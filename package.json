@@ -1,5 +1,5 @@
 {
-  "name": "my-turborepo",
+  "name": "100cims",
   "private": true,
   "scripts": {
     "build": "turbo build",
