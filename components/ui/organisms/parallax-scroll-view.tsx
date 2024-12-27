@@ -1,10 +1,4 @@
-import {
-  Fragment,
-  PropsWithChildren,
-  ReactElement,
-  useEffect,
-  useState,
-} from "react";
+import { PropsWithChildren, ReactElement, useEffect, useState } from "react";
 import Animated, {
   interpolate,
   SharedValue,
@@ -16,13 +10,15 @@ import Animated, {
 } from "react-native-reanimated";
 import { BlurView } from "expo-blur";
 import { ThemedView } from "@/components/ui/atoms/themed-view";
-import { useBottomTabOverflow } from "@/components/ui/tab-bar-background";
 import clsx from "clsx";
-import { ThemedKeyboardAvoidingView, ThemedText } from "@/components/ui/atoms";
+import {
+  Button,
+  ThemedKeyboardAvoidingView,
+  ThemedText,
+} from "@/components/ui/atoms";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useColorScheme } from "@/hooks/use-color-scheme";
-import { IconSymbol } from "@/components/ui/icon-symbol";
+import { Icon } from "@/components/ui/atoms/icon";
 import { useRouter } from "expo-router";
 
 const HEADER_HEIGHT = 300;
@@ -69,9 +65,7 @@ export default function ParallaxScrollView({
             scrollOffset={scrollOffset}
           />
           <HeaderTitleElement title={title} show={!showBlurredTopHeader} />
-          <ThemedView className="relative h-full flex-1 p-8 gap-4 overflow-hidden">
-            {children}
-          </ThemedView>
+          <ThemedView className="relative flex-1">{children}</ThemedView>
         </Animated.ScrollView>
         <HeaderTopElement show={!showBlurredTopHeader} />
         <BlurredTopHeader title={title} show={showBlurredTopHeader}>
@@ -148,16 +142,16 @@ const HeaderTopElement = ({ show }: { show: boolean }) => {
   }));
 
   return (
-    <Animated.View style={animatedStyle} className="absolute top-16 px-8">
+    <Animated.View style={animatedStyle} className="absolute top-16 px-6">
       <TouchableOpacity
         onPress={router.back}
-        className="items-center justify-center w-6 h-6 rounded-full overflow-hidden"
+        className="items-center justify-center -mx-2 w-8 h-8 rounded-full overflow-hidden"
       >
         <BlurView
           className="items-center justify-center"
           style={StyleSheet.absoluteFill}
         >
-          <IconSymbol size={16} color="white" name="chevron.left" />
+          <Icon size={16} color="white" weight="semibold" name="chevron.left" />
         </BlurView>
       </TouchableOpacity>
     </Animated.View>
@@ -188,10 +182,10 @@ const HeaderTitleElement = ({
   return (
     <Animated.View
       style={animatedStyle}
-      className="absolute h-[300px] justify-end items-start pb-4 px-8 w-full"
+      className="absolute h-[300px] justify-end items-start pb-4 px-6 w-full"
     >
       <LinearGradient
-        colors={["transparent", "rgba(0,0,0,0.4)"]}
+        colors={["transparent", "transparent", "rgba(0,0,0,0.4)"]}
         style={StyleSheet.absoluteFill}
       />
 
@@ -228,13 +222,13 @@ const BlurredTopHeader = ({
       className="top-0 absolute flex-1 w-full h-24"
     >
       <BlurView className="flex-1">
-        <View className="flex-row px-8 items-center justify-between mt-auto pb-2">
-          <TouchableOpacity onPress={router.back}>
-            <IconSymbol size={16} color="black" name="chevron.left" />
+        <View className="flex-row px-6 items-center justify-between mt-auto pb-2">
+          <TouchableOpacity onPress={router.back} className="px-4 -mx-4">
+            <Icon size={16} name="chevron.left" />
           </TouchableOpacity>
           {children}
           <TouchableOpacity>
-            <IconSymbol size={18} color="black" name="square.and.arrow.up" />
+            <Icon size={18} name="square.and.arrow.up" />
           </TouchableOpacity>
         </View>
       </BlurView>

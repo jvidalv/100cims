@@ -5,8 +5,8 @@ import {
   TouchableOpacityProps,
 } from "react-native";
 import { tv, type VariantProps } from "tailwind-variants";
-import { FC, useEffect } from "react";
-import { IconSymbol, IconSymbolName } from "@/components/ui/icon-symbol";
+import { FC, forwardRef, useEffect } from "react";
+import { Icon, IconSymbolName } from "@/components/ui/atoms/icon";
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -14,13 +14,15 @@ import Animated, {
   withRepeat,
   withTiming,
 } from "react-native-reanimated";
-import clsx from "clsx";
+import { twMerge } from "tailwind-merge";
+import type from "ajv/lib/vocabularies/jtd/type";
 
 const buttonVariants = tv({
-  base: "flex-row items-center justify-center rounded-lg",
+  base: "flex-row items-center justify-center rounded-xl",
   variants: {
     intent: {
       primary: "bg-primary",
+      accent: "bg-accent",
       danger: "bg-red-500",
     },
     size: {
@@ -43,53 +45,58 @@ type Props = VariantProps<typeof buttonVariants> & {
   iconName?: IconSymbolName;
 } & TouchableOpacityProps;
 
-export const Button: FC<Props> = ({
-  children,
-  intent,
-  size,
-  disabled,
-  isLoading,
-  iconName,
-  onPress,
-  className,
-  ...props
-}) => {
-  const opacity = useSharedValue(1); // Initial opacity
+export const Button = forwardRef<Animated.View, Props>(
+  (
+    {
+      children,
+      intent,
+      size,
+      disabled,
+      isLoading,
+      iconName,
+      onPress,
+      className,
+      ...props
+    },
+    ref,
+  ) => {
+    const opacity = useSharedValue(1); // Initial opacity
 
-  useEffect(() => {
-    if (!isLoading) {
-      opacity.value = 1;
-      return;
-    }
+    useEffect(() => {
+      if (!isLoading) {
+        opacity.value = 1;
+        return;
+      }
 
-    opacity.value = withRepeat(
-      withTiming(0.4, { duration: 1000, easing: Easing.inOut(Easing.ease) }), // Animate opacity to 0.4
-      -1, // Repeat indefinitely
-      true, // Reverse the animation (fades in and out)
+      opacity.value = withRepeat(
+        withTiming(0.4, { duration: 1000, easing: Easing.inOut(Easing.ease) }), // Animate opacity to 0.4
+        -1, // Repeat indefinitely
+        true, // Reverse the animation (fades in and out)
+      );
+    }, [isLoading, opacity]);
+
+    const animatedStyle = useAnimatedStyle(() => ({
+      opacity: opacity.value,
+    }));
+
+    const variants = buttonVariants({ intent, size, disabled });
+
+    return (
+      <Animated.View ref={ref} style={animatedStyle}>
+        <TouchableOpacity
+          className={twMerge(variants, className)}
+          onPress={onPress}
+          disabled={disabled || isLoading}
+          {...props}
+        >
+          {iconName && (
+            <View className="mr-2">
+              <Icon size={28} color="white" name={iconName} />
+            </View>
+          )}
+          <Text className="text-white text-lg font-medium">{children}</Text>
+        </TouchableOpacity>
+      </Animated.View>
     );
-  }, [isLoading, opacity]);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
-  }));
-
-  const variants = buttonVariants({ intent, size, disabled });
-
-  return (
-    <Animated.View style={animatedStyle}>
-      <TouchableOpacity
-        className={clsx(variants, className)}
-        onPress={onPress}
-        disabled={disabled || isLoading}
-        {...props}
-      >
-        {iconName && (
-          <View className="mr-2">
-            <IconSymbol size={28} color="white" name={iconName} />
-          </View>
-        )}
-        <Text className="text-white text-lg font-medium">{children}</Text>
-      </TouchableOpacity>
-    </Animated.View>
-  );
-};
+  },
+);

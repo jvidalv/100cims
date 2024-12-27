@@ -1,26 +1,39 @@
 import { SymbolView, SymbolViewProps, SymbolWeight } from "expo-symbols";
 import { StyleProp, ViewStyle } from "react-native";
+import { useColorScheme } from "@/hooks/use-color-scheme";
+import { AnimationSpec } from "expo-symbols/build/SymbolModule.types";
 
-export function IconSymbol({
+export function Icon({
   name,
   size = 24,
   color,
   className,
   weight = "regular",
   style,
+  muted,
+  animationSpec,
 }: {
   name: SymbolViewProps["name"];
   size?: number;
-  color: string;
+  color?: string;
   className?: string;
+  muted?: boolean;
   style?: StyleProp<ViewStyle>;
   weight?: SymbolWeight;
+  animationSpec?: AnimationSpec;
 }) {
+  const { isDark } = useColorScheme();
+  let finalColor = color;
+  if (!color) {
+    finalColor = isDark ? "white" : "black";
+  }
+
   return (
     <SymbolView
       weight={weight}
-      tintColor={color}
+      tintColor={finalColor}
       resizeMode="scaleAspectFit"
+      animationSpec={animationSpec}
       name={name}
       className={className}
       style={[
@@ -29,6 +42,7 @@ export function IconSymbol({
           height: size,
         },
         style,
+        muted ? { opacity: 0.5 } : {},
       ]}
     />
   );

@@ -1,11 +1,11 @@
 import { Elysia, t } from "elysia";
-import { mountainsTable } from "@/api/db/schema";
+import { mountainTable } from "@/api/db/schema";
 import { db } from "@/api/db";
 
 export const mountainsRoute = new Elysia({ prefix: "/mountains" }).get(
   "/all",
   async () => {
-    const mountains = await db.select().from(mountainsTable).limit(20);
+    const mountains = await db.select().from(mountainTable);
 
     return {
       success: true,
@@ -26,7 +26,7 @@ export const mountainsRoute = new Elysia({ prefix: "/mountains" }).get(
           latitude: t.String(),
           longitude: t.String(),
           url: t.String(),
-          image_url: t.Nullable(t.String()),
+          imageUrl: t.Nullable(t.String()),
         }),
       ),
     }),

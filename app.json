@@ -8,19 +8,15 @@
     "scheme": "centcims",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/images/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#eb144c"
-    },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "usesAppleSignIn": true
     },
     "android": {
       "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/splash.png",
-        "backgroundColor": "#eb144c"
+        "foregroundImage": "./assets/images/mountain.png",
+        "backgroundColor": "#be281f"
       }
     },
     "web": {
@@ -29,14 +25,15 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      "expo-apple-authentication",
       ["expo-router"],
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/mountain.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#eb144c"
+          "backgroundColor": "#be281f"
         }
       ]
     ],

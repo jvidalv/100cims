@@ -47,7 +47,7 @@ And, enjoy :)
 
 ## Usage
 
-@todo 
+@todo
 
 ### Deploy on Vercel
 
@@ -57,7 +57,13 @@ And, enjoy :)
 
 @todo
 
-
 ## Why
 
 @todo
+
+
+### To remember dependencies
+
+#### Elyisia
+
+Current versions are pinned because otherwise types stop working as expected, both for JWT and for eden.

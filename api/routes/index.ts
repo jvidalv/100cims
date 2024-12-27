@@ -1,6 +1,9 @@
 import { Elysia } from "elysia";
-import { mountainsRoute } from "@/api/routes/mountains.route";
+import { publicRoutes } from "@/api/routes/public";
+import { protectedRoutes } from "@/api/routes/protected";
 
-export const app = new Elysia({ prefix: "/api" }).use(mountainsRoute);
+export const app = new Elysia({ prefix: "/api" })
+  .use(publicRoutes)
+  .use(protectedRoutes);
 
 export type App = typeof app;
