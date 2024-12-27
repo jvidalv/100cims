@@ -2,23 +2,30 @@ import { Text, type TextProps } from "react-native";
 
 import { tv, type VariantProps } from "tailwind-variants";
 import clsx from "clsx";
+import { useMemo } from "react";
+import { twMerge } from "tailwind-merge";
+import { getFontFamily } from "@/lib/font-family";
 
 export const textVariants = tv({
   base: "text-foreground",
-  variants: {
-    variant: {
-      title: "text-4xl font-bold",
-      subtitle: "text-xl font-bold",
-      link: "font-medium text-primary",
-    },
-  },
 });
 
 export type TextVariantsProps = VariantProps<typeof textVariants>;
 
 export function ThemedText({
   className,
+  style,
   ...props
 }: TextProps & TextVariantsProps) {
-  return <Text className={clsx(textVariants(props), className)} {...props} />;
+  const fontFamily = useMemo(() => {
+    return getFontFamily(className);
+  }, [className]);
+
+  return (
+    <Text
+      style={[style, { fontFamily }]}
+      className={twMerge("text-foreground", className)}
+      {...props}
+    />
+  );
 }
