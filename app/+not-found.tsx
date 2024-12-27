@@ -9,11 +9,9 @@ export default function NotFoundScreen() {
     <Fragment>
       <Stack.Screen options={{ title: "Oops!" }} />
       <ThemedView className="p-5 flex-1 items-center justify-center">
-        <ThemedText variant="title">This screen doesn't exist.</ThemedText>
+        <ThemedText>This screen doesn't exist.</ThemedText>
         <Link href="/" className="my-4">
-          <ThemedText variant="link" className="underline">
-            Go to home screen
-          </ThemedText>
+          <ThemedText className="underline">Go to home screen</ThemedText>
         </Link>
       </ThemedView>
     </Fragment>

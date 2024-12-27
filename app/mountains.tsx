@@ -101,13 +101,13 @@ export default function MountainsScreen() {
           ListFooterComponent={<View className="h-32" />}
           keyExtractor={({ id }) => id}
           renderItem={({
-            item: { name, slug, essential, location, height, image_url },
+            item: { name, slug, essential, location, height, imageUrl },
           }) => (
             <View className="px-6 py-2">
               <MountainItemList
                 name={name}
                 location={location}
-                image_url={image_url}
+                imageUrl={imageUrl}
                 essential={essential}
                 slug={slug}
                 height={height}
