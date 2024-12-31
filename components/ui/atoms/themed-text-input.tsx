@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { TextInput, View, Animated, Platform } from "react-native";
-import clsx from "clsx";
+import { twMerge } from "tailwind-merge";
+
 import { ThemedText } from "@/components/ui/atoms/themed-text";
 
 type InputProps = {
   label: string;
-  value?: string;
+  value?: string | null;
+  disabled?: boolean;
   className?: string;
   onChangeText?: (text: string) => void;
 };
@@ -13,6 +15,7 @@ type InputProps = {
 export const ThemedTextInput: React.FC<InputProps> = ({
   label,
   value,
+  disabled,
   onChangeText,
   className,
 }) => {
@@ -31,22 +34,22 @@ export const ThemedTextInput: React.FC<InputProps> = ({
     }).start();
   }, [isWeb, internalValue, isFocused, labelPosition, value]);
 
-  const labelStyle = {
+  const style = {
     top: labelPosition.interpolate({
       inputRange: [0, 1],
-      outputRange: [22, 10], // Move from the center to the top
+      outputRange: [19, -8],
     }),
     fontSize: labelPosition.interpolate({
       inputRange: [0, 1],
-      outputRange: [14, 12], // Shrink font size when focused
+      outputRange: [16, 12],
     }),
   };
 
   return (
-    <View className={clsx("relative w-full", className)}>
+    <View className={twMerge("relative w-full h-fit", className)}>
       {isWeb ? (
         <ThemedText
-          className={clsx(
+          className={twMerge(
             "transition-all pointer-events-none absolute left-4 top-5 text-muted-foreground/50",
             (isFocused || internalValue) &&
               "text-muted-foreground top-[10px] text-xs",
@@ -55,22 +58,26 @@ export const ThemedTextInput: React.FC<InputProps> = ({
           {label}
         </ThemedText>
       ) : (
-        <Animated.Text
-          style={[labelStyle]}
-          className={clsx(
-            "absolute left-4 text-muted-foreground/50",
-            isFocused && "text-muted-foreground",
-          )}
+        <Animated.View
+          style={[{ top: style.top }]}
+          className="absolute left-4 z-10 -mx-1 bg-background px-1"
         >
-          {label}
-        </Animated.Text>
+          <Animated.Text
+            style={[{ fontSize: style.fontSize }]}
+            className="text-muted-foreground"
+          >
+            {label}
+          </Animated.Text>
+        </Animated.View>
       )}
       <TextInput
-        className={clsx(
-          "w-full border border-border rounded-lg flex pt-2 px-4 text-base text-foreground focus:border-primary",
-          isWeb ? "h-16" : "h-[4.5rem]",
+        editable={!disabled}
+        className={twMerge(
+          "w-full border-2 border-border rounded-xl flex py-5 px-4 text-foreground focus:border-blue-500",
+          disabled && "bg-gray-50 dark:bg-neutral-900 text-foreground/60",
         )}
-        defaultValue={value}
+        style={{ fontSize: 16 }}
+        defaultValue={!value ? undefined : value}
         onChangeText={(text) => {
           setInternalValue(text);
           onChangeText?.(text);

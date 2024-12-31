@@ -1,17 +1,18 @@
 // This file is a fallback for using MaterialIcons on Android and web.
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { SymbolWeight } from "expo-symbols";
-
+import { AnimationSpec } from "expo-symbols/build/SymbolModule.types";
 import React from "react";
 import { OpaqueColorValue, StyleProp, TextStyle } from "react-native";
+
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { AnimationSpec } from "expo-symbols/build/SymbolModule.types";
 
 // Add your SFSymbol to MaterialIcons mappings here.
 const MAPPING = {
   // See MaterialIcons here: https://icons.expo.fyi
   // See SF Symbols in the SF Symbols app on Mac.
   "person.fill": "person",
+  "list.bullet": "format-list-bulleted",
   "chevron.left": "chevron-left",
   "chevron.right": "chevron-right",
   "info.circle": "info-outline",
@@ -20,6 +21,9 @@ const MAPPING = {
   xmark: "close",
   "mappin.and.ellipse": "location-pin",
   "rectangle.portrait.and.arrow.right": "logout",
+  plus: "add",
+  camera: "camera-alt",
+  hourglass: "hourglass-top",
 } as Partial<
   Record<
     import("expo-symbols").SymbolViewProps["name"],

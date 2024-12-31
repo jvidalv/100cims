@@ -6,7 +6,7 @@ import Animated, {
   withTiming,
   Easing,
 } from "react-native-reanimated";
-import clsx from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export const Skeleton = ({ className }: { className?: string }) => {
   const opacity = useSharedValue(1); // Initial opacity
@@ -25,7 +25,7 @@ export const Skeleton = ({ className }: { className?: string }) => {
 
   return (
     <Animated.View
-      className={clsx("w-full h-24 rounded-lg bg-border", className)}
+      className={twMerge("w-full h-24 rounded-lg bg-border", className)}
       style={animatedStyle}
     />
   );

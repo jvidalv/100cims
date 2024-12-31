@@ -1,3 +1,3 @@
 export { api } from "./request";
-export { getFontFamily } from "./font-family";
-export { cleanText } from "./string";
+export { getFontFamily } from "./fonts";
+export { cleanText } from "./strings";

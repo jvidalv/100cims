@@ -1,7 +1,8 @@
-import { TouchableOpacity, View } from "react-native";
 import { Image } from "expo-image";
-import { ThemedText } from "@/components/ui/atoms";
 import { Link } from "expo-router";
+import { TouchableOpacity, View } from "react-native";
+
+import { ThemedText } from "@/components/ui/atoms";
 
 export const MountainItemList = ({
   slug,
@@ -26,20 +27,20 @@ export const MountainItemList = ({
       }}
       asChild
     >
-      <TouchableOpacity delayPressIn={30} className="flex-row h-32 gap-4">
+      <TouchableOpacity delayPressIn={40} className="flex-row gap-4">
         <Image
           source={imageUrl}
-          style={{ flex: 0.5, borderRadius: 16 }}
+          style={{ width: 100, height: 100, borderRadius: 16 }}
           contentFit="cover"
           contentPosition="center"
           placeholder={{ blurhash: `L~I64nWEWXaz_NWEWWazbvWBaxfQ` }}
         />
         <View className="flex-1 justify-center">
           <View className="gap-1">
-            <ThemedText className="text-xl font-bold tracking-tight leading-6">
+            <ThemedText className="text-lg font-semibold tracking-tight">
               {name}
             </ThemedText>
-            <ThemedText className="text-muted-foreground  font-medium -mt-1">
+            <ThemedText className="-mt-1  font-medium text-muted-foreground">
               {location}
             </ThemedText>
           </View>
@@ -49,7 +50,7 @@ export const MountainItemList = ({
               {essential && (
                 <ThemedText className="text-muted-foreground">
                   ,{" "}
-                  <ThemedText className="text-primary font-semibold">
+                  <ThemedText className="font-semibold text-primary">
                     essential
                   </ThemedText>
                 </ThemedText>

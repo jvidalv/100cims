@@ -1,30 +1,28 @@
 import React, { FC, useState } from "react";
-import { StyleProp, View, ViewStyle } from "react-native";
-import { Image } from "expo-image";
-import { tv } from "tailwind-variants";
-import clsx from "clsx";
-import { ThemedText } from "@/components/ui/atoms/themed-text";
+import { StyleProp, View, ViewStyle, Image } from "react-native";
 import { twMerge } from "tailwind-merge";
+import { tv } from "tailwind-variants";
+
+import { ThemedText } from "@/components/ui/atoms/themed-text";
 
 export type AvatarSize = "sm" | "md" | "lg" | "xl";
 
 interface AvatarProps {
-  name?: string;
-  emoji?: string;
-  imageUrl?: string;
+  initials?: string;
+  imageUrl?: string | null;
   className?: string;
   style?: StyleProp<ViewStyle>;
   size?: AvatarSize;
 }
 
 const avatarStyles = tv({
-  base: "rounded-full bg-gray-400 flex justify-center items-center overflow-hidden",
+  base: "relative flex items-center justify-center overflow-hidden rounded-full",
   variants: {
     size: {
-      sm: "w-10 h-10",
-      md: "w-12 h-12",
-      lg: "w-16 h-16",
-      xl: "w-20 h-20",
+      sm: "size-10",
+      md: "size-12",
+      lg: "size-16",
+      xl: "size-20",
     },
   },
   defaultVariants: {
@@ -33,59 +31,49 @@ const avatarStyles = tv({
 });
 
 export const Avatar: FC<AvatarProps> = ({
-  name,
-  emoji,
+  initials,
   imageUrl,
   size = "md",
   className,
   style,
 }) => {
-  const [imageError, setImageError] = useState(false);
-
-  const getInitials = (name?: string): string => {
-    if (emoji) return emoji;
-    if (!name) return "??";
-    const words = name.split(" ");
-    const initials = words
-      .slice(0, 2)
-      .map((word) => word[0])
-      .join("");
-    return initials.toUpperCase();
-  };
+  const [isImageError, setIsImageError] = useState(false);
+  const [isImageLoading, setIsImageLoading] = useState(false);
 
   return (
     <View
       style={style}
       className={twMerge(
         avatarStyles({ size }),
-        imageUrl && !imageError && "bg-background",
+        (!imageUrl || isImageError) && "bg-gray-400 ",
         className,
       )}
     >
-      {imageUrl && !imageError ? (
-        <Image
-          source={imageUrl}
-          placeholder={{ blurhash: `L~I64nWEWXaz_NWEWWazbvWBaxfQ` }}
-          style={{
-            flex: 1,
-            width: "100%",
-            height: "100%",
-            borderRadius: "50%",
-          }}
-          onError={() => setImageError(true)}
-        />
-      ) : (
-        <ThemedText
-          className={clsx(
-            "text-white font-bold",
-            size === "sm" && "text-sm",
-            size === "md" && "text-base",
-            size === "lg" && "text-lg",
-            size === "xl" && "text-xl",
+      <ThemedText
+        className={twMerge(
+          "text-white font-bold",
+          size === "sm" && "text-sm",
+          size === "md" && "text-base",
+          size === "lg" && "text-lg",
+          size === "xl" && "text-xl",
+        )}
+      >
+        {initials?.toUpperCase()}
+      </ThemedText>
+      {imageUrl && !isImageError && (
+        <View
+          className={twMerge(
+            "absolute size-full",
+            isImageLoading && "opacity-0",
           )}
         >
-          {getInitials(name)}
-        </ThemedText>
+          <Image
+            source={{ uri: imageUrl }}
+            className={twMerge("size-full flex-1 rounded-full")}
+            onLoadEnd={() => setIsImageLoading(false)}
+            onError={() => setIsImageError(true)}
+          />
+        </View>
       )}
     </View>
   );

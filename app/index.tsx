@@ -1,104 +1,61 @@
-import {
-  FlatList,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { format } from "date-fns/format";
+import { BlurView } from "expo-blur";
+import { Link } from "expo-router";
+import { useMemo } from "react";
+import { ScrollView, TouchableOpacity, View } from "react-native";
+
+import { useAuth } from "@/components/providers/auth-provider";
+import { Avatar, Icon } from "@/components/ui/atoms";
 import { ThemedText } from "@/components/ui/atoms/themed-text";
 import { ThemedView } from "@/components/ui/atoms/themed-view";
-import { Link } from "expo-router";
-import { useRecommendedPeaks } from "@/domains/mountains/mountains.api";
-import { BlurView } from "expo-blur";
-import { Avatar, Icon } from "@/components/ui/atoms";
+import { BottomDrawer, MountainItemList } from "@/components/ui/molecules";
 import { AvatarGroup } from "@/components/ui/molecules/avatar-group";
-import { Fragment, useEffect } from "react";
-import { Modal, MountainItemList } from "@/components/ui/molecules";
-import { useQuery } from "@tanstack/react-query";
-import { useApiWithAuth } from "@/hooks/use-api-with-auth";
-import { useAuth } from "@/components/providers/auth-provider";
-import { useUserMe } from "@/domains/user/user.api";
+import { useRecommendedPeaks } from "@/domains/mountain/mountain.api";
+import { useSummitsGet } from "@/domains/summit/summit.api";
+import { useUserMe, useUserSummits } from "@/domains/user/user.api";
+import { getFullName } from "@/domains/user/user.utils";
+import { getInitials } from "@/lib/strings";
 
-const latestSummits = [
-  {
-    mountain: "El tossal",
-    date: "a few hours ago",
-    users: [
-      {
-        name: "Josep Vidal",
-        imageUrl:
-          "https://media.licdn.com/dms/image/v2/D4E03AQFpQWS35rdxNg/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1729674280775?e=1740009600&v=beta&t=qMlgUxWbIHz2XlEZ24GhsDWz9oDFSTxXCjVjoyqnkG8",
-      },
-      {
-        name: "Ainé Garcia",
-        imageUrl:
-          "https://media.licdn.com/dms/image/v2/D4D03AQH9Xw8ywHmkcw/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1729705481301?e=1740009600&v=beta&t=Q_dUBQpNYRdKE7UVGD9gUpIzTVRdxptlDbgUGbVg5Fk",
-      },
-      {
-        name: "Magda Vidal",
-        imageUrl: "https://picsum.photos/id/1000/200",
-      },
-      {
-        name: "Pepito Justo",
-        imageUrl: "https://picsum.photos/id/250/200",
-      },
-    ],
-  },
-  {
-    mountain: "La Mola de Prat",
-    date: "2 days ago",
-    users: [
-      {
-        name: "Ainé Garcia",
-        imageUrl:
-          "https://media.licdn.com/dms/image/v2/D4D03AQH9Xw8ywHmkcw/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1729705481301?e=1740009600&v=beta&t=Q_dUBQpNYRdKE7UVGD9gUpIzTVRdxptlDbgUGbVg5Fk",
-      },
-    ],
-  },
-  {
-    mountain: "Puig Cavaller",
-    date: "1 week ago",
-    users: [
-      {
-        name: "Ainé Garcia",
-        imageUrl:
-          "https://media.licdn.com/dms/image/v2/D4D03AQH9Xw8ywHmkcw/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1729705481301?e=1740009600&v=beta&t=Q_dUBQpNYRdKE7UVGD9gUpIzTVRdxptlDbgUGbVg5Fk",
-      },
-      {
-        name: "Josep Vidal",
-        imageUrl:
-          "https://media.licdn.com/dms/image/v2/D4E03AQFpQWS35rdxNg/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1729674280775?e=1740009600&v=beta&t=qMlgUxWbIHz2XlEZ24GhsDWz9oDFSTxXCjVjoyqnkG8",
-      },
-    ],
-  },
-];
-
-export default function TabIndexScreen() {
+export default function IndexScreen() {
   const recommendedPeaks = useRecommendedPeaks();
   const { isAuthenticated } = useAuth();
-  const { data } = useUserMe();
-  const fullName = `${data?.data?.message.firstName} ${data?.data?.message?.lastName}`;
+  const { data: user } = useUserMe();
+  const fullName = user ? getFullName(user) : "";
+
+  const { data: latestSummits } = useSummitsGet({ limit: 5 });
+  const { data: summits, isPending: isPendingScore } = useUserSummits();
+
+  const totalScore = useMemo(() => {
+    if (!summits || !summits.length) {
+      return 0;
+    }
+
+    return summits.reduce((acc, current) => {
+      acc = acc + current.score;
+      return acc;
+    }, 0);
+  }, [summits]);
 
   return (
     <ThemedView>
-      <BlurView className="absolute z-20 h-[7.5rem] justify-end pb-2 w-full px-6">
+      <BlurView className="absolute z-20 h-[7.5rem] w-full justify-end px-6 pb-2">
         <View className="flex-row items-center justify-between">
           <View />
           <Link href={isAuthenticated ? "/user" : "/join"}>
             <Avatar
-              name={data ? fullName : ""}
-              emoji={!isAuthenticated ? "🏔️" : undefined}
+              initials={isAuthenticated ? getInitials(fullName) || "👨‍🚀" : "🏔️"}
+              imageUrl={user?.imageUrl}
             />
           </Link>
         </View>
       </BlurView>
-      <ScrollView className="px-6">
-        <View className="h-36" />
-        <View className="gap-2 mb-6">
-          <View className="flex-row justify-between items-end">
-            <View className="items-center flex-row">
+      <ScrollView className="gap-10 px-6" contentContainerClassName="gap-10">
+        <View className="h-24" />
+        <View>
+          <View className="flex-row items-end justify-between">
+            <View className="flex-row items-center">
               <ThemedText className="text-2xl font-bold">Score</ThemedText>
-              <Modal
+              <BottomDrawer
                 Trigger={({ setOpen }) => (
                   <TouchableOpacity
                     onPress={() => setOpen((o) => !o)}
@@ -108,136 +65,115 @@ export default function TabIndexScreen() {
                   </TouchableOpacity>
                 )}
               >
-                <View>
-                  <ThemedText className="text-2xl font-semibold mb-0">
-                    About the score
-                  </ThemedText>
-                  <ThemedText className="text-lg leading-5 text-muted-foreground mb-3">
-                    The score is based on the height of the completed peaks
-                    mountains.
-                  </ThemedText>
-                  <ThemedText className="mb-4">
-                    One mountain of 1000 meters ={" "}
-                    <ThemedText className="text-accent">1000 points</ThemedText>
-                    .
-                  </ThemedText>
-                  <View className="border border-border rounded-lg p-2 items-center flex-row gap-2">
-                    <ThemedText>🔥</ThemedText>
-                    <ThemedText>
-                      <ThemedText className="text-primary font-medium">
-                        Essentials{" "}
-                      </ThemedText>
-                      are worth x2. Summit them!
+                {() => (
+                  <View>
+                    <ThemedText className="mb-0 text-2xl font-semibold">
+                      About the score
                     </ThemedText>
+                    <ThemedText className="mb-3 text-lg leading-5 text-muted-foreground">
+                      The score is based on the height of the completed peaks
+                      mountains.
+                    </ThemedText>
+                    <ThemedText className="mb-4">
+                      One mountain of 1000 meters ={" "}
+                      <ThemedText className="text-primary">
+                        1000 points
+                      </ThemedText>
+                      .
+                    </ThemedText>
+                    <View className="flex-row items-center gap-2 rounded-lg border border-border p-2">
+                      <ThemedText>🔥</ThemedText>
+                      <ThemedText>
+                        <ThemedText className="font-medium text-primary">
+                          Essentials{" "}
+                        </ThemedText>
+                        are worth x2. Summit them!
+                      </ThemedText>
+                    </View>
                   </View>
-                </View>
-              </Modal>
+                )}
+              </BottomDrawer>
             </View>
-            <Link href="/highscores" className="px-2 -mx-2">
+            <Link href="/highscores" className="-mx-2 -mb-2 p-2">
               <View className="flex-row items-center gap-1">
                 <ThemedText className="text-muted-foreground">
-                  View highscores
+                  Highscores
                 </ThemedText>
                 <Icon name="arrow.forward" size={12} weight="bold" muted />
               </View>
             </Link>
           </View>
-          <View className="flex-row gap-2">
-            <ThemedText className="text-5xl font-black text-accent">
-              31245
+          <View className="-mt-1 flex-row items-center gap-2">
+            <ThemedText className="text-5xl font-black text-primary">
+              {isPendingScore ? "..." : totalScore}
             </ThemedText>
-            <View className="mt-3">
-              <View className="items-center flex-row gap-1">
-                <ThemedText className="font-bold text-xl">5</ThemedText>
-                <ThemedText className="text-sm mt-0.5">peaks</ThemedText>
+            {!isPendingScore && (
+              <View className="mt-3 flex-row items-center gap-1">
+                <ThemedText className="text-xl font-bold">
+                  {summits?.length}
+                </ThemedText>
+                <ThemedText className="mt-0.5 text-sm">peaks</ThemedText>
               </View>
-            </View>
-          </View>
-        </View>
-        <View className="gap-2 mb-6">
-          <ThemedText className="text-2xl font-bold">Latest summits</ThemedText>
-          <View className="border border-border rounded-xl">
-            {latestSummits.map(({ mountain, date, users }, index, items) => {
-              const firstName = users[0]?.name?.split(" ")?.[0];
-              const firstNameSecond = users[1]?.name?.split(" ")?.[0];
-
-              return (
-                <Fragment key={mountain}>
-                  <View className="p-4" key={mountain}>
-                    <View className="mb-2">
-                      <ThemedText className="font-black">
-                        {mountain}
-                        <ThemedText className="text-muted-foreground">
-                          , by{" "}
-                        </ThemedText>
-                        <ThemedText className="font-medium">
-                          {firstName}
-                        </ThemedText>
-                        {users.length >= 2 && (
-                          <ThemedText className="font-medium">
-                            {users.length === 2 ? (
-                              <ThemedText className="text-muted-foreground">
-                                {" "}
-                                &
-                              </ThemedText>
-                            ) : (
-                              ","
-                            )}{" "}
-                            {firstNameSecond}
-                          </ThemedText>
-                        )}
-                        {users.length > 2 && (
-                          <ThemedText className="text-muted-foreground">
-                            {" "}
-                            & {users.length - 2} more
-                          </ThemedText>
-                        )}
-                      </ThemedText>
-                    </View>
-                    <View className="flex-row items-end justify-between gap-4">
-                      <AvatarGroup items={users} />
-                      <ThemedText className="">{date}</ThemedText>
-                    </View>
-                  </View>
-                  {index !== items.length - 1 && (
-                    <View className="h-[1px] bg-border" />
-                  )}
-                </Fragment>
-              );
-            })}
-          </View>
-        </View>
-        <View className="gap-2 mb-4">
-          <View className="flex-row justify-between items-end">
-            <ThemedText className="text-2xl font-bold">
-              Peaks for you
-            </ThemedText>
-            <View>
-              <Link href="/mountains" className="px-2 -mx-2">
-                <View className="flex-row items-center gap-1">
-                  <ThemedText className="text-muted-foreground">
-                    View all
-                  </ThemedText>
-                  <Icon name="arrow.forward" size={12} weight="bold" muted />
-                </View>
-              </Link>
-            </View>
+            )}
           </View>
         </View>
         <View className="gap-4">
-          {recommendedPeaks?.map(
-            ({ id, name, height, slug, imageUrl, essential, location }) => (
-              <MountainItemList
-                key={id}
-                name={name}
-                height={height}
-                slug={slug}
-                imageUrl={imageUrl}
-                essential={essential}
-                location={location}
-              />
-            ),
-          )}
+          <ThemedText className="text-2xl font-bold">Latest summits</ThemedText>
+          <View className="gap-3">
+            {latestSummits?.data?.message?.map(
+              ({ summitId, mountainName, summitedAt, users }) => {
+                return (
+                  <View className="flex-row items-center" key={summitId}>
+                    <View>
+                      <ThemedText className="font-medium">
+                        {mountainName}
+                      </ThemedText>
+                      <ThemedText className="text-sm text-muted-foreground">
+                        {format(summitedAt, "dd MMM yyyy")}
+                      </ThemedText>
+                    </View>
+                    <View className="ml-auto">
+                      <AvatarGroup
+                        size="sm"
+                        items={users.map((user) => ({
+                          name: getFullName(user),
+                          imageUrl: user.imageUrl,
+                        }))}
+                      />
+                    </View>
+                  </View>
+                );
+              },
+            )}
+          </View>
+        </View>
+        <View className="gap-4">
+          <View className="flex-row items-end justify-between">
+            <ThemedText className="text-2xl font-bold">
+              Peaks for you
+            </ThemedText>
+            <Link href="/mountains" className="-mx-2 -mb-2 p-2">
+              <View className="flex-row items-center gap-1">
+                <ThemedText className="text-muted-foreground">All</ThemedText>
+                <Icon name="arrow.forward" size={12} weight="bold" muted />
+              </View>
+            </Link>
+          </View>
+          <View className="gap-4">
+            {recommendedPeaks?.map(
+              ({ id, name, height, slug, imageUrl, essential, location }) => (
+                <MountainItemList
+                  key={id}
+                  name={name}
+                  height={height}
+                  slug={slug}
+                  imageUrl={imageUrl}
+                  essential={essential}
+                  location={location}
+                />
+              ),
+            )}
+          </View>
         </View>
       </ScrollView>
     </ThemedView>

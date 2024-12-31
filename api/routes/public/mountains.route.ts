@@ -1,6 +1,7 @@
 import { Elysia, t } from "elysia";
-import { mountainTable } from "@/api/db/schema";
+
 import { db } from "@/api/db";
+import { mountainTable } from "@/api/db/schema";
 
 export const mountainsRoute = new Elysia({ prefix: "/mountains" }).get(
   "/all",

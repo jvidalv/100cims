@@ -1,24 +1,16 @@
-import {
-  ThemedView,
-  ThemedText,
-  SearchInput,
-  Avatar,
-} from "@/components/ui/atoms";
-import { useMountains } from "@/domains/mountains/mountains.api";
-import { Header } from "@/components/navigation";
-import { FlatList, ScrollView, TouchableOpacity, View } from "react-native";
-import { MountainItemList } from "@/components/ui/molecules";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { cleanText } from "@/lib";
-import clsx from "clsx";
+import { useEffect } from "react";
+import { View } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedScrollHandler,
   useAnimatedStyle,
   withTiming,
   withSpring,
-  withDelay,
 } from "react-native-reanimated";
+
+import { Header } from "@/components/navigation";
+import { ThemedView, ThemedText, Avatar } from "@/components/ui/atoms";
+import { getInitials } from "@/lib/strings";
 
 const dummyData = [
   {
@@ -127,7 +119,7 @@ export default function HighscoresScreen() {
     setTimeout(() => {
       mounted.value = withSpring(0, { damping: 5, stiffness: 80 });
     }, 125);
-  }, []);
+  }, [mounted]);
 
   const onScroll = useAnimatedScrollHandler((event) => {
     scrollY.value = event.contentOffset.y;
@@ -163,8 +155,8 @@ export default function HighscoresScreen() {
           initialNumToRender={25}
           stickyHeaderIndices={[0]}
           ListHeaderComponent={
-            <ThemedView className="pb-2 px-6">
-              <ThemedText className="text-4xl font-bold mb-2">
+            <ThemedView className="px-6 pb-2">
+              <ThemedText className="mb-2 text-4xl font-bold">
                 Highscores
               </ThemedText>
             </ThemedView>
@@ -174,14 +166,14 @@ export default function HighscoresScreen() {
           keyExtractor={({ id }) => `${id}`}
           renderItem={({ index, item: { name, score, image_url } }) => {
             return (
-              <View className="px-6 mb-1" style={{ zIndex: 1000 - index }}>
-                <ThemedView className="relative border rounded-xl border-border p-4">
-                  <ThemedView className="absolute items-center justify-center top-6 -left-4 w-6 h-6 border border-border rounded-full z-10">
+              <View className="mb-1 px-6" style={{ zIndex: 1000 - index }}>
+                <ThemedView className="relative rounded-xl border border-border p-4">
+                  <ThemedView className="absolute -left-4 top-6 z-10 size-6 items-center justify-center rounded-full border border-border">
                     <ThemedText className="font-semibold">
                       {index + 1}
                     </ThemedText>
                   </ThemedView>
-                  <View className="absolute top-10 -left-4">
+                  <View className="absolute -left-4 top-10">
                     {index === 0 && (
                       <ThemedText className="text-xl">🥇</ThemedText>
                     )}
@@ -193,17 +185,21 @@ export default function HighscoresScreen() {
                     )}
                   </View>
                   <View className="flex-row items-center justify-between gap-4">
-                    <View className="relative flex-row gap-2 items-center flex-1">
-                      <Avatar size="sm" name={name} imageUrl={image_url} />
+                    <View className="relative flex-1 flex-row items-center gap-2">
+                      <Avatar
+                        size="sm"
+                        initials={getInitials(name)}
+                        imageUrl={image_url}
+                      />
                       <ThemedText
-                        className="font-semibold text-lg flex-1"
+                        className="flex-1 text-lg font-semibold"
                         numberOfLines={1}
                       >
                         {name}
                       </ThemedText>
                     </View>
                     <View>
-                      <ThemedText className="text-2xl text-accent font-semibold">
+                      <ThemedText className="text-2xl font-semibold text-primary">
                         {score}
                       </ThemedText>
                     </View>

@@ -1,4 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+
+import { useApiWithAuth } from "@/hooks/use-api-with-auth";
 import { api } from "@/lib";
 
 export const useMountains = () => {
@@ -15,4 +17,13 @@ export const useRecommendedPeaks = () => {
   const { data } = useMountains();
 
   return data?.data?.message?.filter(({ essential }) => essential).slice(0, 5);
+};
+
+export const useSummitPost = (mountainSlug: string) => {
+  const apiWithAuth = useApiWithAuth();
+
+  return useMutation({
+    mutationKey: ["summit", mountainSlug],
+    mutationFn: apiWithAuth.protected.mountain.summit.post,
+  });
 };

@@ -1,19 +1,19 @@
+import * as Application from "expo-application";
+import { useRouter } from "expo-router";
+import { Fragment } from "react";
+import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
+
+import { Header } from "@/components/navigation";
+import { useAuth } from "@/components/providers/auth-provider";
 import {
   ThemedText,
   ThemedView,
   Icon,
   IconSymbolName,
 } from "@/components/ui/atoms";
-import { Header } from "@/components/navigation";
-import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
-import * as Application from "expo-application";
-
-import { Fragment } from "react";
 import { useUserMe } from "@/domains/user/user.api";
-import { useAuth } from "@/components/providers/auth-provider";
-import { useRouter } from "expo-router";
 
-export default function UserScreen() {
+export default function UserIndexScreen() {
   const { logout } = useAuth();
   const router = useRouter();
   const { data } = useUserMe();
@@ -24,11 +24,11 @@ export default function UserScreen() {
   }[] = [
     {
       iconName: "person",
-      text: "Personal information",
-      onPress: () => false,
+      text: "Me",
+      onPress: () => router.push("/user/me"),
     },
     {
-      iconName: "mountain.2",
+      iconName: "list.bullet",
       text: "Summits",
       onPress: () => false,
     },
@@ -51,7 +51,7 @@ export default function UserScreen() {
             style: "default",
             onPress: () => {
               logout();
-              router.replace("/");
+              router.dismissAll();
             },
           },
         ]);
@@ -63,10 +63,10 @@ export default function UserScreen() {
     <ThemedView className="flex-1">
       <Header />
       <ScrollView className="flex-1 px-6">
-        <ThemedText className="text-4xl font-bold mb-4">
+        <ThemedText className="mb-4 text-4xl font-bold">
           {data?.data?.message?.firstName}
         </ThemedText>
-        <View className="rounded-lg border border-border mb-4">
+        <View className="mb-4 rounded-xl border-2 border-border">
           {items.map(({ iconName, text, onPress }, index) => (
             <Fragment key={text}>
               <TouchableOpacity
@@ -75,14 +75,16 @@ export default function UserScreen() {
               >
                 <View className="flex-row items-center gap-4">
                   <Icon name={iconName} />
-                  <ThemedText className="text-xl">{text}</ThemedText>
-                  <View className="ml-auto opacity-50">
+                  <ThemedText className="text-xl font-semibold">
+                    {text}
+                  </ThemedText>
+                  <View className="ml-auto opacity-25">
                     <Icon name="chevron.right" weight="semibold" size={16} />
                   </View>
                 </View>
               </TouchableOpacity>
               {index + 1 !== items.length && (
-                <View className="h-[1px] w-full bg-border" />
+                <View className="h-[2px] w-full bg-border" />
               )}
             </Fragment>
           ))}

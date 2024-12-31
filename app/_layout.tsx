@@ -3,35 +3,35 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
+import { useFonts } from "expo-font";
+import { Image } from "expo-image";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
+// eslint-disable-next-line import/order
 import { StatusBar } from "expo-status-bar";
+
 import "react-native-reanimated";
-import { useColorScheme } from "@/hooks/use-color-scheme";
-import { QueryClientProvider } from "@/components/providers";
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, PropsWithChildren } from "react";
 import { Animated, View } from "react-native";
-import { useMountains } from "@/domains/mountains/mountains.api";
-import { Image } from "expo-image";
 import { Easing } from "react-native-reanimated";
-import "../global.css";
-import { useFonts } from "expo-font";
+
+import { QueryClientProvider } from "@/components/providers";
 import {
   AuthProvider,
   overwriteJwt,
 } from "@/components/providers/auth-provider";
+import { useMountains } from "@/domains/mountain/mountain.api";
+import { useSummitsGet } from "@/domains/summit/summit.api";
+import { useUserMe, useUserSummits } from "@/domains/user/user.api";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import { getJwt } from "@/lib/auth";
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-void SplashScreen.preventAutoHideAsync();
+import "../global.css";
 
 const ANIMATION_DURATION = 1500;
 
-// Set the animation options. This is optional.
-SplashScreen.setOptions({
-  duration: ANIMATION_DURATION,
-  fade: true,
-});
+// Prevent the splash screen from auto-hiding before asset loading is complete.
+void SplashScreen.preventAutoHideAsync();
 
 const SplashAnimation = () => {
   const fadeOutOpacity = useRef(new Animated.Value(0)).current;
@@ -52,10 +52,10 @@ const SplashAnimation = () => {
         easing: Easing.out(Easing.ease),
       }),
     ]).start();
-  }, []);
+  }, [fadeOutOpacity, translateY]);
 
   return (
-    <View className="flex-1 bg-primary items-center justify-center">
+    <View className="flex-1 items-center justify-center bg-primary">
       <Animated.Image
         source={require("@/assets/images/one-hundred.png")}
         style={[
@@ -71,25 +71,56 @@ const SplashAnimation = () => {
         source={require("@/assets/images/mountain.png")}
         style={{ width: 200, height: 200 }}
       />
-      <View className="h-[100px] -mb-[100px] w-full bg-primary" />
+      <View className="mb-[-100px] h-[100px] w-full bg-primary" />
     </View>
   );
 };
 
 function Content() {
   const { isDark } = useColorScheme();
-  const [loaded] = useFonts({
+  const [fontsLoaded] = useFonts({
     regular: require("@/assets/fonts/BricolageGrotesque-Regular.ttf"),
     medium: require("@/assets/fonts/BricolageGrotesque-Medium.ttf"),
     semibold: require("@/assets/fonts/BricolageGrotesque-SemiBold.ttf"),
     bold: require("@/assets/fonts/BricolageGrotesque-Bold.ttf"),
     black: require("@/assets/fonts/BricolageGrotesque-ExtraBold.ttf"),
   });
-  const [showApp, setShowApp] = React.useState(false);
-  const [isJwtLoaded, setIsJwtLoaded] = React.useState(false);
-  const { data: mountains } = useMountains();
+  const { isPending: isPendingMountains } = useMountains();
+  const { isPending: isPendingUser } = useUserMe();
+  const { isPending: isPendingHomepageSummits } = useSummitsGet({ limit: 5 });
+  useUserSummits();
 
-  const ready = loaded && isJwtLoaded && mountains;
+  const ready =
+    fontsLoaded &&
+    !isPendingMountains &&
+    !isPendingUser &&
+    !isPendingHomepageSummits;
+
+  useEffect(() => {
+    void SplashScreen.hideAsync();
+  }, []);
+
+  if (!ready) {
+    return <SplashAnimation />;
+  }
+
+  return (
+    <ThemeProvider value={isDark ? DarkTheme : DefaultTheme}>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen
+          name="mountain/[slug]/summit"
+          options={{ presentation: "modal" }}
+        />
+        <Stack.Screen name="+not-found" />
+        <Stack.Screen name="join" options={{ presentation: "modal" }} />
+      </Stack>
+      <StatusBar style="auto" />
+    </ThemeProvider>
+  );
+}
+
+function AuthLayer({ children }: PropsWithChildren) {
+  const [isJwtLoaded, setIsJwtLoaded] = React.useState(false);
 
   useEffect(() => {
     (async () => {
@@ -101,43 +132,19 @@ function Content() {
     })();
   }, []);
 
-  useEffect(() => {
-    if (ready) {
-      void SplashScreen.hideAsync();
-      setTimeout(() => setShowApp(true), ANIMATION_DURATION);
-    }
-  }, [ready]);
-
-  if (!showApp) {
-    return <SplashAnimation />;
+  if (!isJwtLoaded) {
+    return null;
   }
 
-  return (
-    <AuthProvider>
-      <ThemeProvider value={isDark ? DarkTheme : DefaultTheme}>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="index" />
-          <Stack.Screen name="mountains" />
-          <Stack.Screen name="highscores" />
-          <Stack.Screen name="mountain/[slug]/index" />
-          <Stack.Screen
-            name="mountain/[slug]/summit"
-            options={{ presentation: "modal" }}
-          />
-          <Stack.Screen name="+not-found" />
-          <Stack.Screen name="user" />
-          <Stack.Screen name="join" options={{ presentation: "modal" }} />
-        </Stack>
-        <StatusBar style="auto" />
-      </ThemeProvider>
-    </AuthProvider>
-  );
+  return <AuthProvider>{children}</AuthProvider>;
 }
 
 export default function RootLayout() {
   return (
     <QueryClientProvider>
-      <Content />
+      <AuthLayer>
+        <Content />
+      </AuthLayer>
     </QueryClientProvider>
   );
 }

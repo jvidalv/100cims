@@ -1,157 +1,185 @@
-import { ThemedView, ThemedText, Button } from "@/components/ui/atoms";
 import { Image } from "expo-image";
-import { TouchableOpacity, View } from "react-native";
-import { AvatarGroup } from "@/components/ui/molecules";
-import * as AppleAuthentication from "expo-apple-authentication";
-import { useColorScheme } from "@/hooks/use-color-scheme";
-import { useRouter } from "expo-router";
+import * as ImagePicker from "expo-image-picker";
+import { ImagePickerAsset } from "expo-image-picker";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useState } from "react";
+import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
 
-const data = [
-  {
-    name: "Magda Vidal",
-    imageUrl:
-      "https://media.licdn.com/dms/image/v2/D4E03AQFpQWS35rdxNg/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1729674280775?e=1740009600&v=beta&t=qMlgUxWbIHz2XlEZ24GhsDWz9oDFSTxXCjVjoyqnkG8",
-  },
-  {
-    name: "Pepito Justo",
-    imageUrl:
-      "https://media.licdn.com/dms/image/v2/D4D03AQH9Xw8ywHmkcw/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1729705481301?e=1740009600&v=beta&t=Q_dUBQpNYRdKE7UVGD9gUpIzTVRdxptlDbgUGbVg5Fk",
-  },
-  { name: "Lucas Mora", imageUrl: "https://picsum.photos/id/300/200" },
-  { name: "Sophia Reyes", imageUrl: "https://picsum.photos/id/350/200" },
-  { name: "Emma Thompson", imageUrl: "https://picsum.photos/id/400/200" },
-  { name: "Olivia Martinez", imageUrl: "https://picsum.photos/id/450/200" },
-  { name: "Noah Johnson", imageUrl: "https://picsum.photos/id/500/200" },
-  { name: "Liam Carter", imageUrl: "https://picsum.photos/id/550/200" },
-  { name: "Mia Gonzalez", imageUrl: "https://picsum.photos/id/600/200" },
-  { name: "James Taylor", imageUrl: "https://picsum.photos/id/650/200" },
-  { name: "William Adams", imageUrl: "https://picsum.photos/id/700/200" },
-  { name: "Ava Brown", imageUrl: "https://picsum.photos/id/750/200" },
-];
+import { IMAGE_TO_BIG } from "@/api/routes/@shared/error-codes";
+import { Button, Icon, ThemedText, ThemedView } from "@/components/ui/atoms";
+import { DateInput } from "@/components/ui/atoms/date-input";
+import {
+  UserForSelectInput,
+  UserSelectInput,
+} from "@/components/ui/atoms/user-select-input";
+import { useMountains, useSummitPost } from "@/domains/mountain/mountain.api";
+import { useUserMe, useUsers } from "@/domains/user/user.api";
+import { getFullName } from "@/domains/user/user.utils";
+import { getImageOptimized } from "@/lib/images";
 
-const features = [
-  {
-    emoji: "📝",
-    text: (
-      <ThemedText>
-        The ability to{" "}
-        <ThemedText className="font-black tracking-tighter">
-          register your summits
-        </ThemedText>{" "}
-        and track your completed mountains.
-      </ThemedText>
-    ),
-  },
-  {
-    emoji: "🏆",
-    text: (
-      <ThemedText>
-        A{" "}
-        <ThemedText className="font-black tracking-tighter">
-          community ranking
-        </ThemedText>{" "}
-        where you can compete with other mountain lovers.
-      </ThemedText>
-    ),
-  },
-  {
-    emoji: "💪🏼",
-    text: (
-      <ThemedText>
-        A{" "}
-        <ThemedText className="font-black tracking-tighter">
-          profile with your feats
-        </ThemedText>{" "}
-        that you can share with the world.
-      </ThemedText>
-    ),
-  },
-];
-
-export default function JoinScreen({}) {
-  const { isDark } = useColorScheme();
+export default function SummitMountainScreen() {
   const router = useRouter();
+  const { slug } = useLocalSearchParams<{ slug: string }>();
+  const { mutateAsync, isPending } = useSummitPost(slug);
+  const { data: mountains } = useMountains();
+  const { data: user } = useUserMe();
+  const { data: users } = useUsers();
+
+  const [image, setImage] = useState<ImagePickerAsset | null>(null);
+  const [date, setDate] = useState<Date>();
+  const [selectedUsers, setSelectedUsers] = useState<UserForSelectInput[]>(
+    user
+      ? [
+          {
+            id: user?.id,
+            fullName: getFullName(user) || "?",
+            imageUrl: user?.imageUrl,
+          },
+        ]
+      : [],
+  );
+
+  const mountain = mountains?.data?.message?.find(
+    (mountain) => slug === mountain.slug,
+  );
+
+  if (!mountain || !user) {
+    return null;
+  }
+
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      base64: true,
+      aspect: [4, 3],
+      quality: 0,
+    });
+
+    if (!result.canceled) {
+      const image = result.assets[0];
+      try {
+        const modifiedImage = await getImageOptimized(image);
+        setImage(modifiedImage);
+      } catch {
+        Alert.alert("Error, try again or use another image.");
+      }
+    }
+  };
+
+  const submitDisabled =
+    !date || !image?.base64 || !selectedUsers?.length || !mountain;
+
+  const onSubmit = async () => {
+    if (submitDisabled || !image?.base64) {
+      return Alert.alert("Missing information");
+    }
+
+    try {
+      const response = await mutateAsync({
+        date: date.toString(),
+        image: image.base64,
+        mountainId: mountain?.id,
+        usersId: selectedUsers.map((user) => user.id),
+      });
+
+      if (response.error) {
+        if (response.error.status === 500) {
+          if (response.error.value.message === IMAGE_TO_BIG) {
+            return Alert.alert("Image too big");
+          }
+        }
+      } else {
+        router.dismiss();
+      }
+    } catch {
+      return Alert.alert("Something went wrong");
+    }
+  };
 
   return (
-    <ThemedView className="flex-1 gap-6 px-6 pt-6">
-      <View className="items-center">
-        <View
-          className="items-center border-4 border-accent rounded-full justify-center overflow-hidden"
-          style={{ width: 150, height: 150 }}
-        >
-          <Image
-            source={require("@/assets/images/logo-small.png")}
-            style={{ width: 150, height: 150 }}
-          />
-        </View>
-      </View>
-      <View className="items-center justify-center">
-        <ThemedText className="items-center justify-center text-4xl font-black">
-          Join{" "}
-          <ThemedText className="text-accent font-black">100cims </ThemedText>
-          today
-        </ThemedText>
-        <ThemedText className="items-center justify-center text-xl font-medium text-muted-foreground">
-          and be part of a thriving community
-        </ThemedText>
-        <View className="mt-3 mb-8 gap-2 flex-row items-center justify-center">
-          <AvatarGroup items={data} />
-        </View>
-        <View className="mb-12">
-          <ThemedText className="text-lg text-left font-medium text-muted-foreground mb-2">
-            Also unblock...
-          </ThemedText>
-          <View className="gap-2 w-[350px]">
-            {features.map(({ emoji, text }, index) => (
-              <View key={index} className="flex-row gap-2 items-start">
-                <ThemedText>{emoji}</ThemedText>
-                <ThemedText className="font-medium text-lg leading-5 flex-1">
-                  {text}
-                </ThemedText>
-              </View>
-            ))}
+    <ThemedView className="flex-1">
+      <ScrollView className="flex-1" keyboardShouldPersistTaps="handled">
+        <View className="gap-6 px-6 pt-6">
+          <View className="items-center justify-center">
+            <View
+              className="mb-4 overflow-hidden rounded-full"
+              style={{ width: 100, height: 100 }}
+            >
+              <Image
+                source={mountain.imageUrl}
+                style={{ width: 100, height: 100 }}
+              />
+            </View>
+            <ThemedText className="mb-1 text-lg font-bold text-muted-foreground">
+              Mountain
+            </ThemedText>
+            <ThemedText className="text-center text-3xl font-black">
+              {mountain.name}
+            </ThemedText>
           </View>
+          <View className="gap-2">
+            <ThemedText className="text-lg font-bold">Date</ThemedText>
+            <DateInput value={new Date()} onDateValid={setDate} />
+          </View>
+          <View className="gap-2">
+            <ThemedText className="text-lg font-bold">Summit photo</ThemedText>
+            <TouchableOpacity
+              onPress={pickImage}
+              className="h-48 w-full items-center justify-center overflow-hidden rounded-xl border-2 border-border bg-background"
+            >
+              {image ? (
+                <View className="relative size-full items-center justify-center">
+                  <View className="absolute top-0 z-10 size-full">
+                    <Image
+                      source={{ uri: image.uri }}
+                      style={{ width: "100%", height: "100%" }}
+                      contentFit="contain"
+                      contentPosition="center"
+                    />
+                  </View>
+                  <Image
+                    blurRadius={99}
+                    source={{ uri: image.uri }}
+                    style={{ width: "100%", height: "100%", opacity: 0.5 }}
+                    contentFit="cover"
+                    contentPosition="center"
+                  />
+                </View>
+              ) : (
+                <Icon
+                  name="camera"
+                  size={32}
+                  muted
+                  animationSpec={{
+                    effect: { type: "bounce" },
+                  }}
+                />
+              )}
+            </TouchableOpacity>
+          </View>
+          <View className="gap-2">
+            <ThemedText className="text-lg font-bold">People</ThemedText>
+            <UserSelectInput
+              firstSelectedRemovable={false}
+              selectedUsers={selectedUsers}
+              selectableUsers={users?.data?.message?.map((selectableUser) => ({
+                id: selectableUser.id,
+                fullName: getFullName(selectableUser) || "?",
+                imageUrl: selectableUser.imageUrl,
+              }))}
+              onSelectedUsersChange={setSelectedUsers}
+            />
+          </View>
+          <Button
+            disabled={submitDisabled}
+            isLoading={isPending}
+            intent="accent"
+            onPress={onSubmit}
+          >
+            Save
+          </Button>
         </View>
-      </View>
-      <View className="mt-auto justify-end pb-12 flex-1">
-        <AppleAuthentication.AppleAuthenticationButton
-          buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
-          buttonStyle={
-            isDark
-              ? AppleAuthentication.AppleAuthenticationButtonStyle.WHITE
-              : AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
-          }
-          cornerRadius={12}
-          style={{
-            height: 44,
-          }}
-          onPress={async () => {
-            try {
-              const credential = await AppleAuthentication.signInAsync({
-                requestedScopes: [
-                  AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
-                  AppleAuthentication.AppleAuthenticationScope.EMAIL,
-                ],
-              });
-              // signed in
-            } catch (e) {
-              // if (e.code === "ERR_REQUEST_CANCELED") {
-              //   // handle that the user canceled the sign-in flow
-              // } else {
-              //   // handle other errors
-              // }
-            }
-          }}
-        />
-        <Button className="rounded-xl mt-2 bg-zinc-600">
-          Sign in with Google
-        </Button>
-        <TouchableOpacity className="py-8" onPress={() => router.back()}>
-          <ThemedText className="text-muted-foreground text-center underline">
-            I will join later
-          </ThemedText>
-        </TouchableOpacity>
-      </View>
+      </ScrollView>
     </ThemedView>
   );
 }

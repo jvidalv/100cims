@@ -4,11 +4,11 @@
  */
 export const Colors = {
   light: {
-    primary: "#be281f",
-    accent: "#f43f5e",
+    primary: "#f43f5e",
+    accent: "#963ff4",
   },
   dark: {
-    primary: "#e5382f",
-    accent: "#f43f5e",
+    primary: "#f43f5e",
+    accent: "#963ff4",
   },
 };

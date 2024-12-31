@@ -1,7 +1,8 @@
 import { SymbolView, SymbolViewProps, SymbolWeight } from "expo-symbols";
-import { StyleProp, ViewStyle } from "react-native";
-import { useColorScheme } from "@/hooks/use-color-scheme";
 import { AnimationSpec } from "expo-symbols/build/SymbolModule.types";
+import { StyleProp, ViewStyle } from "react-native";
+
+import { useColorScheme } from "@/hooks/use-color-scheme";
 
 export function Icon({
   name,

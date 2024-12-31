@@ -1,7 +1,6 @@
 import {
   Dispatch,
   Fragment,
-  PropsWithChildren,
   ReactNode,
   SetStateAction,
   useEffect,
@@ -12,20 +11,26 @@ import {
   Pressable,
   TouchableOpacity,
   View,
+  PanResponder,
 } from "react-native";
-import { Icon, ThemedView } from "@/components/ui/atoms";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
 
-export function Modal({
+import { Icon } from "@/components/ui/atoms";
+
+export function BottomDrawer({
   onRequestClose,
   children,
   Trigger,
-}: PropsWithChildren<{
+}: {
   onRequestClose?: () => void;
+  children: (props: {
+    open: boolean;
+    setOpen: Dispatch<SetStateAction<boolean>>;
+  }) => ReactNode;
   Trigger: ({
     open,
     setOpen,
@@ -33,21 +38,46 @@ export function Modal({
     open: boolean;
     setOpen: Dispatch<SetStateAction<boolean>>;
   }) => ReactNode;
-}>) {
+}) {
   const [innerOpen, setInnerOpen] = useState(false);
 
+  const translateY = useSharedValue(0);
   const opacity = useSharedValue(innerOpen ? 1 : 0);
 
   // Update opacity when `innerOpen` changes
   useEffect(() => {
-    opacity.value = withTiming(innerOpen ? 1 : 0, {
-      duration: innerOpen ? 500 : 0,
-    });
-  }, [innerOpen]);
+    if (innerOpen) {
+      translateY.value = withTiming(0, { duration: 300 });
+      opacity.value = withTiming(1, { duration: 300 });
+    } else {
+      translateY.value = withTiming(300, { duration: 300 });
+      opacity.value = withTiming(0, { duration: 50 });
+    }
+  }, [innerOpen, opacity, translateY]);
 
   const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: translateY.value }],
+  }));
+
+  const backgroundStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
   }));
+
+  const panResponder = PanResponder.create({
+    onStartShouldSetPanResponder: () => true,
+    onPanResponderMove: (_, gestureState) => {
+      if (gestureState.dy > 0) {
+        translateY.value = gestureState.dy;
+      }
+    },
+    onPanResponderRelease: (_, gestureState) => {
+      if (gestureState.dy > 100) {
+        setInnerOpen(false);
+      } else {
+        translateY.value = withTiming(0, { duration: 300 });
+      }
+    },
+  });
 
   return (
     <Fragment>
@@ -59,15 +89,19 @@ export function Modal({
       >
         <View className="flex-1 justify-end">
           <Animated.View
-            className="absolute bg-background/40 h-full w-full"
-            style={animatedStyle}
+            className="absolute size-full bg-background/40"
+            style={backgroundStyle}
           >
             <Pressable
               onPress={() => setInnerOpen(false)}
-              className="h-full w-full"
+              className="size-full"
             />
           </Animated.View>
-          <ThemedView className="-mx-[1px] shadow-sm relative p-6 min-h-64 rounded-t-2xl border border-border">
+          <Animated.View
+            {...panResponder.panHandlers}
+            style={animatedStyle}
+            className="relative -mx-px min-h-64 rounded-t-2xl border border-border bg-background shadow-sm"
+          >
             <TouchableOpacity
               onPress={() => setInnerOpen(false)}
               className="absolute -top-8 right-4"
@@ -78,8 +112,8 @@ export function Modal({
                 size={18}
               />
             </TouchableOpacity>
-            {children}
-          </ThemedView>
+            {children({ open: innerOpen, setOpen: setInnerOpen })}
+          </Animated.View>
         </View>
       </RNModal>
       <Trigger open={innerOpen} setOpen={setInnerOpen} />

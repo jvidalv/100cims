@@ -1,20 +1,19 @@
+import { eq } from "drizzle-orm";
 import { Elysia, t } from "elysia";
-import { JWT } from "@/api/routes/@shared/jwt";
+
 import { db } from "@/api/db";
 import { userTable } from "@/api/db/schema";
-import { eq } from "drizzle-orm";
+import { JWT } from "@/api/routes/@shared/jwt";
 
 const getAppleEmailFromIdentityToken = (identityToken: string): string => {
-  const [_, payload] = identityToken.split(".");
-
+  const [, payload] = identityToken.split(".");
   const decodedPayload = JSON.parse(atob(payload));
-
   return decodedPayload.email;
 };
 
 export const joinRoute = new Elysia().use(JWT()).post(
   "/join",
-  async ({ jwt, body, set, error }) => {
+  async ({ jwt, body, error }) => {
     let email;
     if (body.provider === "apple") {
       email = getAppleEmailFromIdentityToken(body.identityToken);

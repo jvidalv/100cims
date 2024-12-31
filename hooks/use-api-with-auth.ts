@@ -1,6 +1,7 @@
-import { useAuth } from "@/components/providers/auth-provider";
 import { treaty } from "@elysiajs/eden";
+
 import { App } from "@/api/routes";
+import { useAuth } from "@/components/providers/auth-provider";
 
 export const useApiWithAuth = () => {
   const { jwt } = useAuth();

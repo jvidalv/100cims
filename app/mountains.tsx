@@ -1,11 +1,12 @@
-import { ThemedView, ThemedText, SearchInput } from "@/components/ui/atoms";
-import { useMountains } from "@/domains/mountains/mountains.api";
-import { Header } from "@/components/navigation";
-import { FlatList, ScrollView, TouchableOpacity, View } from "react-native";
-import { MountainItemList } from "@/components/ui/molecules";
 import { useMemo, useState } from "react";
+import { FlatList, Pressable, ScrollView, View } from "react-native";
+import { twMerge } from "tailwind-merge";
+
+import { Header } from "@/components/navigation";
+import { ThemedView, ThemedText, SearchInput } from "@/components/ui/atoms";
+import { MountainItemList } from "@/components/ui/molecules";
+import { useMountains } from "@/domains/mountain/mountain.api";
 import { cleanText } from "@/lib";
-import clsx from "clsx";
 
 type FilterType = "higher-first" | "essentials";
 
@@ -64,21 +65,22 @@ export default function MountainsScreen() {
           initialNumToRender={10}
           stickyHeaderIndices={[0]}
           scrollEventThrottle={16}
+          keyboardShouldPersistTaps="handled"
           ListHeaderComponent={
-            <ThemedView className="pb-2 px-6">
-              <ThemedText className="text-4xl font-bold mb-2">
+            <ThemedView className="px-6 pb-2">
+              <ThemedText className="mb-2 text-4xl font-bold">
                 All peaks
               </ThemedText>
               <SearchInput onChangeText={setQuery} className="mb-2" />
-              <ScrollView horizontal>
+              <ScrollView keyboardShouldPersistTaps="handled" horizontal>
                 {filters.map(({ type, name }) => {
                   const isSelected = filtersSelected.includes(type);
 
                   return (
-                    <TouchableOpacity
-                      className={clsx(
-                        "rounded-2xl text-foreground p-2 mr-1",
-                        isSelected ? "bg-accent" : "bg-border",
+                    <Pressable
+                      className={twMerge(
+                        "rounded-xl text-foreground py-2 px-2.5 mr-1",
+                        isSelected ? "bg-primary" : "bg-border",
                       )}
                       onPress={() => {
                         if (isSelected) {
@@ -92,7 +94,7 @@ export default function MountainsScreen() {
                       key={name}
                     >
                       <ThemedText className="font-medium">{name}</ThemedText>
-                    </TouchableOpacity>
+                    </Pressable>
                   );
                 })}
               </ScrollView>

@@ -1,4 +1,8 @@
+import { BlurView } from "expo-blur";
+import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 import { PropsWithChildren, ReactElement, useEffect, useState } from "react";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Animated, {
   interpolate,
   SharedValue,
@@ -8,24 +12,18 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { BlurView } from "expo-blur";
-import { ThemedView } from "@/components/ui/atoms/themed-view";
-import clsx from "clsx";
-import {
-  Button,
-  ThemedKeyboardAvoidingView,
-  ThemedText,
-} from "@/components/ui/atoms";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
+import { twMerge } from "tailwind-merge";
+
+import { ThemedKeyboardAvoidingView, ThemedText } from "@/components/ui/atoms";
 import { Icon } from "@/components/ui/atoms/icon";
-import { useRouter } from "expo-router";
+import { ThemedView } from "@/components/ui/atoms/themed-view";
 
 const HEADER_HEIGHT = 300;
 const DEFAULT_BLURRED_HEADER_CLASSNAME = "font-medium text-lg";
 
 type Props = PropsWithChildren<{
   headerImage: ReactElement;
+  contentClassName?: string;
   headerClassName: string;
   title: string;
   blurredTopHeaderElement?: ({
@@ -42,6 +40,7 @@ export default function ParallaxScrollView({
   headerClassName,
   title,
   blurredTopHeaderElement,
+  contentClassName,
 }: Props) {
   const [scrollPosition, setScrollPosition] = useState(0);
   const handleScroll = (event: any) => {
@@ -53,7 +52,7 @@ export default function ParallaxScrollView({
 
   return (
     <ThemedKeyboardAvoidingView>
-      <ThemedView className="flex-1 pb-8 relative">
+      <ThemedView className="relative flex-1 pb-8">
         <Animated.ScrollView
           ref={scrollRef}
           onScroll={handleScroll}
@@ -65,7 +64,9 @@ export default function ParallaxScrollView({
             scrollOffset={scrollOffset}
           />
           <HeaderTitleElement title={title} show={!showBlurredTopHeader} />
-          <ThemedView className="relative flex-1">{children}</ThemedView>
+          <ThemedView className={twMerge("flex-1", contentClassName)}>
+            {children}
+          </ThemedView>
         </Animated.ScrollView>
         <HeaderTopElement show={!showBlurredTopHeader} />
         <BlurredTopHeader title={title} show={showBlurredTopHeader}>
@@ -117,7 +118,7 @@ const AnimatedHeaderBackground = ({
 
   return (
     <Animated.View
-      className={clsx("h-[300px] overflow-hidden", headerClassName)}
+      className={twMerge("h-[300px] overflow-hidden", headerClassName)}
       style={headerAnimatedStyle}
     >
       {headerImage}
@@ -145,7 +146,7 @@ const HeaderTopElement = ({ show }: { show: boolean }) => {
     <Animated.View style={animatedStyle} className="absolute top-16 px-6">
       <TouchableOpacity
         onPress={router.back}
-        className="items-center justify-center -mx-2 w-8 h-8 rounded-full overflow-hidden"
+        className="-mx-2 size-8 items-center justify-center overflow-hidden rounded-full"
       >
         <BlurView
           className="items-center justify-center"
@@ -182,14 +183,14 @@ const HeaderTitleElement = ({
   return (
     <Animated.View
       style={animatedStyle}
-      className="absolute h-[300px] justify-end items-start pb-4 px-6 w-full"
+      className="absolute h-[300px] w-full items-start justify-end px-6 pb-4"
     >
       <LinearGradient
         colors={["transparent", "transparent", "rgba(0,0,0,0.4)"]}
         style={StyleSheet.absoluteFill}
       />
 
-      <ThemedText className="text-4xl text-white font-bold">{title}</ThemedText>
+      <ThemedText className="text-4xl font-bold text-white">{title}</ThemedText>
     </Animated.View>
   );
 };
@@ -219,11 +220,11 @@ const BlurredTopHeader = ({
   return (
     <Animated.View
       style={animatedStyle}
-      className="top-0 absolute flex-1 w-full h-24"
+      className="absolute top-0 h-24 w-full flex-1"
     >
       <BlurView className="flex-1">
-        <View className="flex-row px-6 items-center justify-between mt-auto pb-2">
-          <TouchableOpacity onPress={router.back} className="px-4 -mx-4">
+        <View className="mt-auto flex-row items-center justify-between px-6 pb-2">
+          <TouchableOpacity onPress={router.back} className="-mx-4 px-4">
             <Icon size={16} name="chevron.left" />
           </TouchableOpacity>
           {children}

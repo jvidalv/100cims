@@ -1,11 +1,13 @@
-import { Elysia } from "elysia";
-import { userRoute } from "@/api/routes/protected/user.route";
-import { JWT } from "@/api/routes/@shared/jwt";
 import { bearer } from "@elysiajs/bearer";
-import { userTable } from "@/api/db/schema";
-import { db } from "@/api/db";
 import { eq } from "drizzle-orm";
+import { Elysia } from "elysia";
+
+import { db } from "@/api/db";
+import { userTable } from "@/api/db/schema";
+import { JWT } from "@/api/routes/@shared/jwt";
 import { User } from "@/api/routes/@shared/types";
+import { mountainRoute } from "@/api/routes/protected/mountain.route";
+import { userRoute } from "@/api/routes/protected/user.route";
 
 export const protectedRoutes = new Elysia({ prefix: "/protected" })
   .use(JWT())
@@ -40,4 +42,5 @@ export const protectedRoutes = new Elysia({ prefix: "/protected" })
       return unauthorizedResponse();
     }
   })
-  .use(userRoute);
+  .use(userRoute)
+  .use(mountainRoute);
