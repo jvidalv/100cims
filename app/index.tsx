@@ -68,13 +68,13 @@ const MountainsDone = () => {
 };
 
 const TopSection = () => {
-  const { data: userSummits, isPending: isPendingScore } = useUserSummits();
+  const { data: userSummits } = useUserSummits();
 
   const { isAuthenticated } = useAuth();
   const score = isAuthenticated
-    ? isPendingScore
+    ? !userSummits
       ? "..."
-      : userSummits?.score?.toFixed(1)
+      : userSummits?.score?.toFixed(1) || 0
     : "Not yet";
 
   return (
@@ -130,7 +130,11 @@ export default function IndexScreen() {
           </Animated.View>
           <Link href={isAuthenticated ? "/user" : "/join"}>
             <Avatar
-              initials={isAuthenticated ? getInitials(fullName) || "👨‍🚀" : "🏔️"}
+              initials={
+                isAuthenticated && user
+                  ? getInitials(fullName || user.email || "Y")
+                  : "🏔️"
+              }
               imageUrl={user?.imageUrl}
             />
           </Link>
