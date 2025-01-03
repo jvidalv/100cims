@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { asc, desc, eq } from "drizzle-orm";
 import { Elysia, error, t } from "elysia";
 
 import { db } from "@/api/db";
@@ -92,8 +92,10 @@ export const userRoute = new Elysia({ prefix: "/user" })
         .select({
           summitId: summitTable.id,
           summitedAt: summitTable.summitedAt,
+          summitedValidated: summitTable.validated,
           mountainName: mountainTable.name,
           mountainSlug: mountainTable.slug,
+          mountainImageUrl: mountainTable.imageUrl,
           mountainHeight: mountainTable.height,
           mountainEssential: mountainTable.essential,
         })
@@ -103,34 +105,66 @@ export const userRoute = new Elysia({ prefix: "/user" })
           eq(summitHasUsersTable.summitId, summitTable.id),
         )
         .innerJoin(mountainTable, eq(summitTable.mountainId, mountainTable.id))
-        .where(eq(summitHasUsersTable.userId, userId));
+        .where(eq(summitHasUsersTable.userId, userId))
+        .orderBy(desc(summitTable.createdAt));
+
+      const summitsWithScore = results.map((props) => {
+        return {
+          ...props,
+          score:
+            (parseInt(props.mountainHeight) / 10) *
+            (props.mountainEssential ? 2 : 1),
+        };
+      });
+
+      const uniquePeaks = new Set(
+        summitsWithScore.map((summit) => summit.mountainSlug),
+      );
+
+      const essentialPeaks = new Set(
+        summitsWithScore
+          .filter((summit) => summit.mountainEssential)
+          .map((summit) => summit.mountainSlug),
+      );
 
       return {
         success: true,
-        message: results.map((props) => {
-          return {
-            ...props,
-            score:
-              (parseInt(props.mountainHeight) / 10) *
-              (props.mountainEssential ? 2 : 0),
-          };
-        }),
+        message: {
+          score: summitsWithScore.reduce((acc, current) => {
+            if (!current.summitedValidated) {
+              return acc;
+            }
+
+            acc = acc + current.score;
+            return acc;
+          }, 0),
+          uniquePeaksCount: uniquePeaks.size,
+          essentialPeaksCount: essentialPeaks.size,
+          summits: summitsWithScore,
+        },
       };
     },
     {
       response: t.Object({
         success: t.Boolean(),
-        message: t.Array(
-          t.Object({
-            summitId: t.String(),
-            summitedAt: t.String(),
-            score: t.Number(),
-            mountainName: t.String(),
-            mountainSlug: t.String(),
-            mountainHeight: t.String(),
-            mountainEssential: t.Boolean(),
-          }),
-        ),
+        message: t.Object({
+          score: t.Number(),
+          uniquePeaksCount: t.Number(),
+          essentialPeaksCount: t.Number(),
+          summits: t.Array(
+            t.Object({
+              summitId: t.String(),
+              summitedAt: t.String(),
+              summitedValidated: t.Boolean(),
+              score: t.Number(),
+              mountainName: t.String(),
+              mountainSlug: t.String(),
+              mountainImageUrl: t.String(),
+              mountainHeight: t.String(),
+              mountainEssential: t.Boolean(),
+            }),
+          ),
+        }),
       }),
     },
   )
@@ -144,7 +178,8 @@ export const userRoute = new Elysia({ prefix: "/user" })
           lastName: userTable.lastName,
           imageUrl: userTable.imageUrl,
         })
-        .from(userTable);
+        .from(userTable)
+        .orderBy(asc(userTable.firstName));
 
       return {
         success: true,

@@ -1,4 +1,3 @@
-import { BlurView } from "expo-blur";
 import { useEffect, useState } from "react";
 import { Pressable, ScrollView, TouchableOpacity, View } from "react-native";
 import Animated, {
@@ -14,6 +13,7 @@ import { Button } from "@/components/ui/atoms/button";
 import { Icon } from "@/components/ui/atoms/icon";
 import { SearchInput } from "@/components/ui/atoms/search-input";
 import { ThemedText } from "@/components/ui/atoms/themed-text";
+import { ThemedView } from "@/components/ui/atoms/themed-view";
 import { BottomDrawer } from "@/components/ui/molecules";
 import { useIsKeyboardVisible } from "@/hooks/use-is-keyboard-visible";
 import { cleanText } from "@/lib";
@@ -32,6 +32,7 @@ type Props = {
   firstSelectedRemovable?: boolean;
   className?: string;
   initialHeightSize?: number;
+  maxSelected?: number;
 };
 
 export const UserSelectInput = ({
@@ -40,6 +41,7 @@ export const UserSelectInput = ({
   firstSelectedRemovable = true,
   onSelectedUsersChange,
   initialHeightSize = 500,
+  maxSelected,
 }: Props) => {
   const [query, setQuery] = useState<string>("");
   const isKeyboardVisible = useIsKeyboardVisible();
@@ -66,14 +68,24 @@ export const UserSelectInput = ({
     };
   });
 
+  const filteredUsers = selectableUsers?.filter((user) =>
+    cleanText(user.fullName)
+      ?.toLowerCase()
+      .includes(cleanText(query)?.toLowerCase()),
+  );
+
   return (
     <BottomDrawer
       Trigger={({ setOpen }) => (
         <Pressable
           onPress={() => setOpen(true)}
-          className="relative flex-row items-center rounded-xl border-2 border-border bg-background py-2"
+          className="flex-row items-center rounded-xl border-2 border-border bg-background py-2"
         >
-          <View className="flex-row gap-2 pl-4">
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerClassName="flex-row gap-2 pl-4"
+          >
             {selectedUsers?.map((user, index) => (
               <TouchableOpacity
                 onPress={() =>
@@ -95,10 +107,10 @@ export const UserSelectInput = ({
                 )}
               </TouchableOpacity>
             ))}
-          </View>
+          </ScrollView>
           <TouchableOpacity
             onPress={() => setOpen(true)}
-            className="ml-auto mr-4 size-10 items-center justify-center rounded-xl bg-foreground/30"
+            className="mx-4 size-10 items-center justify-center rounded-xl bg-muted-foreground/30 shadow"
           >
             <Icon name="plus" weight="semibold" size={16} />
           </TouchableOpacity>
@@ -107,60 +119,73 @@ export const UserSelectInput = ({
     >
       {({ setOpen }) => (
         <Animated.View style={animatedStyle}>
-          <View className="px-6 pb-4 pt-6">
+          <View className="gap-4 px-6 pb-2 pt-6">
             <SearchInput onChangeText={setQuery} />
+            <View className="flex-row justify-between">
+              <ThemedText className="text-muted-foreground">
+                {filteredUsers?.length} total
+              </ThemedText>
+              {selectedUsers?.length && (
+                <ThemedText className="text-emerald-500">
+                  {selectedUsers?.length} selected
+                </ThemedText>
+              )}
+            </View>
           </View>
           <ScrollView
             keyboardShouldPersistTaps="handled"
-            contentContainerClassName="gap-6 px-6 pb-24 pt-2"
+            contentContainerClassName="gap-6 px-6 pb-36 pt-2"
           >
-            {selectableUsers
-              ?.filter((user) =>
-                cleanText(user.fullName)
-                  ?.toLowerCase()
-                  .includes(cleanText(query)?.toLowerCase()),
-              )
-              .map((user) => {
-                const isSelected = selectedUsers.some(
-                  (selectedUser) => selectedUser.id === user.id,
-                );
+            {filteredUsers?.map((user) => {
+              const isSelected = selectedUsers.some(
+                (selectedUser) => selectedUser.id === user.id,
+              );
 
-                const isDisabled =
-                  !firstSelectedRemovable && user.id === selectedUsers?.[0].id;
+              const isFirstSelectedAndNotRemovable =
+                !firstSelectedRemovable && user.id === selectedUsers?.[0].id;
 
-                const onPress = () => {
-                  if (isSelected) {
-                    onSelectedUsersChange?.(
-                      selectedUsers.filter(({ id }) => id !== user.id),
-                    );
-                  } else {
-                    onSelectedUsersChange?.([...selectedUsers, user]);
-                  }
-                };
+              const notAllowed = !!(
+                maxSelected &&
+                maxSelected === selectedUsers?.length &&
+                !isSelected
+              );
 
-                return (
-                  <Pressable
-                    key={user.id}
-                    className={twMerge(
-                      "flex flex-row items-center gap-4",
-                      isDisabled && "opacity-80",
-                    )}
-                    onPress={onPress}
-                    disabled={isDisabled}
-                  >
-                    <View className="flex flex-row items-center gap-4">
-                      <Avatar
-                        imageUrl={user?.imageUrl}
-                        initials={getInitials(user?.fullName)}
-                        style={{
-                          boxShadow: isSelected
-                            ? "0px 0px 0px 2px #22c55e"
-                            : undefined,
-                        }}
-                      />
-                      <ThemedText>{user.fullName}</ThemedText>
-                    </View>
-                    <View className="ml-auto text-green-500">
+              const onPress = () => {
+                if (isSelected) {
+                  onSelectedUsersChange?.(
+                    selectedUsers.filter(({ id }) => id !== user.id),
+                  );
+                } else {
+                  onSelectedUsersChange?.([...selectedUsers, user]);
+                }
+              };
+
+              return (
+                <Pressable
+                  key={user.id}
+                  className={twMerge(
+                    "flex flex-row items-center gap-4",
+                    notAllowed && "opacity-50",
+                  )}
+                  onPress={onPress}
+                  disabled={isFirstSelectedAndNotRemovable || notAllowed}
+                >
+                  <View className="flex flex-row items-center gap-4">
+                    <Avatar
+                      imageUrl={user?.imageUrl}
+                      initials={getInitials(user?.fullName)}
+                      style={{
+                        boxShadow: isSelected
+                          ? "0px 0px 0px 2px #22c55e"
+                          : undefined,
+                      }}
+                    />
+                    <ThemedText>{user.fullName}</ThemedText>
+                  </View>
+                  <View className="ml-auto text-green-500">
+                    {isFirstSelectedAndNotRemovable ? (
+                      <Icon name="lock.fill" color="#22c55e" />
+                    ) : (
                       <Icon
                         name={isSelected ? "checkmark.square.fill" : "square"}
                         color={isSelected ? "#22c55e" : undefined}
@@ -170,16 +195,17 @@ export const UserSelectInput = ({
                             : undefined
                         }
                       />
-                    </View>
-                  </Pressable>
-                );
-              })}
+                    )}
+                  </View>
+                </Pressable>
+              );
+            })}
           </ScrollView>
-          <BlurView className="absolute bottom-0 h-32 w-full p-6">
-            <Button onPress={() => setOpen(false)} intent="success">
+          <ThemedView className="absolute bottom-0 h-32 w-full p-6">
+            <Button onPress={() => setOpen(false)} intent="outline">
               Done
             </Button>
-          </BlurView>
+          </ThemedView>
         </Animated.View>
       )}
     </BottomDrawer>

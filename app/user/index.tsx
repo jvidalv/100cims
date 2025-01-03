@@ -1,7 +1,7 @@
 import * as Application from "expo-application";
 import { useRouter } from "expo-router";
 import { Fragment } from "react";
-import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
+import { Alert, TouchableOpacity, View } from "react-native";
 
 import { Header } from "@/components/navigation";
 import { useAuth } from "@/components/providers/auth-provider";
@@ -29,42 +29,44 @@ export default function UserIndexScreen() {
     },
     {
       iconName: "list.bullet",
-      text: "Summits",
-      onPress: () => false,
+      text: "My summits",
+      onPress: () => router.push("/user/summits"),
     },
     {
-      iconName: "info.circle",
-      text: "About 100cims",
-      onPress: () => false,
+      iconName: "mountain.2",
+      text: "100 cims challenge",
+      onPress: () => router.push("/user/100-cims-challenge"),
     },
     {
-      iconName: "rectangle.portrait.and.arrow.right",
-      text: "Logout",
-      onPress: () => {
-        Alert.alert("Leaving 100cims", "Are you sure you want to logout?", [
-          {
-            text: "Cancel",
-            style: "cancel",
-          },
-          {
-            text: "Yes",
-            style: "default",
-            onPress: () => {
-              logout();
-              router.dismissAll();
-            },
-          },
-        ]);
-      },
+      iconName: "iphone.gen1",
+      text: "About the app",
+      onPress: () => router.push("/user/about-the-app"),
     },
   ];
+
+  const onLogout = () => {
+    Alert.alert("Leaving 100cims", "Are you sure you want to logout?", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Yes",
+        style: "default",
+        onPress: () => {
+          logout();
+          router.dismissAll();
+        },
+      },
+    ]);
+  };
 
   return (
     <ThemedView className="flex-1">
       <Header />
-      <ScrollView className="flex-1 px-6">
+      <ThemedView className="flex-1 px-6">
         <ThemedText className="mb-4 text-4xl font-bold">
-          {data?.data?.message?.firstName}
+          {data?.firstName}
         </ThemedText>
         <View className="mb-4 rounded-xl border-2 border-border">
           {items.map(({ iconName, text, onPress }, index) => (
@@ -94,7 +96,15 @@ export default function UserIndexScreen() {
             Version {Application.nativeApplicationVersion}
           </ThemedText>
         </View>
-      </ScrollView>
+        <TouchableOpacity
+          onPress={onLogout}
+          className="mt-auto items-center pb-12"
+        >
+          <ThemedText className="text-muted-foreground underline">
+            Logout
+          </ThemedText>
+        </TouchableOpacity>
+      </ThemedView>
     </ThemedView>
   );
 }

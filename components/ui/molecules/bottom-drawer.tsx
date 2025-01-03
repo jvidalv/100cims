@@ -100,7 +100,7 @@ export function BottomDrawer({
           <Animated.View
             {...panResponder.panHandlers}
             style={animatedStyle}
-            className="relative -mx-px min-h-64 rounded-t-2xl border border-border bg-background shadow-sm"
+            className="relative -mx-px min-h-44 rounded-t-2xl border border-border bg-background shadow-sm"
           >
             <TouchableOpacity
               onPress={() => setInnerOpen(false)}

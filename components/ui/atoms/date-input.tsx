@@ -28,9 +28,10 @@ export const DateInput = ({
   const yearRef = useRef<TextInput>(null);
 
   const valueDay = value?.getDate()?.toString();
-  const valueMonth = value?.getMonth()
-    ? (value.getMonth() + 1)?.toString()
-    : undefined;
+  const valueMonth =
+    value?.getMonth() !== undefined
+      ? (value.getMonth() + 1)?.toString()
+      : undefined;
   const valueYear = value?.getFullYear()?.toString();
 
   const [day, setDay] = useState<string | undefined>(

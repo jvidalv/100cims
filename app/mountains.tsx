@@ -6,20 +6,36 @@ import { Header } from "@/components/navigation";
 import { ThemedView, ThemedText, SearchInput } from "@/components/ui/atoms";
 import { MountainItemList } from "@/components/ui/molecules";
 import { useMountains } from "@/domains/mountain/mountain.api";
+import { useUserSummits } from "@/domains/user/user.api";
 import { cleanText } from "@/lib";
 
-type FilterType = "higher-first" | "essentials";
+type FilterType = "higher-first" | "essentials" | "not-summited" | "summited";
 
 export default function MountainsScreen() {
   const { data } = useMountains();
   const [query, setQuery] = useState("");
   const [filtersSelected, setFiltersSelected] = useState<FilterType[]>([]);
-  const filters: { type: FilterType; name: string }[] = [
+  const { data: userSummits } = useUserSummits();
+  const filters: {
+    type: FilterType;
+    name: string;
+    disabledIf?: () => boolean;
+  }[] = [
     {
       type: "higher-first",
-      name: "Higher",
+      name: "Higher first",
     },
     { type: "essentials", name: "Essentials" },
+    {
+      type: "not-summited",
+      name: "Not summited",
+      disabledIf: () => filtersSelected.includes("summited"),
+    },
+    {
+      type: "summited",
+      name: "Summited",
+      disabledIf: () => filtersSelected.includes("not-summited"),
+    },
   ];
 
   const queriedMountains = useMemo(() => {
@@ -43,6 +59,21 @@ export default function MountainsScreen() {
       return filtered;
     }
 
+    if (filtersSelected.includes("summited")) {
+      filtered = filtered?.filter(({ slug }) =>
+        userSummits?.summits?.some(({ mountainSlug }) => mountainSlug === slug),
+      );
+    }
+
+    if (filtersSelected.includes("not-summited")) {
+      filtered = filtered?.filter(
+        ({ slug }) =>
+          !userSummits?.summits?.some(
+            ({ mountainSlug }) => mountainSlug === slug,
+          ),
+      );
+    }
+
     if (filtersSelected.includes("essentials")) {
       filtered = filtered?.filter(({ essential }) => essential);
     }
@@ -54,7 +85,7 @@ export default function MountainsScreen() {
     }
 
     return filtered;
-  }, [queriedMountains, filtersSelected]);
+  }, [queriedMountains, filtersSelected, userSummits?.summits]);
 
   return (
     <ThemedView className="flex-1">
@@ -65,23 +96,33 @@ export default function MountainsScreen() {
           initialNumToRender={10}
           stickyHeaderIndices={[0]}
           scrollEventThrottle={16}
+          showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
           ListHeaderComponent={
-            <ThemedView className="px-6 pb-2">
-              <ThemedText className="mb-2 text-4xl font-bold">
-                All peaks
+            <ThemedView className="pb-2">
+              <ThemedText className="mx-6 mb-2 text-4xl font-bold">
+                All peaks{" "}
+                <ThemedText className="text-lg font-semibold text-muted-foreground">
+                  {filteredMountains?.length}
+                </ThemedText>
               </ThemedText>
-              <SearchInput onChangeText={setQuery} className="mb-2" />
-              <ScrollView keyboardShouldPersistTaps="handled" horizontal>
-                {filters.map(({ type, name }) => {
+              <SearchInput onChangeText={setQuery} className="mx-6 mb-2" />
+              <ScrollView
+                keyboardShouldPersistTaps="handled"
+                showsHorizontalScrollIndicator={false}
+                contentContainerClassName="pl-6 pr-4"
+                horizontal
+              >
+                {filters.map(({ type, name, disabledIf }) => {
                   const isSelected = filtersSelected.includes(type);
 
                   return (
                     <Pressable
                       className={twMerge(
-                        "rounded-xl text-foreground py-2 px-2.5 mr-1",
+                        "rounded-xl text-foreground py-2 px-2.5 mr-1 disabled:opacity-50",
                         isSelected ? "bg-primary" : "bg-border",
                       )}
+                      disabled={disabledIf?.()}
                       onPress={() => {
                         if (isSelected) {
                           setFiltersSelected((filters) =>

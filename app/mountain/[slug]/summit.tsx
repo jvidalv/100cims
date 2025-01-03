@@ -4,6 +4,7 @@ import { ImagePickerAsset } from "expo-image-picker";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
+import { twMerge } from "tailwind-merge";
 
 import { IMAGE_TO_BIG } from "@/api/routes/@shared/error-codes";
 import { Button, Icon, ThemedText, ThemedView } from "@/components/ui/atoms";
@@ -26,6 +27,7 @@ export default function SummitMountainScreen() {
   const { data: users } = useUsers();
 
   const [image, setImage] = useState<ImagePickerAsset | null>(null);
+  const [isImageMissing, setIsImageMissing] = useState(false);
   const [date, setDate] = useState<Date>();
   const [selectedUsers, setSelectedUsers] = useState<UserForSelectInput[]>(
     user
@@ -70,7 +72,12 @@ export default function SummitMountainScreen() {
     !date || !image?.base64 || !selectedUsers?.length || !mountain;
 
   const onSubmit = async () => {
-    if (submitDisabled || !image?.base64) {
+    if (!image?.base64) {
+      setIsImageMissing(true);
+      return;
+    }
+
+    if (submitDisabled) {
       return Alert.alert("Missing information");
     }
 
@@ -83,10 +90,15 @@ export default function SummitMountainScreen() {
       });
 
       if (response.error) {
-        if (response.error.status === 500) {
-          if (response.error.value.message === IMAGE_TO_BIG) {
-            return Alert.alert("Image too big");
-          }
+        switch (response.error.status) {
+          case 500:
+            return response.error.value.message === IMAGE_TO_BIG
+              ? Alert.alert("Image too big")
+              : Alert.alert("Error, try again.");
+          case 402:
+            return Alert.alert(
+              "You must wait some time before summiting again!",
+            );
         }
       } else {
         router.dismiss();
@@ -122,10 +134,21 @@ export default function SummitMountainScreen() {
             <DateInput value={new Date()} onDateValid={setDate} />
           </View>
           <View className="gap-2">
-            <ThemedText className="text-lg font-bold">Summit photo</ThemedText>
+            <ThemedText
+              lo-0
+              className={twMerge(
+                "text-lg font-bold",
+                isImageMissing && "text-red-500",
+              )}
+            >
+              Summit photo
+            </ThemedText>
             <TouchableOpacity
               onPress={pickImage}
-              className="h-48 w-full items-center justify-center overflow-hidden rounded-xl border-2 border-border bg-background"
+              className={twMerge(
+                "h-48 w-full items-center justify-center overflow-hidden rounded-xl border-2 border-border bg-background",
+                isImageMissing && "border-red-500",
+              )}
             >
               {image ? (
                 <View className="relative size-full items-center justify-center">
@@ -160,9 +183,10 @@ export default function SummitMountainScreen() {
           <View className="gap-2">
             <ThemedText className="text-lg font-bold">People</ThemedText>
             <UserSelectInput
+              maxSelected={5}
               firstSelectedRemovable={false}
               selectedUsers={selectedUsers}
-              selectableUsers={users?.data?.message?.map((selectableUser) => ({
+              selectableUsers={users?.map((selectableUser) => ({
                 id: selectableUser.id,
                 fullName: getFullName(selectableUser) || "?",
                 imageUrl: selectableUser.imageUrl,
@@ -170,12 +194,7 @@ export default function SummitMountainScreen() {
               onSelectedUsersChange={setSelectedUsers}
             />
           </View>
-          <Button
-            disabled={submitDisabled}
-            isLoading={isPending}
-            intent="accent"
-            onPress={onSubmit}
-          >
+          <Button isLoading={isPending} intent="accent" onPress={onSubmit}>
             Save
           </Button>
         </View>

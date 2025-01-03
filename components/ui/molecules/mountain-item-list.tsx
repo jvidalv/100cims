@@ -2,7 +2,8 @@ import { Image } from "expo-image";
 import { Link } from "expo-router";
 import { TouchableOpacity, View } from "react-native";
 
-import { ThemedText } from "@/components/ui/atoms";
+import { Icon, ThemedText } from "@/components/ui/atoms";
+import { useUserSummits } from "@/domains/user/user.api";
 
 export const MountainItemList = ({
   slug,
@@ -19,6 +20,12 @@ export const MountainItemList = ({
   essential: boolean;
   imageUrl: string | null;
 }) => {
+  const { data: userSummits } = useUserSummits();
+
+  const isSummited = userSummits?.summits.some(
+    ({ mountainSlug }) => slug === mountainSlug,
+  );
+
   return (
     <Link
       href={{
@@ -27,7 +34,7 @@ export const MountainItemList = ({
       }}
       asChild
     >
-      <TouchableOpacity delayPressIn={40} className="flex-row gap-4">
+      <TouchableOpacity className="flex-row gap-4">
         <Image
           source={imageUrl}
           style={{ width: 100, height: 100, borderRadius: 16 }}
@@ -37,6 +44,14 @@ export const MountainItemList = ({
         />
         <View className="flex-1 justify-center">
           <View className="gap-1">
+            {isSummited && (
+              <View className="flex-row items-center gap-1">
+                <ThemedText className="font-semibold text-emerald-500">
+                  Summited
+                </ThemedText>
+                <Icon name="checkmark.seal.fill" color="#10b981" size={16} />
+              </View>
+            )}
             <ThemedText className="text-lg font-semibold tracking-tight">
               {name}
             </ThemedText>
@@ -51,7 +66,8 @@ export const MountainItemList = ({
                 <ThemedText className="text-muted-foreground">
                   ,{" "}
                   <ThemedText className="font-semibold text-primary">
-                    essential
+                    essential{" "}
+                    <View className="size-3 rounded-full bg-primary" />
                   </ThemedText>
                 </ThemedText>
               )}

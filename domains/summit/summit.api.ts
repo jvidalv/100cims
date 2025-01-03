@@ -1,8 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { useAuth } from "@/components/providers/auth-provider";
-import { useApiWithAuth } from "@/hooks/use-api-with-auth";
 import { useRefreshOnFocus } from "@/hooks/use-refetch-on-focus";
+import { api } from "@/lib";
 
 export const useSummitsGet = ({
   mountainId,
@@ -11,14 +10,10 @@ export const useSummitsGet = ({
   mountainId?: string;
   limit?: number;
 }) => {
-  const { isAuthenticated } = useAuth();
-  const api = useApiWithAuth();
-
   const args = useQuery({
     queryKey: ["summits", mountainId, limit],
-    enabled: () => isAuthenticated,
     queryFn: () =>
-      api.protected.mountain.summits.get({
+      api.public.mountains.summits.get({
         query: {
           mountainId,
           limit,
@@ -28,5 +23,5 @@ export const useSummitsGet = ({
 
   useRefreshOnFocus(args.refetch);
 
-  return args;
+  return { ...args, data: args.data?.data?.message };
 };

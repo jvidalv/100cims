@@ -17,7 +17,7 @@ if (Platform.OS !== "web") {
   });
 }
 
-const queryClient = new QueryClient();
+export const queryClient = new QueryClient();
 
 export const QueryClientProvider = ({ children }: PropsWithChildren) => {
   return (

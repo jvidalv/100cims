@@ -1,7 +1,13 @@
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { PropsWithChildren, ReactElement, useEffect, useState } from "react";
+import {
+  PropsWithChildren,
+  ReactElement,
+  ReactNode,
+  useEffect,
+  useState,
+} from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Animated, {
   interpolate,
@@ -26,7 +32,8 @@ type Props = PropsWithChildren<{
   contentClassName?: string;
   headerClassName: string;
   title: string;
-  blurredTopHeaderElement?: ({
+  blurredTopHeaderRightElement?: ReactElement;
+  blurredTopHeaderCenterElement?: ({
     title,
   }: {
     title: string;
@@ -39,7 +46,8 @@ export default function ParallaxScrollView({
   headerImage,
   headerClassName,
   title,
-  blurredTopHeaderElement,
+  blurredTopHeaderCenterElement,
+  blurredTopHeaderRightElement,
   contentClassName,
 }: Props) {
   const [scrollPosition, setScrollPosition] = useState(0);
@@ -69,9 +77,13 @@ export default function ParallaxScrollView({
           </ThemedView>
         </Animated.ScrollView>
         <HeaderTopElement show={!showBlurredTopHeader} />
-        <BlurredTopHeader title={title} show={showBlurredTopHeader}>
-          {blurredTopHeaderElement ? (
-            blurredTopHeaderElement({
+        <BlurredTopHeader
+          title={title}
+          rightElement={blurredTopHeaderRightElement}
+          show={showBlurredTopHeader}
+        >
+          {blurredTopHeaderCenterElement ? (
+            blurredTopHeaderCenterElement({
               title,
               defaultTitleClassName: DEFAULT_BLURRED_HEADER_CLASSNAME,
             })
@@ -198,9 +210,11 @@ const HeaderTitleElement = ({
 const BlurredTopHeader = ({
   show,
   children,
+  rightElement,
 }: PropsWithChildren<{
   title?: string;
   show: boolean;
+  rightElement?: ReactNode;
 }>) => {
   const router = useRouter();
   const opacity = useSharedValue(0); // Start with opacity 0
@@ -220,17 +234,18 @@ const BlurredTopHeader = ({
   return (
     <Animated.View
       style={animatedStyle}
-      className="absolute top-0 h-24 w-full flex-1"
+      className="absolute top-0 h-28 w-full flex-1"
     >
       <BlurView className="flex-1">
-        <View className="mt-auto flex-row items-center justify-between px-6 pb-2">
-          <TouchableOpacity onPress={router.back} className="-mx-4 px-4">
-            <Icon size={16} name="chevron.left" />
+        <View className="mt-auto flex-row items-center justify-between">
+          <TouchableOpacity
+            onPress={router.back}
+            className="-mt-3 flex-1 py-3 pl-6"
+          >
+            <Icon size={16} weight="medium" name="chevron.left" />
           </TouchableOpacity>
-          {children}
-          <TouchableOpacity>
-            <Icon size={18} name="square.and.arrow.up" />
-          </TouchableOpacity>
+          <View className="flex-1 pb-3">{children}</View>
+          <View className="flex-1">{rightElement}</View>
         </View>
       </BlurView>
     </Animated.View>

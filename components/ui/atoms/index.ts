@@ -7,3 +7,4 @@ export { ThemedTextInput } from "./themed-text-input";
 export { ThemedKeyboardAvoidingView } from "./themed-keyboard-avoiding-view";
 export { Icon, IconSymbolName } from "./icon";
 export { SearchInput } from "./search-input";
+export { ActivityIndicator } from "./activity-indicator";

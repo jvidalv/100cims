@@ -11,7 +11,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 
 import "react-native-reanimated";
-import React, { useRef, useEffect, PropsWithChildren } from "react";
+import React, { useRef, useEffect, PropsWithChildren, useState } from "react";
 import { Animated, View } from "react-native";
 import { Easing } from "react-native-reanimated";
 
@@ -19,6 +19,7 @@ import { QueryClientProvider } from "@/components/providers";
 import {
   AuthProvider,
   overwriteJwt,
+  useAuth,
 } from "@/components/providers/auth-provider";
 import { useMountains } from "@/domains/mountain/mountain.api";
 import { useSummitsGet } from "@/domains/summit/summit.api";
@@ -85,20 +86,34 @@ function Content() {
     bold: require("@/assets/fonts/BricolageGrotesque-Bold.ttf"),
     black: require("@/assets/fonts/BricolageGrotesque-ExtraBold.ttf"),
   });
+  const [ready, setReady] = useState(false);
+  const { isAuthenticated } = useAuth();
   const { isPending: isPendingMountains } = useMountains();
   const { isPending: isPendingUser } = useUserMe();
   const { isPending: isPendingHomepageSummits } = useSummitsGet({ limit: 5 });
   useUserSummits();
 
-  const ready =
-    fontsLoaded &&
-    !isPendingMountains &&
-    !isPendingUser &&
-    !isPendingHomepageSummits;
-
   useEffect(() => {
     void SplashScreen.hideAsync();
   }, []);
+
+  useEffect(() => {
+    if (!ready) {
+      setReady(
+        fontsLoaded &&
+          !isPendingMountains &&
+          !isPendingHomepageSummits &&
+          (!isPendingUser || !isAuthenticated),
+      );
+    }
+  }, [
+    fontsLoaded,
+    isAuthenticated,
+    isPendingHomepageSummits,
+    isPendingMountains,
+    isPendingUser,
+    ready,
+  ]);
 
   if (!ready) {
     return <SplashAnimation />;

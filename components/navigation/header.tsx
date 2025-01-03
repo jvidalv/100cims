@@ -10,8 +10,8 @@ export const Header = () => {
   const router = useRouter();
 
   return (
-    <ThemedView className="fixed top-0 h-24 w-full justify-end px-6 pb-3">
-      <TouchableOpacity onPress={router.back} className="-ml-2 px-2 py-0.5">
+    <ThemedView className="fixed top-0 h-24 w-full justify-end">
+      <TouchableOpacity onPress={router.back} className="-ml-2 w-fit py-3 pl-8">
         <Icon
           size={16}
           color={isDark ? "white" : "black"}

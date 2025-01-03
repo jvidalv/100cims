@@ -21,14 +21,15 @@ export const mountainTable = pgTable("mountain", {
   utm31tx: numeric(),
   utm31ty: numeric(),
   url: text().notNull(),
-  imageUrl: text(),
+  imageUrl: text().notNull(),
 });
 
 export const userTable = pgTable("user", {
   id: uuid().primaryKey().defaultRandom(),
   username: text()
     .unique()
-    .default(sql`'default_' || random()::text`),
+    .default(sql`'default_' || random()::text`)
+    .notNull(),
   email: text().unique().notNull(),
   firstName: text(),
   lastName: text(),
@@ -41,7 +42,7 @@ export const summitTable = pgTable("summit", {
   id: uuid().primaryKey().defaultRandom(),
   mountainId: uuid().references(() => mountainTable.id),
   imageUrl: text().notNull(),
-  validated: boolean().notNull().default(false),
+  validated: boolean().notNull().default(true),
   summitedAt: date().notNull(),
   createdAt: timestamp().notNull().defaultNow(),
 });
@@ -49,7 +50,7 @@ export const summitTable = pgTable("summit", {
 export const summitHasUsersTable = pgTable("summit_has_users", {
   id: uuid().primaryKey().defaultRandom(),
   summitId: uuid().references(() => summitTable.id, { onDelete: "cascade" }),
-  userId: uuid().references(() => userTable.id),
+  userId: uuid().references(() => userTable.id, { onDelete: "cascade" }),
   createdAt: timestamp().notNull().defaultNow(),
 });
 
