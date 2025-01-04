@@ -133,9 +133,9 @@ export const mountainsRoute = new Elysia({ prefix: "/mountains" })
             users: t.Array(
               t.Object({
                 id: t.String(),
-                firstName: t.Nullable(t.String()), // Nullable if the user may not have a first name
-                lastName: t.Nullable(t.String()), // Nullable if the user may not have a last name
-                imageUrl: t.Nullable(t.String()), // Nullable if the user may not have an image
+                firstName: t.Nullable(t.String()),
+                lastName: t.Nullable(t.String()),
+                imageUrl: t.Nullable(t.String()),
               }),
             ),
           }),
