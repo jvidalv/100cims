@@ -11,17 +11,14 @@
     "ios": {
       "supportsTablet": true,
       "usesAppleSignIn": true,
-      "bundleIdentifier": "com.100cims.100cims"
+      "bundleIdentifier": "app.100cims.100cims"
     },
     "android": {
       "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/mountain.png",
         "backgroundColor": "#f43f5e"
-      },
-      "permissions": [
-        "android.permission.RECORD_AUDIO"
-      ]
+      }
     },
     "web": {
       "bundler": "metro",
