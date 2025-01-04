@@ -10,14 +10,18 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "usesAppleSignIn": true
+      "usesAppleSignIn": true,
+      "bundleIdentifier": "com.100cims.100cims"
     },
     "android": {
       "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/mountain.png",
         "backgroundColor": "#f43f5e"
-      }
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -32,7 +36,9 @@
           "iosUrlScheme": "com.googleusercontent.apps._some_id_here_"
         }
       ],
-      ["expo-router"],
+      [
+        "expo-router"
+      ],
       [
         "expo-image-picker",
         {
@@ -51,6 +57,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "b06b0874-9640-4da6-9acc-227afe51cfd1"
+      }
     }
   }
 }
