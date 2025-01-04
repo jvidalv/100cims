@@ -1,13 +1,13 @@
 import { and, desc, eq } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 
-import { db } from "@/@api/db";
+import { db } from "@/api/db";
 import {
   mountainTable,
   summitHasUsersTable,
   summitTable,
   userTable,
-} from "@/@api/db/schema";
+} from "@/api/db/schema";
 
 export const mountainsRoute = new Elysia({ prefix: "/mountains" })
   .get(

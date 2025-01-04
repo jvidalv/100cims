@@ -1,6 +1,6 @@
 import { treaty } from "@elysiajs/eden";
 
-import { App } from "@/@api/routes";
+import { App } from "@/api/routes";
 import { useAuth } from "@/components/providers/auth-provider";
 
 export const useApiWithAuth = () => {

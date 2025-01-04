@@ -1,6 +1,6 @@
 import { treaty } from "@elysiajs/eden";
 
-import { App } from "@/@api/routes";
+import { App } from "@/api/routes";
 import { getJwt } from "@/lib/auth";
 
 const app = treaty<App>(process.env.EXPO_PUBLIC_API_URL || "", {

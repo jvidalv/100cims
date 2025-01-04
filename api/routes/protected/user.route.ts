@@ -1,18 +1,18 @@
 import { asc, desc, eq } from "drizzle-orm";
 import { Elysia, error, t } from "elysia";
 
-import { db } from "@/@api/db";
+import { db } from "@/api/db";
 import {
   mountainTable,
   summitHasUsersTable,
   summitTable,
   userTable,
-} from "@/@api/db/schema";
-import { isBase64SizeValid } from "@/@api/lib/images";
-import { IMAGE_TO_BIG } from "@/@api/routes/@shared/error-codes";
-import { JWT } from "@/@api/routes/@shared/jwt";
-import { getPublicUrl, putImageOnS3 } from "@/@api/routes/@shared/s3";
-import { getStoreUser } from "@/@api/routes/@shared/store";
+} from "@/api/db/schema";
+import { isBase64SizeValid } from "@/api/lib/images";
+import { IMAGE_TO_BIG } from "@/api/routes/@shared/error-codes";
+import { JWT } from "@/api/routes/@shared/jwt";
+import { getPublicUrl, putImageOnS3 } from "@/api/routes/@shared/s3";
+import { getStoreUser } from "@/api/routes/@shared/store";
 
 export const userRoute = new Elysia({ prefix: "/user" })
   .use(JWT())

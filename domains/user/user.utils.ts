@@ -1,4 +1,4 @@
-import { User } from "@/@api/routes/@shared/types";
+import { User } from "@/api/routes/@shared/types";
 
 export const getFullName = (user: Partial<User>) => {
   if (user.firstName && user.lastName) {
