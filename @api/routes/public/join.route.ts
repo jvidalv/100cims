@@ -1,9 +1,9 @@
 import { eq } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 
-import { db } from "@/api/db";
-import { userTable } from "@/api/db/schema";
-import { JWT } from "@/api/routes/@shared/jwt";
+import { db } from "@/@api/db";
+import { userTable } from "@/@api/db/schema";
+import { JWT } from "@/@api/routes/@shared/jwt";
 
 const getAppleEmailFromIdentityToken = (identityToken: string): string => {
   const [, payload] = identityToken.split(".");

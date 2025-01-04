@@ -2,14 +2,14 @@ import { eq, and, gt } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 import { uuidv7 } from "uuidv7";
 
-import { db } from "@/api/db";
-import { summitHasUsersTable, summitTable } from "@/api/db/schema";
-import { formatDateForPostgres } from "@/api/lib/dates";
-import { isBase64SizeValid } from "@/api/lib/images";
-import { IMAGE_TO_BIG, SUMMIT_SPAM } from "@/api/routes/@shared/error-codes";
-import { JWT } from "@/api/routes/@shared/jwt";
-import { getPublicUrl, putImageOnS3 } from "@/api/routes/@shared/s3";
-import { getStoreUser } from "@/api/routes/@shared/store";
+import { db } from "@/@api/db";
+import { summitHasUsersTable, summitTable } from "@/@api/db/schema";
+import { formatDateForPostgres } from "@/@api/lib/dates";
+import { isBase64SizeValid } from "@/@api/lib/images";
+import { IMAGE_TO_BIG, SUMMIT_SPAM } from "@/@api/routes/@shared/error-codes";
+import { JWT } from "@/@api/routes/@shared/jwt";
+import { getPublicUrl, putImageOnS3 } from "@/@api/routes/@shared/s3";
+import { getStoreUser } from "@/@api/routes/@shared/store";
 
 export const mountainRoute = new Elysia({ prefix: "/mountain" })
   .use(JWT())

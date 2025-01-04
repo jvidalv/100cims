@@ -6,7 +6,7 @@ import { useState } from "react";
 import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
-import { IMAGE_TO_BIG } from "@/api/routes/@shared/error-codes";
+import { IMAGE_TO_BIG } from "@/@api/routes/@shared/error-codes";
 import { queryClient } from "@/components/providers/query-client-provider";
 import { Button, Icon, ThemedText, ThemedView } from "@/components/ui/atoms";
 import { DateInput } from "@/components/ui/atoms/date-input";

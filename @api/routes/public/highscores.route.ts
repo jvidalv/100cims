@@ -1,14 +1,14 @@
 import { desc, eq, sql } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 
-import { db } from "@/api/db";
+import { db } from "@/@api/db";
 import {
   mountainTable,
   summitHasUsersTable,
   summitTable,
   userTable,
-} from "@/api/db/schema";
-import { JWT } from "@/api/routes/@shared/jwt";
+} from "@/@api/db/schema";
+import { JWT } from "@/@api/routes/@shared/jwt";
 
 export const hiscoresRoute = new Elysia({ prefix: "/hiscores" }).use(JWT()).get(
   "/all",

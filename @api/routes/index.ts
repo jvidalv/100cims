@@ -1,8 +1,8 @@
 import { Elysia } from "elysia";
 
-import { postgresClient } from "@/api/db";
-import { protectedRoutes } from "@/api/routes/protected";
-import { publicRoutes } from "@/api/routes/public";
+import { postgresClient } from "@/@api/db";
+import { protectedRoutes } from "@/@api/routes/protected";
+import { publicRoutes } from "@/@api/routes/public";
 
 export const app = new Elysia({ prefix: "/api" })
   .onAfterHandle(() => {
