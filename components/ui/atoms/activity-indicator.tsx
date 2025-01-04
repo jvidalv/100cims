@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { Animated } from "react-native";
 import { twMerge } from "tailwind-merge";
 
-import { Icon } from "@/components/ui/atoms";
+import { Icon } from "@/components/ui/atoms/icon";
 
 type SpinnerProps = {
   size?: "sm" | "md" | "lg";

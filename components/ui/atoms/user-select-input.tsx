@@ -101,7 +101,7 @@ export const UserSelectInput = ({
                   initials={getInitials(user?.fullName)}
                 />
                 {(index !== 0 || firstSelectedRemovable === true) && (
-                  <View className="absolute right-0 top-0 size-4 items-center justify-center rounded-full bg-background/40">
+                  <View className="absolute right-0 top-0 size-4 items-center justify-center rounded-full bg-background/80">
                     <Icon name="xmark" size={10} weight="semibold" />
                   </View>
                 )}
@@ -112,7 +112,7 @@ export const UserSelectInput = ({
             onPress={() => setOpen(true)}
             className="mx-4 size-10 items-center justify-center rounded-xl bg-muted-foreground/30 shadow"
           >
-            <Icon name="plus" weight="semibold" size={16} />
+            <Icon name="plus" weight="semibold" color="white" size={16} />
           </TouchableOpacity>
         </Pressable>
       )}

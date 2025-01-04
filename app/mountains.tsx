@@ -119,7 +119,7 @@ export default function MountainsScreen() {
                   return (
                     <Pressable
                       className={twMerge(
-                        "rounded-xl text-foreground py-2 px-2.5 mr-1 disabled:opacity-50",
+                        "rounded-xl py-2 px-2.5 mr-1 disabled:opacity-50",
                         isSelected ? "bg-primary" : "bg-border",
                       )}
                       disabled={disabledIf?.()}
@@ -134,7 +134,9 @@ export default function MountainsScreen() {
                       }}
                       key={name}
                     >
-                      <ThemedText className="font-medium">{name}</ThemedText>
+                      <ThemedText className="font-medium text-foreground">
+                        {name}
+                      </ThemedText>
                     </Pressable>
                   );
                 })}

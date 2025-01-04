@@ -1,7 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { useRefreshOnFocus } from "@/hooks/use-refetch-on-focus";
 import { api } from "@/lib";
+
+export const SUMMITS_KEY = ({
+  mountainId,
+  limit,
+}: {
+  mountainId?: string;
+  limit?: number;
+}) => ["summits", mountainId, limit];
 
 export const useSummitsGet = ({
   mountainId,
@@ -11,7 +18,7 @@ export const useSummitsGet = ({
   limit?: number;
 }) => {
   const args = useQuery({
-    queryKey: ["summits", mountainId, limit],
+    queryKey: SUMMITS_KEY({ mountainId, limit }),
     queryFn: () =>
       api.public.mountains.summits.get({
         query: {
@@ -20,8 +27,6 @@ export const useSummitsGet = ({
         },
       }),
   });
-
-  useRefreshOnFocus(args.refetch);
 
   return { ...args, data: args.data?.data?.message };
 };

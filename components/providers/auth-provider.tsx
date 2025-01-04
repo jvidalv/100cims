@@ -7,7 +7,6 @@ import React, {
 } from "react";
 
 import { queryClient } from "@/components/providers/query-client-provider";
-import { USER_ME_QUERY_KEY } from "@/domains/user/user.api";
 import { removeJwt, setJwt } from "@/lib/auth";
 
 interface AuthContextType {
@@ -32,7 +31,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const logout = async () => {
     await removeJwt();
-    queryClient.removeQueries({ queryKey: USER_ME_QUERY_KEY });
+    queryClient.removeQueries({ queryKey: ["me"] });
     setProviderJwt("");
   };
 

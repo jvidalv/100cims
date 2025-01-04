@@ -73,6 +73,7 @@ export const Button = forwardRef<View, Props>(
           className={twMerge(
             "text-xl font-semibold text-white",
             isLoading && "opacity-0",
+            intent === "outline" && "text-foreground",
           )}
         >
           {children}

@@ -88,7 +88,10 @@ export default function ParallaxScrollView({
               defaultTitleClassName: DEFAULT_BLURRED_HEADER_CLASSNAME,
             })
           ) : (
-            <ThemedText className={DEFAULT_BLURRED_HEADER_CLASSNAME}>
+            <ThemedText
+              numberOfLines={1}
+              className={DEFAULT_BLURRED_HEADER_CLASSNAME}
+            >
               {title}
             </ThemedText>
           )}
@@ -155,7 +158,7 @@ const HeaderTopElement = ({ show }: { show: boolean }) => {
   }));
 
   return (
-    <Animated.View style={animatedStyle} className="absolute top-16 px-6">
+    <Animated.View style={animatedStyle} className="absolute top-20 px-6">
       <TouchableOpacity
         onPress={router.back}
         className="-mx-2 size-8 items-center justify-center overflow-hidden rounded-full"
@@ -240,12 +243,12 @@ const BlurredTopHeader = ({
         <View className="mt-auto flex-row items-center justify-between">
           <TouchableOpacity
             onPress={router.back}
-            className="-mt-3 flex-1 py-3 pl-6"
+            className="-mt-3 w-1/5 py-3 pl-6"
           >
             <Icon size={16} weight="medium" name="chevron.left" />
           </TouchableOpacity>
-          <View className="flex-1 pb-3">{children}</View>
-          <View className="flex-1">{rightElement}</View>
+          <View className="mx-auto pb-3 text-center">{children}</View>
+          <View className="w-1/5">{rightElement}</View>
         </View>
       </BlurView>
     </Animated.View>

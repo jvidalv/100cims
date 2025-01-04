@@ -7,6 +7,7 @@ import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
 import { IMAGE_TO_BIG } from "@/api/routes/@shared/error-codes";
+import { queryClient } from "@/components/providers/query-client-provider";
 import { Button, Icon, ThemedText, ThemedView } from "@/components/ui/atoms";
 import { DateInput } from "@/components/ui/atoms/date-input";
 import {
@@ -14,7 +15,8 @@ import {
   UserSelectInput,
 } from "@/components/ui/atoms/user-select-input";
 import { useMountains, useSummitPost } from "@/domains/mountain/mountain.api";
-import { useUserMe, useUsers } from "@/domains/user/user.api";
+import { SUMMITS_KEY } from "@/domains/summit/summit.api";
+import { USER_SUMMITS_KEY, useUserMe, useUsers } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
 import { getImageOptimized } from "@/lib/images";
 
@@ -101,6 +103,10 @@ export default function SummitMountainScreen() {
             );
         }
       } else {
+        void queryClient.refetchQueries({
+          queryKey: SUMMITS_KEY({ mountainId: mountain.id, limit: 100 }),
+        });
+        void queryClient.refetchQueries({ queryKey: USER_SUMMITS_KEY });
         router.dismiss();
       }
     } catch {

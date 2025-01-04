@@ -1,6 +1,7 @@
 import { format } from "date-fns/format";
 import { BlurView } from "expo-blur";
 import { Link } from "expo-router";
+import { useColorScheme } from "nativewind";
 import { Fragment } from "react";
 import { TouchableOpacity, View } from "react-native";
 import Animated, {
@@ -121,6 +122,8 @@ export default function IndexScreen() {
     };
   });
 
+  const { setColorScheme, colorScheme } = useColorScheme();
+
   return (
     <ThemedView>
       <BlurView className="absolute z-20 h-[7.5rem] w-full justify-end px-6 pb-2">
@@ -128,16 +131,39 @@ export default function IndexScreen() {
           <Animated.View style={topLeftSectionStyle}>
             <MountainsDone />
           </Animated.View>
-          <Link href={isAuthenticated ? "/user" : "/join"}>
-            <Avatar
-              initials={
-                isAuthenticated && user
-                  ? getInitials(fullName || user.email || "Y")
-                  : "🏔️"
+          <View className="flex-row items-center gap-2">
+            <TouchableOpacity
+              className="size-12 items-center justify-center rounded-full border-2 border-border opacity-80"
+              onPress={() =>
+                setColorScheme(colorScheme === "dark" ? "light" : "dark")
               }
-              imageUrl={user?.imageUrl}
-            />
-          </Link>
+            >
+              {colorScheme === "dark" && (
+                <Icon
+                  name="sun.max.fill"
+                  muted
+                  animationSpec={{ effect: { type: "bounce" } }}
+                />
+              )}
+              {colorScheme === "light" && (
+                <Icon
+                  name="moon.fill"
+                  muted
+                  animationSpec={{ effect: { type: "bounce" } }}
+                />
+              )}
+            </TouchableOpacity>
+            <Link href={isAuthenticated ? "/user" : "/join"}>
+              <Avatar
+                initials={
+                  isAuthenticated && user
+                    ? getInitials(fullName || user.email || "Y")
+                    : "🏔️"
+                }
+                imageUrl={user?.imageUrl}
+              />
+            </Link>
+          </View>
         </View>
       </BlurView>
       <Animated.ScrollView

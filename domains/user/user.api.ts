@@ -2,9 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 
 import { useAuth } from "@/components/providers/auth-provider";
 import { useApiWithAuth } from "@/hooks/use-api-with-auth";
-import { useRefreshOnFocus } from "@/hooks/use-refetch-on-focus";
 
 export const USER_ME_QUERY_KEY = ["me"];
+export const USER_SUMMITS_KEY = ["user", "summits", "all"];
 
 export const useUserMe = () => {
   const { isAuthenticated } = useAuth();
@@ -40,12 +40,10 @@ export const useUserSummits = () => {
   const api = useApiWithAuth();
 
   const props = useQuery({
-    queryKey: ["user", "summits", "all"],
+    queryKey: USER_SUMMITS_KEY,
     enabled: () => isAuthenticated,
     queryFn: () => api.protected.user.summits.get(),
   });
-
-  useRefreshOnFocus(props.refetch);
 
   return { ...props, data: props?.data?.data?.message };
 };

@@ -24,7 +24,7 @@ export default function MountainScreen() {
 
   const { data: latestSummits, isPending: isPendingLatestSummits } =
     useSummitsGet({
-      limit: 50,
+      limit: 100,
       mountainId: mountain?.id,
     });
   const { data: userSummits } = useUserSummits();

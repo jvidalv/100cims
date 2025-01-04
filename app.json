@@ -16,7 +16,7 @@
       "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/mountain.png",
-        "backgroundColor": "#be281f"
+        "backgroundColor": "#f43f5e"
       }
     },
     "web": {
@@ -26,6 +26,12 @@
     },
     "plugins": [
       "expo-apple-authentication",
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps._some_id_here_"
+        }
+      ],
       ["expo-router"],
       [
         "expo-image-picker",
@@ -39,7 +45,7 @@
           "image": "./assets/images/mountain.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#be281f"
+          "backgroundColor": "#f43f5e"
         }
       ]
     ],
