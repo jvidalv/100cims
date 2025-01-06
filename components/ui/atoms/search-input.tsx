@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useIntl } from "react-intl";
 import { TextInput, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
@@ -15,6 +16,8 @@ export const SearchInput = ({
   className?: string;
   onChangeText: (text: string) => void;
 }) => {
+  const intl = useIntl();
+
   const [focused, setFocused] = useState(false);
   const fontFamily = useMemo(() => {
     return getFontFamily(inputClassName);
@@ -40,7 +43,7 @@ export const SearchInput = ({
         }}
         style={{ fontFamily, fontSize: 16 }}
         onChangeText={onChangeText}
-        placeholder="Search..."
+        placeholder={intl.formatMessage({ defaultMessage: "Search..." })}
         autoCapitalize="none"
         autoCorrect={false}
         className={twMerge(inputClassName, focused && "border-blue-500")}

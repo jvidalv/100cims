@@ -1,24 +1,35 @@
 import * as ImagePicker from "expo-image-picker";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { FormattedMessage, useIntl } from "react-intl";
 import { ScrollView, TouchableOpacity, View } from "react-native";
 
 import { Header } from "@/components/navigation";
+import { queryClient } from "@/components/providers/query-client-provider";
 import {
   ThemedText,
   Icon,
+  ThemedToggleInput,
   ThemedKeyboardAvoidingView,
   ThemedTextInput,
   Avatar,
 } from "@/components/ui/atoms";
-import { useUserMe } from "@/domains/user/user.api";
+import { USER_SUMMITS_KEY, useUserMe } from "@/domains/user/user.api";
 import { useApiWithAuth } from "@/hooks/use-api-with-auth";
 import { debounce } from "@/lib/debounce";
 import { getImageOptimized } from "@/lib/images";
 
 export default function UserMeScreen() {
+  const intl = useIntl();
   const api = useApiWithAuth();
   const { data: me, refetch } = useUserMe();
   const [image, setImage] = useState<string | null>(null);
+
+  useEffect(() => {
+    return () => {
+      void refetch();
+      void queryClient.refetchQueries({ queryKey: USER_SUMMITS_KEY });
+    };
+  }, [refetch]);
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -38,6 +49,7 @@ export default function UserMeScreen() {
       if (imageOptimized.base64) {
         await api.protected.user.me.post({ image: imageOptimized.base64 });
         void refetch();
+        void queryClient.refetchQueries({ queryKey: USER_SUMMITS_KEY });
       }
     }
   };
@@ -46,17 +58,25 @@ export default function UserMeScreen() {
     await api.protected.user.me.post({
       firstName,
     });
-
-    void refetch();
   }, 500);
 
   const onChangeLastName = debounce(async (lastName: string) => {
     await api.protected.user.me.post({
       lastName,
     });
-
-    void refetch();
   }, 500);
+
+  const onVisibleHiscoresChange = async (checked: boolean) => {
+    void api.protected.user.me.post({
+      visibleOnHiscores: checked,
+    });
+  };
+
+  const onVisiblePeopleSearchChange = async (checked: boolean) => {
+    void api.protected.user.me.post({
+      visibleOnPeopleSearch: checked,
+    });
+  };
 
   if (!me) {
     return null;
@@ -66,7 +86,9 @@ export default function UserMeScreen() {
     <ThemedKeyboardAvoidingView>
       <Header />
       <ScrollView className="flex-1 px-6">
-        <ThemedText className="mb-4 text-4xl font-bold">Me</ThemedText>
+        <ThemedText className="mb-4 text-4xl font-bold">
+          <FormattedMessage defaultMessage="Me" />
+        </ThemedText>
         <View className="gap-6">
           <View className="relative items-center justify-center">
             <TouchableOpacity onPress={pickImage}>
@@ -88,16 +110,34 @@ export default function UserMeScreen() {
               </View>
             )}
           </View>
-          <ThemedTextInput disabled label="Email" value={me?.email} />
           <ThemedTextInput
-            label="First name"
-            value={me?.firstName}
+            disabled
+            label={intl.formatMessage({ defaultMessage: "Email" })}
+            defaultValue={me?.email}
+          />
+          <ThemedTextInput
+            label={intl.formatMessage({ defaultMessage: "First name" })}
+            defaultValue={me?.firstName}
             onChangeText={onChangeFirstName}
           />
           <ThemedTextInput
-            label="Last name"
-            value={me?.lastName}
+            label={intl.formatMessage({ defaultMessage: "Last name" })}
+            defaultValue={me?.lastName}
             onChangeText={onChangeLastName}
+          />
+          <ThemedToggleInput
+            label={intl.formatMessage({
+              defaultMessage: "Visible on hiscores?",
+            })}
+            defaultChecked={me?.visibleOnHiscores}
+            onChecked={onVisibleHiscoresChange}
+          />
+          <ThemedToggleInput
+            label={intl.formatMessage({
+              defaultMessage: "Visible on people search?",
+            })}
+            defaultChecked={me?.visibleOnPeopleSearch}
+            onChecked={onVisiblePeopleSearchChange}
           />
         </View>
       </ScrollView>

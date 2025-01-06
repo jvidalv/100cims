@@ -1,4 +1,4 @@
-import { asc, desc, eq } from "drizzle-orm";
+import { asc, desc, eq, or } from "drizzle-orm";
 import { Elysia, error, t } from "elysia";
 
 import { db } from "@/api/db";
@@ -33,6 +33,8 @@ export const userRoute = new Elysia({ prefix: "/user" })
           firstName: t.Nullable(t.String()),
           lastName: t.Nullable(t.String()),
           imageUrl: t.Nullable(t.String()),
+          visibleOnHiscores: t.Boolean(),
+          visibleOnPeopleSearch: t.Boolean(),
         }),
       }),
     },
@@ -58,6 +60,8 @@ export const userRoute = new Elysia({ prefix: "/user" })
           firstName: body.firstName,
           lastName: body.lastName,
           imageUrl: image ? getPublicUrl(key) : undefined,
+          visibleOnHiscores: body.visibleOnHiscores,
+          visibleOnPeopleSearch: body.visibleOnPeopleSearch,
         })
         .where(eq(userTable.id, user.id));
 
@@ -70,6 +74,8 @@ export const userRoute = new Elysia({ prefix: "/user" })
         firstName: t.Optional(t.String()),
         lastName: t.Optional(t.String()),
         image: t.Optional(t.String()),
+        visibleOnHiscores: t.Optional(t.Boolean()),
+        visibleOnPeopleSearch: t.Optional(t.Boolean()),
       }),
       response: {
         500: t.Object({
@@ -170,7 +176,9 @@ export const userRoute = new Elysia({ prefix: "/user" })
   )
   .get(
     "/all",
-    async () => {
+    async ({ store }) => {
+      const user = getStoreUser(store);
+
       const users = await db
         .select({
           id: userTable.id,
@@ -179,6 +187,12 @@ export const userRoute = new Elysia({ prefix: "/user" })
           imageUrl: userTable.imageUrl,
         })
         .from(userTable)
+        .where(
+          or(
+            eq(userTable.visibleOnPeopleSearch, true),
+            eq(userTable.id, user.id),
+          ),
+        )
         .orderBy(asc(userTable.firstName));
 
       return {

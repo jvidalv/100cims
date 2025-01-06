@@ -17,7 +17,7 @@ type Props = {
 const inputClassName = "text-foreground font-medium";
 const fontFamily = getFontFamily(inputClassName);
 
-export const DateInput = ({
+export const ThemedDateInput = ({
   value,
   onDateValid,
   onDateError,
@@ -175,7 +175,7 @@ export const DateInput = ({
         }
       }}
       className={twMerge(
-        "border-2 border-border justify-center rounded-xl py-2 pl-10 relative",
+        "border-2 border-border justify-center rounded-xl py-3 pl-10 relative",
         isFocused && "border-blue-500",
         isDateComplete && !isDateValid && "border-red-500",
         isDateComplete && isDateValid && isFocused && "border-green-500",

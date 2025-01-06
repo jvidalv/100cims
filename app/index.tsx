@@ -1,8 +1,8 @@
 import { format } from "date-fns/format";
-import { BlurView } from "expo-blur";
 import { Link } from "expo-router";
 import { useColorScheme } from "nativewind";
 import { Fragment } from "react";
+import { FormattedMessage, useIntl } from "react-intl";
 import { TouchableOpacity, View } from "react-native";
 import Animated, {
   useAnimatedRef,
@@ -10,9 +10,10 @@ import Animated, {
   useScrollViewOffset,
   withTiming,
 } from "react-native-reanimated";
+import { twMerge } from "tailwind-merge";
 
 import { useAuth } from "@/components/providers/auth-provider";
-import { Avatar, Icon, Skeleton } from "@/components/ui/atoms";
+import { Avatar, BlurView, Icon, Skeleton } from "@/components/ui/atoms";
 import { ThemedText } from "@/components/ui/atoms/themed-text";
 import { ThemedView } from "@/components/ui/atoms/themed-view";
 import { BottomDrawer, MountainItemList } from "@/components/ui/molecules";
@@ -21,6 +22,7 @@ import { useRecommendedPeaks } from "@/domains/mountain/mountain.api";
 import { useSummitsGet } from "@/domains/summit/summit.api";
 import { useUserMe, useUserSummits } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
+import { hasDynamicIsland } from "@/lib/device";
 import { getInitials } from "@/lib/strings";
 
 const MountainsDone = () => {
@@ -41,7 +43,7 @@ const MountainsDone = () => {
               {isAuthenticated ? userSummits?.essentialPeaksCount : 0}
             </ThemedText>
             <ThemedText className="text-lg font-medium text-muted-foreground">
-              of
+              <FormattedMessage defaultMessage="of" />
             </ThemedText>
             <ThemedText className="text-lg">150</ThemedText>
           </View>
@@ -53,7 +55,7 @@ const MountainsDone = () => {
               {isAuthenticated ? userSummits?.uniquePeaksCount : 0}
             </ThemedText>
             <ThemedText className="text-lg font-medium text-muted-foreground">
-              of
+              <FormattedMessage defaultMessage="of" />
             </ThemedText>
             <ThemedText className="text-lg">522</ThemedText>
           </View>
@@ -69,6 +71,7 @@ const MountainsDone = () => {
 };
 
 const TopSection = () => {
+  const intl = useIntl();
   const { data: userSummits } = useUserSummits();
 
   const { isAuthenticated } = useAuth();
@@ -76,7 +79,7 @@ const TopSection = () => {
     ? !userSummits
       ? "..."
       : userSummits?.score?.toFixed(1) || 0
-    : "Not yet";
+    : intl.formatMessage({ defaultMessage: "Not yet" });
 
   return (
     <Fragment>
@@ -126,12 +129,17 @@ export default function IndexScreen() {
 
   return (
     <ThemedView>
-      <BlurView className="absolute z-20 h-[7.5rem] w-full justify-end px-6 pb-2">
+      <BlurView
+        className={twMerge(
+          "absolute z-20 h-[7rem] w-full justify-end px-6 pb-2",
+          hasDynamicIsland && "h-[7.5rem]",
+        )}
+      >
         <View className="flex-row items-center justify-between">
-          <Animated.View style={topLeftSectionStyle}>
+          <Animated.View className="flex-1" style={topLeftSectionStyle}>
             <MountainsDone />
           </Animated.View>
-          <View className="flex-row items-center gap-2">
+          <View className="flex-1 flex-row items-center justify-end gap-2">
             <TouchableOpacity
               className="size-12 items-center justify-center rounded-full border-2 border-border opacity-80"
               onPress={() =>
@@ -175,23 +183,25 @@ export default function IndexScreen() {
         <Animated.View style={scoreSectionStyle}>
           <View className="flex-row items-end justify-between">
             <View className="flex-row items-center">
-              <ThemedText className="text-2xl font-bold">Score</ThemedText>
+              <ThemedText className="text-2xl font-bold">
+                <FormattedMessage defaultMessage="Score" />
+              </ThemedText>
               <BottomDrawer
                 Trigger={({ setOpen }) => (
                   <TouchableOpacity
                     onPress={() => setOpen((o) => !o)}
                     className="py-1.5 pl-1.5 pr-3"
                   >
-                    <Icon name="info.circle" size={20} muted />
+                    <Icon name="info.circle.fill" size={20} muted />
                   </TouchableOpacity>
                 )}
               >
                 {() => (
                   <View className="p-6">
                     <ThemedText className="mb-4">
-                      One mountain of 1000 meters ={" "}
+                      <FormattedMessage defaultMessage="One summit of 1000 meters =" />{" "}
                       <ThemedText className="text-primary">
-                        100 points
+                        <FormattedMessage defaultMessage="100 points" />
                       </ThemedText>
                       .
                     </ThemedText>
@@ -199,9 +209,9 @@ export default function IndexScreen() {
                       <ThemedText>🔥</ThemedText>
                       <ThemedText>
                         <ThemedText className="font-medium text-primary">
-                          Essentials{" "}
+                          <FormattedMessage defaultMessage="Essentials" />{" "}
                         </ThemedText>
-                        are worth x2. Summit them!
+                        <FormattedMessage defaultMessage="are worth x2. Summit them!" />
                       </ThemedText>
                     </View>
                   </View>
@@ -211,7 +221,7 @@ export default function IndexScreen() {
             <Link href="/hiscores" className="-mx-2 -mb-2 p-2">
               <View className="flex-row items-center gap-1">
                 <ThemedText className="text-muted-foreground">
-                  Hiscores
+                  <FormattedMessage defaultMessage="Hiscores" />
                 </ThemedText>
                 <Icon name="arrow.forward" size={12} weight="bold" muted />
               </View>
@@ -220,7 +230,9 @@ export default function IndexScreen() {
           <TopSection />
         </Animated.View>
         <View className="gap-4">
-          <ThemedText className="text-2xl font-bold">Latest summits</ThemedText>
+          <ThemedText className="text-2xl font-bold">
+            <FormattedMessage defaultMessage="Latest summits" />
+          </ThemedText>
           <View className="gap-3">
             {latestSummits?.map(
               ({ summitId, mountainName, summitedAt, users }) => {
@@ -255,11 +267,13 @@ export default function IndexScreen() {
         <View className="gap-4">
           <View className="flex-row items-end justify-between">
             <ThemedText className="text-2xl font-bold">
-              Peaks for you
+              <FormattedMessage defaultMessage="Recommended" />
             </ThemedText>
             <Link href="/mountains" className="-mx-2 -mb-2 p-2">
               <View className="flex-row items-center gap-1">
-                <ThemedText className="text-muted-foreground">All</ThemedText>
+                <ThemedText className="text-muted-foreground">
+                  <FormattedMessage defaultMessage="All" />
+                </ThemedText>
                 <Icon name="arrow.forward" size={12} weight="bold" muted />
               </View>
             </Link>

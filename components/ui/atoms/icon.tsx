@@ -1,5 +1,5 @@
 // This file is a fallback for using MaterialIcons on Android and web.
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { SymbolWeight } from "expo-symbols";
 import { AnimationSpec } from "expo-symbols/build/SymbolModule.types";
 import React from "react";
@@ -7,27 +7,34 @@ import { OpaqueColorValue, StyleProp, TextStyle } from "react-native";
 
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
-// Add your SFSymbol to MaterialIcons mappings here.
+// Add your SFSymbol to MaterialCommunityIcons mappings here.
 const MAPPING = {
-  // See MaterialIcons here: https://icons.expo.fyi
+  // See MaterialCommunityIcons here: https://icons.expo.fyi
   // See SF Symbols in the SF Symbols app on Mac.
-  "person.fill": "person",
-  "list.bullet": "format-list-bulleted",
-  "chevron.left": "chevron-left",
+  "sun.max.fill": "white-balance-sunny",
+  "moon.fill": "weather-night",
+  "info.circle.fill": "information",
+  "arrow.forward": "arrow-right",
+  "mountain.2.fill": "summit",
+  "checkmark.seal.fill": "check-decagram",
+  "map.circle.fill": "map-search",
   "chevron.right": "chevron-right",
-  "info.circle": "info-outline",
-  "mountain.2": "directions-walk",
-  magnifyingglass: "search",
-  xmark: "close",
-  "mappin.and.ellipse": "location-pin",
-  "rectangle.portrait.and.arrow.right": "logout",
-  plus: "add",
-  camera: "camera-alt",
-  hourglass: "hourglass-top",
+  "chevron.left": "chevron-left",
+  magnifyingglass: "magnify",
+  "arrow.right": "arrow-right",
+  camera: "camera",
+  person: "account",
+  "medal.fill": "medal",
+  calendar: "calendar",
+  xmark: "window-close",
+  plus: "plus",
+  "lock.fill": "lock",
+  "checkmark.square.fill": "checkbox-marked",
+  square: "checkbox-blank-outline",
 } as Partial<
   Record<
     import("expo-symbols").SymbolViewProps["name"],
-    React.ComponentProps<typeof MaterialIcons>["name"]
+    React.ComponentProps<typeof MaterialCommunityIcons>["name"]
   >
 >;
 
@@ -62,7 +69,7 @@ export function Icon({
   }
 
   return (
-    <MaterialIcons
+    <MaterialCommunityIcons
       size={size}
       color={finalColor}
       style={[style, muted ? { opacity: 0.7 } : {}]}

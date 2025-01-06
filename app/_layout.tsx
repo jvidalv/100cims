@@ -11,7 +11,14 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 
 import "react-native-reanimated";
-import React, { useRef, useEffect, PropsWithChildren, useState } from "react";
+import React, {
+  useRef,
+  useEffect,
+  PropsWithChildren,
+  useState,
+  useMemo,
+} from "react";
+import { IntlProvider } from "react-intl";
 import { Animated, View } from "react-native";
 import { Easing } from "react-native-reanimated";
 
@@ -26,6 +33,10 @@ import { useSummitsGet } from "@/domains/summit/summit.api";
 import { useUserMe, useUserSummits } from "@/domains/user/user.api";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { getJwt } from "@/lib/auth";
+import { getLocale } from "@/lib/locale";
+import ca from "@/translations/ca.json";
+import en from "@/translations/en.json";
+import es from "@/translations/es.json";
 
 import "../global.css";
 
@@ -155,10 +166,28 @@ function AuthLayer({ children }: PropsWithChildren) {
 }
 
 export default function RootLayout() {
+  const locale = getLocale();
+
+  const messages = useMemo(() => {
+    if (locale === "en") {
+      return en;
+    }
+
+    if (locale === "es") {
+      return es;
+    }
+
+    if (locale === "ca") {
+      return ca;
+    }
+  }, [locale]);
+
   return (
     <QueryClientProvider>
       <AuthLayer>
-        <Content />
+        <IntlProvider messages={messages} locale={locale} defaultLocale="en">
+          <Content />
+        </IntlProvider>
       </AuthLayer>
     </QueryClientProvider>
   );

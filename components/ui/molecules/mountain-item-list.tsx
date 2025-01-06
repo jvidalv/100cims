@@ -1,5 +1,6 @@
 import { Image } from "expo-image";
 import { Link } from "expo-router";
+import { FormattedMessage } from "react-intl";
 import { TouchableOpacity, View } from "react-native";
 
 import { Icon, ThemedText } from "@/components/ui/atoms";
@@ -66,7 +67,7 @@ export const MountainItemList = ({
                 <ThemedText className="text-muted-foreground">
                   ,{" "}
                   <ThemedText className="font-semibold text-primary">
-                    essential{" "}
+                    <FormattedMessage defaultMessage="essential" />{" "}
                     <View className="size-3 rounded-full bg-primary" />
                   </ThemedText>
                 </ThemedText>

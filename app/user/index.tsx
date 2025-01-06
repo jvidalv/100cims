@@ -1,6 +1,7 @@
 import * as Application from "expo-application";
 import { useRouter } from "expo-router";
 import { Fragment } from "react";
+import { FormattedMessage, useIntl } from "react-intl";
 import { Alert, TouchableOpacity, View } from "react-native";
 
 import { Header } from "@/components/navigation";
@@ -14,6 +15,7 @@ import {
 import { useUserMe } from "@/domains/user/user.api";
 
 export default function UserIndexScreen() {
+  const intl = useIntl();
   const { logout } = useAuth();
   const router = useRouter();
   const { data } = useUserMe();
@@ -24,41 +26,47 @@ export default function UserIndexScreen() {
   }[] = [
     {
       iconName: "person",
-      text: "Me",
+      text: intl.formatMessage({ defaultMessage: "Me" }),
       onPress: () => router.push("/user/me"),
     },
     {
-      iconName: "list.bullet",
-      text: "My summits",
+      iconName: "mountain.2.fill",
+      text: intl.formatMessage({ defaultMessage: "My summits" }),
       onPress: () => router.push("/user/summits"),
     },
     {
-      iconName: "mountain.2",
-      text: "100 cims challenge",
+      iconName: "medal.fill",
+      text: intl.formatMessage({ defaultMessage: "100 cims challenge" }),
       onPress: () => router.push("/user/100-cims-challenge"),
     },
     {
-      iconName: "iphone.gen1",
-      text: "About the app",
+      iconName: "info.circle.fill",
+      text: intl.formatMessage({ defaultMessage: "About the app" }),
       onPress: () => router.push("/user/about-the-app"),
     },
   ];
 
   const onLogout = () => {
-    Alert.alert("Leaving 100cims", "Are you sure you want to logout?", [
-      {
-        text: "Cancel",
-        style: "cancel",
-      },
-      {
-        text: "Yes",
-        style: "default",
-        onPress: () => {
-          logout();
-          router.dismissAll();
+    Alert.alert(
+      intl.formatMessage({ defaultMessage: "Login out" }),
+      intl.formatMessage({
+        defaultMessage: "Are you sure you want to continue?",
+      }),
+      [
+        {
+          text: intl.formatMessage({ defaultMessage: "Cancel" }),
+          style: "cancel",
         },
-      },
-    ]);
+        {
+          text: intl.formatMessage({ defaultMessage: "Yes" }),
+          style: "default",
+          onPress: () => {
+            logout();
+            router.dismissAll();
+          },
+        },
+      ],
+    );
   };
 
   return (
@@ -93,7 +101,8 @@ export default function UserIndexScreen() {
         </View>
         <View>
           <ThemedText className="text-center text-muted-foreground">
-            Version {Application.nativeApplicationVersion}
+            <FormattedMessage defaultMessage="Version" />{" "}
+            {Application.nativeApplicationVersion}
           </ThemedText>
         </View>
         <TouchableOpacity
@@ -101,7 +110,7 @@ export default function UserIndexScreen() {
           className="mt-auto items-center pb-12"
         >
           <ThemedText className="text-muted-foreground underline">
-            Logout
+            <FormattedMessage defaultMessage="Logout" />
           </ThemedText>
         </TouchableOpacity>
       </ThemedView>

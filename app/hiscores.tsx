@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { FormattedMessage } from "react-intl";
 import { View } from "react-native";
 import Animated, {
   useSharedValue,
@@ -74,7 +75,7 @@ export default function HiscoresScreen() {
           ListHeaderComponent={
             <ThemedView className="px-6 pb-2">
               <ThemedText className="mb-2 text-4xl font-bold">
-                Hiscores
+                <FormattedMessage defaultMessage="Hiscores" />
               </ThemedText>
               {!hiscores?.length && (
                 <View className="mt-2 flex-row gap-3">
@@ -100,7 +101,6 @@ export default function HiscoresScreen() {
               userId,
               firstName,
               lastName,
-              essentialPeaksCount,
               uniquePeaksCount,
               totalScore,
               imageUrl,
@@ -146,20 +146,12 @@ export default function HiscoresScreen() {
                     </ThemedText>
                     <View className="flex-row items-center gap-2">
                       <View className="flex-row items-center gap-1 rounded-xl border-2 border-border px-2 py-1">
-                        <View className="mr-1 size-4 rounded-full bg-primary" />
-                        <ThemedText>{essentialPeaksCount}</ThemedText>
-                        <ThemedText className="font-medium text-muted-foreground">
-                          of
-                        </ThemedText>
-                        <ThemedText>150</ThemedText>
-                      </View>
-                      <View className="flex-row items-center gap-1 rounded-xl border-2 border-border px-2 py-1">
                         <View className="mr-1">
                           <Icon name="mountain.2.fill" muted size={18} />
                         </View>
                         <ThemedText>{uniquePeaksCount}</ThemedText>
                         <ThemedText className="font-medium text-muted-foreground">
-                          of
+                          <FormattedMessage defaultMessage="of" />
                         </ThemedText>
                         <ThemedText>522</ThemedText>
                       </View>

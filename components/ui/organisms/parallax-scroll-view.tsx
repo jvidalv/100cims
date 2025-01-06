@@ -1,4 +1,3 @@
-import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import {
@@ -20,9 +19,14 @@ import Animated, {
 } from "react-native-reanimated";
 import { twMerge } from "tailwind-merge";
 
-import { ThemedKeyboardAvoidingView, ThemedText } from "@/components/ui/atoms";
+import {
+  BlurView,
+  ThemedKeyboardAvoidingView,
+  ThemedText,
+} from "@/components/ui/atoms";
 import { Icon } from "@/components/ui/atoms/icon";
 import { ThemedView } from "@/components/ui/atoms/themed-view";
+import { hasDynamicIsland, isAndroid } from "@/lib/device";
 
 const HEADER_HEIGHT = 300;
 const DEFAULT_BLURRED_HEADER_CLASSNAME = "font-medium text-lg";
@@ -158,7 +162,13 @@ const HeaderTopElement = ({ show }: { show: boolean }) => {
   }));
 
   return (
-    <Animated.View style={animatedStyle} className="absolute top-20 px-6">
+    <Animated.View
+      style={animatedStyle}
+      className={twMerge(
+        "absolute top-14 px-6",
+        hasDynamicIsland && "top-[4.5rem]",
+      )}
+    >
       <TouchableOpacity
         onPress={router.back}
         className="-mx-2 size-8 items-center justify-center overflow-hidden rounded-full"
@@ -167,7 +177,12 @@ const HeaderTopElement = ({ show }: { show: boolean }) => {
           className="items-center justify-center"
           style={StyleSheet.absoluteFill}
         >
-          <Icon size={16} color="white" weight="semibold" name="chevron.left" />
+          <Icon
+            size={isAndroid ? 20 : 16}
+            color={isAndroid ? undefined : "white"}
+            weight="semibold"
+            name="chevron.left"
+          />
         </BlurView>
       </TouchableOpacity>
     </Animated.View>
@@ -237,7 +252,10 @@ const BlurredTopHeader = ({
   return (
     <Animated.View
       style={animatedStyle}
-      className="absolute top-0 h-28 w-full flex-1"
+      className={twMerge(
+        "absolute top-0 h-24 w-full flex-1",
+        hasDynamicIsland && "h-28",
+      )}
     >
       <BlurView className="flex-1">
         <View className="mt-auto flex-row items-center justify-between">
@@ -245,7 +263,11 @@ const BlurredTopHeader = ({
             onPress={router.back}
             className="-mt-3 w-1/5 py-3 pl-6"
           >
-            <Icon size={16} weight="medium" name="chevron.left" />
+            <Icon
+              size={isAndroid ? 20 : 16}
+              weight="medium"
+              name="chevron.left"
+            />
           </TouchableOpacity>
           <View className="mx-auto pb-3 text-center">{children}</View>
           <View className="w-1/5">{rightElement}</View>

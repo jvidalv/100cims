@@ -2,7 +2,7 @@
   "expo": {
     "name": "100cims",
     "slug": "100cims",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "centcims",
@@ -28,9 +28,7 @@
     "plugins": [
       "expo-localization",
       "expo-apple-authentication",
-      [
-        "expo-router"
-      ],
+      ["expo-router"],
       [
         "expo-image-picker",
         {

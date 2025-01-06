@@ -2,8 +2,9 @@
 module.exports = {
   extends: ["expo", "prettier", "plugin:tailwindcss/recommended"],
   ignorePatterns: ["/dist/*"],
-  plugins: ["prettier", "react-hooks", "import", "tailwindcss"],
+  plugins: ["prettier", "react-hooks", "import", "tailwindcss", "formatjs"],
   rules: {
+    "formatjs/no-offset": "error",
     "prettier/prettier": "error",
     "@typescript-eslint/no-unused-vars": ["error", {}],
     "no-empty-pattern": "error",

@@ -1,75 +1,69 @@
-import React, { useState } from "react";
-import { TextInput, View, Animated, Platform } from "react-native";
+import { FC, useEffect, useRef, useState } from "react";
+import { TextInput, View, Animated } from "react-native";
 import { twMerge } from "tailwind-merge";
-
-import { ThemedText } from "@/components/ui/atoms/themed-text";
 
 type InputProps = {
   label: string;
   value?: string | null;
+  defaultValue?: string | null;
   disabled?: boolean;
   className?: string;
   onChangeText?: (text: string) => void;
 };
 
-export const ThemedTextInput: React.FC<InputProps> = ({
+export const ThemedTextInput: FC<InputProps> = ({
   label,
   value,
+  defaultValue,
   disabled,
   onChangeText,
   className,
 }) => {
+  const isUncontrolled = !!defaultValue;
+  const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
   const [isFocused, setIsFocused] = useState(false);
-  const [internalValue, setInternalValue] = useState(value);
-  const isWeb = Platform.OS === "web";
-  const labelPosition = React.useRef(new Animated.Value(0)).current;
+  const labelPosition = useRef(new Animated.Value(0)).current;
 
-  React.useEffect(() => {
-    if (isWeb) return;
-
+  useEffect(() => {
     Animated.timing(labelPosition, {
-      toValue: isFocused || !!internalValue ? 1 : 0, // Animate up when focused or value exists
+      toValue:
+        isFocused || !!value || (isUncontrolled && !!uncontrolledValue) ? 1 : 0,
       duration: 200,
-      useNativeDriver: false, // For layout animations, `false` is necessary
+      useNativeDriver: false,
     }).start();
-  }, [isWeb, internalValue, isFocused, labelPosition, value]);
+  }, [
+    value,
+    isFocused,
+    labelPosition,
+    defaultValue,
+    isUncontrolled,
+    uncontrolledValue,
+  ]);
 
   const style = {
     top: labelPosition.interpolate({
       inputRange: [0, 1],
-      outputRange: [19, -8],
+      outputRange: [19, -9],
     }),
     fontSize: labelPosition.interpolate({
       inputRange: [0, 1],
-      outputRange: [16, 12],
+      outputRange: [16, 14],
     }),
   };
 
   return (
     <View className={twMerge("relative w-full h-fit", className)}>
-      {isWeb ? (
-        <ThemedText
-          className={twMerge(
-            "transition-all pointer-events-none absolute left-4 top-5 text-muted-foreground/50",
-            (isFocused || internalValue) &&
-              "text-muted-foreground top-[10px] text-xs",
-          )}
+      <Animated.View
+        style={[{ top: style.top }]}
+        className="absolute left-4 z-10 -mx-1 bg-background px-1"
+      >
+        <Animated.Text
+          style={[{ fontSize: style.fontSize }]}
+          className="text-muted-foreground"
         >
           {label}
-        </ThemedText>
-      ) : (
-        <Animated.View
-          style={[{ top: style.top }]}
-          className="absolute left-4 z-10 -mx-1 bg-background px-1"
-        >
-          <Animated.Text
-            style={[{ fontSize: style.fontSize }]}
-            className="text-muted-foreground"
-          >
-            {label}
-          </Animated.Text>
-        </Animated.View>
-      )}
+        </Animated.Text>
+      </Animated.View>
       <TextInput
         editable={!disabled}
         className={twMerge(
@@ -77,9 +71,12 @@ export const ThemedTextInput: React.FC<InputProps> = ({
           disabled && "bg-gray-50 dark:bg-neutral-900 text-foreground/60",
         )}
         style={{ fontSize: 16 }}
-        defaultValue={!value ? undefined : value}
+        value={!value ? undefined : value}
+        defaultValue={!defaultValue ? undefined : defaultValue}
         onChangeText={(text) => {
-          setInternalValue(text);
+          if (isUncontrolled) {
+            setUncontrolledValue(text);
+          }
           onChangeText?.(text);
         }}
         onFocus={() => setIsFocused(true)}

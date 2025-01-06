@@ -2,6 +2,10 @@ import { format } from "date-fns/format";
 import { Image } from "expo-image";
 import * as Linking from "expo-linking";
 import { Link, useLocalSearchParams } from "expo-router";
+import { setStatusBarStyle } from "expo-status-bar";
+import { useColorScheme } from "nativewind";
+import { useEffect } from "react";
+import { FormattedMessage } from "react-intl";
 import { TouchableOpacity, View } from "react-native";
 
 import { useAuth } from "@/components/providers/auth-provider";
@@ -12,11 +16,22 @@ import { useMountains } from "@/domains/mountain/mountain.api";
 import { useSummitsGet } from "@/domains/summit/summit.api";
 import { useUserSummits } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
+import { isIOS } from "@/lib/device";
 
 export default function MountainScreen() {
+  const { colorScheme } = useColorScheme();
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const { isAuthenticated } = useAuth();
   const { data: mountains } = useMountains();
+
+  useEffect(() => {
+    if (!isIOS) return;
+
+    setStatusBarStyle("light", true);
+    return () => {
+      setStatusBarStyle(colorScheme === "dark" ? "light" : "dark", true);
+    };
+  }, [colorScheme]);
 
   const mountain = mountains?.data?.message?.find(
     (mountain) => slug === mountain.slug,
@@ -58,7 +73,7 @@ export default function MountainScreen() {
           <View className="flex flex-row items-center gap-2">
             <Icon name="checkmark.seal.fill" color="#10b981" />
             <ThemedText className="text-xl font-medium text-emerald-500">
-              You summited this mountain
+              <FormattedMessage defaultMessage="You summited this mountain" />
             </ThemedText>
           </View>
         )}
@@ -72,7 +87,9 @@ export default function MountainScreen() {
           {mountain.essential && (
             <View className="flex-row items-center gap-2">
               <View className="size-4 rounded-full bg-primary" />
-              <ThemedText className="text-xl font-medium">Essential</ThemedText>
+              <ThemedText className="text-xl font-medium">
+                <FormattedMessage defaultMessage="Essential" />
+              </ThemedText>
             </View>
           )}
         </View>
@@ -84,7 +101,9 @@ export default function MountainScreen() {
         </View>
       </View>
       <View className="gap-4">
-        <ThemedText className="text-2xl font-semibold">View</ThemedText>
+        <ThemedText className="text-2xl font-semibold">
+          <FormattedMessage defaultMessage="View" />
+        </ThemedText>
         <View className="flex-row gap-4">
           <TouchableOpacity
             onPress={() =>
@@ -95,9 +114,9 @@ export default function MountainScreen() {
             className="flex-1 flex-row items-center justify-between rounded-xl border-2 border-border p-4"
           >
             <ThemedText className="text-xl font-medium">
-              On{" "}
+              <FormattedMessage defaultMessage="On" />{" "}
               <ThemedText className="text-xl font-medium text-blue-500">
-                maps
+                <FormattedMessage defaultMessage="maps" />
               </ThemedText>
             </ThemedText>
             <Icon name="arrow.right" muted size={20} />
@@ -111,7 +130,7 @@ export default function MountainScreen() {
             className="flex-1 flex-row items-center justify-between rounded-xl border-2 border-border p-4"
           >
             <ThemedText className="text-xl font-medium">
-              On{" "}
+              <FormattedMessage defaultMessage="On" />{" "}
               <ThemedText
                 className="text-xl font-medium"
                 style={{ color: "#4b8c2a" }}
@@ -124,7 +143,9 @@ export default function MountainScreen() {
         </View>
       </View>
       <View className="gap-4">
-        <ThemedText className="text-2xl font-semibold">Actions</ThemedText>
+        <ThemedText className="text-2xl font-semibold">
+          <FormattedMessage defaultMessage="Actions" />
+        </ThemedText>
         <Link
           href={
             isAuthenticated
@@ -134,12 +155,18 @@ export default function MountainScreen() {
           asChild
         >
           <Button className="flex-1">
-            {isSummited ? "Summit again" : "Summit"}
+            {isSummited ? (
+              <FormattedMessage defaultMessage="Summit again" />
+            ) : (
+              <FormattedMessage defaultMessage="Summit" />
+            )}
           </Button>
         </Link>
       </View>
       <View className="mb-32 gap-4">
-        <ThemedText className="text-2xl font-semibold">All summits</ThemedText>
+        <ThemedText className="text-2xl font-semibold">
+          <FormattedMessage defaultMessage="All" />
+        </ThemedText>
         <View className="gap-3">
           {isPendingLatestSummits && (
             <View className="flex-row justify-between">
@@ -152,7 +179,7 @@ export default function MountainScreen() {
           )}
           {!latestSummits?.length && !isPendingLatestSummits && (
             <ThemedText className="text-muted-foreground">
-              No summits yet.
+              <FormattedMessage defaultMessage="No one summited yet." />
             </ThemedText>
           )}
           {latestSummits?.map(({ summitId, summitedAt, users }) => {

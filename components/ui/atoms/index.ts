@@ -8,3 +8,5 @@ export { ThemedKeyboardAvoidingView } from "./themed-keyboard-avoiding-view";
 export { Icon, IconSymbolName } from "./icon";
 export { SearchInput } from "./search-input";
 export { ActivityIndicator } from "./activity-indicator";
+export { ThemedToggleInput } from "./themed-toggle-input";
+export { BlurView } from "./blur-view";

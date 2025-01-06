@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { FormattedMessage, useIntl } from "react-intl";
 import { FlatList, Pressable, ScrollView, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
@@ -12,6 +13,7 @@ import { cleanText } from "@/lib";
 type FilterType = "higher-first" | "essentials" | "not-summited" | "summited";
 
 export default function MountainsScreen() {
+  const intl = useIntl();
   const { data } = useMountains();
   const [query, setQuery] = useState("");
   const [filtersSelected, setFiltersSelected] = useState<FilterType[]>([]);
@@ -23,17 +25,20 @@ export default function MountainsScreen() {
   }[] = [
     {
       type: "higher-first",
-      name: "Higher first",
+      name: intl.formatMessage({ defaultMessage: "Higher first" }),
     },
-    { type: "essentials", name: "Essentials" },
+    {
+      type: "essentials",
+      name: intl.formatMessage({ defaultMessage: "Essentials" }),
+    },
     {
       type: "not-summited",
-      name: "Not summited",
+      name: intl.formatMessage({ defaultMessage: "Not summited" }),
       disabledIf: () => filtersSelected.includes("summited"),
     },
     {
       type: "summited",
-      name: "Summited",
+      name: intl.formatMessage({ defaultMessage: "Summited" }),
       disabledIf: () => filtersSelected.includes("not-summited"),
     },
   ];
@@ -101,7 +106,7 @@ export default function MountainsScreen() {
           ListHeaderComponent={
             <ThemedView className="pb-2">
               <ThemedText className="mx-6 mb-2 text-4xl font-bold">
-                All peaks{" "}
+                <FormattedMessage defaultMessage="All summits" />{" "}
                 <ThemedText className="text-lg font-semibold text-muted-foreground">
                   {filteredMountains?.length}
                 </ThemedText>

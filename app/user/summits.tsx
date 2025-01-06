@@ -1,4 +1,5 @@
 import { format } from "date-fns/format";
+import { FormattedMessage } from "react-intl";
 import { ScrollView, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
@@ -23,7 +24,12 @@ export default function UserSummitsScreen() {
     <ThemedKeyboardAvoidingView>
       <Header />
       <ScrollView className="flex-1 px-6">
-        <ThemedText className="mb-4 text-4xl font-bold">My summits</ThemedText>
+        <ThemedText className="mb-4 text-4xl font-bold">
+          <FormattedMessage defaultMessage="My summits" />{" "}
+          <ThemedText className="text-lg font-semibold text-muted-foreground">
+            {userSummits?.summits?.length}
+          </ThemedText>
+        </ThemedText>
         <View className="gap-4">
           {userSummits?.summits?.map(
             ({

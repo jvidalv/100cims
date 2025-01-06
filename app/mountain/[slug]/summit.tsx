@@ -3,13 +3,14 @@ import * as ImagePicker from "expo-image-picker";
 import { ImagePickerAsset } from "expo-image-picker";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
+import { FormattedMessage, useIntl } from "react-intl";
 import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
 import { IMAGE_TO_BIG } from "@/api/routes/@shared/error-codes";
 import { queryClient } from "@/components/providers/query-client-provider";
 import { Button, Icon, ThemedText, ThemedView } from "@/components/ui/atoms";
-import { DateInput } from "@/components/ui/atoms/date-input";
+import { ThemedDateInput } from "@/components/ui/atoms/themed-date-input";
 import {
   UserForSelectInput,
   UserSelectInput,
@@ -18,9 +19,11 @@ import { useMountains, useSummitPost } from "@/domains/mountain/mountain.api";
 import { SUMMITS_KEY } from "@/domains/summit/summit.api";
 import { USER_SUMMITS_KEY, useUserMe, useUsers } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
+import { isAndroid } from "@/lib/device";
 import { getImageOptimized } from "@/lib/images";
 
 export default function SummitMountainScreen() {
+  const intl = useIntl();
   const router = useRouter();
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const { mutateAsync, isPending } = useSummitPost(slug);
@@ -65,7 +68,11 @@ export default function SummitMountainScreen() {
         const modifiedImage = await getImageOptimized(image);
         setImage(modifiedImage);
       } catch {
-        Alert.alert("Error, try again or use another image.");
+        Alert.alert(
+          intl.formatMessage({
+            defaultMessage: "Error, try again or use another image.",
+          }),
+        );
       }
     }
   };
@@ -80,7 +87,11 @@ export default function SummitMountainScreen() {
     }
 
     if (submitDisabled) {
-      return Alert.alert("Missing information");
+      return Alert.alert(
+        intl.formatMessage({
+          defaultMessage: "Missing information.",
+        }),
+      );
     }
 
     try {
@@ -95,11 +106,22 @@ export default function SummitMountainScreen() {
         switch (response.error.status) {
           case 500:
             return response.error.value.message === IMAGE_TO_BIG
-              ? Alert.alert("Image too big")
-              : Alert.alert("Error, try again.");
+              ? Alert.alert(
+                  intl.formatMessage({
+                    defaultMessage: "Image too big.",
+                  }),
+                )
+              : Alert.alert(
+                  intl.formatMessage({
+                    defaultMessage: "Error, try again.",
+                  }),
+                );
           case 402:
             return Alert.alert(
-              "You must wait some time before summiting again!",
+              intl.formatMessage({
+                defaultMessage:
+                  "You must wait some time before summiting again!",
+              }),
             );
         }
       } else {
@@ -110,12 +132,16 @@ export default function SummitMountainScreen() {
         router.dismiss();
       }
     } catch {
-      return Alert.alert("Something went wrong");
+      return Alert.alert(
+        intl.formatMessage({
+          defaultMessage: "Error, try again.",
+        }),
+      );
     }
   };
 
   return (
-    <ThemedView className="flex-1">
+    <ThemedView className={twMerge("flex-1", isAndroid && "pt-12")}>
       <ScrollView className="flex-1" keyboardShouldPersistTaps="handled">
         <View className="gap-6 px-6 pt-6">
           <View className="items-center justify-center">
@@ -129,15 +155,18 @@ export default function SummitMountainScreen() {
               />
             </View>
             <ThemedText className="mb-1 text-lg font-bold text-muted-foreground">
-              Mountain
+              <FormattedMessage defaultMessage="Summit" />
             </ThemedText>
             <ThemedText className="text-center text-3xl font-black">
               {mountain.name}
             </ThemedText>
           </View>
           <View className="gap-2">
-            <ThemedText className="text-lg font-bold">Date</ThemedText>
-            <DateInput value={new Date()} onDateValid={setDate} />
+            <ThemedText className="text-lg font-bold">
+              {" "}
+              <FormattedMessage defaultMessage="Date" />
+            </ThemedText>
+            <ThemedDateInput value={new Date()} onDateValid={setDate} />
           </View>
           <View className="gap-2">
             <ThemedText
@@ -147,7 +176,7 @@ export default function SummitMountainScreen() {
                 isImageMissing && "text-red-500",
               )}
             >
-              Summit photo
+              <FormattedMessage defaultMessage="Summit photo" />
             </ThemedText>
             <TouchableOpacity
               onPress={pickImage}
@@ -187,7 +216,9 @@ export default function SummitMountainScreen() {
             </TouchableOpacity>
           </View>
           <View className="gap-2">
-            <ThemedText className="text-lg font-bold">People</ThemedText>
+            <ThemedText className="text-lg font-bold">
+              <FormattedMessage defaultMessage="People" />
+            </ThemedText>
             <UserSelectInput
               maxSelected={5}
               firstSelectedRemovable={false}
@@ -201,8 +232,13 @@ export default function SummitMountainScreen() {
             />
           </View>
           <Button isLoading={isPending} intent="accent" onPress={onSubmit}>
-            Save
+            <FormattedMessage defaultMessage="Save" />
           </Button>
+          <TouchableOpacity className="mt-4" onPress={router.back}>
+            <ThemedText className="text-center text-muted-foreground underline">
+              <FormattedMessage defaultMessage="I'll summit later" />
+            </ThemedText>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </ThemedView>

@@ -34,6 +34,8 @@ export const userTable = pgTable("user", {
   firstName: text(),
   lastName: text(),
   imageUrl: text(),
+  visibleOnHiscores: boolean().notNull().default(false),
+  visibleOnPeopleSearch: boolean().notNull().default(true),
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp().notNull().defaultNow(),
 });

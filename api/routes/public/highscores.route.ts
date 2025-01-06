@@ -1,4 +1,4 @@
-import { desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, sql } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 
 import { db } from "@/api/db";
@@ -41,7 +41,12 @@ export const hiscoresRoute = new Elysia({ prefix: "/hiscores" }).use(JWT()).get(
       )
       .leftJoin(summitTable, eq(summitHasUsersTable.summitId, summitTable.id))
       .leftJoin(mountainTable, eq(summitTable.mountainId, mountainTable.id))
-      .where(eq(summitTable.validated, true))
+      .where(
+        and(
+          eq(summitTable.validated, true),
+          eq(userTable.visibleOnHiscores, true),
+        ),
+      )
       .groupBy(
         userTable.id,
         userTable.username,
@@ -50,10 +55,9 @@ export const hiscoresRoute = new Elysia({ prefix: "/hiscores" }).use(JWT()).get(
         userTable.imageUrl,
       )
       .orderBy(
-        desc(sql`SUM(
-                               (CAST(${mountainTable.height} AS FLOAT) / 10) *
-                                 CASE WHEN ${mountainTable.essential} THEN 2 ELSE 1 END
-                             )`),
+        desc(
+          sql`SUM((CAST(${mountainTable.height} AS FLOAT) / 10) *CASE WHEN ${mountainTable.essential} THEN 2 ELSE 1 END)`,
+        ),
       );
 
     return {

@@ -24,6 +24,7 @@ export const useRecommendedPeaks = () => {
         essential &&
         !userSummits?.summits.some(({ mountainSlug }) => mountainSlug === slug),
     )
+    ?.sort((a, b) => parseInt(b.height) - parseInt(a.height))
     .slice(0, 5);
 };
 

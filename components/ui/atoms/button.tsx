@@ -24,6 +24,9 @@ const buttonVariants = tv({
     disabled: {
       true: "opacity-70",
     },
+    loading: {
+      true: "opacity-70",
+    },
   },
   defaultVariants: {
     intent: "primary",
@@ -49,7 +52,7 @@ export const Button = forwardRef<View, Props>(
     },
     ref,
   ) => {
-    const variants = buttonVariants({ intent, disabled });
+    const variants = buttonVariants({ intent, disabled, loading: isLoading });
 
     return (
       <TouchableOpacity
