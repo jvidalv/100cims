@@ -10,7 +10,6 @@ import Animated, {
 } from "react-native-reanimated";
 import { twMerge } from "tailwind-merge";
 
-import { Header } from "@/components/navigation";
 import {
   ThemedView,
   ThemedText,
@@ -18,6 +17,7 @@ import {
   Icon,
   Skeleton,
 } from "@/components/ui/atoms";
+import { ScreenHeader } from "@/components/ui/molecules";
 import { useHiscoresGet } from "@/domains/hiscores/hiscores.api";
 import { useUserMe } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
@@ -65,7 +65,7 @@ export default function HiscoresScreen() {
 
   return (
     <ThemedView className="flex-1">
-      <Header />
+      <ScreenHeader />
       <View>
         <Animated.FlatList
           data={hiscores ?? []}

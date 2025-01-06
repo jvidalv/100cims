@@ -4,7 +4,6 @@ import { Fragment } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Alert, TouchableOpacity, View } from "react-native";
 
-import { Header } from "@/components/navigation";
 import { useAuth } from "@/components/providers/auth-provider";
 import {
   ThemedText,
@@ -12,6 +11,7 @@ import {
   Icon,
   IconSymbolName,
 } from "@/components/ui/atoms";
+import { ScreenHeader } from "@/components/ui/molecules";
 import { useUserMe } from "@/domains/user/user.api";
 
 export default function UserIndexScreen() {
@@ -71,7 +71,7 @@ export default function UserIndexScreen() {
 
   return (
     <ThemedView className="flex-1">
-      <Header />
+      <ScreenHeader />
       <ThemedView className="flex-1 px-6">
         <ThemedText className="mb-4 text-4xl font-bold">
           {data?.firstName}

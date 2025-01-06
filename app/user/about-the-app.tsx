@@ -2,13 +2,13 @@ import * as Linking from "expo-linking";
 import { FormattedMessage } from "react-intl";
 import { TouchableOpacity, View } from "react-native";
 
-import { Header } from "@/components/navigation";
 import { ThemedText, ThemedView } from "@/components/ui/atoms";
+import { ScreenHeader } from "@/components/ui/molecules";
 
 export default function AboutTheAppScreen() {
   return (
     <ThemedView className="flex-1">
-      <Header />
+      <ScreenHeader />
       <View className="flex-1 px-6">
         <ThemedText className="mb-4 text-4xl font-bold">
           <FormattedMessage defaultMessage="About the app" />

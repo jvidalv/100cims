@@ -6,7 +6,7 @@ import { ThemedView } from "@/components/ui/atoms";
 import { Icon } from "@/components/ui/atoms/icon";
 import { hasDynamicIsland, isAndroid } from "@/lib/device";
 
-export const Header = () => {
+export const ScreenHeader = () => {
   const router = useRouter();
   return (
     <ThemedView

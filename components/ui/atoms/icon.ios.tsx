@@ -1,8 +1,7 @@
 import { SymbolView, SymbolViewProps, SymbolWeight } from "expo-symbols";
 import { AnimationSpec } from "expo-symbols/build/SymbolModule.types";
+import { useColorScheme } from "nativewind";
 import { StyleProp, ViewStyle } from "react-native";
-
-import { useColorScheme } from "@/hooks/use-color-scheme";
 
 export function Icon({
   name,
@@ -23,10 +22,10 @@ export function Icon({
   weight?: SymbolWeight;
   animationSpec?: AnimationSpec;
 }) {
-  const { isDark } = useColorScheme();
+  const { colorScheme } = useColorScheme();
   let finalColor = color;
   if (!color) {
-    finalColor = isDark ? "white" : "black";
+    finalColor = colorScheme === "dark" ? "white" : "black";
   }
 
   return (

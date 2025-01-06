@@ -1,9 +1,11 @@
+import { useColorScheme } from "nativewind";
 import { useMemo, useState } from "react";
 import { useIntl } from "react-intl";
 import { TextInput, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
 import { Icon } from "@/components/ui/atoms/icon";
+import { isAndroid } from "@/lib/device";
 import { getFontFamily } from "@/lib/fonts";
 
 const inputClassName =
@@ -16,6 +18,7 @@ export const SearchInput = ({
   className?: string;
   onChangeText: (text: string) => void;
 }) => {
+  const { colorScheme } = useColorScheme();
   const intl = useIntl();
 
   const [focused, setFocused] = useState(false);
@@ -44,6 +47,9 @@ export const SearchInput = ({
         style={{ fontFamily, fontSize: 16 }}
         onChangeText={onChangeText}
         placeholder={intl.formatMessage({ defaultMessage: "Search..." })}
+        placeholderTextColor={
+          isAndroid && colorScheme === "dark" ? "gray" : undefined
+        }
         autoCapitalize="none"
         autoCorrect={false}
         className={twMerge(inputClassName, focused && "border-blue-500")}

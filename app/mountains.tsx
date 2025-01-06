@@ -3,9 +3,9 @@ import { FormattedMessage, useIntl } from "react-intl";
 import { FlatList, Pressable, ScrollView, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
-import { Header } from "@/components/navigation";
 import { ThemedView, ThemedText, SearchInput } from "@/components/ui/atoms";
 import { MountainItemList } from "@/components/ui/molecules";
+import { ScreenHeader } from "@/components/ui/molecules";
 import { useMountains } from "@/domains/mountain/mountain.api";
 import { useUserSummits } from "@/domains/user/user.api";
 import { cleanText } from "@/lib";
@@ -94,7 +94,7 @@ export default function MountainsScreen() {
 
   return (
     <ThemedView className="flex-1">
-      <Header />
+      <ScreenHeader />
       <View>
         <FlatList
           data={filteredMountains}

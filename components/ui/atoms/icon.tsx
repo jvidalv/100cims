@@ -2,10 +2,9 @@
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { SymbolWeight } from "expo-symbols";
 import { AnimationSpec } from "expo-symbols/build/SymbolModule.types";
+import { useColorScheme } from "nativewind";
 import React from "react";
 import { OpaqueColorValue, StyleProp, TextStyle } from "react-native";
-
-import { useColorScheme } from "@/hooks/use-color-scheme";
 
 // Add your SFSymbol to MaterialCommunityIcons mappings here.
 const MAPPING = {
@@ -62,10 +61,10 @@ export function Icon({
   muted?: boolean;
   animationSpec?: AnimationSpec;
 }) {
-  const { isDark } = useColorScheme();
+  const { colorScheme } = useColorScheme();
   let finalColor = color;
   if (!color) {
-    finalColor = isDark ? "white" : "black";
+    finalColor = colorScheme === "dark" ? "white" : "black";
   }
 
   return (

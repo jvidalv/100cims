@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { ScrollView, TouchableOpacity, View } from "react-native";
 
-import { Header } from "@/components/navigation";
 import { queryClient } from "@/components/providers/query-client-provider";
 import {
   ThemedText,
@@ -13,6 +12,7 @@ import {
   ThemedTextInput,
   Avatar,
 } from "@/components/ui/atoms";
+import { ScreenHeader } from "@/components/ui/molecules";
 import { USER_SUMMITS_KEY, useUserMe } from "@/domains/user/user.api";
 import { useApiWithAuth } from "@/hooks/use-api-with-auth";
 import { debounce } from "@/lib/debounce";
@@ -84,7 +84,7 @@ export default function UserMeScreen() {
 
   return (
     <ThemedKeyboardAvoidingView>
-      <Header />
+      <ScreenHeader />
       <ScrollView className="flex-1 px-6">
         <ThemedText className="mb-4 text-4xl font-bold">
           <FormattedMessage defaultMessage="Me" />

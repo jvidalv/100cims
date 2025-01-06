@@ -11,6 +11,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 
 import "react-native-reanimated";
+import { useColorScheme } from "nativewind";
 import React, {
   useRef,
   useEffect,
@@ -31,7 +32,6 @@ import {
 import { useMountains } from "@/domains/mountain/mountain.api";
 import { useSummitsGet } from "@/domains/summit/summit.api";
 import { useUserMe, useUserSummits } from "@/domains/user/user.api";
-import { useColorScheme } from "@/hooks/use-color-scheme";
 import { getJwt } from "@/lib/auth";
 import { getLocale } from "@/lib/locale";
 import ca from "@/translations/ca.json";
@@ -89,7 +89,7 @@ const SplashAnimation = () => {
 };
 
 function Content() {
-  const { isDark } = useColorScheme();
+  const { colorScheme } = useColorScheme();
   const [fontsLoaded] = useFonts({
     regular: require("@/assets/fonts/BricolageGrotesque-Regular.ttf"),
     medium: require("@/assets/fonts/BricolageGrotesque-Medium.ttf"),
@@ -131,7 +131,7 @@ function Content() {
   }
 
   return (
-    <ThemeProvider value={isDark ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen
           name="mountain/[slug]/summit"
