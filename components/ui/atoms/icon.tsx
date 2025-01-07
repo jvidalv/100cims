@@ -22,7 +22,7 @@ const MAPPING = {
   magnifyingglass: "magnify",
   "arrow.right": "arrow-right",
   camera: "camera",
-  person: "account",
+  "person.fill": "account",
   "medal.fill": "medal",
   calendar: "calendar",
   xmark: "window-close",

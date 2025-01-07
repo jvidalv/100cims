@@ -14,8 +14,10 @@ const inputClassName =
 export const SearchInput = ({
   onChangeText,
   className,
+  autoFocus,
 }: {
   className?: string;
+  autoFocus?: boolean;
   onChangeText: (text: string) => void;
 }) => {
   const { colorScheme } = useColorScheme();
@@ -38,6 +40,7 @@ export const SearchInput = ({
         />
       </View>
       <TextInput
+        autoFocus={autoFocus}
         onFocus={() => {
           setFocused(true);
         }}

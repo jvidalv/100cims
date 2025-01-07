@@ -1,4 +1,4 @@
-import { asc, desc, eq, or } from "drizzle-orm";
+import { and, asc, desc, eq, or, sql } from "drizzle-orm";
 import { Elysia, error, t } from "elysia";
 
 import { db } from "@/api/db";
@@ -176,24 +176,42 @@ export const userRoute = new Elysia({ prefix: "/user" })
   )
   .get(
     "/all",
-    async ({ store }) => {
+    async ({ store, query }) => {
       const user = getStoreUser(store);
+      const q = query.q;
 
-      const users = await db
-        .select({
-          id: userTable.id,
-          firstName: userTable.firstName,
-          lastName: userTable.lastName,
-          imageUrl: userTable.imageUrl,
-        })
-        .from(userTable)
-        .where(
-          or(
-            eq(userTable.visibleOnPeopleSearch, true),
-            eq(userTable.id, user.id),
-          ),
-        )
-        .orderBy(asc(userTable.firstName));
+      let users = [
+        {
+          id: user.id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          imageUrl: user.imageUrl,
+        },
+      ];
+
+      if (q) {
+        users = await db
+          .select({
+            id: userTable.id,
+            firstName: userTable.firstName,
+            lastName: userTable.lastName,
+            imageUrl: userTable.imageUrl,
+          })
+          .from(userTable)
+          .where(
+            and(
+              or(
+                eq(userTable.visibleOnPeopleSearch, true),
+                eq(userTable.id, user.id),
+              ),
+              or(
+                sql`unaccent(${userTable.firstName}) ILIKE unaccent(${`%${q}%`})`,
+                sql`unaccent(${userTable.lastName}) ILIKE unaccent(${`%${q}%`})`,
+              ),
+            ),
+          )
+          .orderBy(asc(userTable.firstName));
+      }
 
       return {
         success: true,
@@ -201,6 +219,9 @@ export const userRoute = new Elysia({ prefix: "/user" })
       };
     },
     {
+      query: t.Object({
+        q: t.String(),
+      }),
       response: t.Object({
         success: t.Boolean(),
         message: t.Array(

@@ -22,14 +22,15 @@ export const useUserMe = () => {
   };
 };
 
-export const useUsers = () => {
+export const useUsers = ({ query }: { query?: string }) => {
   const { isAuthenticated } = useAuth();
   const api = useApiWithAuth();
 
   const args = useQuery({
-    queryKey: ["users", "all"],
-    enabled: () => isAuthenticated,
-    queryFn: () => api.protected.user.all.get(),
+    queryKey: ["users", "all", query],
+    enabled: () => isAuthenticated && !!query,
+    queryFn: () =>
+      query ? api.protected.user.all.get({ query: { q: query } }) : null,
   });
 
   return { ...args, data: args.data?.data?.message };

@@ -25,7 +25,7 @@ export default function UserIndexScreen() {
     onPress: () => void;
   }[] = [
     {
-      iconName: "person",
+      iconName: "person.fill",
       text: intl.formatMessage({ defaultMessage: "Me" }),
       onPress: () => router.push("/user/me"),
     },

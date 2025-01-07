@@ -29,7 +29,10 @@ export default function SummitMountainScreen() {
   const { mutateAsync, isPending } = useSummitPost(slug);
   const { data: mountains } = useMountains();
   const { data: user } = useUserMe();
-  const { data: users } = useUsers();
+  const [userQuery, setUserQuery] = useState<string>("");
+  const { data: users, isPending: isPendingUsers } = useUsers({
+    query: userQuery,
+  });
 
   const [image, setImage] = useState<ImagePickerAsset | null>(null);
   const [isImageMissing, setIsImageMissing] = useState(false);
@@ -223,6 +226,9 @@ export default function SummitMountainScreen() {
               maxSelected={5}
               firstSelectedRemovable={false}
               selectedUsers={selectedUsers}
+              onQueryChange={setUserQuery}
+              query={userQuery}
+              isFetchingUsers={isPendingUsers}
               selectableUsers={users?.map((selectableUser) => ({
                 id: selectableUser.id,
                 fullName: getFullName(selectableUser) || "?",
@@ -234,7 +240,7 @@ export default function SummitMountainScreen() {
           <Button isLoading={isPending} intent="accent" onPress={onSubmit}>
             <FormattedMessage defaultMessage="Save" />
           </Button>
-          <TouchableOpacity className="mt-4" onPress={router.back}>
+          <TouchableOpacity className="mt-2" onPress={router.back}>
             <ThemedText className="text-center text-muted-foreground underline">
               <FormattedMessage defaultMessage="I'll summit later" />
             </ThemedText>

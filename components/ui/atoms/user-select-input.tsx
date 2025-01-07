@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { FormattedMessage } from "react-intl";
 import { Pressable, ScrollView, TouchableOpacity, View } from "react-native";
 import Animated, {
   useSharedValue,
@@ -12,11 +13,11 @@ import { Avatar } from "@/components/ui/atoms/avatar";
 import { Button } from "@/components/ui/atoms/button";
 import { Icon } from "@/components/ui/atoms/icon";
 import { SearchInput } from "@/components/ui/atoms/search-input";
+import { Skeleton } from "@/components/ui/atoms/skeleton";
 import { ThemedText } from "@/components/ui/atoms/themed-text";
 import { ThemedView } from "@/components/ui/atoms/themed-view";
 import { BottomDrawer } from "@/components/ui/molecules";
 import { useIsKeyboardVisible } from "@/hooks/use-is-keyboard-visible";
-import { cleanText } from "@/lib";
 import { getInitials } from "@/lib/strings";
 
 export type UserForSelectInput = {
@@ -29,7 +30,10 @@ type Props = {
   selectedUsers?: UserForSelectInput[];
   selectableUsers?: UserForSelectInput[];
   onSelectedUsersChange: (selectedUsers: UserForSelectInput[]) => void;
+  query: string;
+  onQueryChange: (query: string) => void;
   firstSelectedRemovable?: boolean;
+  isFetchingUsers?: boolean;
   className?: string;
   initialHeightSize?: number;
   maxSelected?: number;
@@ -40,13 +44,15 @@ export const UserSelectInput = ({
   selectableUsers,
   firstSelectedRemovable = true,
   onSelectedUsersChange,
-  initialHeightSize = 500,
+  isFetchingUsers,
+  query,
+  initialHeightSize = 400,
+  onQueryChange,
   maxSelected,
 }: Props) => {
-  const [query, setQuery] = useState<string>("");
   const isKeyboardVisible = useIsKeyboardVisible();
   const height = useSharedValue(initialHeightSize);
-  const totalHeightSize = initialHeightSize + 200;
+  const totalHeightSize = initialHeightSize + 100;
 
   useEffect(() => {
     if (isKeyboardVisible) {
@@ -67,12 +73,6 @@ export const UserSelectInput = ({
       height: height.value,
     };
   });
-
-  const filteredUsers = selectableUsers?.filter((user) =>
-    cleanText(user.fullName)
-      ?.toLowerCase()
-      .includes(cleanText(query)?.toLowerCase()),
-  );
 
   return (
     <BottomDrawer
@@ -120,23 +120,32 @@ export const UserSelectInput = ({
       {({ setOpen }) => (
         <Animated.View style={animatedStyle}>
           <View className="gap-4 px-6 pb-2 pt-6">
-            <SearchInput onChangeText={setQuery} />
-            <View className="flex-row justify-between">
-              <ThemedText className="text-muted-foreground">
-                {filteredUsers?.length} total
+            <SearchInput autoFocus onChangeText={onQueryChange} />
+            {!query && (
+              <ThemedText className="text-muted-foreground/50">
+                <FormattedMessage defaultMessage="Type to search." />
               </ThemedText>
-              {selectedUsers?.length && (
-                <ThemedText className="text-emerald-500">
-                  {selectedUsers?.length} selected
-                </ThemedText>
-              )}
-            </View>
+            )}
+            {query && isFetchingUsers && (
+              <View className="flex-row items-center justify-between">
+                <View className="flex-row items-center gap-2">
+                  <Skeleton className="size-12 rounded-full" />
+                  <Skeleton className="h-6 w-32" />
+                </View>
+                <Skeleton className="size-5" />
+              </View>
+            )}
+            {query && !isFetchingUsers && !selectableUsers?.length && (
+              <ThemedText className="text-muted-foreground/50">
+                <FormattedMessage defaultMessage="No results, please change the search." />
+              </ThemedText>
+            )}
           </View>
           <ScrollView
             keyboardShouldPersistTaps="handled"
             contentContainerClassName="gap-6 px-6 pb-36 pt-2"
           >
-            {filteredUsers?.map((user) => {
+            {selectableUsers?.map((user) => {
               const isSelected = selectedUsers.some(
                 (selectedUser) => selectedUser.id === user.id,
               );
@@ -203,7 +212,7 @@ export const UserSelectInput = ({
           </ScrollView>
           <ThemedView className="absolute bottom-0 h-32 w-full p-6">
             <Button onPress={() => setOpen(false)} intent="outline">
-              Done
+              <FormattedMessage defaultMessage="Done" />
             </Button>
           </ThemedView>
         </Animated.View>
