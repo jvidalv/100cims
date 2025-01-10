@@ -17,7 +17,7 @@ export const ScreenHeader = () => {
     >
       <TouchableOpacity onPress={router.back} className="-ml-2 w-fit py-3 pl-8">
         <Icon
-          size={isAndroid ? 20 : 16}
+          size={isAndroid ? 24 : 16}
           name="chevron.left"
           weight="semibold"
         />

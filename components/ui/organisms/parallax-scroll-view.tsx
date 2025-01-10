@@ -178,7 +178,7 @@ const HeaderTopElement = ({ show }: { show: boolean }) => {
           style={StyleSheet.absoluteFill}
         >
           <Icon
-            size={isAndroid ? 20 : 16}
+            size={isAndroid ? 24 : 16}
             color={isAndroid ? undefined : "white"}
             weight="semibold"
             name="chevron.left"
@@ -264,7 +264,7 @@ const BlurredTopHeader = ({
             className="-mt-3 w-1/5 py-3 pl-6"
           >
             <Icon
-              size={isAndroid ? 20 : 16}
+              size={isAndroid ? 24 : 16}
               weight="medium"
               name="chevron.left"
             />

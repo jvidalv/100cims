@@ -15,8 +15,38 @@ export const joinRoute = new Elysia().use(JWT()).post(
   "/join",
   async ({ jwt, body, error }) => {
     let email;
+    let firstName;
+    let lastName;
+    let imageUrl;
+
     if (body.provider === "apple") {
       email = getAppleEmailFromIdentityToken(body.identityToken);
+      firstName = body.firstName;
+      lastName = body.firstName;
+    }
+
+    if (body.provider === "google") {
+      const response = await fetch(
+        `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${body.identityToken}`,
+      );
+      const json = (await response.json()) as {
+        email: string;
+        given_name: string;
+        last_name: string;
+        picture: string;
+      };
+
+      if (!json.email) {
+        return error(500, {
+          success: false,
+          message: "Invalid google email address",
+        });
+      }
+
+      email = json.email;
+      firstName = json.given_name;
+      lastName = json.last_name;
+      imageUrl = json.picture;
     }
 
     if (!email) {
@@ -34,8 +64,9 @@ export const joinRoute = new Elysia().use(JWT()).post(
         .insert(userTable)
         .values({
           email: email,
-          firstName: body.firstName,
-          lastName: body.lastName,
+          firstName: firstName,
+          lastName: lastName,
+          imageUrl: imageUrl,
         })
         .returning();
       user = insert[0];
@@ -65,8 +96,8 @@ export const joinRoute = new Elysia().use(JWT()).post(
     body: t.Object({
       provider: t.Enum({ apple: "apple", google: "google" }),
       identityToken: t.String(),
-      firstName: t.Nullable(t.String()),
-      lastName: t.Nullable(t.String()),
+      firstName: t.Optional(t.String()),
+      lastName: t.Optional(t.String()),
     }),
   },
 );

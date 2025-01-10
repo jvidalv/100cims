@@ -30,6 +30,7 @@ const MAPPING = {
   "lock.fill": "lock",
   "checkmark.square.fill": "checkbox-marked",
   square: "checkbox-blank-outline",
+  hourglass: "timer-sand",
 } as Partial<
   Record<
     import("expo-symbols").SymbolViewProps["name"],
