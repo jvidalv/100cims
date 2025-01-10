@@ -58,7 +58,7 @@ export default function UserSummitsScreen() {
                             "size-3 rounded-full",
                             mountainEssential
                               ? "bg-primary"
-                              : "bg-muted-foreground",
+                              : "bg-muted-foreground/50",
                           )}
                         />
                         <ThemedText className="text-sm text-muted-foreground">

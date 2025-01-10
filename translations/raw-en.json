@@ -5,11 +5,14 @@
   "0BUTMv": {
     "defaultMessage": "Search..."
   },
-  "0UNObB": {
-    "defaultMessage": "No summits yet."
+  "3GLhZz": {
+    "defaultMessage": "No one summited yet."
   },
   "47FYwb": {
     "defaultMessage": "Cancel"
+  },
+  "5lwgvM": {
+    "defaultMessage": "Visible on people search?"
   },
   "71GNdG": {
     "defaultMessage": "are worth x2. Summit them!"
@@ -53,6 +56,9 @@
   "Iu60EH": {
     "defaultMessage": "Are you sure you want to continue?"
   },
+  "JXdbo8": {
+    "defaultMessage": "Done"
+  },
   "KOEnRI": {
     "defaultMessage": "100 cims challenge"
   },
@@ -95,11 +101,14 @@
   "V3/qK6": {
     "defaultMessage": "This is a non-profit app designed to help you track your progress, discover new mountains, and embrace the challenge of conquering the 100 summits."
   },
-  "Vymntg": {
-    "defaultMessage": "To do next"
+  "VKfWR3": {
+    "defaultMessage": "Recommended"
   },
   "W0qW5N": {
     "defaultMessage": "maps"
+  },
+  "YdQ8KR": {
+    "defaultMessage": "No results, please change the search."
   },
   "YzLFgz": {
     "defaultMessage": "Image too big."
@@ -113,6 +122,9 @@
   "a5msuh": {
     "defaultMessage": "Yes"
   },
+  "aiy3+p": {
+    "defaultMessage": "Type to search."
+  },
   "c1AKgx": {
     "defaultMessage": "Missing information."
   },
@@ -124,9 +136,6 @@
   },
   "eXbuB9": {
     "defaultMessage": "Essentials"
-  },
-  "eanEJ7": {
-    "defaultMessage": "I will join later"
   },
   "gzZWtl": {
     "defaultMessage": "The ability to"
@@ -146,6 +155,9 @@
   "lO7wKc": {
     "defaultMessage": "Not yet"
   },
+  "lnUmYp": {
+    "defaultMessage": "I'll join later"
+  },
   "nUhH7c": {
     "defaultMessage": "The challenge involves reaching 100 peaks from a list of 522 representative mountains in Catalonia, Northern Catalonia, and Andorra. This list of peaks is the result of research conducted by members of the “100 Peaks” Committee and contributions from federated individuals who have provided input."
   },
@@ -154,6 +166,9 @@
   },
   "oLkLww": {
     "defaultMessage": "Score"
+  },
+  "oUWADl": {
+    "defaultMessage": "No"
   },
   "oi7NV3": {
     "defaultMessage": "or by email at"
@@ -188,9 +203,6 @@
   "ukJ6eH": {
     "defaultMessage": "Not summited"
   },
-  "vQ4Ldt": {
-    "defaultMessage": "All peaks"
-  },
   "vg1jsx": {
     "defaultMessage": "Summit photo"
   },
@@ -199,6 +211,12 @@
   },
   "wL7VAE": {
     "defaultMessage": "Actions"
+  },
+  "wW8uQD": {
+    "defaultMessage": "I'll summit later"
+  },
+  "xSRKf4": {
+    "defaultMessage": "Visible on hiscores?"
   },
   "xiBL3d": {
     "defaultMessage": "Hiscores"
