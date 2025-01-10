@@ -46,12 +46,9 @@ export const MountainItemList = ({
         <View className="flex-1 justify-center">
           <View className="gap-1">
             {isSummited && (
-              <View className="flex-row items-center gap-1">
-                <ThemedText className="font-semibold text-emerald-500">
-                  Summited
-                </ThemedText>
-                <Icon name="checkmark.seal.fill" color="#10b981" size={16} />
-              </View>
+              <ThemedText className="font-semibold text-emerald-500">
+                <FormattedMessage defaultMessage="Summited" />
+              </ThemedText>
             )}
             <ThemedText className="text-lg font-semibold tracking-tight">
               {name}
