@@ -48,7 +48,7 @@ export function BottomDrawer({
   useEffect(() => {
     if (innerOpen) {
       translateY.value = withTiming(0, { duration: 300 });
-      opacity.value = withTiming(1, { duration: 300 });
+      opacity.value = withTiming(1, { duration: 500 });
     } else {
       translateY.value = withTiming(300, { duration: 300 });
       opacity.value = withTiming(0, { duration: 50 });
