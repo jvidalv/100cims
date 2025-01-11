@@ -8,6 +8,7 @@
     "scheme": "centcims",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "platforms": ["ios", "android"],
     "ios": {
       "supportsTablet": true,
       "usesAppleSignIn": true,
@@ -21,11 +22,6 @@
         "backgroundColor": "#f43f5e"
       },
       "package": "app.x100cims.x100cims"
-    },
-    "web": {
-      "bundler": "metro",
-      "output": "server",
-      "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
       "expo-localization",
