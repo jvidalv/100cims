@@ -23,6 +23,10 @@
       },
       "package": "app.x100cims.x100cims"
     },
+    "web": {
+      "bundler": "metro",
+      "output": "server"
+    },
     "plugins": [
       "expo-localization",
       "expo-apple-authentication",

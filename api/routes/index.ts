@@ -7,6 +7,7 @@ import { publicRoutes } from "@/api/routes/public";
 export const app = new Elysia({ prefix: "/api" })
   .use(cors())
   .use(publicRoutes)
-  .use(protectedRoutes);
+  .use(protectedRoutes)
+  .onError(console.log);
 
 export type App = typeof app;
