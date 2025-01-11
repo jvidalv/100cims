@@ -8,10 +8,6 @@
     "scheme": "centcims",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "platforms": [
-      "ios",
-      "android"
-    ],
     "ios": {
       "supportsTablet": true,
       "usesAppleSignIn": true,

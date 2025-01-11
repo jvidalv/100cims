@@ -33,6 +33,7 @@ import { useMountains } from "@/domains/mountain/mountain.api";
 import { useSummitsGet } from "@/domains/summit/summit.api";
 import { useUserMe, useUserSummits } from "@/domains/user/user.api";
 import { getJwt } from "@/lib/auth";
+import { isWeb } from "@/lib/device";
 import { getLocale } from "@/lib/locale";
 import ca from "@/translations/ca.json";
 import en from "@/translations/en.json";
@@ -165,7 +166,7 @@ function AuthLayer({ children }: PropsWithChildren) {
   return <AuthProvider>{children}</AuthProvider>;
 }
 
-export default function RootLayout() {
+function RootProviders() {
   const locale = getLocale();
 
   const messages = useMemo(() => {
@@ -191,4 +192,12 @@ export default function RootLayout() {
       </AuthLayer>
     </QueryClientProvider>
   );
+}
+
+export default function Root() {
+  if (isWeb) {
+    return "Welcome to the 100cims API 🍻";
+  }
+
+  return <RootProviders />;
 }
