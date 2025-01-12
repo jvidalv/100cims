@@ -90,7 +90,6 @@ const SplashAnimation = () => {
 };
 
 function Content() {
-  const { colorScheme } = useColorScheme();
   const [fontsLoaded] = useFonts({
     regular: require("@/assets/fonts/BricolageGrotesque-Regular.ttf"),
     medium: require("@/assets/fonts/BricolageGrotesque-Medium.ttf"),
@@ -127,22 +126,19 @@ function Content() {
     ready,
   ]);
 
-  if (!ready) {
+  if (!ready && !isWeb) {
     return <SplashAnimation />;
   }
 
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen
-          name="mountain/[slug]/summit"
-          options={{ presentation: "modal" }}
-        />
-        <Stack.Screen name="+not-found" />
-        <Stack.Screen name="join" options={{ presentation: "modal" }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen
+        name="mountain/[slug]/summit"
+        options={{ presentation: "modal" }}
+      />
+      <Stack.Screen name="+not-found" />
+      <Stack.Screen name="join" options={{ presentation: "modal" }} />
+    </Stack>
   );
 }
 
@@ -167,6 +163,7 @@ function AuthLayer({ children }: PropsWithChildren) {
 }
 
 function RootProviders() {
+  const { colorScheme } = useColorScheme();
   const locale = getLocale();
 
   const messages = useMemo(() => {
@@ -187,7 +184,12 @@ function RootProviders() {
     <QueryClientProvider>
       <AuthLayer>
         <IntlProvider messages={messages} locale={locale} defaultLocale="en">
-          <Content />
+          <ThemeProvider
+            value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+          >
+            <Content />
+            <StatusBar style="auto" />
+          </ThemeProvider>
         </IntlProvider>
       </AuthLayer>
     </QueryClientProvider>
@@ -195,9 +197,5 @@ function RootProviders() {
 }
 
 export default function Root() {
-  if (isWeb) {
-    return "Welcome to the 100cims API 🍻";
-  }
-
   return <RootProviders />;
 }

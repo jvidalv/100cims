@@ -3,7 +3,7 @@ import { Link } from "expo-router";
 import { FormattedMessage } from "react-intl";
 import { TouchableOpacity, View } from "react-native";
 
-import { Icon, ThemedText } from "@/components/ui/atoms";
+import { ThemedText } from "@/components/ui/atoms";
 import { useUserSummits } from "@/domains/user/user.api";
 
 export const MountainItemList = ({
