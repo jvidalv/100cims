@@ -6,7 +6,7 @@ export default function IndexScreen() {
       <div className="grid items-center justify-center gap-12 px-6 sm:min-h-screen sm:max-w-7xl sm:grid-cols-5">
         <div className="grid gap-8 sm:col-span-2">
           <div className="text-center sm:text-left">
-            <h1 className="mb-4 text-7xl font-black">
+            <h1 className="mb-4 text-7xl font-black tracking-tight">
               <FormattedMessage defaultMessage="Join" />{" "}
               <span className="text-primary">100cims</span>{" "}
               <FormattedMessage defaultMessage="today" />
@@ -16,10 +16,7 @@ export default function IndexScreen() {
             </p>
           </div>
           <div className="flex flex-col items-center gap-2 sm:items-start">
-            <button
-              autoFocus
-              className="w-fit cursor-pointer rounded-lg bg-foreground px-6 py-3 text-2xl font-semibold text-background transition-all hover:scale-105"
-            >
+            <button className="w-fit cursor-pointer rounded-lg bg-foreground px-6 py-3 text-2xl font-semibold text-background transition-all hover:scale-105">
               <FormattedMessage defaultMessage="Download now" /> ⬇️
             </button>
             <div className="text-muted-foreground/70">
@@ -45,7 +42,7 @@ export default function IndexScreen() {
           />
         </div>
       </div>
-      <div className="mt-12 flex gap-4 overflow-x-auto px-6 sm:hidden">
+      <div className="no-scrollbar mt-12 flex gap-4 overflow-x-auto px-6 sm:hidden">
         <img
           alt=""
           src="app-landing.png"
