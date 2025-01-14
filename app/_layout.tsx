@@ -33,7 +33,7 @@ import { useMountains } from "@/domains/mountain/mountain.api";
 import { useSummitsGet } from "@/domains/summit/summit.api";
 import { useUserMe, useUserSummits } from "@/domains/user/user.api";
 import { getJwt } from "@/lib/auth";
-import { isWeb } from "@/lib/device";
+import { isIpadOS, isWeb } from "@/lib/device";
 import { getLocale } from "@/lib/locale";
 import ca from "@/translations/ca.json";
 import en from "@/translations/en.json";
@@ -134,10 +134,13 @@ function Content() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen
         name="mountain/[slug]/summit"
-        options={{ presentation: "modal" }}
+        options={{ presentation: isIpadOS ? "fullScreenModal" : "modal" }}
       />
       <Stack.Screen name="+not-found" />
-      <Stack.Screen name="join" options={{ presentation: "modal" }} />
+      <Stack.Screen
+        name="join"
+        options={{ presentation: isIpadOS ? "fullScreenModal" : "modal" }}
+      />
     </Stack>
   );
 }

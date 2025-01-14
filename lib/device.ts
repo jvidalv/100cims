@@ -20,5 +20,6 @@ export const hasDynamicIsland =
   devicesWithDynamicIsland.includes(Device.modelName);
 
 export const isAndroid = Device.osName === "Android";
-export const isIOS = Device.osName === "iOS";
+export const isIpadOS = Device.osName === "iPadOS";
+export const isIOS = Device.osName === "iOS" || isIpadOS;
 export const isWeb = Platform.OS === "web";
