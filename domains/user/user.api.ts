@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 
 import { useAuth } from "@/components/providers/auth-provider";
 import { useApiWithAuth } from "@/hooks/use-api-with-auth";
@@ -7,7 +8,7 @@ export const USER_ME_QUERY_KEY = ["me"];
 export const USER_SUMMITS_KEY = ["user", "summits", "all"];
 
 export const useUserMe = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
   const api = useApiWithAuth();
 
   const props = useQuery({
@@ -15,6 +16,12 @@ export const useUserMe = () => {
     enabled: () => isAuthenticated,
     queryFn: () => api.protected.user.me.get(),
   });
+
+  useEffect(() => {
+    if (props.data?.error?.status === 401) {
+      logout();
+    }
+  }, [logout, props]);
 
   return {
     ...props,
