@@ -53,6 +53,7 @@ export const Button = forwardRef<View, Props>(
     ref,
   ) => {
     const variants = buttonVariants({ intent, disabled, loading: isLoading });
+    const iconColor = "white";
 
     return (
       <TouchableOpacity
@@ -64,12 +65,12 @@ export const Button = forwardRef<View, Props>(
       >
         {iconName && (
           <View className={twMerge(isLoading && "opacity-0")}>
-            <Icon color="white" name={iconName} size={28} />
+            <Icon color={iconColor} name={iconName} size={28} />
           </View>
         )}
         {isLoading && (
           <View className="absolute w-full">
-            <ActivityIndicator />
+            <ActivityIndicator color={iconColor} />
           </View>
         )}
         <Text

@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, or, sql } from "drizzle-orm";
+import { and, asc, desc, eq, or, sql, inArray } from "drizzle-orm";
 import { Elysia, error, t } from "elysia";
 
 import { db } from "@/api/db";
@@ -233,5 +233,51 @@ export const userRoute = new Elysia({ prefix: "/user" })
           }),
         ),
       }),
+    },
+  )
+  .get(
+    "/delete",
+    async ({ store }) => {
+      const user = getStoreUser(store);
+
+      const deletedUser = await db
+        .delete(userTable)
+        .where(eq(userTable.id, user.id))
+        .returning();
+
+      if (!deletedUser) {
+        return error(500, { success: false });
+      }
+
+      // Query to find all `summitTable` entries without corresponding `summitHasUsersTable` entries
+      const orphanedSummits = await db
+        .select({ id: summitTable.id })
+        .from(summitTable)
+        .leftJoin(
+          summitHasUsersTable,
+          eq(summitTable.id, summitHasUsersTable.summitId),
+        )
+        .where(sql`${summitHasUsersTable.id} IS NULL`);
+
+      const orphanedSummitIds = orphanedSummits.map((summit) => summit.id);
+      if (orphanedSummitIds.length > 0) {
+        await db
+          .delete(summitTable)
+          .where(inArray(summitTable.id, orphanedSummitIds));
+      }
+
+      return {
+        success: true,
+      };
+    },
+    {
+      response: {
+        500: t.Object({
+          success: t.Boolean(),
+        }),
+        200: t.Object({
+          success: t.Boolean(),
+        }),
+      },
     },
   );

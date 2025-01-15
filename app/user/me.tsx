@@ -1,8 +1,10 @@
 import * as ImagePicker from "expo-image-picker";
+import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { ScrollView, TouchableOpacity, View } from "react-native";
+import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
 
+import { useAuth } from "@/components/providers/auth-provider";
 import { queryClient } from "@/components/providers/query-client-provider";
 import {
   ThemedText,
@@ -19,6 +21,8 @@ import { debounce } from "@/lib/debounce";
 import { getImageOptimized } from "@/lib/images";
 
 export default function UserMeScreen() {
+  const router = useRouter();
+  const { logout } = useAuth();
   const intl = useIntl();
   const api = useApiWithAuth();
   const { data: me, refetch } = useUserMe();
@@ -76,6 +80,31 @@ export default function UserMeScreen() {
     void api.protected.user.me.post({
       visibleOnPeopleSearch: checked,
     });
+  };
+
+  const onDeleteAccount = () => {
+    Alert.alert(
+      intl.formatMessage({ defaultMessage: "Delete your account" }),
+      intl.formatMessage({
+        defaultMessage:
+          "Are you sure you want to continue? All the data will be lost.",
+      }),
+      [
+        {
+          text: intl.formatMessage({ defaultMessage: "Cancel" }),
+          style: "cancel",
+        },
+        {
+          text: intl.formatMessage({ defaultMessage: "Yes, I'm sure" }),
+          style: "default",
+          onPress: async () => {
+            await api.protected.user.delete.get();
+            router.dismissAll();
+            logout();
+          },
+        },
+      ],
+    );
   };
 
   if (!me) {
@@ -139,6 +168,11 @@ export default function UserMeScreen() {
             defaultChecked={me?.visibleOnPeopleSearch}
             onChecked={onVisiblePeopleSearchChange}
           />
+          <TouchableOpacity onPress={onDeleteAccount}>
+            <ThemedText className="text-center text-muted-foreground underline">
+              <FormattedMessage defaultMessage="Delete account" />
+            </ThemedText>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </ThemedKeyboardAvoidingView>

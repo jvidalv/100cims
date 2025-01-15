@@ -29,6 +29,9 @@
   "9SDVYT": {
     "defaultMessage": "Build by Josep Vidal, a software engineer passionate about creating impactful projects that blend technology and adventure."
   },
+  "9yslhD": {
+    "defaultMessage": "Yes, I'm sure"
+  },
   "AD7tFG": {
     "defaultMessage": "Error, try again."
   },
@@ -46,6 +49,9 @@
   },
   "E1EEy4": {
     "defaultMessage": "Error, try again or use another image."
+  },
+  "F4zKkr": {
+    "defaultMessage": "Are you sure you want to continue? All the data will be lost."
   },
   "FB2a6a": {
     "defaultMessage": "In 2006, the FEEC launched the “100 cims” challenge, whose main goal is to promote knowledge of the territory while practicing hiking."
@@ -140,6 +146,9 @@
   "bRWQLO": {
     "defaultMessage": "Available on iOS and Android"
   },
+  "bhN9Hq": {
+    "defaultMessage": "Delete your account"
+  },
   "c1AKgx": {
     "defaultMessage": "Missing information."
   },
@@ -232,6 +241,9 @@
   },
   "wW8uQD": {
     "defaultMessage": "I'll summit later"
+  },
+  "wyxJrL": {
+    "defaultMessage": "Delete account"
   },
   "xSRKf4": {
     "defaultMessage": "Visible on hiscores?"

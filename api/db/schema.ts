@@ -42,7 +42,9 @@ export const userTable = pgTable("user", {
 
 export const summitTable = pgTable("summit", {
   id: uuid().primaryKey().defaultRandom(),
-  mountainId: uuid().references(() => mountainTable.id),
+  mountainId: uuid().references(() => mountainTable.id, {
+    onDelete: "cascade",
+  }),
   imageUrl: text().notNull(),
   validated: boolean().notNull().default(true),
   summitedAt: date().notNull(),

@@ -7,9 +7,14 @@ import { Icon } from "@/components/ui/atoms/icon";
 type SpinnerProps = {
   size?: "sm" | "md" | "lg";
   className?: string;
+  color?: string;
 };
 
-export function ActivityIndicator({ size = "md", className }: SpinnerProps) {
+export function ActivityIndicator({
+  size = "md",
+  className,
+  color,
+}: SpinnerProps) {
   const spinAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -44,7 +49,7 @@ export function ActivityIndicator({ size = "md", className }: SpinnerProps) {
       }}
       className={twMerge("justify-center items-center", className)}
     >
-      <Icon name="hourglass" size={iconSize} />
+      <Icon name="hourglass" color={color} size={iconSize} />
     </Animated.View>
   );
 }

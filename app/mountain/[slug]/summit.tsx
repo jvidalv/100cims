@@ -119,7 +119,7 @@ export default function SummitMountainScreen() {
                     defaultMessage: "Error, try again.",
                   }),
                 );
-          case 402:
+          case 405:
             return Alert.alert(
               intl.formatMessage({
                 defaultMessage:
@@ -128,6 +128,9 @@ export default function SummitMountainScreen() {
             );
         }
       } else {
+        void queryClient.refetchQueries({
+          queryKey: SUMMITS_KEY({ limit: 5 }),
+        });
         void queryClient.refetchQueries({
           queryKey: SUMMITS_KEY({ mountainId: mountain.id, limit: 100 }),
         });

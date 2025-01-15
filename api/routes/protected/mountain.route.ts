@@ -22,7 +22,7 @@ export const mountainRoute = new Elysia({ prefix: "/mountain" })
       const shouldReturn405 = await hasAddedSummitRecently(user.id);
 
       if (shouldReturn405) {
-        return error(402, { success: false, message: SUMMIT_SPAM });
+        return error(405, { success: false, message: SUMMIT_SPAM });
       }
 
       if (!isBase64SizeValid(body.image, 200)) {
@@ -65,7 +65,7 @@ export const mountainRoute = new Elysia({ prefix: "/mountain" })
         image: t.String(),
       }),
       response: {
-        402: t.Object({
+        405: t.Object({
           success: t.Boolean(),
           message: t.String(),
         }),
