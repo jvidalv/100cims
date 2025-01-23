@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres_local
+    restart: always
+    ports:
+      - "5432:5432" # Maps PostgreSQL's default port to localhost
+    environment:
+      POSTGRES_USER: admin       # Default username
+      POSTGRES_PASSWORD: admin   # Default password
+      POSTGRES_DB: my_local_db   # Default database name
+    volumes:
+      - pgdata:/var/lib/postgresql/data # Persist data across container restarts
+      - ./init-scripts:/docker-entrypoint-initdb.d # Optional: Initialize database with scripts
+
+volumes:
+  pgdata:

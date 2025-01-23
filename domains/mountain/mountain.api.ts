@@ -1,13 +1,16 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 
+import { useChallenge } from "@/components/providers/challenge-provider";
 import { useUserSummits } from "@/domains/user/user.api";
 import { useApiWithAuth } from "@/hooks/use-api-with-auth";
 import { api } from "@/lib";
 
 export const useMountains = () => {
+  const { challengeId } = useChallenge();
+
   return useQuery({
-    queryKey: ["mountains"],
-    queryFn: () => api.public.mountains.all.get(),
+    queryKey: ["mountains", challengeId],
+    queryFn: () => api.public.mountains.all.get({ query: { challengeId } }),
     retryOnMount: false,
     staleTime: 10000 * 60 * 60,
     refetchOnWindowFocus: false,

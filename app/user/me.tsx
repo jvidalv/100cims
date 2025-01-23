@@ -5,6 +5,7 @@ import { FormattedMessage, useIntl } from "react-intl";
 import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
 
 import { useAuth } from "@/components/providers/auth-provider";
+import { useChallenge } from "@/components/providers/challenge-provider";
 import { queryClient } from "@/components/providers/query-client-provider";
 import {
   ThemedText,
@@ -23,6 +24,7 @@ import { getImageOptimized } from "@/lib/images";
 export default function UserMeScreen() {
   const router = useRouter();
   const { logout } = useAuth();
+  const { challengeId } = useChallenge();
   const intl = useIntl();
   const api = useApiWithAuth();
   const { data: me, refetch } = useUserMe();
@@ -31,9 +33,11 @@ export default function UserMeScreen() {
   useEffect(() => {
     return () => {
       void refetch();
-      void queryClient.refetchQueries({ queryKey: USER_SUMMITS_KEY });
+      void queryClient.refetchQueries({
+        queryKey: USER_SUMMITS_KEY(challengeId),
+      });
     };
-  }, [refetch]);
+  }, [challengeId, refetch]);
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -53,7 +57,9 @@ export default function UserMeScreen() {
       if (imageOptimized.base64) {
         await api.protected.user.me.post({ image: imageOptimized.base64 });
         void refetch();
-        void queryClient.refetchQueries({ queryKey: USER_SUMMITS_KEY });
+        void queryClient.refetchQueries({
+          queryKey: USER_SUMMITS_KEY(challengeId),
+        });
       }
     }
   };

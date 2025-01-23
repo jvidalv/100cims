@@ -10,19 +10,19 @@ import { queryClient } from "@/components/providers/query-client-provider";
 import { removeJwt, setJwt } from "@/lib/auth";
 
 interface AuthContextType {
-  jwt?: string;
+  jwt: string | null;
   isAuthenticated: boolean;
   setAuthenticated: (jwt: string) => void;
   logout: () => void;
 }
 
-let jwt = "";
-export const overwriteJwt = (token: string) => (jwt = token);
-
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
-  const [providerJwt, setProviderJwt] = useState<string>(jwt);
+export const AuthProvider: FC<PropsWithChildren<{ jwt: string | null }>> = ({
+  children,
+  jwt,
+}) => {
+  const [providerJwt, setProviderJwt] = useState<string | null>(jwt);
 
   const setAuthenticated = async (jwt: string) => {
     await setJwt(jwt);

@@ -1,7 +1,6 @@
 import "react-native-reanimated";
 import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { Stack } from "expo-router";
-import { useColorScheme } from "nativewind";
 import { Fragment, useMemo } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { IntlProvider, useIntl } from "react-intl";
@@ -61,7 +60,6 @@ function Content() {
 }
 
 function RootProviders() {
-  const { colorScheme } = useColorScheme();
   const locale = getLocale();
 
   const messages = useMemo(() => {

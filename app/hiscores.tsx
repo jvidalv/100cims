@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { FormattedMessage } from "react-intl";
-import { View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedScrollHandler,
@@ -17,7 +17,7 @@ import {
   Icon,
   Skeleton,
 } from "@/components/ui/atoms";
-import { ScreenHeader } from "@/components/ui/molecules";
+import { BottomDrawer, ScreenHeader } from "@/components/ui/molecules";
 import { useHiscoresGet } from "@/domains/hiscores/hiscores.api";
 import { useUserMe } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
@@ -25,7 +25,7 @@ import { getInitials } from "@/lib/strings";
 
 export default function HiscoresScreen() {
   const { data: user } = useUserMe();
-  const { data: hiscores } = useHiscoresGet();
+  const { data: hiscores, isPending: isPendingHiscores } = useHiscoresGet();
 
   const scrollY = useSharedValue(0);
   const mounted = useSharedValue(-100); // Initial position for entry animation
@@ -74,12 +74,40 @@ export default function HiscoresScreen() {
           stickyHeaderIndices={[0]}
           ListHeaderComponent={
             <ThemedView className="px-6 pb-2">
-              <ThemedText className="mb-2 text-4xl font-bold">
-                <FormattedMessage defaultMessage="Hiscores" />
-              </ThemedText>
-              {!hiscores?.length && (
-                <View className="mt-2 flex-row gap-3">
-                  <Skeleton className="size-16  rounded-full" />
+              <View className="flex-row items-center gap-2">
+                <ThemedText className="mb-2 text-4xl font-bold">
+                  <FormattedMessage defaultMessage="Hiscores" />
+                </ThemedText>
+                <BottomDrawer
+                  Trigger={({ setOpen }) => (
+                    <TouchableOpacity onPress={() => setOpen((o) => !o)}>
+                      <Icon name="info.circle.fill" size={20} muted />
+                    </TouchableOpacity>
+                  )}
+                >
+                  <View className="p-6">
+                    <ThemedText className="mb-4">
+                      <FormattedMessage defaultMessage="One summit of 1000 meters =" />{" "}
+                      <ThemedText className="text-primary">
+                        <FormattedMessage defaultMessage="100 points" />
+                      </ThemedText>
+                      .
+                    </ThemedText>
+                    <View className="flex-row items-center gap-2 rounded-xl border border-border p-2">
+                      <ThemedText className="text-sm">🔥</ThemedText>
+                      <ThemedText>
+                        <ThemedText className="font-medium text-primary">
+                          <FormattedMessage defaultMessage="Essentials" />{" "}
+                        </ThemedText>
+                        <FormattedMessage defaultMessage="are worth x2. Summit them!" />
+                      </ThemedText>
+                    </View>
+                  </View>
+                </BottomDrawer>
+              </View>
+              {isPendingHiscores && (
+                <View className="mt-4 flex-row gap-3">
+                  <Skeleton className="size-16 rounded-full" />
                   <View className="gap-2">
                     <Skeleton className="h-6 w-40" />
                     <View className="flex-row gap-2">
@@ -89,6 +117,11 @@ export default function HiscoresScreen() {
                     </View>
                   </View>
                 </View>
+              )}
+              {!isPendingHiscores && !hiscores?.length && (
+                <ThemedText className="text-muted-foreground">
+                  <FormattedMessage defaultMessage="No one has yet reached the hiscores." />
+                </ThemedText>
               )}
             </ThemedView>
           }

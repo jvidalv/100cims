@@ -5,7 +5,7 @@ import { tv } from "tailwind-variants";
 
 import { ThemedText } from "@/components/ui/atoms/themed-text";
 
-export type AvatarSize = "sm" | "md" | "lg" | "xl";
+export type AvatarSize = "xs" | "sm" | "md" | "lg" | "xl";
 
 interface AvatarProps {
   initials?: string;
@@ -19,6 +19,7 @@ const avatarStyles = tv({
   base: "relative flex items-center justify-center overflow-hidden rounded-full",
   variants: {
     size: {
+      xs: "size-8",
       sm: "size-10",
       md: "size-12",
       lg: "size-16",
@@ -52,6 +53,7 @@ export const Avatar: FC<AvatarProps> = ({
       <ThemedText
         className={twMerge(
           "text-white font-bold",
+          size === "xs" && "text-xs",
           size === "sm" && "text-sm",
           size === "md" && "text-base",
           size === "lg" && "text-lg",

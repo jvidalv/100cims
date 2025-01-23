@@ -3,6 +3,7 @@ import { Elysia, error, t } from "elysia";
 
 import { db } from "@/api/db";
 import {
+  challengeHasMountainTable,
   mountainTable,
   summitHasUsersTable,
   summitTable,
@@ -90,7 +91,7 @@ export const userRoute = new Elysia({ prefix: "/user" })
   )
   .get(
     "/summits",
-    async ({ store }) => {
+    async ({ store, query }) => {
       const user = getStoreUser(store);
       const userId = user.id;
 
@@ -111,7 +112,18 @@ export const userRoute = new Elysia({ prefix: "/user" })
           eq(summitHasUsersTable.summitId, summitTable.id),
         )
         .innerJoin(mountainTable, eq(summitTable.mountainId, mountainTable.id))
-        .where(eq(summitHasUsersTable.userId, userId))
+        .leftJoin(
+          challengeHasMountainTable,
+          eq(mountainTable.id, challengeHasMountainTable.mountainId),
+        )
+        .where(
+          and(
+            eq(summitHasUsersTable.userId, userId),
+            query.challengeId
+              ? eq(challengeHasMountainTable.challengeId, query.challengeId)
+              : undefined,
+          ),
+        )
         .orderBy(desc(summitTable.createdAt));
 
       const summitsWithScore = results.map((props) => {
@@ -151,6 +163,9 @@ export const userRoute = new Elysia({ prefix: "/user" })
       };
     },
     {
+      query: t.Object({
+        challengeId: t.String(),
+      }),
       response: t.Object({
         success: t.Boolean(),
         message: t.Object({
@@ -165,7 +180,7 @@ export const userRoute = new Elysia({ prefix: "/user" })
               score: t.Number(),
               mountainName: t.String(),
               mountainSlug: t.String(),
-              mountainImageUrl: t.String(),
+              mountainImageUrl: t.Nullable(t.String()),
               mountainHeight: t.String(),
               mountainEssential: t.Boolean(),
             }),

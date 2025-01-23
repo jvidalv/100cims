@@ -24,7 +24,7 @@ export default function IndexScreen() {
             </div>
           </div>
         </div>
-        <div className="max-w-screen relative hidden items-center justify-center sm:col-span-3 sm:flex sm:max-w-full sm:justify-start">
+        <div className="relative hidden items-center justify-center sm:col-span-3 sm:flex sm:max-w-full sm:justify-start">
           <img
             alt=""
             src="app-mountains.png"

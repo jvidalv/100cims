@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import React, { forwardRef, useMemo } from "react";
 import { Text, type TextProps } from "react-native";
 import { twMerge } from "tailwind-merge";
 import { tv, type VariantProps } from "tailwind-variants";
@@ -11,29 +11,30 @@ export const textVariants = tv({
 
 export type TextVariantsProps = VariantProps<typeof textVariants>;
 
-export function ThemedText({
-  className,
-  style,
-  ...props
-}: TextProps & TextVariantsProps) {
-  const fontFamily = useMemo(() => {
-    return getFontFamily(className);
-  }, [className]);
+export const ThemedText = forwardRef<Text, TextProps & TextVariantsProps>(
+  ({ className, style, ...props }, ref) => {
+    const fontFamily = useMemo(() => {
+      return getFontFamily(className);
+    }, [className]);
 
-  const fontSize = useMemo(() => {
-    return getFontSize(className);
-  }, [className]);
+    const fontSize = useMemo(() => {
+      return getFontSize(className);
+    }, [className]);
 
-  return (
-    <Text
-      style={[{ fontFamily, fontSize }, style]}
-      className={twMerge(
-        "text-foreground",
-        className
-          ?.replace(/text-(5xl|4xl|3xl|2xl|xl|lg|base|sm|xs)/g, "")
-          .trim(),
-      )}
-      {...props}
-    />
-  );
-}
+    return (
+      <Text
+        ref={ref}
+        style={[{ fontFamily, fontSize }, style]}
+        className={twMerge(
+          "text-foreground",
+          className
+            ?.replace(/text-(5xl|4xl|3xl|2xl|xl|lg|base|sm|xs)/g, "")
+            .trim(),
+        )}
+        {...props}
+      />
+    );
+  },
+);
+
+ThemedText.displayName = "ThemedText";

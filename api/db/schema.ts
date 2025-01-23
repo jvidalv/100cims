@@ -9,6 +9,14 @@ import {
   date,
 } from "drizzle-orm/pg-core";
 
+export const challengeTable = pgTable("challenge", {
+  id: uuid().primaryKey().defaultRandom(),
+  name: text().notNull(),
+  slug: text().unique().notNull(),
+  webUrl: text(),
+  country: text().notNull(),
+});
+
 export const mountainTable = pgTable("mountain", {
   id: uuid().primaryKey().defaultRandom(),
   name: text().notNull(),
@@ -20,8 +28,8 @@ export const mountainTable = pgTable("mountain", {
   longitude: numeric().notNull(),
   utm31tx: numeric(),
   utm31ty: numeric(),
-  url: text().notNull(),
-  imageUrl: text().notNull(),
+  url: text(),
+  imageUrl: text(),
 });
 
 export const userTable = pgTable("user", {
@@ -58,12 +66,27 @@ export const summitHasUsersTable = pgTable("summit_has_users", {
   createdAt: timestamp().notNull().defaultNow(),
 });
 
+export const challengeHasMountainTable = pgTable("challenge_has_mountain", {
+  id: uuid().primaryKey().defaultRandom(),
+  challengeId: uuid().references(() => challengeTable.id, {
+    onDelete: "cascade",
+  }),
+  mountainId: uuid().references(() => mountainTable.id, {
+    onDelete: "cascade",
+  }),
+});
+
 export const userRelations = relations(userTable, ({ many }) => ({
   summitHasUsers: many(summitHasUsersTable),
 }));
 
 export const mountainRelations = relations(mountainTable, ({ many }) => ({
   summit: many(summitTable),
+  challengeHasMountain: many(challengeHasMountainTable),
+}));
+
+export const challengeRelation = relations(challengeTable, ({ many }) => ({
+  challengeHasMountain: many(challengeHasMountainTable),
 }));
 
 export const summitRelations = relations(summitTable, ({ one, many }) => ({

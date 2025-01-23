@@ -3,6 +3,7 @@ import { Elysia, t } from "elysia";
 
 import { db } from "@/api/db";
 import {
+  challengeHasMountainTable,
   mountainTable,
   summitHasUsersTable,
   summitTable,
@@ -12,7 +13,7 @@ import { JWT } from "@/api/routes/@shared/jwt";
 
 export const hiscoresRoute = new Elysia({ prefix: "/hiscores" }).use(JWT()).get(
   "/all",
-  async () => {
+  async ({ query }) => {
     const results = await db
       .select({
         userId: userTable.id,
@@ -41,10 +42,15 @@ export const hiscoresRoute = new Elysia({ prefix: "/hiscores" }).use(JWT()).get(
       )
       .leftJoin(summitTable, eq(summitHasUsersTable.summitId, summitTable.id))
       .leftJoin(mountainTable, eq(summitTable.mountainId, mountainTable.id))
+      .leftJoin(
+        challengeHasMountainTable,
+        eq(mountainTable.id, challengeHasMountainTable.mountainId),
+      )
       .where(
         and(
           eq(summitTable.validated, true),
           eq(userTable.visibleOnHiscores, true),
+          eq(challengeHasMountainTable.challengeId, query.challengeId), // Filter by challenge ID
         ),
       )
       .groupBy(
@@ -66,6 +72,9 @@ export const hiscoresRoute = new Elysia({ prefix: "/hiscores" }).use(JWT()).get(
     };
   },
   {
+    query: t.Object({
+      challengeId: t.String(),
+    }),
     response: t.Object({
       success: t.Boolean(),
       message: t.Array(

@@ -1,4 +1,7 @@
 {
+  "///zLu": {
+    "defaultMessage": "Challenges"
+  },
   "0++ZND": {
     "defaultMessage": "My summits"
   },
@@ -25,6 +28,9 @@
   },
   "8q89x7": {
     "defaultMessage": "Track your progress in the 100cims challenge"
+  },
+  "9MidH4": {
+    "defaultMessage": "Challenge"
   },
   "9SDVYT": {
     "defaultMessage": "Build by Josep Vidal, a software engineer passionate about creating impactful projects that blend technology and adventure."
@@ -179,9 +185,6 @@
   "kkpP2k": {
     "defaultMessage": "today"
   },
-  "lO7wKc": {
-    "defaultMessage": "Not yet"
-  },
   "lnUmYp": {
     "defaultMessage": "I'll join later"
   },
@@ -190,9 +193,6 @@
   },
   "nfhxxT": {
     "defaultMessage": "Login out"
-  },
-  "oLkLww": {
-    "defaultMessage": "Score"
   },
   "oUWADl": {
     "defaultMessage": "No"
@@ -208,6 +208,9 @@
   },
   "pqUy68": {
     "defaultMessage": "register your summits"
+  },
+  "q4aOMe": {
+    "defaultMessage": "Each challenge is constrained within a region. You can switch betweem them freely, progress is saved."
   },
   "rfzuQv": {
     "defaultMessage": "Essential"
@@ -229,6 +232,9 @@
   },
   "ukJ6eH": {
     "defaultMessage": "Not summited"
+  },
+  "v0btUQ": {
+    "defaultMessage": "No one has yet reached the hiscores."
   },
   "vg1jsx": {
     "defaultMessage": "Summit photo"

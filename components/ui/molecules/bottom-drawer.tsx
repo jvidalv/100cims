@@ -27,10 +27,12 @@ export function BottomDrawer({
   Trigger,
 }: {
   onRequestClose?: () => void;
-  children: (props: {
-    open: boolean;
-    setOpen: Dispatch<SetStateAction<boolean>>;
-  }) => ReactNode;
+  children:
+    | ((props: {
+        open: boolean;
+        setOpen: Dispatch<SetStateAction<boolean>>;
+      }) => ReactNode)
+    | ReactNode;
   Trigger: ({
     open,
     setOpen,
@@ -48,7 +50,7 @@ export function BottomDrawer({
   useEffect(() => {
     if (innerOpen) {
       translateY.value = withTiming(0, { duration: 300 });
-      opacity.value = withTiming(1, { duration: 500 });
+      opacity.value = withTiming(1, { duration: 1000 });
     } else {
       translateY.value = withTiming(300, { duration: 300 });
       opacity.value = withTiming(0, { duration: 50 });
@@ -112,7 +114,9 @@ export function BottomDrawer({
                 size={18}
               />
             </TouchableOpacity>
-            {children({ open: innerOpen, setOpen: setInnerOpen })}
+            {typeof children === "function"
+              ? children({ open: innerOpen, setOpen: setInnerOpen })
+              : children}
           </Animated.View>
         </View>
       </RNModal>

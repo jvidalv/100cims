@@ -86,3 +86,5 @@ export const Button = forwardRef<View, Props>(
     );
   },
 );
+
+Button.displayName = "Button";

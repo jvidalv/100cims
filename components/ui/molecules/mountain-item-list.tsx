@@ -64,8 +64,7 @@ export const MountainItemList = ({
                 <ThemedText className="text-muted-foreground">
                   ,{" "}
                   <ThemedText className="font-semibold text-primary">
-                    <FormattedMessage defaultMessage="essential" />{" "}
-                    <View className="size-3 rounded-full bg-primary" />
+                    <FormattedMessage defaultMessage="essential" />
                   </ThemedText>
                 </ThemedText>
               )}

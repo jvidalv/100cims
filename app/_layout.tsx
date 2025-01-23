@@ -24,11 +24,15 @@ import { Animated, View } from "react-native";
 import { Easing } from "react-native-reanimated";
 
 import { QueryClientProvider } from "@/components/providers";
+import { AuthProvider, useAuth } from "@/components/providers/auth-provider";
 import {
-  AuthProvider,
-  overwriteJwt,
-  useAuth,
-} from "@/components/providers/auth-provider";
+  ChallengeProvider,
+  getLocalChallenge,
+} from "@/components/providers/challenge-provider";
+import {
+  DEFAULT_CHALLENGE_ID,
+  useChallengesGet,
+} from "@/domains/challenge/challenge.api";
 import { useMountains } from "@/domains/mountain/mountain.api";
 import { useSummitsGet } from "@/domains/summit/summit.api";
 import { useUserMe, useUserSummits } from "@/domains/user/user.api";
@@ -38,7 +42,6 @@ import { getLocale } from "@/lib/locale";
 import ca from "@/translations/ca.json";
 import en from "@/translations/en.json";
 import es from "@/translations/es.json";
-
 import "../global.css";
 
 const ANIMATION_DURATION = 1500;
@@ -102,6 +105,7 @@ function Content() {
   const { isPending: isPendingMountains } = useMountains();
   const { isPending: isPendingUser } = useUserMe();
   const { isPending: isPendingHomepageSummits } = useSummitsGet({ limit: 5 });
+  const { isPending: isPendingChallenges } = useChallengesGet();
   useUserSummits();
 
   useEffect(() => {
@@ -114,6 +118,7 @@ function Content() {
         fontsLoaded &&
           !isPendingMountains &&
           !isPendingHomepageSummits &&
+          !isPendingChallenges &&
           (!isPendingUser || !isAuthenticated),
       );
     }
@@ -123,6 +128,7 @@ function Content() {
     isPendingHomepageSummits,
     isPendingMountains,
     isPendingUser,
+    isPendingChallenges,
     ready,
   ]);
 
@@ -141,19 +147,25 @@ function Content() {
         name="join"
         options={{ presentation: isIpadOS ? "fullScreenModal" : "modal" }}
       />
+      <Stack.Screen
+        name="challenges"
+        options={{ presentation: isIpadOS ? "fullScreenModal" : "modal" }}
+      />
     </Stack>
   );
 }
 
 function AuthLayer({ children }: PropsWithChildren) {
-  const [isJwtLoaded, setIsJwtLoaded] = React.useState(false);
+  const [isJwtLoaded, setIsJwtLoaded] = useState(false);
+  const [jwt, setJwt] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
-      const jwt = await getJwt();
-      if (jwt) {
-        overwriteJwt(jwt);
+      const localStorageJwt = await getJwt();
+      if (localStorageJwt) {
+        setJwt(localStorageJwt);
       }
+
       setIsJwtLoaded(true);
     })();
   }, []);
@@ -162,7 +174,30 @@ function AuthLayer({ children }: PropsWithChildren) {
     return null;
   }
 
-  return <AuthProvider>{children}</AuthProvider>;
+  return <AuthProvider jwt={jwt}>{children}</AuthProvider>;
+}
+
+function ChallengeLayer({ children }: PropsWithChildren) {
+  const [isChallengeLoaded, setIsChallengeLoaded] = useState(false);
+  const [challenge, setChallenge] = useState<string>(DEFAULT_CHALLENGE_ID);
+
+  useEffect(() => {
+    (async () => {
+      const localStorageChallenge = await getLocalChallenge();
+      if (localStorageChallenge) {
+        setChallenge(localStorageChallenge);
+      }
+      setIsChallengeLoaded(true);
+    })();
+  }, []);
+
+  if (!isChallengeLoaded) {
+    return null;
+  }
+
+  return (
+    <ChallengeProvider challengeId={challenge}>{children}</ChallengeProvider>
+  );
 }
 
 function RootProviders() {
@@ -186,14 +221,16 @@ function RootProviders() {
   return (
     <QueryClientProvider>
       <AuthLayer>
-        <IntlProvider messages={messages} locale={locale} defaultLocale="en">
-          <ThemeProvider
-            value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-          >
-            <Content />
-            <StatusBar style="auto" />
-          </ThemeProvider>
-        </IntlProvider>
+        <ChallengeLayer>
+          <IntlProvider messages={messages} locale={locale} defaultLocale="en">
+            <ThemeProvider
+              value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+            >
+              <Content />
+              <StatusBar style="auto" />
+            </ThemeProvider>
+          </IntlProvider>
+        </ChallengeLayer>
       </AuthLayer>
     </QueryClientProvider>
   );

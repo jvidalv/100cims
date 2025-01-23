@@ -3,6 +3,7 @@ import { Elysia, t } from "elysia";
 
 import { db } from "@/api/db";
 import {
+  challengeHasMountainTable,
   mountainTable,
   summitHasUsersTable,
   summitTable,
@@ -12,8 +13,25 @@ import {
 export const mountainsRoute = new Elysia({ prefix: "/mountains" })
   .get(
     "/all",
-    async () => {
-      const mountains = await db.select().from(mountainTable);
+    async ({ query }) => {
+      const mountains = await db
+        .select({
+          id: mountainTable.id,
+          name: mountainTable.name,
+          slug: mountainTable.slug,
+          location: mountainTable.location,
+          essential: mountainTable.essential,
+          height: mountainTable.height,
+          latitude: mountainTable.latitude,
+          longitude: mountainTable.longitude,
+          imageUrl: mountainTable.imageUrl,
+        })
+        .from(mountainTable)
+        .innerJoin(
+          challengeHasMountainTable,
+          eq(challengeHasMountainTable.mountainId, mountainTable.id),
+        )
+        .where(eq(challengeHasMountainTable.challengeId, query.challengeId));
 
       return {
         success: true,
@@ -21,6 +39,9 @@ export const mountainsRoute = new Elysia({ prefix: "/mountains" })
       };
     },
     {
+      query: t.Object({
+        challengeId: t.String(),
+      }),
       response: t.Object({
         success: t.Boolean(),
         message: t.Array(
@@ -33,7 +54,6 @@ export const mountainsRoute = new Elysia({ prefix: "/mountains" })
             height: t.String(),
             latitude: t.String(),
             longitude: t.String(),
-            url: t.String(),
             imageUrl: t.Nullable(t.String()),
           }),
         ),
@@ -66,10 +86,17 @@ export const mountainsRoute = new Elysia({ prefix: "/mountains" })
           eq(summitTable.id, summitHasUsersTable.summitId),
         )
         .leftJoin(userTable, eq(summitHasUsersTable.userId, userTable.id))
+        .leftJoin(
+          challengeHasMountainTable,
+          eq(mountainTable.id, challengeHasMountainTable.mountainId),
+        )
         .where(
           and(
             eq(summitTable.validated, true),
             mountainId ? eq(summitTable.mountainId, mountainId) : undefined,
+            query.challengeId
+              ? eq(challengeHasMountainTable.challengeId, query.challengeId)
+              : undefined,
           ),
         )
         .orderBy(desc(summitTable.createdAt))
@@ -142,6 +169,7 @@ export const mountainsRoute = new Elysia({ prefix: "/mountains" })
         ),
       }),
       query: t.Object({
+        challengeId: t.String(),
         mountainId: t.Optional(t.String()),
         limit: t.Optional(t.Number()),
       }),

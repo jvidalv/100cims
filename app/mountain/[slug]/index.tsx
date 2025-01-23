@@ -124,7 +124,7 @@ export default function MountainScreen() {
           <TouchableOpacity
             onPress={() =>
               Linking.openURL(
-                `https://es.wikiloc.com/wikiloc/map.do?q=100cims ${mountain.name}&fitMapToTrails=1&page=1`,
+                `https://es.wikiloc.com/wikiloc/map.do?q=${mountain.name}, ${mountain.location}&fitMapToTrails=1&page=1`,
               )
             }
             className="flex-1 flex-row items-center justify-between rounded-xl border-2 border-border p-4"

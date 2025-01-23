@@ -2,10 +2,16 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 
 import { useAuth } from "@/components/providers/auth-provider";
+import { useChallenge } from "@/components/providers/challenge-provider";
 import { useApiWithAuth } from "@/hooks/use-api-with-auth";
 
 export const USER_ME_QUERY_KEY = ["me"];
-export const USER_SUMMITS_KEY = ["user", "summits", "all"];
+export const USER_SUMMITS_KEY = (challengeId: string) => [
+  "user",
+  "summits",
+  "all",
+  challengeId,
+];
 
 export const useUserMe = () => {
   const { isAuthenticated, logout } = useAuth();
@@ -45,12 +51,13 @@ export const useUsers = ({ query }: { query?: string }) => {
 
 export const useUserSummits = () => {
   const { isAuthenticated } = useAuth();
+  const { challengeId } = useChallenge();
   const api = useApiWithAuth();
 
   const props = useQuery({
-    queryKey: USER_SUMMITS_KEY,
+    queryKey: USER_SUMMITS_KEY(challengeId),
     enabled: () => isAuthenticated,
-    queryFn: () => api.protected.user.summits.get(),
+    queryFn: () => api.protected.user.summits.get({ query: { challengeId } }),
   });
 
   return { ...props, data: props?.data?.data?.message };

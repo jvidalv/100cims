@@ -2,7 +2,7 @@ import { format } from "date-fns/format";
 import { Link } from "expo-router";
 import { useColorScheme } from "nativewind";
 import { Fragment } from "react";
-import { FormattedMessage, useIntl } from "react-intl";
+import { FormattedMessage } from "react-intl";
 import { TouchableOpacity, View } from "react-native";
 import Animated, {
   useAnimatedRef,
@@ -13,11 +13,13 @@ import Animated, {
 import { twMerge } from "tailwind-merge";
 
 import { useAuth } from "@/components/providers/auth-provider";
+import { useChallenge } from "@/components/providers/challenge-provider";
 import { Avatar, BlurView, Icon, Skeleton } from "@/components/ui/atoms";
 import { ThemedText } from "@/components/ui/atoms/themed-text";
 import { ThemedView } from "@/components/ui/atoms/themed-view";
-import { BottomDrawer, MountainItemList } from "@/components/ui/molecules";
+import { MountainItemList } from "@/components/ui/molecules";
 import { AvatarGroup } from "@/components/ui/molecules/avatar-group";
+import { useChallengesGet } from "@/domains/challenge/challenge.api";
 import { useRecommendedPeaks } from "@/domains/mountain/mountain.api";
 import { useSummitsGet } from "@/domains/summit/summit.api";
 import { useUserMe, useUserSummits } from "@/domains/user/user.api";
@@ -29,6 +31,12 @@ const MountainsDone = () => {
   const { data: userSummits } = useUserSummits();
 
   const { isAuthenticated } = useAuth();
+  const { data: challenges } = useChallengesGet();
+  const { challengeId } = useChallenge();
+
+  const challenge = challenges?.find(
+    (challenge) => challenge.id === challengeId,
+  );
 
   return (
     <Link
@@ -45,7 +53,9 @@ const MountainsDone = () => {
             <ThemedText className="text-lg font-medium text-muted-foreground">
               <FormattedMessage defaultMessage="of" />
             </ThemedText>
-            <ThemedText className="text-lg">150</ThemedText>
+            <ThemedText className="text-lg">
+              {challenge?.totalEssentialMountains}
+            </ThemedText>
           </View>
           <View className="flex-row items-center gap-1 rounded-xl border-2 border-border px-2 py-1">
             <View className="mr-1">
@@ -57,7 +67,9 @@ const MountainsDone = () => {
             <ThemedText className="text-lg font-medium text-muted-foreground">
               <FormattedMessage defaultMessage="of" />
             </ThemedText>
-            <ThemedText className="text-lg">522</ThemedText>
+            <ThemedText className="text-lg">
+              {challenge?.totalMountains}
+            </ThemedText>
           </View>
         </View>
       ) : (
@@ -71,27 +83,27 @@ const MountainsDone = () => {
 };
 
 const TopSection = () => {
-  const intl = useIntl();
-  const { data: userSummits } = useUserSummits();
-
-  const { isAuthenticated } = useAuth();
-  const score = isAuthenticated
-    ? !userSummits
-      ? "..."
-      : userSummits?.score?.toFixed(1) || 0
-    : intl.formatMessage({ defaultMessage: "Not yet" });
+  const { challengeId } = useChallenge();
+  const { data: challenges } = useChallengesGet();
+  const challenge = challenges?.find(
+    (challenge) => challenge.id === challengeId,
+  );
 
   return (
     <Fragment>
-      <View className="-mt-1 flex-row items-center gap-2">
-        <ThemedText className="text-5xl font-black text-primary">
-          {score}
+      <Link href="/challenges" asChild>
+        <ThemedText
+          numberOfLines={1}
+          className="flex-1 text-4xl font-black tracking-tighter text-primary"
+        >
+          {challenge?.name}
         </ThemedText>
-      </View>
+      </Link>
       <MountainsDone />
     </Fragment>
   );
 };
+
 export default function IndexScreen() {
   const recommendedPeaks = useRecommendedPeaks();
   const { isAuthenticated } = useAuth();
@@ -128,7 +140,7 @@ export default function IndexScreen() {
   const { setColorScheme, colorScheme } = useColorScheme();
 
   return (
-    <ThemedView>
+    <ThemedView className="flex-1">
       <BlurView
         className={twMerge(
           "absolute z-20 h-[7rem] w-full justify-end px-6 pb-2",
@@ -178,45 +190,20 @@ export default function IndexScreen() {
         ref={scrollRef}
         className="gap-10 px-6 pb-12"
         contentContainerClassName="gap-10"
+        showsVerticalScrollIndicator={false}
       >
         <View className="h-24" />
-        <Animated.View style={scoreSectionStyle}>
+        <Animated.View className="gap-0.5" style={scoreSectionStyle}>
           <View className="flex-row items-end justify-between">
             <View className="flex-row items-center">
-              <ThemedText className="text-2xl font-bold">
-                <FormattedMessage defaultMessage="Score" />
-              </ThemedText>
-              <BottomDrawer
-                Trigger={({ setOpen }) => (
-                  <TouchableOpacity
-                    onPress={() => setOpen((o) => !o)}
-                    className="py-1.5 pl-1.5 pr-3"
-                  >
-                    <Icon name="info.circle.fill" size={20} muted />
-                  </TouchableOpacity>
-                )}
-              >
-                {() => (
-                  <View className="p-6">
-                    <ThemedText className="mb-4">
-                      <FormattedMessage defaultMessage="One summit of 1000 meters =" />{" "}
-                      <ThemedText className="text-primary">
-                        <FormattedMessage defaultMessage="100 points" />
-                      </ThemedText>
-                      .
-                    </ThemedText>
-                    <View className="flex-row items-center gap-2 rounded-xl border border-border p-2">
-                      <ThemedText>🔥</ThemedText>
-                      <ThemedText>
-                        <ThemedText className="font-medium text-primary">
-                          <FormattedMessage defaultMessage="Essentials" />{" "}
-                        </ThemedText>
-                        <FormattedMessage defaultMessage="are worth x2. Summit them!" />
-                      </ThemedText>
-                    </View>
-                  </View>
-                )}
-              </BottomDrawer>
+              <Link href="/challenges">
+                <ThemedText className="text-2xl font-bold">
+                  <FormattedMessage defaultMessage="Challenge" />
+                </ThemedText>
+              </Link>
+              <Link href="/challenges" className="py-1.5 pl-1.5 pr-3">
+                <Icon name="arrow.left.arrow.right" size={20} muted />
+              </Link>
             </View>
             <Link href="/hiscores" className="-mx-2 -mb-2 p-2">
               <View className="flex-row items-center gap-1">
@@ -229,41 +216,46 @@ export default function IndexScreen() {
           </View>
           <TopSection />
         </Animated.View>
-        <View className="gap-4">
-          <ThemedText className="text-2xl font-bold">
-            <FormattedMessage defaultMessage="Latest summits" />
-          </ThemedText>
-          <View className="gap-3">
-            {latestSummits?.map(
-              ({ summitId, mountainName, summitedAt, users }) => {
-                return (
-                  <View className="flex-row items-center gap-4" key={summitId}>
-                    <View className="flex-1">
-                      <ThemedText
-                        className="flex-1 font-medium"
-                        numberOfLines={1}
-                      >
-                        {mountainName}
-                      </ThemedText>
-                      <ThemedText className="text-sm text-muted-foreground">
-                        {format(summitedAt, "dd MMM yyyy")}
-                      </ThemedText>
+        {!!latestSummits?.length && (
+          <View className="gap-4">
+            <ThemedText className="text-2xl font-bold">
+              <FormattedMessage defaultMessage="Latest summits" />
+            </ThemedText>
+            <View className="gap-3">
+              {latestSummits?.map(
+                ({ summitId, mountainName, summitedAt, users }) => {
+                  return (
+                    <View
+                      className="flex-row items-center gap-4"
+                      key={summitId}
+                    >
+                      <View className="flex-1">
+                        <ThemedText
+                          className="flex-1 font-medium"
+                          numberOfLines={1}
+                        >
+                          {mountainName}
+                        </ThemedText>
+                        <ThemedText className="text-sm text-muted-foreground">
+                          {format(summitedAt, "dd MMM yyyy")}
+                        </ThemedText>
+                      </View>
+                      <View className="ml-auto">
+                        <AvatarGroup
+                          size="sm"
+                          items={users.map((user) => ({
+                            name: getFullName(user),
+                            imageUrl: user.imageUrl,
+                          }))}
+                        />
+                      </View>
                     </View>
-                    <View className="ml-auto">
-                      <AvatarGroup
-                        size="sm"
-                        items={users.map((user) => ({
-                          name: getFullName(user),
-                          imageUrl: user.imageUrl,
-                        }))}
-                      />
-                    </View>
-                  </View>
-                );
-              },
-            )}
+                  );
+                },
+              )}
+            </View>
           </View>
-        </View>
+        )}
         <View className="gap-4">
           <View className="flex-row items-end justify-between">
             <ThemedText className="text-2xl font-bold">

@@ -139,7 +139,12 @@ export default function MountainsScreen() {
                       }}
                       key={name}
                     >
-                      <ThemedText className="font-medium text-foreground">
+                      <ThemedText
+                        className={twMerge(
+                          "font-medium text-foreground",
+                          isSelected && "text-white",
+                        )}
+                      >
                         {name}
                       </ThemedText>
                     </Pressable>
