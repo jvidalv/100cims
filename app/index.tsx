@@ -225,31 +225,36 @@ export default function IndexScreen() {
               {latestSummits?.map(
                 ({ summitId, mountainName, summitedAt, users }) => {
                   return (
-                    <View
-                      className="flex-row items-center gap-4"
+                    <Link
+                      href={{
+                        pathname: "/user/summits/[summit]",
+                        params: { summit: summitId },
+                      }}
                       key={summitId}
                     >
-                      <View className="flex-1">
-                        <ThemedText
-                          className="flex-1 font-medium"
-                          numberOfLines={1}
-                        >
-                          {mountainName}
-                        </ThemedText>
-                        <ThemedText className="text-sm text-muted-foreground">
-                          {format(summitedAt, "dd MMM yyyy")}
-                        </ThemedText>
+                      <View className="flex-row items-center gap-4">
+                        <View className="flex-1">
+                          <ThemedText
+                            className="flex-1 font-medium"
+                            numberOfLines={1}
+                          >
+                            {mountainName}
+                          </ThemedText>
+                          <ThemedText className="text-sm text-muted-foreground">
+                            {format(summitedAt, "dd MMM yyyy")}
+                          </ThemedText>
+                        </View>
+                        <View className="ml-auto">
+                          <AvatarGroup
+                            size="sm"
+                            items={users.map((user) => ({
+                              name: getFullName(user),
+                              imageUrl: user.imageUrl,
+                            }))}
+                          />
+                        </View>
                       </View>
-                      <View className="ml-auto">
-                        <AvatarGroup
-                          size="sm"
-                          items={users.map((user) => ({
-                            name: getFullName(user),
-                            imageUrl: user.imageUrl,
-                          }))}
-                        />
-                      </View>
-                    </View>
+                    </Link>
                   );
                 },
               )}

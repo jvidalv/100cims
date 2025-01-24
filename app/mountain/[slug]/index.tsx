@@ -187,45 +187,52 @@ export default function MountainScreen() {
             const firstNameSecond = users[1]?.firstName;
 
             return (
-              <View
+              <Link
+                href={{
+                  pathname: "/user/summits/[summit]",
+                  params: { summit: summitId },
+                }}
                 key={summitId}
-                className="flex-row items-end justify-between gap-4"
               >
-                <View>
-                  <ThemedText className="font-black">
-                    <ThemedText className="font-medium">{firstName}</ThemedText>
-                    {users.length >= 2 && (
+                <View className="w-full flex-row items-end justify-between gap-4">
+                  <View>
+                    <ThemedText className="font-black">
                       <ThemedText className="font-medium">
-                        {users.length === 2 ? (
-                          <ThemedText className="text-muted-foreground">
-                            {" "}
-                            &
-                          </ThemedText>
-                        ) : (
-                          ","
-                        )}{" "}
-                        {firstNameSecond}
+                        {firstName}
                       </ThemedText>
-                    )}
-                    {users.length > 2 && (
-                      <ThemedText className="text-muted-foreground">
-                        {" "}
-                        & {users.length - 2} more
-                      </ThemedText>
-                    )}
-                  </ThemedText>
-                  <ThemedText className="text-sm text-muted-foreground">
-                    {format(summitedAt, "dd MMM yyyy")}
-                  </ThemedText>
+                      {users.length >= 2 && (
+                        <ThemedText className="font-medium">
+                          {users.length === 2 ? (
+                            <ThemedText className="text-muted-foreground">
+                              {" "}
+                              &
+                            </ThemedText>
+                          ) : (
+                            ","
+                          )}{" "}
+                          {firstNameSecond}
+                        </ThemedText>
+                      )}
+                      {users.length > 2 && (
+                        <ThemedText className="text-muted-foreground">
+                          {" "}
+                          & {users.length - 2} more
+                        </ThemedText>
+                      )}
+                    </ThemedText>
+                    <ThemedText className="text-sm text-muted-foreground">
+                      {format(summitedAt, "dd MMM yyyy")}
+                    </ThemedText>
+                  </View>
+                  <AvatarGroup
+                    size="sm"
+                    items={users.map((user) => ({
+                      name: getFullName(user),
+                      imageUrl: user.imageUrl,
+                    }))}
+                  />
                 </View>
-                <AvatarGroup
-                  size="sm"
-                  items={users.map((user) => ({
-                    name: getFullName(user),
-                    imageUrl: user.imageUrl,
-                  }))}
-                />
-              </View>
+              </Link>
             );
           })}
         </View>

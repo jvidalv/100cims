@@ -1,7 +1,7 @@
 // https://docs.expo.dev/guides/using-eslint/
 module.exports = {
   extends: ["expo", "prettier", "plugin:tailwindcss/recommended"],
-  ignorePatterns: ["/dist/*"],
+  ignorePatterns: ["/dist/*", "/expo-env.d.ts"],
   plugins: ["prettier", "react-hooks", "import", "tailwindcss", "formatjs"],
   rules: {
     "formatjs/no-offset": "error",

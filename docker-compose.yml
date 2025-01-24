@@ -13,7 +13,7 @@ services:
       POSTGRES_DB: my_local_db   # Default database name
     volumes:
       - pgdata:/var/lib/postgresql/data # Persist data across container restarts
-      - ./init-scripts:/docker-entrypoint-initdb.d # Optional: Initialize database with scripts
+      - ./api/db/init-script.sql # Optional: Initialize database with scripts
 
 volumes:
   pgdata:
