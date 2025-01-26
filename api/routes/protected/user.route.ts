@@ -119,8 +119,11 @@ export const userRoute = new Elysia({ prefix: "/user" })
         .where(
           and(
             eq(summitHasUsersTable.userId, userId),
-            query.challengeId
-              ? eq(challengeHasMountainTable.challengeId, query.challengeId)
+            query.challengeId || "5f996363-7460-4bc8-817c-8dd633c0b504"
+              ? eq(
+                  challengeHasMountainTable.challengeId,
+                  query.challengeId || "5f996363-7460-4bc8-817c-8dd633c0b504",
+                )
               : undefined,
           ),
         )

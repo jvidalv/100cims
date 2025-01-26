@@ -50,7 +50,7 @@ export const hiscoresRoute = new Elysia({ prefix: "/hiscores" }).use(JWT()).get(
         and(
           eq(summitTable.validated, true),
           eq(userTable.visibleOnHiscores, true),
-          eq(challengeHasMountainTable.challengeId, query.challengeId), // Filter by challenge ID
+          eq(challengeHasMountainTable.challengeId, query.challengeId),
         ),
       )
       .groupBy(

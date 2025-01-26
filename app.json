@@ -20,7 +20,10 @@
         "foregroundImage": "./assets/images/mountain.png",
         "backgroundColor": "#f43f5e"
       },
-      "package": "app.x100cims.x100cims"
+      "package": "app.x100cims.x100cims",
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -60,6 +63,12 @@
       "eas": {
         "projectId": "b06b0874-9640-4da6-9acc-227afe51cfd1"
       }
+    },
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/b06b0874-9640-4da6-9acc-227afe51cfd1"
     }
   }
 }
