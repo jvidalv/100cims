@@ -101,7 +101,8 @@ export default function UserIndexScreen() {
         </View>
         <View>
           <ThemedText className="text-center text-muted-foreground">
-            <FormattedMessage defaultMessage="Version" />{" "}
+            <FormattedMessage defaultMessage="Version" />
+            {" ~"}
             {Application.nativeApplicationVersion}
           </ThemedText>
         </View>
