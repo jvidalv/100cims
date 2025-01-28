@@ -20,7 +20,7 @@ export const AvatarGroup = ({
     <View className="flex-row flex-wrap">
       {itemsSliced?.map((item, index) => (
         <Avatar
-          key={item.name}
+          key={index}
           size={size}
           imageUrl={item.imageUrl}
           initials={getInitials(item.name)}
