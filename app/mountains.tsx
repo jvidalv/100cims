@@ -7,7 +7,7 @@ import { ThemedView, ThemedText, SearchInput } from "@/components/ui/atoms";
 import { MountainItemList } from "@/components/ui/molecules";
 import { ScreenHeader } from "@/components/ui/molecules";
 import { useMountains } from "@/domains/mountain/mountain.api";
-import { useUserSummits } from "@/domains/user/user.api";
+import { useUserChallengeSummits } from "@/domains/user/user.api";
 import { cleanText } from "@/lib";
 
 type FilterType = "higher-first" | "essentials" | "not-summited" | "summited";
@@ -17,7 +17,7 @@ export default function MountainsScreen() {
   const { data } = useMountains();
   const [query, setQuery] = useState("");
   const [filtersSelected, setFiltersSelected] = useState<FilterType[]>([]);
-  const { data: userSummits } = useUserSummits();
+  const { data: userSummits } = useUserChallengeSummits();
   const filters: {
     type: FilterType;
     name: string;

@@ -4,7 +4,7 @@ import { FormattedMessage } from "react-intl";
 import { TouchableOpacity, View } from "react-native";
 
 import { ThemedText } from "@/components/ui/atoms";
-import { useUserSummits } from "@/domains/user/user.api";
+import { useUserChallengeSummits } from "@/domains/user/user.api";
 
 export const MountainItemList = ({
   slug,
@@ -21,7 +21,7 @@ export const MountainItemList = ({
   essential: boolean;
   imageUrl: string | null;
 }) => {
-  const { data: userSummits } = useUserSummits();
+  const { data: userSummits } = useUserChallengeSummits();
 
   const isSummited = userSummits?.summits.some(
     ({ mountainSlug }) => slug === mountainSlug,

@@ -1,5 +1,5 @@
 import { format } from "date-fns/format";
-import { Link } from "expo-router";
+import { Link, Redirect } from "expo-router";
 import { FormattedMessage } from "react-intl";
 import { ScrollView, View } from "react-native";
 import { twMerge } from "tailwind-merge";
@@ -18,7 +18,7 @@ export default function UserSummitsScreen() {
   const { data: userSummits } = useUserSummits();
 
   if (!me) {
-    return null;
+    return <Redirect href="/join" />;
   }
 
   return (

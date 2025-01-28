@@ -6,7 +6,7 @@ import { useChallenge } from "@/components/providers/challenge-provider";
 import { useApiWithAuth } from "@/hooks/use-api-with-auth";
 
 export const USER_ME_QUERY_KEY = ["me"];
-export const USER_SUMMITS_KEY = (challengeId: string) => [
+export const USER_SUMMITS_KEY = (challengeId?: string) => [
   "user",
   "summits",
   "all",
@@ -49,7 +49,7 @@ export const useUsers = ({ query }: { query?: string }) => {
   return { ...args, data: args.data?.data?.message };
 };
 
-export const useUserSummits = () => {
+export const useUserChallengeSummits = () => {
   const { isAuthenticated } = useAuth();
   const { challengeId } = useChallenge();
   const api = useApiWithAuth();
@@ -58,6 +58,19 @@ export const useUserSummits = () => {
     queryKey: USER_SUMMITS_KEY(challengeId),
     enabled: () => isAuthenticated,
     queryFn: () => api.protected.user.summits.get({ query: { challengeId } }),
+  });
+
+  return { ...props, data: props?.data?.data?.message };
+};
+
+export const useUserSummits = () => {
+  const { isAuthenticated } = useAuth();
+  const api = useApiWithAuth();
+
+  const props = useQuery({
+    queryKey: USER_SUMMITS_KEY(),
+    enabled: () => isAuthenticated,
+    queryFn: () => api.protected.user.summits.get({ query: {} }),
   });
 
   return { ...props, data: props?.data?.data?.message };

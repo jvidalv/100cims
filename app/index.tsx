@@ -22,13 +22,13 @@ import { AvatarGroup } from "@/components/ui/molecules/avatar-group";
 import { useChallengesGet } from "@/domains/challenge/challenge.api";
 import { useRecommendedPeaks } from "@/domains/mountain/mountain.api";
 import { useSummitsGet } from "@/domains/summit/summit.api";
-import { useUserMe, useUserSummits } from "@/domains/user/user.api";
+import { useUserMe, useUserChallengeSummits } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
 import { hasDynamicIsland } from "@/lib/device";
 import { getInitials } from "@/lib/strings";
 
 const MountainsDone = () => {
-  const { data: userSummits } = useUserSummits();
+  const { data: userSummits } = useUserChallengeSummits();
 
   const { isAuthenticated } = useAuth();
   const { data: challenges } = useChallengesGet();

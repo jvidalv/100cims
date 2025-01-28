@@ -14,7 +14,7 @@ import { AvatarGroup } from "@/components/ui/molecules";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
 import { useMountains } from "@/domains/mountain/mountain.api";
 import { useSummitsGet } from "@/domains/summit/summit.api";
-import { useUserSummits } from "@/domains/user/user.api";
+import { useUserChallengeSummits } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
 import { isIOS } from "@/lib/device";
 
@@ -42,7 +42,7 @@ export default function MountainScreen() {
       limit: 100,
       mountainId: mountain?.id,
     });
-  const { data: userSummits } = useUserSummits();
+  const { data: userSummits } = useUserChallengeSummits();
 
   const isSummited = userSummits?.summits.some(
     ({ mountainSlug }) => slug === mountainSlug,

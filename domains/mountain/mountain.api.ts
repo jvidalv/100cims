@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 import { useChallenge } from "@/components/providers/challenge-provider";
-import { useUserSummits } from "@/domains/user/user.api";
+import { useUserChallengeSummits } from "@/domains/user/user.api";
 import { useApiWithAuth } from "@/hooks/use-api-with-auth";
 import { api } from "@/lib";
 
@@ -19,7 +19,7 @@ export const useMountains = () => {
 
 export const useRecommendedPeaks = () => {
   const { data } = useMountains();
-  const { data: userSummits } = useUserSummits();
+  const { data: userSummits } = useUserChallengeSummits();
 
   return data?.data?.message
     ?.filter(

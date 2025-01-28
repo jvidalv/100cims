@@ -119,16 +119,22 @@ export const userRoute = new Elysia({ prefix: "/user" })
         .where(
           and(
             eq(summitHasUsersTable.userId, userId),
-            query.challengeId || "5f996363-7460-4bc8-817c-8dd633c0b504"
-              ? eq(
-                  challengeHasMountainTable.challengeId,
-                  query.challengeId || "5f996363-7460-4bc8-817c-8dd633c0b504",
-                )
+            query.challengeId
+              ? eq(challengeHasMountainTable.challengeId, query.challengeId)
               : undefined,
           ),
         )
+        .groupBy(
+          summitTable.id,
+          summitTable.summitedAt,
+          summitTable.validated,
+          mountainTable.name,
+          mountainTable.slug,
+          mountainTable.imageUrl,
+          mountainTable.height,
+          mountainTable.essential,
+        )
         .orderBy(desc(summitTable.createdAt));
-
       const summitsWithScore = results.map((props) => {
         return {
           ...props,
@@ -166,9 +172,11 @@ export const userRoute = new Elysia({ prefix: "/user" })
       };
     },
     {
-      query: t.Object({
-        challengeId: t.String(),
-      }),
+      query: t.Optional(
+        t.Object({
+          challengeId: t.Optional(t.String()),
+        }),
+      ),
       response: t.Object({
         success: t.Boolean(),
         message: t.Object({

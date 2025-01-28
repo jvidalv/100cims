@@ -35,7 +35,7 @@ import {
 } from "@/domains/challenge/challenge.api";
 import { useMountains } from "@/domains/mountain/mountain.api";
 import { useSummitsGet } from "@/domains/summit/summit.api";
-import { useUserMe, useUserSummits } from "@/domains/user/user.api";
+import { useUserMe, useUserChallengeSummits } from "@/domains/user/user.api";
 import { getJwt } from "@/lib/auth";
 import { isIpadOS, isWeb } from "@/lib/device";
 import { getLocale } from "@/lib/locale";
@@ -106,7 +106,7 @@ function Content() {
   const { isPending: isPendingUser } = useUserMe();
   const { isPending: isPendingHomepageSummits } = useSummitsGet({ limit: 5 });
   const { isPending: isPendingChallenges } = useChallengesGet();
-  useUserSummits();
+  useUserChallengeSummits();
 
   useEffect(() => {
     void SplashScreen.hideAsync();
