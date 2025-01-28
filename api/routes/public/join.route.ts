@@ -22,7 +22,7 @@ export const joinRoute = new Elysia().use(JWT()).post(
     if (body.provider === "apple") {
       email = getAppleEmailFromIdentityToken(body.identityToken);
       firstName = body.firstName;
-      lastName = body.firstName;
+      lastName = body.lastName;
     }
 
     if (body.provider === "google") {
@@ -33,6 +33,7 @@ export const joinRoute = new Elysia().use(JWT()).post(
         email: string;
         given_name: string;
         last_name: string;
+        family_name: string;
         picture: string;
       };
 
@@ -45,7 +46,7 @@ export const joinRoute = new Elysia().use(JWT()).post(
 
       email = json.email;
       firstName = json.given_name;
-      lastName = json.last_name;
+      lastName = json.family_name || json.last_name;
       imageUrl = json.picture;
     }
 
