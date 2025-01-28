@@ -4,8 +4,8 @@ import { ImagePickerAsset } from "expo-image-picker";
 export const getImageOptimized = async (
   image: ImagePickerAsset,
   config: { compress: number; resizeBy: number } = {
-    compress: 0.3,
-    resizeBy: 4,
+    compress: 0.5,
+    resizeBy: 3,
   },
 ) => {
   const manipulate = ImageManipulator.manipulate(image.uri);

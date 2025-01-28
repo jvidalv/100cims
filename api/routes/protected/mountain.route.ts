@@ -25,7 +25,7 @@ export const mountainRoute = new Elysia({ prefix: "/mountain" })
         return error(405, { success: false, message: SUMMIT_SPAM });
       }
 
-      if (!isBase64SizeValid(body.image, 200)) {
+      if (!isBase64SizeValid(body.image, 300)) {
         return error(500, { success: false, message: IMAGE_TO_BIG });
       }
 
