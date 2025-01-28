@@ -32,6 +32,7 @@ const MAPPING = {
   square: "checkbox-blank-outline",
   hourglass: "timer-sand",
   "arrow.left.arrow.right": "arrow-u-left-bottom",
+  "text.bubble": "chat-processing",
 } as Partial<
   Record<
     import("expo-symbols").SymbolViewProps["name"],

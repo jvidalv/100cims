@@ -8,6 +8,7 @@ import {
   ThemedText,
   ThemedKeyboardAvoidingView,
   Avatar,
+  Skeleton,
 } from "@/components/ui/atoms";
 import { ScreenHeader } from "@/components/ui/molecules";
 import { useUserMe, useUserSummits } from "@/domains/user/user.api";
@@ -15,7 +16,8 @@ import { useUserMe, useUserSummits } from "@/domains/user/user.api";
 export default function UserSummitsScreen() {
   const { data: me } = useUserMe();
 
-  const { data: userSummits } = useUserSummits();
+  const { data: userSummits, isPending: isPendingUserSummits } =
+    useUserSummits();
 
   if (!me) {
     return <Redirect href="/join" />;
@@ -32,6 +34,18 @@ export default function UserSummitsScreen() {
           </ThemedText>
         </ThemedText>
         <View className="gap-4">
+          {isPendingUserSummits && !userSummits?.summits?.length && (
+            <View className="flex-row items-center justify-between">
+              <View className="flex-row gap-2">
+                <Skeleton className="size-10 rounded-full" />
+                <View className="gap-1">
+                  <Skeleton className="h-4 w-32" />
+                  <Skeleton className="h-4 w-20" />
+                </View>
+              </View>
+              <Skeleton className="h-4 w-20" />
+            </View>
+          )}
           {userSummits?.summits?.map(
             ({
               summitId,

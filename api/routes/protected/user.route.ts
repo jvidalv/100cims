@@ -10,6 +10,7 @@ import {
   userTable,
 } from "@/api/db/schema";
 import { isBase64SizeValid } from "@/api/lib/images";
+import { addRowToSheets, SUGGESTIONS_SPREADSHEET } from "@/api/lib/sheets";
 import { IMAGE_TO_BIG } from "@/api/routes/@shared/error-codes";
 import { JWT } from "@/api/routes/@shared/jwt";
 import { getPublicUrl, putImageOnS3 } from "@/api/routes/@shared/s3";
@@ -301,6 +302,29 @@ export const userRoute = new Elysia({ prefix: "/user" })
         500: t.Object({
           success: t.Boolean(),
         }),
+        200: t.Object({
+          success: t.Boolean(),
+        }),
+      },
+    },
+  )
+  .post(
+    "/suggestion",
+    async ({ body, store }) => {
+      const user = getStoreUser(store);
+      await addRowToSheets(SUGGESTIONS_SPREADSHEET, [
+        user.email,
+        body.suggestion,
+      ]);
+      return {
+        success: true,
+      };
+    },
+    {
+      body: t.Object({
+        suggestion: t.String(),
+      }),
+      response: {
         200: t.Object({
           success: t.Boolean(),
         }),

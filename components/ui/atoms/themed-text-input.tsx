@@ -7,6 +7,8 @@ type InputProps = {
   value?: string | null;
   defaultValue?: string | null;
   disabled?: boolean;
+  multiline?: boolean;
+  autoFocus?: boolean;
   className?: string;
   onChangeText?: (text: string) => void;
 };
@@ -18,6 +20,8 @@ export const ThemedTextInput: FC<InputProps> = ({
   disabled,
   onChangeText,
   className,
+  multiline,
+  autoFocus,
 }) => {
   const isUncontrolled = !!defaultValue;
   const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
@@ -66,6 +70,8 @@ export const ThemedTextInput: FC<InputProps> = ({
       </Animated.View>
       <TextInput
         editable={!disabled}
+        multiline={multiline}
+        autoFocus={autoFocus}
         className={twMerge(
           "w-full border-2 border-border rounded-xl flex py-5 px-4 text-foreground focus:border-blue-500",
           disabled && "bg-gray-50 dark:bg-neutral-900 text-foreground/60",

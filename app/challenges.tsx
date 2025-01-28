@@ -1,4 +1,4 @@
-import { useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { useState } from "react";
 import { FormattedMessage } from "react-intl";
 import { TouchableOpacity, View } from "react-native";
@@ -93,6 +93,11 @@ export default function ChallengesScreen() {
             )}
           </TouchableOpacity>
         ))}
+        <Link href="/user/suggestions" asChild>
+          <ThemedText className="mt-4 text-center font-medium text-muted-foreground underline">
+            <FormattedMessage defaultMessage="Suggest a new challenge" />
+          </ThemedText>
+        </Link>
       </View>
     </ThemedView>
   );

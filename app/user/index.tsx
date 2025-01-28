@@ -44,6 +44,11 @@ export default function UserIndexScreen() {
       text: intl.formatMessage({ defaultMessage: "About the app" }),
       onPress: () => router.push("/user/about-the-app"),
     },
+    {
+      iconName: "text.bubble.fill",
+      text: intl.formatMessage({ defaultMessage: "Suggestions" }),
+      onPress: () => router.push("/user/suggestions"),
+    },
   ];
 
   const onLogout = () => {
