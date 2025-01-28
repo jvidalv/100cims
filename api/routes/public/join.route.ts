@@ -78,11 +78,7 @@ export const joinRoute = new Elysia().use(JWT()).post(
         .returning();
       user = insert[0];
     }
-    try {
-      void addRowToSheets(EMAILS_SPREADSHEET, [email, firstName, lastName]);
-    } catch {
-      // noop
-    }
+
     const hash = await jwt.sign({
       id: user.id,
       email: user.email,

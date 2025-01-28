@@ -1,12 +1,14 @@
 import { format } from "date-fns/format";
 import { Image } from "expo-image";
-import { Redirect, useLocalSearchParams } from "expo-router";
+import { Link, Redirect, useLocalSearchParams, useRouter } from "expo-router";
 import { FormattedMessage } from "react-intl";
-import { ScrollView, View } from "react-native";
+import { ScrollView, TouchableOpacity, View } from "react-native";
 
 import { useAuth } from "@/components/providers/auth-provider";
 import {
   Avatar,
+  Button,
+  Icon,
   Skeleton,
   ThemedText,
   ThemedView,
@@ -17,6 +19,7 @@ import { getFullName } from "@/domains/user/user.utils";
 import { getInitials } from "@/lib/strings";
 
 const Content = () => {
+  const router = useRouter();
   const { summit } = useLocalSearchParams<{ summit: string }>();
 
   const { data, isPending } = useSummitGet({ summitId: summit });
@@ -26,7 +29,15 @@ const Content = () => {
       <ThemedView className="flex-1">
         <ScreenHeader />
         <View className="px-6">
-          <Skeleton className="h-9 w-40" />
+          <Skeleton className="mb-1 h-10 w-64" />
+          <Skeleton className="mb-8 h-6 w-20" />
+          <ThemedText className="mb-2 text-xl font-medium">
+            <FormattedMessage defaultMessage="People" />
+          </ThemedText>
+          <Skeleton className="mb-6 size-10 rounded-full" />
+          <ThemedText className="mb-2 text-xl font-medium">
+            <FormattedMessage defaultMessage="Photo" />
+          </ThemedText>
         </View>
       </ThemedView>
     );
@@ -36,12 +47,25 @@ const Content = () => {
     <ThemedView className="flex-1">
       <ScreenHeader />
       <ScrollView className="flex-1 px-6">
-        <ThemedText className=" text-4xl font-bold">
-          {data.mountainName}
-        </ThemedText>
-        <ThemedText className="mb-8 text-lg font-semibold text-muted-foreground">
-          {format(data.summitedAt, "dd MMM yyyy")}
-        </ThemedText>
+        <Link
+          href={{
+            pathname: "/mountain/[slug]",
+            params: { slug: data.mountainSlug },
+          }}
+          asChild
+        >
+          <TouchableOpacity className="mb-8">
+            <ThemedText className="text-3xl font-bold">
+              {data.mountainName}
+            </ThemedText>
+            <View className="flex-row items-center gap-1">
+              <ThemedText className="text-lg font-semibold text-muted-foreground">
+                {format(data.summitedAt, "dd MMM yyyy")}
+              </ThemedText>
+              <Icon name="arrow.forward" size={20} muted />
+            </View>
+          </TouchableOpacity>
+        </Link>
         <ThemedText className="mb-2 text-xl font-medium">
           <FormattedMessage defaultMessage="People" />
         </ThemedText>
@@ -60,7 +84,7 @@ const Content = () => {
         <ThemedText className="mb-2 text-xl font-medium">
           <FormattedMessage defaultMessage="Photo" />
         </ThemedText>
-        <View className="overflow-hidden rounded-xl">
+        <View className="mb-6 overflow-hidden rounded-xl">
           <Image
             source={data.summitImageUrl}
             placeholder={{ blurhash: `L~I64nWEWXaz_NWEWWazbvWBaxfQ` }}
@@ -70,6 +94,9 @@ const Content = () => {
             transition={500}
           />
         </View>
+        <Button intent="outline" onPress={router.back}>
+          <FormattedMessage defaultMessage="Back" />
+        </Button>
       </ScrollView>
     </ThemedView>
   );
