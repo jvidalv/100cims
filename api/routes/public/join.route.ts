@@ -3,6 +3,7 @@ import { Elysia, t } from "elysia";
 
 import { db } from "@/api/db";
 import { userTable } from "@/api/db/schema";
+import { addRowToSheets, EMAILS_SPREADSHEET } from "@/api/lib/sheets";
 import { JWT } from "@/api/routes/@shared/jwt";
 
 const getAppleEmailFromIdentityToken = (identityToken: string): string => {
@@ -61,6 +62,11 @@ export const joinRoute = new Elysia().use(JWT()).post(
 
     let user = users?.[0];
     if (!user) {
+      try {
+        void addRowToSheets(EMAILS_SPREADSHEET, [email, firstName, lastName]);
+      } catch {
+        // noop
+      }
       const insert = await db
         .insert(userTable)
         .values({
@@ -72,7 +78,11 @@ export const joinRoute = new Elysia().use(JWT()).post(
         .returning();
       user = insert[0];
     }
-
+    try {
+      void addRowToSheets(EMAILS_SPREADSHEET, [email, firstName, lastName]);
+    } catch {
+      // noop
+    }
     const hash = await jwt.sign({
       id: user.id,
       email: user.email,
