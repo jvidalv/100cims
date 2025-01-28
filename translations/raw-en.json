@@ -2,6 +2,9 @@
   "///zLu": {
     "defaultMessage": "Challenges"
   },
+  "/b3UL8": {
+    "defaultMessage": "Photo"
+  },
   "0++ZND": {
     "defaultMessage": "My summits"
   },
@@ -38,6 +41,9 @@
   "9yslhD": {
     "defaultMessage": "Yes, I'm sure"
   },
+  "A9uIjl": {
+    "defaultMessage": "Share your ideas to improve the app!"
+  },
   "AD7tFG": {
     "defaultMessage": "Error, try again."
   },
@@ -65,6 +71,9 @@
   "FgydNe": {
     "defaultMessage": "View"
   },
+  "Hv0XJn": {
+    "defaultMessage": "Suggestions"
+  },
   "I3b4hn": {
     "defaultMessage": "Version"
   },
@@ -88,6 +97,12 @@
   },
   "NyrFn7": {
     "defaultMessage": "Also unblock..."
+  },
+  "OHvDJa": {
+    "defaultMessage": "Suggest a new challenge"
+  },
+  "OKhRC6": {
+    "defaultMessage": "Share"
   },
   "OmsvLb": {
     "defaultMessage": "Download now"
@@ -163,6 +178,9 @@
   },
   "chGTqd": {
     "defaultMessage": "You must wait some time before summiting again!"
+  },
+  "ciVgJV": {
+    "defaultMessage": "Received, thanks for your suggestion!"
   },
   "dEo+/0": {
     "defaultMessage": "and be part of a thriving community"
