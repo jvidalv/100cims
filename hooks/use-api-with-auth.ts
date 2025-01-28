@@ -1,12 +1,10 @@
-import { treaty } from "@elysiajs/eden";
-
-import { App } from "@/api/routes";
 import { useAuth } from "@/components/providers/auth-provider";
+import { request } from "@/lib/request";
 
 export const useApiWithAuth = () => {
   const { jwt } = useAuth();
 
-  const app = treaty<App>(process.env.EXPO_PUBLIC_API_URL || "", {
+  const app = request({
     headers: (path) => {
       if (path.startsWith("/api/protected") && jwt) {
         return [{ Authorization: `Bearer ${jwt}` }];
