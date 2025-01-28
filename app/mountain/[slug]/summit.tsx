@@ -10,7 +10,13 @@ import { twMerge } from "tailwind-merge";
 import { IMAGE_TO_BIG } from "@/api/routes/@shared/error-codes";
 import { useChallenge } from "@/components/providers/challenge-provider";
 import { queryClient } from "@/components/providers/query-client-provider";
-import { Button, Icon, ThemedText, ThemedView } from "@/components/ui/atoms";
+import {
+  ActivityIndicator,
+  Button,
+  Icon,
+  ThemedText,
+  ThemedView,
+} from "@/components/ui/atoms";
 import { ThemedDateInput } from "@/components/ui/atoms/themed-date-input";
 import {
   UserForSelectInput,
@@ -38,6 +44,7 @@ export default function SummitMountainScreen() {
 
   const [image, setImage] = useState<ImagePickerAsset | null>(null);
   const [isImageMissing, setIsImageMissing] = useState(false);
+  const [isLoadingImage, setIsLoadingImage] = useState(false);
   const [date, setDate] = useState<Date>();
   const [selectedUsers, setSelectedUsers] = useState<UserForSelectInput[]>(
     user
@@ -60,6 +67,7 @@ export default function SummitMountainScreen() {
   }
 
   const pickImage = async () => {
+    setIsLoadingImage(true);
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       base64: true,
@@ -80,6 +88,7 @@ export default function SummitMountainScreen() {
         );
       }
     }
+    setIsLoadingImage(false);
   };
 
   const submitDisabled =
@@ -217,6 +226,8 @@ export default function SummitMountainScreen() {
                     contentPosition="center"
                   />
                 </View>
+              ) : isLoadingImage ? (
+                <ActivityIndicator className="opacity-50" />
               ) : (
                 <Icon
                   name="camera"
