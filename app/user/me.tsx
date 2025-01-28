@@ -16,6 +16,7 @@ import {
   Avatar,
 } from "@/components/ui/atoms";
 import { ScreenHeader } from "@/components/ui/molecules";
+import { SUMMITS_KEY } from "@/domains/summit/summit.api";
 import { USER_SUMMITS_KEY, useUserMe } from "@/domains/user/user.api";
 import { useApiWithAuth } from "@/hooks/use-api-with-auth";
 import { debounce } from "@/lib/debounce";
@@ -59,6 +60,9 @@ export default function UserMeScreen() {
         void refetch();
         void queryClient.refetchQueries({
           queryKey: USER_SUMMITS_KEY(challengeId),
+        });
+        void queryClient.refetchQueries({
+          queryKey: SUMMITS_KEY({ limit: 5, challengeId }),
         });
       }
     }
