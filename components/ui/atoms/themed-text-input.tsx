@@ -1,6 +1,5 @@
 import { FC, useEffect, useRef, useState } from "react";
-import { TextInput, View, Animated } from "react-native";
-import { KeyboardTypeOptions } from "react-native/Libraries/Components/TextInput/TextInput";
+import { TextInput, View, Animated, KeyboardTypeOptions } from "react-native";
 import { twMerge } from "tailwind-merge";
 
 type InputProps = {
