@@ -4,5 +4,6 @@ export const isBase64SizeValid = (
 ): boolean => {
   const sizeInBytes = Buffer.byteLength(base64Data, "base64");
   const sizeInKB = sizeInBytes / 1024;
+
   return sizeInKB <= maxSizeInKB;
 };
