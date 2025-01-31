@@ -130,13 +130,6 @@ export default function SummitMountainScreen() {
                     defaultMessage: "Error, try again.",
                   }),
                 );
-          case 405:
-            return Alert.alert(
-              intl.formatMessage({
-                defaultMessage:
-                  "You must wait some time before summiting again!",
-              }),
-            );
         }
       } else {
         void queryClient.refetchQueries({

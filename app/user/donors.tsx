@@ -1,4 +1,3 @@
-import { StripeProvider, useStripe } from "@stripe/stripe-react-native";
 import { useLocalSearchParams, Link } from "expo-router";
 import { useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
@@ -9,6 +8,7 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 
+import { StripeProvider, useStripe } from "@/components/bridges/stripe";
 import { queryClient } from "@/components/providers/query-client-provider";
 import {
   Avatar,
