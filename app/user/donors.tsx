@@ -199,7 +199,7 @@ export default function DonorsScreen() {
         ))}
       </ScrollView>
       <StripeProvider
-        publishableKey="pk_test_51QlXQzGGF8E5GRBLA45Sb036ZDfsB5UFOvVaZ1lSOCa01Ict61waxEAEyVeOxzxypm8CUv440zVoCxehMYwgmB6X00lHUYjRUU"
+        publishableKey={process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""}
         merchantIdentifier="merchant.100cims.100cims" // required for Apple Pay
         urlScheme="centcims" // required for 3D Secure and bank redirects
       >
