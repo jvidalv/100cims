@@ -1,4 +1,3 @@
-import { eq, and, gt } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 import { uuidv7 } from "uuidv7";
 
@@ -6,24 +5,17 @@ import { db } from "@/api/db";
 import { summitHasUsersTable, summitTable } from "@/api/db/schema";
 import { formatDateForPostgres } from "@/api/lib/dates";
 import { isBase64SizeValid } from "@/api/lib/images";
-import { IMAGE_TO_BIG, SUMMIT_SPAM } from "@/api/routes/@shared/error-codes";
+import { IMAGE_TO_BIG } from "@/api/routes/@shared/error-codes";
 import { JWT } from "@/api/routes/@shared/jwt";
 import { getPublicUrl, putImageOnS3 } from "@/api/routes/@shared/s3";
-import { getStoreUser } from "@/api/routes/@shared/store";
 
 export const mountainRoute = new Elysia({ prefix: "/mountain" })
   .use(JWT())
   .post(
     "/summit",
-    async ({ body, error, store }) => {
+    async ({ body, error }) => {
       const id = uuidv7();
       const key = `${process.env.APP_NAME}/mountain/summit/${id}.jpeg`;
-      const user = getStoreUser(store);
-      const shouldReturn405 = await hasAddedSummitRecently(user.id);
-
-      if (shouldReturn405) {
-        return error(405, { success: false, message: SUMMIT_SPAM });
-      }
 
       if (!isBase64SizeValid(body.image, 300)) {
         return error(500, { success: false, message: IMAGE_TO_BIG });
@@ -79,25 +71,25 @@ export const mountainRoute = new Elysia({ prefix: "/mountain" })
       },
     },
   );
-
-async function hasAddedSummitRecently(userId: string): Promise<boolean> {
-  const oneMinuteAgo = new Date(Date.now() - 2 * 60 * 1000); // 1 minute ago
-
-  const results = await db
-    .select({
-      recentSummit: summitTable.id,
-    })
-    .from(summitTable)
-    .innerJoin(
-      summitHasUsersTable,
-      eq(summitTable.id, summitHasUsersTable.summitId),
-    )
-    .where(
-      and(
-        eq(summitHasUsersTable.userId, userId),
-        gt(summitTable.createdAt, oneMinuteAgo),
-      ),
-    );
-
-  return results.length > 0;
-}
+//
+// async function hasAddedSummitRecently(userId: string): Promise<boolean> {
+//   const oneMinuteAgo = new Date(Date.now() - 2 * 60 * 1000); // 1 minute ago
+//
+//   const results = await db
+//     .select({
+//       recentSummit: summitTable.id,
+//     })
+//     .from(summitTable)
+//     .innerJoin(
+//       summitHasUsersTable,
+//       eq(summitTable.id, summitHasUsersTable.summitId),
+//     )
+//     .where(
+//       and(
+//         eq(summitHasUsersTable.userId, userId),
+//         gt(summitTable.createdAt, oneMinuteAgo),
+//       ),
+//     );
+//
+//   return results.length > 0;
+// }

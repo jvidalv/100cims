@@ -10,3 +10,4 @@ export { SearchInput } from "./search-input";
 export { ActivityIndicator } from "./activity-indicator";
 export { ThemedToggleInput } from "./themed-toggle-input";
 export { BlurView } from "./blur-view";
+export { ProgressBar } from "./progress-bar";

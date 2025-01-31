@@ -3304,6 +3304,11 @@
     "@smithy/types" "^4.1.0"
     tslib "^2.6.2"
 
+"@stripe/stripe-react-native@0.38.6":
+  version "0.38.6"
+  resolved "https://registry.yarnpkg.com/@stripe/stripe-react-native/-/stripe-react-native-0.38.6.tgz#a580c0e43aa3cde7ec0c707090f0d2ac40268bfa"
+  integrity sha512-U6yELoRr4h4x+p9an0MiDXZBbm/FYNayPXJP0PtsR3iFVAGpGQm6DzM+cye2PVlhbDK8htBA5ReZ1YEFxT/hJA==
+
 "@tanstack/query-core@5.62.16":
   version "5.62.16"
   resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.62.16.tgz#f7efc92b1562a054748bc00c7f8d9d833407503b"
@@ -3439,6 +3444,13 @@
   version "22.10.5"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-22.10.5.tgz#95af89a3fb74a2bb41ef9927f206e6472026e48b"
   integrity sha512-F8Q+SeGimwOo86fiovQh8qiXfFEh2/ocYv7tU5pJ3EXMSSxk1Joj5wefpFK2fHTf/N6HKGSxIDBT9f3gCxXPkQ==
+  dependencies:
+    undici-types "~6.20.0"
+
+"@types/node@>=8.1.0":
+  version "22.12.0"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-22.12.0.tgz#bf8af3b2af0837b5a62a368756ff2b705ae0048c"
+  integrity sha512-Fll2FZ1riMjNmlmJOdAyY5pUbkftXslB5DgEzlIuNaiWhXd00FhWxVC/r4yV/4wBb9JfImTu+jiSvXTkJ7F/gA==
   dependencies:
     undici-types "~6.20.0"
 
@@ -8627,7 +8639,7 @@ qrcode-terminal@0.11.0:
   resolved "https://registry.yarnpkg.com/qrcode-terminal/-/qrcode-terminal-0.11.0.tgz#ffc6c28a2fc0bfb47052b47e23f4f446a5fbdb9e"
   integrity sha512-Uu7ii+FQy4Qf82G4xu7ShHhjhGahEpCWc3x8UavY3CTcWV+ufmmCtwkr7ZKsX42jdL0kr1B5FKUeqJvAn51jzQ==
 
-qs@^6.7.0:
+qs@^6.11.0, qs@^6.7.0:
   version "6.14.0"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.14.0.tgz#c63fa40680d2c5c941412a0e899c89af60c0a930"
   integrity sha512-YWWTjgABSKcvs/nWBi9PycY/JiPJqOD4JA6o9Sej2AtvSGarXxKC3OQSk4pAarbdQlKAh5D4FCQkJNkW+GAn3w==
@@ -9706,6 +9718,14 @@ strip-json-comments@~2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/strip-json-comments/-/strip-json-comments-2.0.1.tgz#3c531942e908c2697c0ec344858c286c7ca0a60a"
   integrity sha512-4gB8na07fecVVkOI6Rs4e7T6NOTki5EmL7TUduTs6bu3EdnSycntVJ4re8kgZA+wx9IueI2Y11bfbgwtzuE0KQ==
+
+stripe@^17.6.0:
+  version "17.6.0"
+  resolved "https://registry.yarnpkg.com/stripe/-/stripe-17.6.0.tgz#6495a42b7a20066e0d96068c362da793d684e79c"
+  integrity sha512-+HB6+SManp0gSRB0dlPmXO+io18krlAe0uimXhhIkL/RG/VIRigkfoM3QDJPkqbuSW0XsA6uzsivNCJU1ELEDA==
+  dependencies:
+    "@types/node" ">=8.1.0"
+    qs "^6.11.0"
 
 strnum@^1.0.5:
   version "1.0.5"

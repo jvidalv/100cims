@@ -13,18 +13,21 @@ export const app = new Elysia({ prefix: "/api" })
         "validation",
         error.status,
         request.url,
+        error.message,
       ]);
     } else if (error instanceof ParseError) {
       void addRowToSheets(ERRORS_SPREADSHEET, [
         "parse",
         error.status,
         request.url,
+        error.message,
       ]);
     } else {
       void addRowToSheets(ERRORS_SPREADSHEET, [
         "generic",
         JSON.stringify(error),
         request.url,
+        error.message,
       ]);
     }
   })

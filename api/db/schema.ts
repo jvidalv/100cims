@@ -96,3 +96,17 @@ export const summitRelations = relations(summitTable, ({ one, many }) => ({
     references: [mountainTable.id],
   }),
 }));
+
+export const donorTable = pgTable("donor", {
+  id: uuid().primaryKey().defaultRandom(),
+  userId: uuid().references(() => userTable.id, { onDelete: "cascade" }),
+  donation: numeric().notNull(),
+  createdAt: timestamp().notNull().defaultNow(),
+});
+
+export const donorRelations = relations(donorTable, ({ one }) => ({
+  user: one(userTable, {
+    fields: [donorTable.userId],
+    references: [userTable.id],
+  }),
+}));

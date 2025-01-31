@@ -33,6 +33,7 @@ const MAPPING = {
   hourglass: "timer-sand",
   "arrow.left.arrow.right": "arrow-u-left-bottom",
   "text.bubble": "chat-processing",
+  "eurosign.circle.fill": "chess-king",
 } as Partial<
   Record<
     import("expo-symbols").SymbolViewProps["name"],

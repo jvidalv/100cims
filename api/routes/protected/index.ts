@@ -6,7 +6,9 @@ import { db } from "@/api/db";
 import { userTable } from "@/api/db/schema";
 import { JWT } from "@/api/routes/@shared/jwt";
 import { User } from "@/api/routes/@shared/types";
+import { donorRoute } from "@/api/routes/protected/donor.route";
 import { mountainRoute } from "@/api/routes/protected/mountain.route";
+import { stripeRoute } from "@/api/routes/protected/stripe.route";
 import { summitRoute } from "@/api/routes/protected/summit.route";
 import { userRoute } from "@/api/routes/protected/user.route";
 
@@ -45,4 +47,6 @@ export const protectedRoutes = new Elysia({ prefix: "/protected" })
   })
   .use(userRoute)
   .use(mountainRoute)
-  .use(summitRoute);
+  .use(summitRoute)
+  .use(stripeRoute)
+  .use(donorRoute);

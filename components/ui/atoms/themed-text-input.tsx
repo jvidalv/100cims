@@ -1,15 +1,20 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { TextInput, View, Animated } from "react-native";
+import { KeyboardTypeOptions } from "react-native/Libraries/Components/TextInput/TextInput";
 import { twMerge } from "tailwind-merge";
 
 type InputProps = {
-  label: string;
+  label?: string;
   value?: string | null;
   defaultValue?: string | null;
   disabled?: boolean;
   multiline?: boolean;
   autoFocus?: boolean;
   className?: string;
+  inputClassName?: string;
+  onFocus?: () => void;
+  onBlur?: () => void;
+  keyboardType?: KeyboardTypeOptions;
   onChangeText?: (text: string) => void;
 };
 
@@ -20,8 +25,12 @@ export const ThemedTextInput: FC<InputProps> = ({
   disabled,
   onChangeText,
   className,
+  inputClassName,
   multiline,
   autoFocus,
+  keyboardType,
+  onBlur,
+  onFocus,
 }) => {
   const isUncontrolled = !!defaultValue;
   const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
@@ -57,24 +66,28 @@ export const ThemedTextInput: FC<InputProps> = ({
 
   return (
     <View className={twMerge("relative w-full h-fit", className)}>
-      <Animated.View
-        style={[{ top: style.top }]}
-        className="absolute left-4 z-10 -mx-1 bg-background px-1"
-      >
-        <Animated.Text
-          style={[{ fontSize: style.fontSize }]}
-          className="text-muted-foreground"
+      {!!label && (
+        <Animated.View
+          style={[{ top: style.top }]}
+          className="absolute left-4 z-10 -mx-1 bg-background px-1"
         >
-          {label}
-        </Animated.Text>
-      </Animated.View>
+          <Animated.Text
+            style={[{ fontSize: style.fontSize }]}
+            className="text-muted-foreground"
+          >
+            {label}
+          </Animated.Text>
+        </Animated.View>
+      )}
       <TextInput
         editable={!disabled}
         multiline={multiline}
         autoFocus={autoFocus}
+        keyboardType={keyboardType}
         className={twMerge(
           "w-full border-2 border-border rounded-xl flex py-5 px-4 text-foreground focus:border-blue-500",
           disabled && "bg-gray-50 dark:bg-neutral-900 text-foreground/60",
+          inputClassName,
         )}
         style={{ fontSize: 16 }}
         value={!value ? undefined : value}
@@ -85,8 +98,14 @@ export const ThemedTextInput: FC<InputProps> = ({
           }
           onChangeText?.(text);
         }}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
+        onFocus={() => {
+          setIsFocused(true);
+          onFocus?.();
+        }}
+        onBlur={() => {
+          setIsFocused(false);
+          onBlur?.();
+        }}
       />
     </View>
   );

@@ -12,7 +12,7 @@ import {
 import { ScreenHeader } from "@/components/ui/molecules";
 import { useApiWithAuth } from "@/hooks/use-api-with-auth";
 
-export default function AboutTheAppScreen() {
+export default function SuggestionsScreen() {
   const intl = useIntl();
   const api = useApiWithAuth();
   const [suggestion, setSuggestion] = useState("");

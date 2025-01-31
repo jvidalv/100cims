@@ -11,7 +11,13 @@
     "ios": {
       "supportsTablet": true,
       "usesAppleSignIn": true,
-      "bundleIdentifier": "app.100cims.100cims"
+      "bundleIdentifier": "app.100cims.100cims",
+      "infoPlist": {
+        "CFBundleAllowMixedLocalizations": true,
+        "CFBundleLocalizations": [
+          "en", "ca", "es"
+        ]
+      }
     },
     "android": {
       "googleServicesFile": "./google-services.json",
@@ -20,10 +26,7 @@
         "foregroundImage": "./assets/images/mountain.png",
         "backgroundColor": "#f43f5e"
       },
-      "package": "app.x100cims.x100cims",
-      "permissions": [
-        "android.permission.RECORD_AUDIO"
-      ]
+      "package": "app.x100cims.x100cims"
     },
     "web": {
       "bundler": "metro",
@@ -32,6 +35,12 @@
     "plugins": [
       "expo-localization",
       "expo-apple-authentication",
+      [
+        "@stripe/stripe-react-native",
+        {
+          "merchantIdentifier": "merchant.100cims.100cims"
+        }
+      ],
       [
         "expo-router"
       ],
