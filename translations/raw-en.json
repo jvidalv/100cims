@@ -11,8 +11,17 @@
   "0BUTMv": {
     "defaultMessage": "Search..."
   },
+  "2IFGap": {
+    "defaultMessage": "Donate"
+  },
   "3GLhZz": {
     "defaultMessage": "No one summited yet."
+  },
+  "3d8FaF": {
+    "defaultMessage": "*Current month donations, {donations}€"
+  },
+  "3dqsvA": {
+    "defaultMessage": "Donors"
   },
   "47FYwb": {
     "defaultMessage": "Cancel"
@@ -59,8 +68,14 @@
   "DJbyE/": {
     "defaultMessage": "You summited this mountain"
   },
+  "Dc54PV": {
+    "defaultMessage": "*By donating, you are helping us keep the app alive while also encouraging the continuous addition of new features."
+  },
   "E1EEy4": {
     "defaultMessage": "Error, try again or use another image."
+  },
+  "EuAm32": {
+    "defaultMessage": "The monthly maintenance cost is ~30€"
   },
   "F4zKkr": {
     "defaultMessage": "Are you sure you want to continue? All the data will be lost."
@@ -80,6 +95,9 @@
   "Iu60EH": {
     "defaultMessage": "Are you sure you want to continue?"
   },
+  "J+n1jo": {
+    "defaultMessage": "Help 100cims"
+  },
   "JXdbo8": {
     "defaultMessage": "Done"
   },
@@ -88,6 +106,9 @@
   },
   "KS+YEv": {
     "defaultMessage": "A profile with your feats"
+  },
+  "Kv6iJs": {
+    "defaultMessage": "Received, thanks for your donation!"
   },
   "M7VcNh": {
     "defaultMessage": "where you can compete with other mountain lovers."
@@ -140,6 +161,12 @@
   "VKfWR3": {
     "defaultMessage": "Recommended"
   },
+  "VsOebc": {
+    "defaultMessage": "Keep 100cims alive"
+  },
+  "Vssfeb": {
+    "defaultMessage": "Share requests or suggestions here"
+  },
   "W0qW5N": {
     "defaultMessage": "maps"
   },
@@ -160,6 +187,9 @@
   },
   "a5msuh": {
     "defaultMessage": "Yes"
+  },
+  "aaMNyT": {
+    "defaultMessage": "Angels that with their contributions help 100cims stay alive."
   },
   "aiy3+p": {
     "defaultMessage": "Type to search."
@@ -182,6 +212,9 @@
   "ciVgJV": {
     "defaultMessage": "Received, thanks for your suggestion!"
   },
+  "cyR7Kh": {
+    "defaultMessage": "Back"
+  },
   "dEo+/0": {
     "defaultMessage": "and be part of a thriving community"
   },
@@ -190,6 +223,9 @@
   },
   "gzZWtl": {
     "defaultMessage": "The ability to"
+  },
+  "ibQJ4B": {
+    "defaultMessage": "How much you want to contribute (€)?"
   },
   "icHbvn": {
     "defaultMessage": "All summits"
