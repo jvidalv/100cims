@@ -68,27 +68,29 @@ export default function SummitMountainScreen() {
 
   const pickImage = async () => {
     setIsLoadingImage(true);
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      base64: true,
-      aspect: [4, 3],
-      quality: 0.5,
-    });
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ["images"],
+        base64: true,
+        aspect: [4, 3],
+        quality: 0.5,
+      });
 
-    if (!result.canceled) {
-      const image = result.assets[0];
-      try {
+      if (!result.canceled) {
+        const image = result.assets[0];
+
         const modifiedImage = await getImageOptimized(image);
         setImage(modifiedImage);
-      } catch {
-        Alert.alert(
-          intl.formatMessage({
-            defaultMessage: "Error, try again or use another image.",
-          }),
-        );
       }
+    } catch {
+      Alert.alert(
+        intl.formatMessage({
+          defaultMessage: "Error, try again or use another image.",
+        }),
+      );
+    } finally {
+      setIsLoadingImage(false);
     }
-    setIsLoadingImage(false);
   };
 
   const submitDisabled =
