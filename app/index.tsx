@@ -28,6 +28,7 @@ import { useRecommendedPeaks } from "@/domains/mountain/mountain.api";
 import { useSummitsGet } from "@/domains/summit/summit.api";
 import { useUserMe, useUserChallengeSummits } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
+import { useOnAppActive } from "@/hooks/use-on-app-active";
 import { hasDynamicIsland } from "@/lib/device";
 import { getInitials } from "@/lib/strings";
 
@@ -175,10 +176,19 @@ const TopSection = () => {
 export default function IndexScreen() {
   const recommendedPeaks = useRecommendedPeaks();
   const { isAuthenticated } = useAuth();
-  const { data: user } = useUserMe();
+  const { data: user, refetch: refetchUser } = useUserMe();
   const fullName = user ? getFullName(user) : "";
+  const { refetch: refetchChallengeSummits } = useUserChallengeSummits();
 
-  const { data: latestSummits } = useSummitsGet({ limit: 5 });
+  const { data: latestSummits, refetch: refetchLatestSummits } = useSummitsGet({
+    limit: 5,
+  });
+
+  useOnAppActive(() => {
+    void refetchUser();
+    void refetchLatestSummits();
+    void refetchChallengeSummits();
+  });
 
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useScrollViewOffset(scrollRef);
