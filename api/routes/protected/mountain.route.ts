@@ -17,7 +17,7 @@ export const mountainRoute = new Elysia({ prefix: "/mountain" })
       const id = uuidv7();
       const key = `${process.env.APP_NAME}/mountain/summit/${id}.jpeg`;
 
-      if (!isBase64SizeValid(body.image, 500)) {
+      if (!isBase64SizeValid(body.image, 1024)) {
         return error(500, { success: false, message: IMAGE_TO_BIG });
       }
 

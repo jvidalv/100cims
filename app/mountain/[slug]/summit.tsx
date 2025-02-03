@@ -72,7 +72,7 @@ export default function SummitMountainScreen() {
       mediaTypes: ["images"],
       base64: true,
       aspect: [4, 3],
-      quality: 0,
+      quality: 0.5,
     });
 
     if (!result.canceled) {
