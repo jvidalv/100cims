@@ -38,9 +38,6 @@
   "80mxmc": {
     "defaultMessage": "Latest summits"
   },
-  "8q89x7": {
-    "defaultMessage": "Track your progress in the 100cims challenge"
-  },
   "9MidH4": {
     "defaultMessage": "Challenge"
   },
@@ -113,9 +110,6 @@
   "M7VcNh": {
     "defaultMessage": "where you can compete with other mountain lovers."
   },
-  "NHjmeb": {
-    "defaultMessage": "Track your progress in the 100 cims challenge by FEEC."
-  },
   "NyrFn7": {
     "defaultMessage": "Also unblock..."
   },
@@ -124,9 +118,6 @@
   },
   "OKhRC6": {
     "defaultMessage": "Share"
-  },
-  "OmsvLb": {
-    "defaultMessage": "Download now"
   },
   "Op5EHr": {
     "defaultMessage": "Sign in with Google"
@@ -176,9 +167,6 @@
   "YzLFgz": {
     "defaultMessage": "Image too big."
   },
-  "ZIkTHq": {
-    "defaultMessage": "This app only uses your data for authentication purposes. We do not store, share, or use your data for any other purpose. For questions, contact: josepvidalvidal@gmail.com."
-  },
   "ZbBhOX": {
     "defaultMessage": "Read more on FEEC website."
   },
@@ -194,20 +182,11 @@
   "aiy3+p": {
     "defaultMessage": "Type to search."
   },
-  "bRWQLO": {
-    "defaultMessage": "Available on iOS and Android"
-  },
   "bhN9Hq": {
     "defaultMessage": "Delete your account"
   },
   "c1AKgx": {
     "defaultMessage": "Missing information."
-  },
-  "cPwv2c": {
-    "defaultMessage": "Privacy policy"
-  },
-  "chGTqd": {
-    "defaultMessage": "You must wait some time before summiting again!"
   },
   "ciVgJV": {
     "defaultMessage": "Received, thanks for your suggestion!"
@@ -290,6 +269,9 @@
   "v0btUQ": {
     "defaultMessage": "No one has yet reached the hiscores."
   },
+  "vZQbSE": {
+    "defaultMessage": "Explore other challenges"
+  },
   "vg1jsx": {
     "defaultMessage": "Summit photo"
   },
@@ -316,8 +298,5 @@
   },
   "zRI7mV": {
     "defaultMessage": "and track the ones left."
-  },
-  "zxX0/q": {
-    "defaultMessage": "Available for iOS and Android"
   }
 }

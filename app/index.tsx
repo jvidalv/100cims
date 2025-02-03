@@ -1,13 +1,16 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { format } from "date-fns/format";
 import { Link } from "expo-router";
 import { useColorScheme } from "nativewind";
-import { Fragment } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import { FormattedMessage } from "react-intl";
 import { TouchableOpacity, View } from "react-native";
 import Animated, {
   useAnimatedRef,
   useAnimatedStyle,
   useScrollViewOffset,
+  useSharedValue,
+  withSpring,
   withTiming,
 } from "react-native-reanimated";
 import { twMerge } from "tailwind-merge";
@@ -19,6 +22,7 @@ import { ThemedText } from "@/components/ui/atoms/themed-text";
 import { ThemedView } from "@/components/ui/atoms/themed-view";
 import { MountainItemList } from "@/components/ui/molecules";
 import { AvatarGroup } from "@/components/ui/molecules/avatar-group";
+import { Colors } from "@/constants/colors";
 import { useChallengesGet } from "@/domains/challenge/challenge.api";
 import { useRecommendedPeaks } from "@/domains/mountain/mountain.api";
 import { useSummitsGet } from "@/domains/summit/summit.api";
@@ -79,6 +83,70 @@ const MountainsDone = () => {
         </View>
       )}
     </Link>
+  );
+};
+
+const TOOLTIP_KEY = "challenges";
+
+const AnimatedTooltip = () => {
+  const [visible, setVisible] = useState(false);
+  const translateX = useSharedValue(-20); // Start off-screen
+  const opacity = useSharedValue(0);
+
+  const showTooltip = useCallback(() => {
+    translateX.value = withSpring(0);
+    opacity.value = withTiming(1, { duration: 200 });
+    setVisible(true);
+  }, [opacity, translateX]);
+
+  const hideTooltip = useCallback(() => {
+    translateX.value = withTiming(-20, { duration: 100 });
+    opacity.value = withTiming(0, { duration: 100 });
+    setVisible(false);
+  }, [opacity, translateX]);
+
+  useEffect(() => {
+    (async () => {
+      if (!(await AsyncStorage.getItem(TOOLTIP_KEY))) {
+        showTooltip();
+        void AsyncStorage.setItem(TOOLTIP_KEY, "true");
+      }
+    })();
+  }, [showTooltip]);
+
+  useEffect(() => {
+    if (visible) {
+      setTimeout(hideTooltip, 6000);
+    }
+  }, [hideTooltip, visible]);
+
+  const animatedTooltipStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: translateX.value }],
+    opacity: opacity.value,
+  }));
+
+  return (
+    <Animated.View
+      style={animatedTooltipStyle}
+      className="absolute left-[85%] z-10 translate-y-1/2"
+    >
+      <TouchableOpacity
+        onPress={hideTooltip}
+        className="flex-row items-center gap-1 rounded-xl border-2 border-primary bg-background p-2"
+      >
+        <View className="-ml-6 pr-2">
+          <Icon
+            name="arrow.backward"
+            size={14}
+            weight="bold"
+            color={Colors.dark.primary}
+          />
+        </View>
+        <ThemedText className="font-medium text-primary">
+          <FormattedMessage defaultMessage="Explore other challenges" />
+        </ThemedText>
+      </TouchableOpacity>
+    </Animated.View>
   );
 };
 
@@ -195,7 +263,8 @@ export default function IndexScreen() {
         <View className="h-24" />
         <Animated.View className="gap-0.5" style={scoreSectionStyle}>
           <View className="flex-row items-end justify-between">
-            <View className="flex-row items-center">
+            <View className="relative flex-row items-center">
+              <AnimatedTooltip />
               <Link href="/challenges">
                 <ThemedText className="text-2xl font-bold">
                   <FormattedMessage defaultMessage="Challenge" />
