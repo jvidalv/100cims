@@ -99,7 +99,7 @@ const Donate = () => {
   return (
     <Animated.View
       style={[animatedStyle]}
-      className="relative border-t border-border px-6 pb-12 pt-8"
+      className="relative border-t border-border bg-background px-6 pb-12 pt-8"
     >
       {isSummited && (
         <View className="absolute left-6 top-2 z-20 h-24 w-full items-center justify-center bg-background">

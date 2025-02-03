@@ -31,7 +31,7 @@ const Donation = () => {
       href={{ pathname: "/user/donors", params: { donate: "true" } }}
       asChild
     >
-      <TouchableOpacity className="rounded-2xl border-4 border-primary p-4">
+      <TouchableOpacity className="rounded-2xl border-2 border-border p-4">
         <ThemedText className="text-xl font-bold">
           <FormattedMessage defaultMessage="Keep 100cims alive" />
         </ThemedText>
