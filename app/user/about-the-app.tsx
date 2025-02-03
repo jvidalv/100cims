@@ -15,6 +15,21 @@ export default function AboutTheAppScreen() {
         </ThemedText>
         <ThemedText className="mb-2 text-muted-foreground">
           <FormattedMessage
+            defaultMessage="In 2006, the FEEC launched the “100 cims” challenge, whose main goal
+          is to promote knowledge of the territory while practicing hiking."
+          />
+        </ThemedText>
+        <TouchableOpacity
+          onPress={() =>
+            Linking.openURL(`https://www.feec.cat/activitats/100-cims/`)
+          }
+        >
+          <ThemedText className="mb-4 underline">
+            <FormattedMessage defaultMessage="Read more on FEEC website." />
+          </ThemedText>
+        </TouchableOpacity>
+        <ThemedText className="mb-2 text-muted-foreground">
+          <FormattedMessage
             defaultMessage="This is a non-profit app designed to help you track your progress,
           discover new mountains, and embrace the challenge of conquering the
           100 summits."
@@ -28,7 +43,7 @@ export default function AboutTheAppScreen() {
           />
         </ThemedText>
         <View className="flex-1 flex-row flex-wrap gap-x-1">
-          <ThemedText className="font-medium">
+          <ThemedText className="text-muted-foreground">
             <FormattedMessage defaultMessage="Contact Josep on" />
           </ThemedText>
           <TouchableOpacity
@@ -40,12 +55,13 @@ export default function AboutTheAppScreen() {
               <FormattedMessage defaultMessage="Linkedin" />
             </ThemedText>
           </TouchableOpacity>
-          <ThemedText className="font-medium">
+          <ThemedText className="text-muted-foreground">
             <FormattedMessage defaultMessage="or by email at" />
           </ThemedText>
           <ThemedText selectable className="font-medium underline">
             josepvidalvidal@gmail.com
           </ThemedText>
+          <ThemedText>.</ThemedText>
         </View>
       </View>
     </ThemedView>

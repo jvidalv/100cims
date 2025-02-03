@@ -85,11 +85,6 @@ export default function UserIndexScreen() {
       onPress: () => router.push("/user/summits"),
     },
     {
-      iconName: "medal.fill",
-      text: intl.formatMessage({ defaultMessage: "100 cims challenge" }),
-      onPress: () => router.push("/user/100-cims-challenge"),
-    },
-    {
       iconName: "info.circle.fill",
       text: intl.formatMessage({ defaultMessage: "About the app" }),
       onPress: () => router.push("/user/about-the-app"),
