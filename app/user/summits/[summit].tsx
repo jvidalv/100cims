@@ -31,11 +31,11 @@ const Content = () => {
         <View className="px-6">
           <Skeleton className="mb-1 h-10 w-64" />
           <Skeleton className="mb-8 h-6 w-20" />
-          <ThemedText className="mb-2 text-xl font-medium">
+          <ThemedText className="mb-2 text-2xl font-semibold">
             <FormattedMessage defaultMessage="People" />
           </ThemedText>
           <Skeleton className="mb-6 size-10 rounded-full" />
-          <ThemedText className="mb-2 text-xl font-medium">
+          <ThemedText className="mb-2 text-2xl font-semibold">
             <FormattedMessage defaultMessage="Photo" />
           </ThemedText>
         </View>
@@ -66,10 +66,10 @@ const Content = () => {
             </View>
           </TouchableOpacity>
         </Link>
-        <ThemedText className="mb-2 text-xl font-medium">
+        <ThemedText className="mb-2 text-2xl font-semibold">
           <FormattedMessage defaultMessage="People" />
         </ThemedText>
-        <View className="mb-6 gap-2">
+        <View className="mb-6 gap-3">
           {data.users.map((user) => (
             <Link
               href={{ pathname: "/user/[user]", params: { user: user.userId } }}
@@ -82,12 +82,14 @@ const Content = () => {
                   imageUrl={user.imageUrl}
                   initials={getInitials(getFullName(user))}
                 />
-                <ThemedText className="text-lg">{getFullName(user)}</ThemedText>
+                <ThemedText className="text-lg">
+                  {getFullName(user)} →
+                </ThemedText>
               </TouchableOpacity>
             </Link>
           ))}
         </View>
-        <ThemedText className="mb-2 text-xl font-medium">
+        <ThemedText className="mb-2 text-2xl font-semibold">
           <FormattedMessage defaultMessage="Photo" />
         </ThemedText>
         <View className="mb-6 overflow-hidden rounded-xl">
@@ -101,7 +103,7 @@ const Content = () => {
           />
         </View>
         <Button intent="outline" onPress={router.back}>
-          <FormattedMessage defaultMessage="Back" />
+          ← <FormattedMessage defaultMessage="Back" />
         </Button>
       </ScrollView>
     </ThemedView>

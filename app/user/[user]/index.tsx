@@ -2,7 +2,7 @@ import { Image as ExpoImage } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { FormattedMessage } from "react-intl";
-import { View, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 
 import { Skeleton, ThemedText, ThemedView } from "@/components/ui/atoms";
 import { AvatarGroup } from "@/components/ui/molecules";
@@ -10,7 +10,7 @@ import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
 import { useAnyUserSummits, useUserOneGet } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
 
-export default function MountainScreen() {
+export default function UserScreen() {
   const router = useRouter();
   const { user: userId } = useLocalSearchParams<{ user: string }>();
   const { data: user, isPending: isPendingUser } = useUserOneGet({ userId });
@@ -71,9 +71,10 @@ export default function MountainScreen() {
               }
               className="relative h-32 w-1/3"
             >
-              <Image
-                source={{ uri: mountainImageUrl! }}
-                className="size-full flex-1"
+              <ExpoImage
+                source={mountainImageUrl}
+                placeholder={{ blurhash: `L~I64nWEWXaz_NWEWWazbvWBaxfQ` }}
+                style={{ height: "100%", width: "100%" }}
               />
               <View className="absolute size-full">
                 <LinearGradient
@@ -108,9 +109,10 @@ export default function MountainScreen() {
             }
             className="relative h-44 w-1/2"
           >
-            <Image
-              source={{ uri: summitedImageUrl }}
-              className="size-full flex-1"
+            <ExpoImage
+              source={summitedImageUrl}
+              placeholder={{ blurhash: `L~I64nWEWXaz_NWEWWazbvWBaxfQ` }}
+              style={{ height: "100%", width: "100%" }}
             />
             <View className="absolute size-full">
               <LinearGradient
