@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useAuth } from "@/components/providers/auth-provider";
 import { useChallenge } from "@/components/providers/challenge-provider";
 import { useApiWithAuth } from "@/hooks/use-api-with-auth";
+import { api } from "@/lib";
 
 export const USER_ME_QUERY_KEY = ["me"];
 export const USER_SUMMITS_KEY = (challengeId?: string) => [
@@ -12,6 +13,15 @@ export const USER_SUMMITS_KEY = (challengeId?: string) => [
   "all",
   challengeId,
 ];
+
+export const USER_ANY_SUMMITS_KEY = (userId: string) => [
+  "user",
+  "summits",
+  "all",
+  userId,
+];
+
+export const USER_ONE_GET_KEY = (userId: string) => ["user", "one", userId];
 
 export const useUserMe = () => {
   const { isAuthenticated, logout } = useAuth();
@@ -71,6 +81,24 @@ export const useUserSummits = () => {
     queryKey: USER_SUMMITS_KEY(),
     enabled: () => isAuthenticated,
     queryFn: () => api.protected.user.summits.get({ query: {} }),
+  });
+
+  return { ...props, data: props?.data?.data?.message };
+};
+
+export const useUserOneGet = ({ userId }: { userId: string }) => {
+  const props = useQuery({
+    queryKey: USER_ONE_GET_KEY(userId),
+    queryFn: () => api.public.user.one.get({ query: { userId } }),
+  });
+
+  return { ...props, data: props?.data?.data?.message };
+};
+
+export const useAnyUserSummits = ({ userId }: { userId: string }) => {
+  const props = useQuery({
+    queryKey: USER_ANY_SUMMITS_KEY(userId),
+    queryFn: () => api.public.user.summits.get({ query: { userId } }),
   });
 
   return { ...props, data: props?.data?.data?.message };

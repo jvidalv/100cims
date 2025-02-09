@@ -5,6 +5,18 @@ import { useUserChallengeSummits } from "@/domains/user/user.api";
 import { useApiWithAuth } from "@/hooks/use-api-with-auth";
 import { api } from "@/lib";
 
+export const useMountainOne = ({ mountainSlug }: { mountainSlug: string }) => {
+  const props = useQuery({
+    queryKey: ["mountain", mountainSlug],
+    queryFn: () => api.public.mountains.one.get({ query: { mountainSlug } }),
+  });
+
+  return {
+    ...props,
+    data: props.data?.data?.message,
+  };
+};
+
 export const useMountains = () => {
   const { challengeId } = useChallenge();
 

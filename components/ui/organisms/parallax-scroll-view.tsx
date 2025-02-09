@@ -1,12 +1,6 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import {
-  PropsWithChildren,
-  ReactElement,
-  ReactNode,
-  useEffect,
-  useState,
-} from "react";
+import { PropsWithChildren, ReactElement, ReactNode } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Animated, {
   interpolate,
@@ -14,16 +8,11 @@ import Animated, {
   useAnimatedRef,
   useAnimatedStyle,
   useScrollViewOffset,
-  useSharedValue,
   withTiming,
 } from "react-native-reanimated";
 import { twMerge } from "tailwind-merge";
 
-import {
-  BlurView,
-  ThemedKeyboardAvoidingView,
-  ThemedText,
-} from "@/components/ui/atoms";
+import { BlurView, ThemedText } from "@/components/ui/atoms";
 import { Icon } from "@/components/ui/atoms/icon";
 import { ThemedView } from "@/components/ui/atoms/themed-view";
 import { hasDynamicIsland, isAndroid } from "@/lib/device";
@@ -36,8 +25,8 @@ type Props = PropsWithChildren<{
   contentClassName?: string;
   headerClassName: string;
   title: string;
-  blurredTopHeaderRightElement?: ReactElement;
-  blurredTopHeaderCenterElement?: ({
+  headerRightElement?: ReactElement;
+  headerCenterElement?: ({
     title,
   }: {
     title: string;
@@ -50,44 +39,94 @@ export default function ParallaxScrollView({
   headerImage,
   headerClassName,
   title,
-  blurredTopHeaderCenterElement,
-  blurredTopHeaderRightElement,
+  headerCenterElement,
+  headerRightElement,
   contentClassName,
 }: Props) {
-  const [scrollPosition, setScrollPosition] = useState(0);
-  const handleScroll = (event: any) => {
-    setScrollPosition(event.nativeEvent.contentOffset.y);
-  };
+  const router = useRouter();
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useScrollViewOffset(scrollRef);
-  const showBlurredTopHeader = scrollPosition > 200;
+
+  const parallaxFloatingElementsStyle = useAnimatedStyle(() => {
+    if (scrollOffset.value < 200) {
+      return {
+        opacity: withTiming(1, { duration: 300 }),
+      };
+    }
+    return {
+      opacity: withTiming(0, { duration: 200 }),
+    };
+  });
+
+  const headerElementsStyle = useAnimatedStyle(() => {
+    if (scrollOffset.value > 190) {
+      return {
+        opacity: withTiming(1, { duration: 300 }),
+      };
+    }
+    return {
+      opacity: withTiming(0, { duration: 200 }),
+    };
+  });
 
   return (
-    <ThemedKeyboardAvoidingView>
-      <ThemedView className="relative flex-1 pb-8">
-        <Animated.ScrollView
-          ref={scrollRef}
-          onScroll={handleScroll}
-          scrollEventThrottle={16}
+    <ThemedView className="relative flex-1 pb-8">
+      <Animated.ScrollView ref={scrollRef} scrollEventThrottle={16}>
+        <AnimatedHeaderBackground
+          headerClassName={headerClassName}
+          headerImage={headerImage}
+          scrollOffset={scrollOffset}
+        />
+        <Animated.View
+          style={parallaxFloatingElementsStyle}
+          className="absolute h-[300px] w-full items-start justify-end px-6 pb-4"
         >
-          <AnimatedHeaderBackground
-            headerClassName={headerClassName}
-            headerImage={headerImage}
-            scrollOffset={scrollOffset}
+          <LinearGradient
+            colors={["transparent", "transparent", "rgba(0,0,0,0.4)"]}
+            style={StyleSheet.absoluteFill}
           />
-          <HeaderTitleElement title={title} show={!showBlurredTopHeader} />
-          <ThemedView className={twMerge("flex-1", contentClassName)}>
-            {children}
-          </ThemedView>
-        </Animated.ScrollView>
-        <HeaderTopElement show={!showBlurredTopHeader} />
-        <BlurredTopHeader
-          title={title}
-          rightElement={blurredTopHeaderRightElement}
-          show={showBlurredTopHeader}
+          <ThemedText className="text-4xl font-bold text-white">
+            {title}
+          </ThemedText>
+        </Animated.View>
+        <ThemedView className={twMerge("flex-1", contentClassName)}>
+          {children}
+        </ThemedView>
+      </Animated.ScrollView>
+      <Animated.View
+        style={parallaxFloatingElementsStyle}
+        className={twMerge(
+          "absolute top-14 px-6",
+          hasDynamicIsland && "top-[4.5rem]",
+        )}
+      >
+        <TouchableOpacity
+          onPress={router.back}
+          className="-mx-2 size-8 items-center justify-center overflow-hidden rounded-full"
         >
-          {blurredTopHeaderCenterElement ? (
-            blurredTopHeaderCenterElement({
+          <BlurView
+            className="items-center justify-center"
+            style={StyleSheet.absoluteFill}
+          >
+            <Icon
+              size={isAndroid ? 24 : 16}
+              color={isAndroid ? undefined : "white"}
+              weight="semibold"
+              name="chevron.left"
+            />
+          </BlurView>
+        </TouchableOpacity>
+      </Animated.View>
+      <Animated.View
+        style={headerElementsStyle}
+        className={twMerge(
+          "absolute top-0 h-24 w-full flex-1",
+          hasDynamicIsland && "h-28",
+        )}
+      >
+        <Header title={title} rightElement={headerRightElement}>
+          {headerCenterElement ? (
+            headerCenterElement({
               title,
               defaultTitleClassName: DEFAULT_BLURRED_HEADER_CLASSNAME,
             })
@@ -99,9 +138,9 @@ export default function ParallaxScrollView({
               {title}
             </ThemedText>
           )}
-        </BlurredTopHeader>
-      </ThemedView>
-    </ThemedKeyboardAvoidingView>
+        </Header>
+      </Animated.View>
+    </ThemedView>
   );
 }
 
@@ -145,134 +184,31 @@ const AnimatedHeaderBackground = ({
   );
 };
 
-const HeaderTopElement = ({ show }: { show: boolean }) => {
-  const router = useRouter();
-  const opacity = useSharedValue(1); // Start with opacity 0
-
-  useEffect(() => {
-    if (show) {
-      opacity.value = withTiming(1, { duration: 200 });
-    } else {
-      opacity.value = withTiming(0, { duration: 300 });
-    }
-  }, [opacity, show]);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
-  }));
-
-  return (
-    <Animated.View
-      style={animatedStyle}
-      className={twMerge(
-        "absolute top-14 px-6",
-        hasDynamicIsland && "top-[4.5rem]",
-      )}
-    >
-      <TouchableOpacity
-        onPress={router.back}
-        className="-mx-2 size-8 items-center justify-center overflow-hidden rounded-full"
-      >
-        <BlurView
-          className="items-center justify-center"
-          style={StyleSheet.absoluteFill}
-        >
-          <Icon
-            size={isAndroid ? 24 : 16}
-            color={isAndroid ? undefined : "white"}
-            weight="semibold"
-            name="chevron.left"
-          />
-        </BlurView>
-      </TouchableOpacity>
-    </Animated.View>
-  );
-};
-
-const HeaderTitleElement = ({
-  title,
-  show,
-}: {
-  title: string;
-  show: boolean;
-}) => {
-  const opacity = useSharedValue(1); // Start with opacity 0
-
-  useEffect(() => {
-    if (show) {
-      opacity.value = withTiming(1, { duration: 200 });
-    } else {
-      opacity.value = withTiming(0, { duration: 300 });
-    }
-  }, [opacity, show]);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
-  }));
-
-  return (
-    <Animated.View
-      style={animatedStyle}
-      className="absolute h-[300px] w-full items-start justify-end px-6 pb-4"
-    >
-      <LinearGradient
-        colors={["transparent", "transparent", "rgba(0,0,0,0.4)"]}
-        style={StyleSheet.absoluteFill}
-      />
-
-      <ThemedText className="text-4xl font-bold text-white">{title}</ThemedText>
-    </Animated.View>
-  );
-};
-
-const BlurredTopHeader = ({
-  show,
+const Header = ({
   children,
   rightElement,
 }: PropsWithChildren<{
   title?: string;
-  show: boolean;
   rightElement?: ReactNode;
 }>) => {
   const router = useRouter();
-  const opacity = useSharedValue(0); // Start with opacity 0
-
-  useEffect(() => {
-    if (show) {
-      opacity.value = withTiming(1, { duration: 300 });
-    } else {
-      opacity.value = withTiming(0, { duration: 200 });
-    }
-  }, [opacity, show]);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
-  }));
 
   return (
-    <Animated.View
-      style={animatedStyle}
-      className={twMerge(
-        "absolute top-0 h-24 w-full flex-1",
-        hasDynamicIsland && "h-28",
-      )}
-    >
-      <BlurView className="flex-1">
-        <View className="mt-auto flex-row items-center justify-between">
-          <TouchableOpacity
-            onPress={router.back}
-            className="-mt-3 w-1/5 py-3 pl-6"
-          >
-            <Icon
-              size={isAndroid ? 24 : 16}
-              weight="medium"
-              name="chevron.left"
-            />
-          </TouchableOpacity>
-          <View className="mx-auto pb-3 text-center">{children}</View>
-          <View className="w-1/5">{rightElement}</View>
-        </View>
-      </BlurView>
-    </Animated.View>
+    <BlurView className="flex-1">
+      <View className="mt-auto flex-row items-center justify-between">
+        <TouchableOpacity
+          onPress={router.back}
+          className="-mt-3 w-1/5 py-3 pl-6"
+        >
+          <Icon
+            size={isAndroid ? 24 : 16}
+            weight="medium"
+            name="chevron.left"
+          />
+        </TouchableOpacity>
+        <View className="mx-auto pb-3 text-center">{children}</View>
+        <View className="w-1/5">{rightElement}</View>
+      </View>
+    </BlurView>
   );
 };

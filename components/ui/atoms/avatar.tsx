@@ -71,7 +71,7 @@ export const Avatar: FC<AvatarProps> = ({
         >
           <Image
             source={{ uri: imageUrl }}
-            className={twMerge("size-full flex-1 rounded-full")}
+            className="size-full flex-1 rounded-full"
             onLoadEnd={() => setIsImageLoading(false)}
             onError={() => setIsImageError(true)}
           />

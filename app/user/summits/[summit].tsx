@@ -44,7 +44,7 @@ const Content = () => {
   }
 
   return (
-    <ThemedView className="flex-1">
+    <ThemedView className="flex-1 pb-16">
       <ScreenHeader />
       <ScrollView className="flex-1 px-6">
         <Link
@@ -71,14 +71,20 @@ const Content = () => {
         </ThemedText>
         <View className="mb-6 gap-2">
           {data.users.map((user) => (
-            <View className="flex-row items-center gap-3" key={user.userId}>
-              <Avatar
-                size="sm"
-                imageUrl={user.imageUrl}
-                initials={getInitials(getFullName(user))}
-              />
-              <ThemedText className="text-lg">{getFullName(user)}</ThemedText>
-            </View>
+            <Link
+              href={{ pathname: "/user/[user]", params: { user: user.userId } }}
+              key={user.userId}
+              asChild
+            >
+              <TouchableOpacity className="flex-row items-center gap-3">
+                <Avatar
+                  size="sm"
+                  imageUrl={user.imageUrl}
+                  initials={getInitials(getFullName(user))}
+                />
+                <ThemedText className="text-lg">{getFullName(user)}</ThemedText>
+              </TouchableOpacity>
+            </Link>
           ))}
         </View>
         <ThemedText className="mb-2 text-xl font-medium">

@@ -11,6 +11,9 @@
   "0BUTMv": {
     "defaultMessage": "Search..."
   },
+  "0UNObB": {
+    "defaultMessage": "No summits yet."
+  },
   "2IFGap": {
     "defaultMessage": "Donate"
   },
@@ -25,6 +28,9 @@
   },
   "47FYwb": {
     "defaultMessage": "Cancel"
+  },
+  "4AYwAm": {
+    "defaultMessage": "Summits"
   },
   "5lwgvM": {
     "defaultMessage": "Visible on people search?"
@@ -43,6 +49,9 @@
   },
   "9SDVYT": {
     "defaultMessage": "Build by Josep Vidal, a software engineer passionate about creating impactful projects that blend technology and adventure."
+  },
+  "9khnVR": {
+    "defaultMessage": "Photos"
   },
   "9yslhD": {
     "defaultMessage": "Yes, I'm sure"
@@ -98,9 +107,6 @@
   "JXdbo8": {
     "defaultMessage": "Done"
   },
-  "KOEnRI": {
-    "defaultMessage": "100 cims challenge"
-  },
   "KS+YEv": {
     "defaultMessage": "A profile with your feats"
   },
@@ -118,6 +124,9 @@
   },
   "OKhRC6": {
     "defaultMessage": "Share"
+  },
+  "OnO2dU": {
+    "defaultMessage": "My information"
   },
   "Op5EHr": {
     "defaultMessage": "Sign in with Google"
@@ -160,6 +169,9 @@
   },
   "W0qW5N": {
     "defaultMessage": "maps"
+  },
+  "WIwKkx": {
+    "defaultMessage": "Your profile"
   },
   "YdQ8KR": {
     "defaultMessage": "No results, please change the search."
@@ -221,9 +233,6 @@
   "lnUmYp": {
     "defaultMessage": "I'll join later"
   },
-  "nUhH7c": {
-    "defaultMessage": "The challenge involves reaching 100 peaks from a list of 522 representative mountains in Catalonia, Northern Catalonia, and Andorra. This list of peaks is the result of research conducted by members of the “100 Peaks” Committee and contributions from federated individuals who have provided input."
-  },
   "nfhxxT": {
     "defaultMessage": "Login out"
   },
@@ -268,6 +277,9 @@
   },
   "v0btUQ": {
     "defaultMessage": "No one has yet reached the hiscores."
+  },
+  "vSU/6Y": {
+    "defaultMessage": "No photos yet."
   },
   "vZQbSE": {
     "defaultMessage": "Explore other challenges"

@@ -31,26 +31,19 @@ export const ThemedTextInput: FC<InputProps> = ({
   onBlur,
   onFocus,
 }) => {
-  const isUncontrolled = !!defaultValue;
-  const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
+  const [internalValue, setInternalValue] = useState(value || defaultValue);
   const [isFocused, setIsFocused] = useState(false);
-  const labelPosition = useRef(new Animated.Value(0)).current;
+  const labelPosition = useRef(
+    new Animated.Value(internalValue ? 1 : 0),
+  ).current;
 
   useEffect(() => {
     Animated.timing(labelPosition, {
-      toValue:
-        isFocused || !!value || (isUncontrolled && !!uncontrolledValue) ? 1 : 0,
+      toValue: isFocused || internalValue ? 1 : 0,
       duration: 200,
       useNativeDriver: false,
     }).start();
-  }, [
-    value,
-    isFocused,
-    labelPosition,
-    defaultValue,
-    isUncontrolled,
-    uncontrolledValue,
-  ]);
+  }, [value, isFocused, labelPosition, defaultValue, internalValue]);
 
   const style = {
     top: labelPosition.interpolate({
@@ -92,9 +85,7 @@ export const ThemedTextInput: FC<InputProps> = ({
         value={!value ? undefined : value}
         defaultValue={!defaultValue ? undefined : defaultValue}
         onChangeText={(text) => {
-          if (isUncontrolled) {
-            setUncontrolledValue(text);
-          }
+          setInternalValue(text);
           onChangeText?.(text);
         }}
         onFocus={() => {

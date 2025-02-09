@@ -1,3 +1,4 @@
+import { Link } from "expo-router";
 import { useEffect } from "react";
 import { FormattedMessage } from "react-intl";
 import { TouchableOpacity, View } from "react-native";
@@ -80,7 +81,10 @@ export default function HiscoresScreen() {
                 </ThemedText>
                 <BottomDrawer
                   Trigger={({ setOpen }) => (
-                    <TouchableOpacity onPress={() => setOpen((o) => !o)}>
+                    <TouchableOpacity
+                      className="-mt-1"
+                      onPress={() => setOpen((o) => !o)}
+                    >
                       <Icon name="info.circle.fill" size={20} muted />
                     </TouchableOpacity>
                   )}
@@ -141,62 +145,69 @@ export default function HiscoresScreen() {
           }) => {
             const isMe = userId === user?.id;
             return (
-              <View className="relative mx-6 py-4">
-                {index > 2 && (
-                  <ThemedView className="absolute -left-3.5 top-2 z-10 size-7 items-center justify-center rounded-full border border-border">
-                    <ThemedText className="font-semibold">
-                      {index + 1}
-                    </ThemedText>
-                  </ThemedView>
-                )}
-                <View className="absolute -left-4 z-10">
-                  {index === 0 && (
-                    <ThemedText className="text-3xl">🥇</ThemedText>
+              <Link
+                href={{ pathname: "/user/[user]", params: { user: userId } }}
+                asChild
+              >
+                <TouchableOpacity className="relative mx-6 py-4">
+                  {index > 2 && (
+                    <ThemedView className="absolute -left-3.5 top-2 z-10 size-7 items-center justify-center rounded-full border border-border">
+                      <ThemedText className="font-semibold">
+                        {index + 1}
+                      </ThemedText>
+                    </ThemedView>
                   )}
-                  {index === 1 && (
-                    <ThemedText className="text-3xl">🥈</ThemedText>
-                  )}
-                  {index === 2 && (
-                    <ThemedText className="text-3xl">🥉</ThemedText>
-                  )}
-                </View>
-                <View className="flex-1 flex-row items-center gap-3">
-                  <Avatar
-                    size="lg"
-                    initials={getInitials(getFullName({ firstName, lastName }))}
-                    imageUrl={imageUrl}
-                    className={twMerge(isMe && "border-2 border-blue-500")}
-                  />
-                  <View className="flex-1 gap-2">
-                    <ThemedText
-                      className={twMerge(
-                        "flex-1 text-xl font-semibold",
-                        isMe && "text-blue-500",
+                  <View className="absolute -left-4 z-10">
+                    {index === 0 && (
+                      <ThemedText className="text-3xl">🥇</ThemedText>
+                    )}
+                    {index === 1 && (
+                      <ThemedText className="text-3xl">🥈</ThemedText>
+                    )}
+                    {index === 2 && (
+                      <ThemedText className="text-3xl">🥉</ThemedText>
+                    )}
+                  </View>
+                  <View className="flex-1 flex-row items-center gap-3">
+                    <Avatar
+                      size="lg"
+                      initials={getInitials(
+                        getFullName({ firstName, lastName }),
                       )}
-                      numberOfLines={1}
-                    >
-                      {getFullName({ firstName, lastName })}
-                    </ThemedText>
-                    <View className="flex-row items-center gap-2">
-                      <View className="flex-row items-center gap-1 rounded-xl border-2 border-border px-2 py-1">
-                        <View className="mr-1">
-                          <Icon name="mountain.2.fill" muted size={18} />
+                      imageUrl={imageUrl}
+                      className={twMerge(isMe && "border-2 border-blue-500")}
+                    />
+                    <View className="flex-1 gap-2">
+                      <ThemedText
+                        className={twMerge(
+                          "flex-1 text-xl font-semibold",
+                          isMe && "text-blue-500",
+                        )}
+                        numberOfLines={1}
+                      >
+                        {getFullName({ firstName, lastName })}
+                      </ThemedText>
+                      <View className="flex-row items-center gap-2">
+                        <View className="flex-row items-center gap-1 rounded-xl border-2 border-border px-2 py-1">
+                          <View className="mr-1">
+                            <Icon name="mountain.2.fill" muted size={18} />
+                          </View>
+                          <ThemedText>{uniquePeaksCount}</ThemedText>
+                          <ThemedText className="font-medium text-muted-foreground">
+                            <FormattedMessage defaultMessage="of" />
+                          </ThemedText>
+                          <ThemedText>522</ThemedText>
                         </View>
-                        <ThemedText>{uniquePeaksCount}</ThemedText>
-                        <ThemedText className="font-medium text-muted-foreground">
-                          <FormattedMessage defaultMessage="of" />
-                        </ThemedText>
-                        <ThemedText>522</ThemedText>
-                      </View>
-                      <View className="rounded-xl border-2 border-border bg-background px-2 py-1">
-                        <ThemedText className="font-semibold text-primary">
-                          {totalScore}
-                        </ThemedText>
+                        <View className="rounded-xl border-2 border-border bg-background px-2 py-1">
+                          <ThemedText className="font-semibold text-primary">
+                            {totalScore}
+                          </ThemedText>
+                        </View>
                       </View>
                     </View>
                   </View>
-                </View>
-              </View>
+                </TouchableOpacity>
+              </Link>
             );
           }}
         />

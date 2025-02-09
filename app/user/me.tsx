@@ -45,14 +45,14 @@ export default function UserMeScreen() {
       mediaTypes: ["images"],
       base64: true,
       aspect: [4, 3],
-      quality: 0,
+      quality: 0.5,
     });
 
     if (!result.canceled) {
       const image = result.assets[0];
       const imageOptimized = await getImageOptimized(image, {
         compress: 0.7,
-        resizeBy: 4,
+        resizeBy: 2,
       });
       setImage(imageOptimized.uri);
       if (imageOptimized.base64) {

@@ -49,7 +49,7 @@ export const userRoute = new Elysia({ prefix: "/user" })
 
       let image;
       if (body.image) {
-        if (!isBase64SizeValid(body.image, 400)) {
+        if (!isBase64SizeValid(body.image, 1024)) {
           return error(500, { success: false, message: IMAGE_TO_BIG });
         }
         const content = Buffer.from(body.image, "base64");

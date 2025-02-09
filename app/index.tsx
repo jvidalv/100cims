@@ -2,9 +2,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { format } from "date-fns/format";
 import { Link } from "expo-router";
 import { useColorScheme } from "nativewind";
-import { Fragment, useCallback, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect } from "react";
 import { FormattedMessage } from "react-intl";
-import { TouchableOpacity, View } from "react-native";
+import { Pressable, TouchableOpacity, View } from "react-native";
 import Animated, {
   useAnimatedRef,
   useAnimatedStyle,
@@ -87,23 +87,20 @@ const MountainsDone = () => {
   );
 };
 
-const TOOLTIP_KEY = "challenges";
+const TOOLTIP_KEY = "challenges2";
 
 const AnimatedTooltip = () => {
-  const [visible, setVisible] = useState(false);
   const translateX = useSharedValue(-20); // Start off-screen
   const opacity = useSharedValue(0);
 
   const showTooltip = useCallback(() => {
     translateX.value = withSpring(0);
     opacity.value = withTiming(1, { duration: 200 });
-    setVisible(true);
   }, [opacity, translateX]);
 
   const hideTooltip = useCallback(() => {
-    translateX.value = withTiming(-20, { duration: 100 });
-    opacity.value = withTiming(0, { duration: 100 });
-    setVisible(false);
+    translateX.value = withTiming(-20, { duration: 500 });
+    opacity.value = withTiming(0, { duration: 500 });
   }, [opacity, translateX]);
 
   useEffect(() => {
@@ -115,12 +112,6 @@ const AnimatedTooltip = () => {
     })();
   }, [showTooltip]);
 
-  useEffect(() => {
-    if (visible) {
-      setTimeout(hideTooltip, 6000);
-    }
-  }, [hideTooltip, visible]);
-
   const animatedTooltipStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: translateX.value }],
     opacity: opacity.value,
@@ -129,13 +120,13 @@ const AnimatedTooltip = () => {
   return (
     <Animated.View
       style={animatedTooltipStyle}
-      className="absolute left-[85%] z-10 translate-y-1/2"
+      className="absolute left-[85%] top-4 z-10 translate-y-1/2"
     >
-      <TouchableOpacity
+      <Pressable
         onPress={hideTooltip}
-        className="flex-row items-center gap-1 rounded-xl border-2 border-primary bg-background p-2"
+        className="relative flex-row items-center rounded-xl bg-primary px-4 py-2 shadow"
       >
-        <View className="-ml-6 pr-2">
+        <View className="absolute -left-3">
           <Icon
             name="arrow.backward"
             size={14}
@@ -143,10 +134,10 @@ const AnimatedTooltip = () => {
             color={Colors.dark.primary}
           />
         </View>
-        <ThemedText className="font-medium text-primary">
+        <ThemedText className="font-medium text-white">
           <FormattedMessage defaultMessage="Explore other challenges" />
         </ThemedText>
-      </TouchableOpacity>
+      </Pressable>
     </Animated.View>
   );
 };

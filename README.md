@@ -8,7 +8,7 @@ Speed <em>up</em> mobile & web app development x100.
 ➡️ Live Demo for <a href="https://demo-mobile.expofa.st">mobile</a> and <a href="https://demo.expofa.st">web</a> ⬅️
 </p>
 
-# [expofa.st](https://expofa.st)
+# [100cims](https://100cims.app)
 
 @todo
 

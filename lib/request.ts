@@ -9,7 +9,10 @@ export const request = (config?: Treaty.Config) =>
     onResponse: (response) => {
       if (!response.ok) {
         if (response.status === 422 || response.status === 500) {
-          Alert.alert("Error");
+          Alert.alert(
+            "Error",
+            "Please update the app ~ Porfavor, actualiza la app.",
+          );
         }
       }
     },

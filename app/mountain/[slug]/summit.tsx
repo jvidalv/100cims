@@ -75,7 +75,6 @@ export default function SummitMountainScreen() {
         aspect: [4, 3],
         quality: 0.5,
       });
-
       if (!result.canceled) {
         const image = result.assets[0];
 

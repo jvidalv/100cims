@@ -14,6 +14,7 @@ const MAPPING = {
   "moon.fill": "weather-night",
   "info.circle.fill": "information",
   "arrow.forward": "arrow-right",
+  "arrow.backward": "arrow-left",
   "mountain.2.fill": "summit",
   "checkmark.seal.fill": "check-decagram",
   "map.circle.fill": "map-search",

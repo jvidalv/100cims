@@ -12,7 +12,7 @@ import { useAuth } from "@/components/providers/auth-provider";
 import { ThemedText, Icon, Button, Skeleton } from "@/components/ui/atoms";
 import { AvatarGroup } from "@/components/ui/molecules";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
-import { useMountains } from "@/domains/mountain/mountain.api";
+import { useMountainOne, useMountains } from "@/domains/mountain/mountain.api";
 import { useSummitsGet } from "@/domains/summit/summit.api";
 import { useUserChallengeSummits } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
@@ -23,6 +23,7 @@ export default function MountainScreen() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const { isAuthenticated } = useAuth();
   const { data: mountains } = useMountains();
+  const { data: fetchedMountain } = useMountainOne({ mountainSlug: slug });
 
   useEffect(() => {
     if (!isIOS) return;
@@ -33,9 +34,11 @@ export default function MountainScreen() {
     };
   }, [colorScheme]);
 
-  const mountain = mountains?.data?.message?.find(
+  const localMountain = mountains?.data?.message?.find(
     (mountain) => slug === mountain.slug,
   );
+
+  const mountain = localMountain || fetchedMountain;
 
   const { data: latestSummits, isPending: isPendingLatestSummits } =
     useSummitsGet({
