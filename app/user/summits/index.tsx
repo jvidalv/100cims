@@ -1,7 +1,7 @@
 import { format } from "date-fns/format";
 import { Link, Redirect } from "expo-router";
-import { FormattedMessage } from "react-intl";
-import { ScrollView, View } from "react-native";
+import { FormattedMessage, useIntl } from "react-intl";
+import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
 import {
@@ -9,15 +9,45 @@ import {
   ThemedKeyboardAvoidingView,
   Avatar,
   Skeleton,
+  Icon,
 } from "@/components/ui/atoms";
 import { ScreenHeader } from "@/components/ui/molecules";
 import { useUserMe, useUserSummits } from "@/domains/user/user.api";
+import { useApiWithAuth } from "@/hooks/use-api-with-auth";
 
 export default function UserSummitsScreen() {
+  const intl = useIntl();
+  const api = useApiWithAuth();
   const { data: me } = useUserMe();
 
-  const { data: userSummits, isPending: isPendingUserSummits } =
-    useUserSummits();
+  const {
+    data: userSummits,
+    isPending: isPendingUserSummits,
+    refetch: refetchSummits,
+  } = useUserSummits();
+
+  const onDelete = (summitId: string) => {
+    Alert.alert(
+      intl.formatMessage({ defaultMessage: "Deleting summit" }),
+      intl.formatMessage({
+        defaultMessage: "Are you sure you want to continue?",
+      }),
+      [
+        {
+          text: intl.formatMessage({ defaultMessage: "Cancel" }),
+          style: "cancel",
+        },
+        {
+          text: intl.formatMessage({ defaultMessage: "Yes" }),
+          style: "default",
+          onPress: async () => {
+            await api.protected.summit.delete.post({ summitId });
+            void refetchSummits();
+          },
+        },
+      ],
+    );
+  };
 
   if (!me) {
     return <Redirect href="/join" />;
@@ -57,15 +87,15 @@ export default function UserSummitsScreen() {
               mountainEssential,
             }) => {
               return (
-                <Link
-                  href={{
-                    pathname: "/user/summits/[summit]",
-                    params: { summit: summitId },
-                  }}
-                  key={summitId}
-                >
-                  <View className="flex-row items-center gap-4">
-                    <View className="flex-1 flex-row gap-2">
+                <View className="flex-row items-center gap-4" key={summitId}>
+                  <Link
+                    href={{
+                      pathname: "/user/summits/[summit]",
+                      params: { summit: summitId },
+                    }}
+                    asChild
+                  >
+                    <TouchableOpacity className="flex-1 flex-row gap-2">
                       <Avatar size="sm" imageUrl={mountainImageUrl} />
                       <View className="flex-1">
                         <ThemedText
@@ -88,19 +118,22 @@ export default function UserSummitsScreen() {
                           </ThemedText>
                         </View>
                       </View>
-                    </View>
-                    <View className="ml-auto">
-                      <ThemedText
-                        className={twMerge(
-                          "font-medium text-muted-foreground",
-                          summitedValidated && "text-primary",
-                        )}
-                      >
-                        +{score}
-                      </ThemedText>
-                    </View>
+                    </TouchableOpacity>
+                  </Link>
+                  <View className="ml-auto flex-row items-center gap-3">
+                    <ThemedText
+                      className={twMerge(
+                        "font-medium text-muted-foreground",
+                        summitedValidated && "text-primary",
+                      )}
+                    >
+                      +{score}
+                    </ThemedText>
+                    <TouchableOpacity onPress={() => onDelete(summitId)}>
+                      <Icon name="trash" muted size={16} />
+                    </TouchableOpacity>
                   </View>
-                </Link>
+                </View>
               );
             },
           )}

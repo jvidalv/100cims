@@ -10,59 +10,9 @@ import {
   ThemedView,
   Icon,
   IconSymbolName,
-  ProgressBar,
-  Button,
 } from "@/components/ui/atoms";
 import { ScreenHeader } from "@/components/ui/molecules";
-import { useDonorsCurrentMonthGet } from "@/domains/donors/donors.api";
 import { useUserMe } from "@/domains/user/user.api";
-
-const Donation = () => {
-  const router = useRouter();
-  const { data } = useDonorsCurrentMonthGet();
-  const totalDonation = data?.totalDonation
-    ? parseFloat(data?.totalDonation)
-    : 0;
-  const progress = (totalDonation * 100) / 30;
-  const isProgressOver100 = progress >= 100;
-
-  return (
-    <Link
-      href={{ pathname: "/user/donors", params: { donate: "true" } }}
-      asChild
-    >
-      <TouchableOpacity className="rounded-2xl border-2 border-border p-4">
-        <ThemedText className="text-xl font-bold">
-          <FormattedMessage defaultMessage="Keep 100cims alive" />
-        </ThemedText>
-        <ThemedText className="mb-4 text-lg text-muted-foreground">
-          <FormattedMessage defaultMessage="The monthly maintenance cost is ~30€" />
-        </ThemedText>
-        <ProgressBar
-          intent={isProgressOver100 ? "success" : "primary"}
-          progress={progress}
-          className="mb-1"
-        />
-        <ThemedText className="mb-4 text-sm text-muted-foreground/80">
-          <FormattedMessage
-            defaultMessage="*Current month donations, {donations}€"
-            values={{ donations: totalDonation }}
-          />
-        </ThemedText>
-        <Button
-          onPress={() =>
-            router.push({
-              pathname: "/user/donors",
-              params: { donate: "true" },
-            })
-          }
-        >
-          <FormattedMessage defaultMessage="Help 100cims" />
-        </Button>
-      </TouchableOpacity>
-    </Link>
-  );
-};
 
 export default function UserIndexScreen() {
   const intl = useIntl();
@@ -93,11 +43,6 @@ export default function UserIndexScreen() {
       iconName: "text.bubble.fill",
       text: intl.formatMessage({ defaultMessage: "Suggestions" }),
       onPress: () => router.push("/user/suggestions"),
-    },
-    {
-      iconName: "eurosign.circle.fill",
-      text: intl.formatMessage({ defaultMessage: "Donors" }),
-      onPress: () => router.push("/user/donors"),
     },
   ];
 
@@ -173,9 +118,6 @@ export default function UserIndexScreen() {
             {" ~"}
             {Application.nativeApplicationVersion}
           </ThemedText>
-        </View>
-        <View className="flex-1 justify-center">
-          <Donation />
         </View>
         <TouchableOpacity
           onPress={onLogout}

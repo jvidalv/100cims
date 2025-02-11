@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { format } from "date-fns/format";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { useColorScheme } from "nativewind";
 import { Fragment, useCallback, useEffect } from "react";
 import { FormattedMessage } from "react-intl";
@@ -28,6 +28,7 @@ import { useRecommendedPeaks } from "@/domains/mountain/mountain.api";
 import { useSummitsGet } from "@/domains/summit/summit.api";
 import { useUserMe, useUserChallengeSummits } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
+import { useIsCurrentScreen } from "@/hooks/use-is-current-screen";
 import { useOnAppActive } from "@/hooks/use-on-app-active";
 import { hasDynamicIsland } from "@/lib/device";
 import { getInitials } from "@/lib/strings";
@@ -87,9 +88,10 @@ const MountainsDone = () => {
   );
 };
 
-const TOOLTIP_KEY = "challenges2";
+const TOOLTIP_KEY = "challenges";
 
 const AnimatedTooltip = () => {
+  const router = useRouter();
   const translateX = useSharedValue(-20); // Start off-screen
   const opacity = useSharedValue(0);
 
@@ -101,7 +103,8 @@ const AnimatedTooltip = () => {
   const hideTooltip = useCallback(() => {
     translateX.value = withTiming(-20, { duration: 500 });
     opacity.value = withTiming(0, { duration: 500 });
-  }, [opacity, translateX]);
+    router.push({ pathname: "/challenges" });
+  }, [opacity, router, translateX]);
 
   useEffect(() => {
     (async () => {
@@ -175,11 +178,26 @@ export default function IndexScreen() {
     limit: 5,
   });
 
+  const isCurrentRoute = useIsCurrentScreen("/");
+
   useOnAppActive(() => {
     void refetchUser();
     void refetchLatestSummits();
     void refetchChallengeSummits();
   });
+
+  useEffect(() => {
+    if (isCurrentRoute) {
+      void refetchLatestSummits();
+      void refetchChallengeSummits();
+      void refetchUser();
+    }
+  }, [
+    isCurrentRoute,
+    refetchChallengeSummits,
+    refetchLatestSummits,
+    refetchUser,
+  ]);
 
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useScrollViewOffset(scrollRef);

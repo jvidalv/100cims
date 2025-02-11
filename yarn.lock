@@ -3368,11 +3368,6 @@
     "@smithy/types" "^4.1.0"
     tslib "^2.6.2"
 
-"@stripe/stripe-react-native@0.41.0":
-  version "0.41.0"
-  resolved "https://registry.yarnpkg.com/@stripe/stripe-react-native/-/stripe-react-native-0.41.0.tgz#a1ca9a0158eea9a591378a0f8f2ccef67cfbe2ef"
-  integrity sha512-yIu9JvxstvlpMo+3bE/8bwaxRS57+MBUdVXHdLJMtqUoTnl3gSJdHWyGxBCPp+vZk88hvGiIQ3TsZeDPnsdTkw==
-
 "@tanstack/query-core@5.66.0":
   version "5.66.0"
   resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.66.0.tgz#163f670b3b4e3b3cdbff6698ad44b2edfcaed185"

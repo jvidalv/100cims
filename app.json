@@ -2,7 +2,7 @@
   "expo": {
     "name": "100cims",
     "slug": "100cims",
-    "version": "0.0.8",
+    "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "centcims",
@@ -29,7 +29,7 @@
         "foregroundImage": "./assets/images/mountain.png",
         "backgroundColor": "#f43f5e"
       },
-      "package": "app.x100cims.x100cims",
+      "package": "app.x100cims.x100cims"
     },
     "web": {
       "bundler": "metro",
@@ -38,12 +38,6 @@
     "plugins": [
       "expo-localization",
       "expo-apple-authentication",
-      [
-        "@stripe/stripe-react-native",
-        {
-          "merchantIdentifier": "merchant.100cims.100cims"
-        }
-      ],
       [
         "expo-router"
       ],
