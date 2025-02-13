@@ -142,7 +142,7 @@ export const mountainsRoute = new Elysia({ prefix: "/mountains" })
               : undefined,
           ),
         )
-        .orderBy(desc(summitTable.createdAt))
+        .orderBy(desc(summitTable.summitedAt))
         .limit(limit)
         .execute();
 

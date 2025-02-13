@@ -8,7 +8,7 @@ export const request = (config?: Treaty.Config) =>
   treaty<App>(process.env.EXPO_PUBLIC_API_URL || "", {
     onResponse: (response) => {
       if (!response.ok) {
-        if (response.status === 422 || response.status === 500) {
+        if (response.status === 422) {
           Alert.alert(
             "Error",
             "Please update the app ~ Porfavor, actualiza la app.",
