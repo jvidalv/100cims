@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
 
+import { IMAGE_TO_BIG } from "@/api/routes/@shared/error-codes";
 import { useAuth } from "@/components/providers/auth-provider";
 import { useChallenge } from "@/components/providers/challenge-provider";
 import { queryClient } from "@/components/providers/query-client-provider";
@@ -41,30 +42,52 @@ export default function UserMeScreen() {
   }, [challengeId, refetch]);
 
   const pickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      base64: true,
-      aspect: [4, 3],
-      quality: 0.7,
-    });
-
-    if (!result.canceled) {
-      const image = result.assets[0];
-      const imageOptimized = await getImageOptimized(image, {
-        compress: 0.7,
-        resizeBy: 2,
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ["images"],
+        base64: true,
+        aspect: [4, 3],
+        quality: 0.7,
       });
-      setImage(imageOptimized.uri);
-      if (imageOptimized.base64) {
-        await api.protected.user.me.post({ image: imageOptimized.base64 });
-        void refetch();
-        void queryClient.refetchQueries({
-          queryKey: USER_SUMMITS_KEY(challengeId),
+
+      if (!result.canceled) {
+        const image = result.assets[0];
+        const imageOptimized = await getImageOptimized(image, {
+          compress: 0.7,
+          resizeBy: 2,
         });
-        void queryClient.refetchQueries({
-          queryKey: SUMMITS_KEY({ limit: 5, challengeId }),
-        });
+        setImage(imageOptimized.uri);
+        if (imageOptimized.base64) {
+          const response = await api.protected.user.me.post({
+            image: imageOptimized.base64,
+          });
+          if (
+            response.error &&
+            response.error.status === 500 &&
+            response.error.value.message === IMAGE_TO_BIG
+          ) {
+            return Alert.alert(
+              intl.formatMessage({
+                defaultMessage: "Image too big.",
+              }),
+            );
+          }
+
+          void refetch();
+          void queryClient.refetchQueries({
+            queryKey: USER_SUMMITS_KEY(challengeId),
+          });
+          void queryClient.refetchQueries({
+            queryKey: SUMMITS_KEY({ limit: 5, challengeId }),
+          });
+        }
       }
+    } catch {
+      Alert.alert(
+        intl.formatMessage({
+          defaultMessage: "Error, try again.",
+        }),
+      );
     }
   };
 
