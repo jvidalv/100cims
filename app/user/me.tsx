@@ -54,12 +54,11 @@ export default function UserMeScreen() {
       });
 
       if (!result.canceled) {
-        const image = result.assets[0];
-        const imageOptimized = await getImageOptimized(image, {
-          compress: 0.7,
-          resizeBy: 2,
-        });
-        setImage(imageOptimized.uri);
+        const pickedImage = result.assets[0];
+        setImage(pickedImage.uri);
+
+        const imageOptimized = await getImageOptimized(pickedImage);
+
         if (imageOptimized.base64) {
           const response = await api.protected.user.me.post({
             image: imageOptimized.base64,
