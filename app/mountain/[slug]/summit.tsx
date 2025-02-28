@@ -2,6 +2,7 @@ import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import { ImagePickerAsset } from "expo-image-picker";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { analytics } from "expofast-analytics";
 import { useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
@@ -67,6 +68,7 @@ export default function SummitMountainScreen() {
   }
 
   const pickImage = async () => {
+    analytics.action(`summit-mountain-pick-image`);
     setIsLoadingImage(true);
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
@@ -81,7 +83,8 @@ export default function SummitMountainScreen() {
         const modifiedImage = await getImageOptimized(image);
         setImage(modifiedImage);
       }
-    } catch {
+    } catch (error) {
+      analytics.error(`Error picking image on summit`, { error });
       Alert.alert(
         intl.formatMessage({
           defaultMessage: "Error, try again or use another image.",
@@ -110,6 +113,7 @@ export default function SummitMountainScreen() {
     }
 
     try {
+      analytics.action(`summit-mountain-summited`);
       const response = await mutateAsync({
         date: date.toString(),
         image: image.base64,
@@ -118,6 +122,13 @@ export default function SummitMountainScreen() {
       });
 
       if (response.error) {
+        analytics.error(
+          `Error on mountain summit ${response.error.value.message}`,
+          {
+            status: response.error.status,
+          },
+        );
+
         switch (response.error.status) {
           case 500:
             return response.error.value.message === IMAGE_TO_BIG
@@ -133,6 +144,8 @@ export default function SummitMountainScreen() {
                 );
         }
       } else {
+        analytics.action(`summit-mountain-summited-successfully`);
+
         void queryClient.refetchQueries({
           queryKey: SUMMITS_KEY({ limit: 5, challengeId }),
         });

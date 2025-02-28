@@ -1,4 +1,5 @@
 import { Link, useRouter } from "expo-router";
+import { analytics } from "expofast-analytics";
 import { useState } from "react";
 import { FormattedMessage } from "react-intl";
 import { TouchableOpacity, View } from "react-native";
@@ -31,6 +32,7 @@ export default function ChallengesScreen() {
 
   const onChallengeSelect = async (id: string) => {
     try {
+      analytics.action("selected-challenge", { challengeId: id });
       setChallengeId(id);
       setIsLoading(true);
       await new Promise((resolve) => setTimeout(resolve, 1000));

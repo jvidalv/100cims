@@ -30,7 +30,6 @@ export const app = new Elysia({ prefix: "/api" })
         error.message,
       ]);
     }
-    console.log(error);
   })
   .use(publicRoutes)
   .use(protectedRoutes);

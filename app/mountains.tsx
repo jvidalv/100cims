@@ -1,3 +1,4 @@
+import { analytics } from "expofast-analytics";
 import { useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { FlatList, Pressable, ScrollView, View } from "react-native";
@@ -134,6 +135,8 @@ export default function MountainsScreen() {
                             filters.filter((t) => t !== type),
                           );
                         } else {
+                          analytics.action(`mountain-filter-${type}`);
+
                           setFiltersSelected((filters) => [...filters, type]);
                         }
                       }}

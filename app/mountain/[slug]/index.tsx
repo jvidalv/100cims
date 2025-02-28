@@ -3,6 +3,7 @@ import { Image } from "expo-image";
 import * as Linking from "expo-linking";
 import { Link, useLocalSearchParams } from "expo-router";
 import { setStatusBarStyle } from "expo-status-bar";
+import { analytics } from "expofast-analytics";
 import { useColorScheme } from "nativewind";
 import { useEffect } from "react";
 import { FormattedMessage } from "react-intl";
@@ -109,11 +110,12 @@ export default function MountainScreen() {
         </ThemedText>
         <View className="flex-row gap-4">
           <TouchableOpacity
-            onPress={() =>
-              Linking.openURL(
+            onPress={() => {
+              analytics.action("mountain-view-on-maps");
+              void Linking.openURL(
                 `https://www.google.es/maps?q=${mountain.latitude},${mountain.longitude}`,
-              )
-            }
+              );
+            }}
             className="flex-1 flex-row items-center justify-between rounded-xl border-2 border-border p-4"
           >
             <ThemedText className="text-xl font-medium">
@@ -125,11 +127,12 @@ export default function MountainScreen() {
             <Icon name="arrow.right" muted size={20} />
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() =>
-              Linking.openURL(
+            onPress={() => {
+              analytics.action("mountain-view-on-wikiloc");
+              void Linking.openURL(
                 `https://es.wikiloc.com/wikiloc/map.do?q=${mountain.name}, ${mountain.location}&fitMapToTrails=1&page=1`,
-              )
-            }
+              );
+            }}
             className="flex-1 flex-row items-center justify-between rounded-xl border-2 border-border p-4"
           >
             <ThemedText className="text-xl font-medium">

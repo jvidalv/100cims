@@ -30,7 +30,7 @@ export const useUserMe = () => {
   const props = useQuery({
     queryKey: USER_ME_QUERY_KEY,
     enabled: () => isAuthenticated,
-    queryFn: () => api.protected.user.me.get(),
+    queryFn: () => (isAuthenticated ? api.protected.user.me.get() : null),
   });
 
   useEffect(() => {
@@ -53,7 +53,9 @@ export const useUsers = ({ query }: { query?: string }) => {
     queryKey: ["users", "all", query],
     enabled: () => isAuthenticated && !!query,
     queryFn: () =>
-      query ? api.protected.user.all.get({ query: { q: query } }) : null,
+      isAuthenticated && query
+        ? api.protected.user.all.get({ query: { q: query } })
+        : null,
   });
 
   return { ...args, data: args.data?.data?.message };
@@ -67,7 +69,10 @@ export const useUserChallengeSummits = () => {
   const props = useQuery({
     queryKey: USER_SUMMITS_KEY(challengeId),
     enabled: () => isAuthenticated,
-    queryFn: () => api.protected.user.summits.get({ query: { challengeId } }),
+    queryFn: () =>
+      isAuthenticated
+        ? api.protected.user.summits.get({ query: { challengeId } })
+        : null,
   });
 
   return { ...props, data: props?.data?.data?.message };
@@ -80,7 +85,8 @@ export const useUserSummits = () => {
   const props = useQuery({
     queryKey: USER_SUMMITS_KEY(),
     enabled: () => isAuthenticated,
-    queryFn: () => api.protected.user.summits.get({ query: {} }),
+    queryFn: () =>
+      isAuthenticated ? api.protected.user.summits.get({ query: {} }) : null,
   });
 
   return { ...props, data: props?.data?.data?.message };

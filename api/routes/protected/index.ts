@@ -15,18 +15,15 @@ import { userRoute } from "@/api/routes/protected/user.route";
 export const protectedRoutes = new Elysia({ prefix: "/protected" })
   .use(JWT())
   .use(bearer())
-  .onBeforeHandle(async ({ jwt, bearer, set, store }) => {
+  .onBeforeHandle(async ({ jwt, bearer, store, error }) => {
     const unauthorizedResponse = () => {
-      set.status = 401;
-      return {
-        success: false,
-        message: "Unauthorized",
-      };
+      return error(401, { success: false, message: "Unauthorized" });
     };
 
     if (!bearer) {
       return unauthorizedResponse();
     }
+
     const verified = await jwt.verify(bearer as string);
 
     if (!verified || !verified.id) {

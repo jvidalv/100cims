@@ -47,11 +47,13 @@ export const useSummitGet = ({ summitId }: { summitId: string }) => {
     queryKey: [summitId],
     enabled: () => isAuthenticated,
     queryFn: () =>
-      api.protected.summit.one.get({
-        query: {
-          summitId,
-        },
-      }),
+      isAuthenticated
+        ? api.protected.summit.one.get({
+            query: {
+              summitId,
+            },
+          })
+        : null,
   });
 
   return { ...args, data: args.data?.data?.message };

@@ -1,8 +1,10 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   DarkTheme,
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
+import * as Application from "expo-application";
 import { useFonts } from "expo-font";
 import { Image } from "expo-image";
 import { Stack } from "expo-router";
@@ -11,6 +13,11 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 
 import "react-native-reanimated";
+import {
+  ExpofastAnalyticsProvider,
+  analytics,
+  createAnalyticsClient,
+} from "expofast-analytics";
 import { useColorScheme } from "nativewind";
 import React, {
   useRef,
@@ -42,6 +49,7 @@ import { getLocale } from "@/lib/locale";
 import ca from "@/translations/ca.json";
 import en from "@/translations/en.json";
 import es from "@/translations/es.json";
+
 import "../global.css";
 
 const ANIMATION_DURATION = 1500;
@@ -103,10 +111,21 @@ function Content() {
   const [ready, setReady] = useState(false);
   const { isAuthenticated } = useAuth();
   const { isPending: isPendingMountains } = useMountains();
-  const { isPending: isPendingUser } = useUserMe();
+  const { data: user, isPending: isPendingUser } = useUserMe();
   const { isPending: isPendingHomepageSummits } = useSummitsGet({ limit: 5 });
   const { isPending: isPendingChallenges } = useChallengesGet();
   useUserChallengeSummits();
+
+  useEffect(() => {
+    if (user?.id) {
+      analytics.identify(user.id, {
+        email: user?.email,
+        firstName: user?.firstName,
+        lastName: user?.lastName,
+        avatarUrl: user?.imageUrl,
+      });
+    }
+  }, [user?.id, user?.email, user?.firstName, user?.lastName, user?.imageUrl]);
 
   useEffect(() => {
     void SplashScreen.hideAsync();
@@ -236,6 +255,19 @@ function RootProviders() {
   );
 }
 
+const client = createAnalyticsClient({
+  apiKey: process.env.EXPO_PUBLIC_EXPOFAST_ANALYTICS_KEY || "",
+  appVersion: Application.nativeApplicationVersion as string,
+  storage: {
+    setItem: AsyncStorage.setItem,
+    getItem: AsyncStorage.getItem,
+  },
+});
+
 export default function Root() {
-  return <RootProviders />;
+  return (
+    <ExpofastAnalyticsProvider client={client}>
+      <RootProviders />
+    </ExpofastAnalyticsProvider>
+  );
 }

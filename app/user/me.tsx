@@ -1,5 +1,6 @@
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
+import { analytics } from "expofast-analytics";
 import React, { useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
@@ -42,6 +43,8 @@ export default function UserMeScreen() {
   }, [challengeId, refetch]);
 
   const pickImage = async () => {
+    analytics.action("opened-change-avatar");
+
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ["images"],
@@ -82,7 +85,9 @@ export default function UserMeScreen() {
           });
         }
       }
-    } catch {
+    } catch (error) {
+      analytics.error(JSON.stringify(error));
+
       Alert.alert(
         intl.formatMessage({
           defaultMessage: "Error, try again.",
@@ -104,12 +109,14 @@ export default function UserMeScreen() {
   }, 500);
 
   const onVisibleHiscoresChange = async (checked: boolean) => {
+    analytics.action(`visible-on-highscores`, { value: checked });
     void api.protected.user.me.post({
       visibleOnHiscores: checked,
     });
   };
 
   const onVisiblePeopleSearchChange = async (checked: boolean) => {
+    analytics.action(`visible-on-people-search`, { value: checked });
     void api.protected.user.me.post({
       visibleOnPeopleSearch: checked,
     });
