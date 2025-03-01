@@ -19,6 +19,7 @@ import {
   Skeleton,
 } from "@/components/ui/atoms";
 import { BottomDrawer, ScreenHeader } from "@/components/ui/molecules";
+import { Colors } from "@/constants/colors";
 import { useHiscoresGet } from "@/domains/hiscores/hiscores.api";
 import { useUserMe } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
@@ -27,6 +28,8 @@ import { getInitials } from "@/lib/strings";
 export default function HiscoresScreen() {
   const { data: user } = useUserMe();
   const { data: hiscores, isPending: isPendingHiscores } = useHiscoresGet();
+
+  const isVisibleOnHiscores = user?.visibleOnHiscores;
 
   const scrollY = useSharedValue(0);
   const mounted = useSharedValue(-100); // Initial position for entry animation
@@ -109,6 +112,21 @@ export default function HiscoresScreen() {
                   </View>
                 </BottomDrawer>
               </View>
+              {user && !isVisibleOnHiscores && (
+                <Link href="/user/me" asChild>
+                  <TouchableOpacity className="mb-4 flex-row items-center justify-between rounded-xl border-2 border-primary p-4">
+                    <ThemedText className="font-medium text-primary">
+                      <FormattedMessage defaultMessage="I want to be visible on the hiscores" />
+                    </ThemedText>
+                    <Icon
+                      name="arrow.forward"
+                      weight="medium"
+                      size={16}
+                      color={Colors.dark.primary}
+                    />
+                  </TouchableOpacity>
+                </Link>
+              )}
               {isPendingHiscores && (
                 <View className="mt-4 flex-row gap-3">
                   <Skeleton className="size-16 rounded-full" />
