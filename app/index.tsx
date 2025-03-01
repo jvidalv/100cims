@@ -36,6 +36,7 @@ import { getInitials } from "@/lib/strings";
 const MountainsDone = () => {
   const { data: userSummits } = useUserChallengeSummits();
 
+  const { data: user } = useUserMe();
   const { isAuthenticated } = useAuth();
   const { data: challenges } = useChallengesGet();
   const { challengeId } = useChallenge();
@@ -46,7 +47,9 @@ const MountainsDone = () => {
 
   return (
     <Link
-      href={isAuthenticated ? "/user/summits" : "/join"}
+      href={
+        user ? { pathname: "/user/[user]", params: { user: user.id } } : "/join"
+      }
       className="flex-row items-center gap-2"
     >
       {userSummits || !isAuthenticated ? (
@@ -157,7 +160,7 @@ const TopSection = () => {
       <Link href="/challenges" asChild>
         <ThemedText
           numberOfLines={1}
-          className="flex-1 text-4xl font-black tracking-tighter text-primary"
+          className="-mt-1 text-4xl font-black tracking-tighter text-primary"
         >
           {challenge?.name}
         </ThemedText>
@@ -293,7 +296,7 @@ export default function IndexScreen() {
                 <Icon name="arrow.left.arrow.right" size={20} muted />
               </Link>
             </View>
-            <Link href="/hiscores" className="-mx-2 -mb-2 p-2">
+            <Link href="/hiscores" className="z-10 -m-2 p-2 pb-4">
               <View className="flex-row items-center gap-1">
                 <ThemedText className="text-muted-foreground">
                   <FormattedMessage defaultMessage="Hiscores" />
