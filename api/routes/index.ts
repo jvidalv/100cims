@@ -25,9 +25,9 @@ export const app = new Elysia({ prefix: "/api" })
     } else {
       void addRowToSheets(ERRORS_SPREADSHEET, [
         "generic",
-        JSON.stringify(error),
+        `assumed 500`,
         request.url,
-        error.message,
+        JSON.stringify(error),
       ]);
     }
   })

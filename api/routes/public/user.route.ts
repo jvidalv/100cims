@@ -29,18 +29,6 @@ export const userRoute = new Elysia({ prefix: "/user" })
       query: t.Object({
         userId: t.String(),
       }),
-      response: t.Object({
-        success: t.Boolean(),
-        message: t.Object({
-          id: t.String(),
-          email: t.String(),
-          firstName: t.Nullable(t.String()),
-          lastName: t.Nullable(t.String()),
-          imageUrl: t.Nullable(t.String()),
-          visibleOnHiscores: t.Boolean(),
-          visibleOnPeopleSearch: t.Boolean(),
-        }),
-      }),
     },
   )
   .get(
@@ -113,30 +101,6 @@ export const userRoute = new Elysia({ prefix: "/user" })
     {
       query: t.Object({
         userId: t.String(),
-      }),
-      response: t.Object({
-        success: t.Boolean(),
-        message: t.Array(
-          t.Object({
-            summitId: t.String(),
-            summitedAt: t.String(),
-            summitedValidated: t.Boolean(),
-            mountainName: t.String(),
-            mountainSlug: t.String(),
-            mountainImageUrl: t.Nullable(t.String()),
-            summitedImageUrl: t.String(),
-            mountainHeight: t.String(),
-            mountainEssential: t.Boolean(),
-            participants: t.Array(
-              t.Object({
-                userId: t.String(),
-                firstName: t.Nullable(t.String()),
-                lastName: t.Nullable(t.String()),
-                imageUrl: t.Nullable(t.String()),
-              }),
-            ),
-          }),
-        ),
       }),
     },
   );

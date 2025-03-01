@@ -18,29 +18,12 @@ import { getStoreUser } from "@/api/routes/@shared/store";
 
 export const userRoute = new Elysia({ prefix: "/user" })
   .use(JWT())
-  .get(
-    "/me",
-    async ({ store }) => {
-      return {
-        success: true,
-        message: getStoreUser(store),
-      };
-    },
-    {
-      response: t.Object({
-        success: t.Boolean(),
-        message: t.Object({
-          id: t.String(),
-          email: t.String(),
-          firstName: t.Nullable(t.String()),
-          lastName: t.Nullable(t.String()),
-          imageUrl: t.Nullable(t.String()),
-          visibleOnHiscores: t.Boolean(),
-          visibleOnPeopleSearch: t.Boolean(),
-        }),
-      }),
-    },
-  )
+  .get("/me", async ({ store }) => {
+    return {
+      success: true,
+      message: getStoreUser(store),
+    };
+  })
   .post(
     "/me",
     async ({ body, store }) => {
@@ -79,15 +62,6 @@ export const userRoute = new Elysia({ prefix: "/user" })
         visibleOnHiscores: t.Optional(t.Boolean()),
         visibleOnPeopleSearch: t.Optional(t.Boolean()),
       }),
-      response: {
-        500: t.Object({
-          success: t.Boolean(),
-          message: t.String(),
-        }),
-        200: t.Object({
-          success: t.Boolean(),
-        }),
-      },
     },
   )
   .get(
@@ -178,27 +152,6 @@ export const userRoute = new Elysia({ prefix: "/user" })
           challengeId: t.Optional(t.String()),
         }),
       ),
-      response: t.Object({
-        success: t.Boolean(),
-        message: t.Object({
-          score: t.Number(),
-          uniquePeaksCount: t.Number(),
-          essentialPeaksCount: t.Number(),
-          summits: t.Array(
-            t.Object({
-              summitId: t.String(),
-              summitedAt: t.String(),
-              summitedValidated: t.Boolean(),
-              score: t.Number(),
-              mountainName: t.String(),
-              mountainSlug: t.String(),
-              mountainImageUrl: t.Nullable(t.String()),
-              mountainHeight: t.String(),
-              mountainEssential: t.Boolean(),
-            }),
-          ),
-        }),
-      }),
     },
   )
   .get(
@@ -249,65 +202,41 @@ export const userRoute = new Elysia({ prefix: "/user" })
       query: t.Object({
         q: t.String(),
       }),
-      response: t.Object({
-        success: t.Boolean(),
-        message: t.Array(
-          t.Object({
-            id: t.String(),
-            firstName: t.Nullable(t.String()),
-            lastName: t.Nullable(t.String()),
-            imageUrl: t.Nullable(t.String()),
-          }),
-        ),
-      }),
     },
   )
-  .get(
-    "/delete",
-    async ({ store }) => {
-      const user = getStoreUser(store);
+  .get("/delete", async ({ store }) => {
+    const user = getStoreUser(store);
 
-      const deletedUser = await db
-        .delete(userTable)
-        .where(eq(userTable.id, user.id))
-        .returning();
+    const deletedUser = await db
+      .delete(userTable)
+      .where(eq(userTable.id, user.id))
+      .returning();
 
-      if (!deletedUser) {
-        return error(500, { success: false });
-      }
+    if (!deletedUser) {
+      return error(500, { success: false });
+    }
 
-      // Query to find all `summitTable` entries without corresponding `summitHasUsersTable` entries
-      const orphanedSummits = await db
-        .select({ id: summitTable.id })
-        .from(summitTable)
-        .leftJoin(
-          summitHasUsersTable,
-          eq(summitTable.id, summitHasUsersTable.summitId),
-        )
-        .where(sql`${summitHasUsersTable.id} IS NULL`);
+    // Query to find all `summitTable` entries without corresponding `summitHasUsersTable` entries
+    const orphanedSummits = await db
+      .select({ id: summitTable.id })
+      .from(summitTable)
+      .leftJoin(
+        summitHasUsersTable,
+        eq(summitTable.id, summitHasUsersTable.summitId),
+      )
+      .where(sql`${summitHasUsersTable.id} IS NULL`);
 
-      const orphanedSummitIds = orphanedSummits.map((summit) => summit.id);
-      if (orphanedSummitIds.length > 0) {
-        await db
-          .delete(summitTable)
-          .where(inArray(summitTable.id, orphanedSummitIds));
-      }
+    const orphanedSummitIds = orphanedSummits.map((summit) => summit.id);
+    if (orphanedSummitIds.length > 0) {
+      await db
+        .delete(summitTable)
+        .where(inArray(summitTable.id, orphanedSummitIds));
+    }
 
-      return {
-        success: true,
-      };
-    },
-    {
-      response: {
-        500: t.Object({
-          success: t.Boolean(),
-        }),
-        200: t.Object({
-          success: t.Boolean(),
-        }),
-      },
-    },
-  )
+    return {
+      success: true,
+    };
+  })
   .post(
     "/suggestion",
     async ({ body, store }) => {
@@ -324,10 +253,5 @@ export const userRoute = new Elysia({ prefix: "/user" })
       body: t.Object({
         suggestion: t.String(),
       }),
-      response: {
-        200: t.Object({
-          success: t.Boolean(),
-        }),
-      },
     },
   );

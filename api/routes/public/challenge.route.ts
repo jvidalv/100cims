@@ -35,20 +35,4 @@ export const challengeRoute = new Elysia({ prefix: "/challenge" }).get(
       message: challengesWithCounts,
     };
   },
-  {
-    response: {
-      200: t.Object({
-        success: t.Boolean(),
-        message: t.Array(
-          t.Object({
-            id: t.String(),
-            name: t.String(),
-            country: t.String(),
-            totalMountains: t.String(),
-            totalEssentialMountains: t.String(),
-          }),
-        ),
-      }),
-    },
-  },
 );

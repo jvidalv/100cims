@@ -63,33 +63,6 @@ export const summitRoute = new Elysia({ prefix: "/summit" })
       };
     },
     {
-      response: t.Object({
-        success: t.Boolean(),
-        message: t.Object({
-          summitId: t.String(),
-          summitedAt: t.String(),
-          summitValidated: t.Boolean(),
-          summitImageUrl: t.String(),
-          mountainId: t.String(),
-          mountainName: t.String(),
-          mountainSlug: t.String(),
-          mountainLocation: t.String(),
-          mountainEssential: t.Boolean(),
-          mountainHeight: t.String(),
-          mountainLatitude: t.String(),
-          mountainLongitude: t.String(),
-          mountainImageUrl: t.Nullable(t.String()),
-          users: t.Array(
-            t.Object({
-              userId: t.String(),
-              firstName: t.Nullable(t.String()),
-              lastName: t.Nullable(t.String()),
-              imageUrl: t.Nullable(t.String()),
-            }),
-          ),
-        }),
-      }),
-
       query: t.Object({
         summitId: t.String(),
       }),
@@ -147,10 +120,6 @@ export const summitRoute = new Elysia({ prefix: "/summit" })
       return { success: true, message: "Summit record deleted successfully" };
     },
     {
-      response: t.Object({
-        success: t.Boolean(),
-        message: t.String(),
-      }),
       body: t.Object({
         summitId: t.String(),
       }),

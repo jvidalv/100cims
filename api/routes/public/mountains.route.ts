@@ -191,26 +191,6 @@ export const mountainsRoute = new Elysia({ prefix: "/mountains" })
       };
     },
     {
-      response: t.Object({
-        success: t.Boolean(),
-        message: t.Array(
-          t.Object({
-            summitId: t.String(),
-            summitedAt: t.String(),
-            createdAt: t.Date(),
-            mountainId: t.String(),
-            mountainName: t.String(),
-            users: t.Array(
-              t.Object({
-                id: t.String(),
-                firstName: t.Nullable(t.String()),
-                lastName: t.Nullable(t.String()),
-                imageUrl: t.Nullable(t.String()),
-              }),
-            ),
-          }),
-        ),
-      }),
       query: t.Object({
         challengeId: t.String(),
         mountainId: t.Optional(t.String()),

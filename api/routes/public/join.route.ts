@@ -90,16 +90,6 @@ export const joinRoute = new Elysia().use(JWT()).post(
     };
   },
   {
-    response: {
-      500: t.Object({
-        success: t.Boolean(),
-        message: t.String(),
-      }),
-      200: t.Object({
-        success: t.Boolean(),
-        message: t.String(),
-      }),
-    },
     body: t.Object({
       provider: t.Enum({ apple: "apple", google: "google" }),
       identityToken: t.String(),

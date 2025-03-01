@@ -75,20 +75,5 @@ export const hiscoresRoute = new Elysia({ prefix: "/hiscores" }).use(JWT()).get(
     query: t.Object({
       challengeId: t.String(),
     }),
-    response: t.Object({
-      success: t.Boolean(),
-      message: t.Array(
-        t.Object({
-          userId: t.String(),
-          firstName: t.Nullable(t.String()),
-          lastName: t.Nullable(t.String()),
-          imageUrl: t.Nullable(t.String()),
-          summitsCount: t.String(),
-          uniquePeaksCount: t.String(),
-          essentialPeaksCount: t.String(),
-          totalScore: t.Number(),
-        }),
-      ),
-    }),
   },
 );

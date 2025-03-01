@@ -56,15 +56,6 @@ export const mountainRoute = new Elysia({ prefix: "/mountain" })
         date: t.String(),
         image: t.String(),
       }),
-      response: {
-        500: t.Object({
-          success: t.Boolean(),
-          message: t.String(),
-        }),
-        200: t.Object({
-          success: t.Boolean(),
-        }),
-      },
     },
   );
 //

@@ -8,49 +8,32 @@ import { getStoreUser } from "@/api/routes/@shared/store";
 
 export const donorRoute = new Elysia({ prefix: "/donors" })
   .use(JWT())
-  .get(
-    "/all",
-    async () => {
-      const results = await db
-        .select({
-          userId: userTable.id,
-          userImageUrl: userTable.imageUrl,
-          userFirstName: userTable.firstName,
-          userLastName: userTable.lastName,
-          totalDonation: sql<string>`SUM(${donorTable.donation})`.as(
-            "totalDonation",
-          ),
-        })
-        .from(donorTable)
-        .innerJoin(userTable, eq(donorTable.userId, userTable.id))
-        .groupBy(
-          userTable.id,
-          userTable.imageUrl,
-          userTable.firstName,
-          userTable.lastName,
-        )
-        .orderBy(desc(sql`SUM(${donorTable.donation})`));
-
-      return {
-        success: true,
-        message: results,
-      };
-    },
-    {
-      response: t.Object({
-        success: t.Boolean(),
-        message: t.Array(
-          t.Object({
-            userId: t.String(),
-            userImageUrl: t.Nullable(t.String()),
-            userFirstName: t.Nullable(t.String()),
-            userLastName: t.Nullable(t.String()),
-            totalDonation: t.String(),
-          }),
+  .get("/all", async () => {
+    const results = await db
+      .select({
+        userId: userTable.id,
+        userImageUrl: userTable.imageUrl,
+        userFirstName: userTable.firstName,
+        userLastName: userTable.lastName,
+        totalDonation: sql<string>`SUM(${donorTable.donation})`.as(
+          "totalDonation",
         ),
-      }),
-    },
-  )
+      })
+      .from(donorTable)
+      .innerJoin(userTable, eq(donorTable.userId, userTable.id))
+      .groupBy(
+        userTable.id,
+        userTable.imageUrl,
+        userTable.firstName,
+        userTable.lastName,
+      )
+      .orderBy(desc(sql`SUM(${donorTable.donation})`));
+
+    return {
+      success: true,
+      message: results,
+    };
+  })
   .get(
     "/current-month",
     async () => {
