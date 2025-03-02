@@ -255,18 +255,20 @@ function RootProviders() {
   );
 }
 
-const client = createAnalyticsClient({
-  apiKey: process.env.EXPO_PUBLIC_EXPOFAST_ANALYTICS_KEY || "",
-  appVersion: Application.nativeApplicationVersion as string,
-  storage: {
-    setItem: AsyncStorage.setItem,
-    getItem: AsyncStorage.getItem,
-  },
-});
-
 export default function Root() {
+  const analyticsClient = useMemo(() => {
+    return createAnalyticsClient({
+      apiKey: process.env.EXPO_PUBLIC_EXPOFAST_ANALYTICS_KEY as string,
+      appVersion: Application.nativeApplicationVersion as string,
+      storage: {
+        setItem: AsyncStorage.setItem,
+        getItem: AsyncStorage.getItem,
+      },
+    });
+  }, []);
+
   return (
-    <ExpofastAnalyticsProvider client={client}>
+    <ExpofastAnalyticsProvider client={analyticsClient}>
       <RootProviders />
     </ExpofastAnalyticsProvider>
   );
