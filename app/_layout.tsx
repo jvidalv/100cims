@@ -258,6 +258,7 @@ function RootProviders() {
 export default function Root() {
   const analyticsClient = useMemo(() => {
     return createAnalyticsClient({
+      // url: "http://localhost:3000/api/analytics/push",
       apiKey: process.env.EXPO_PUBLIC_EXPOFAST_ANALYTICS_KEY as string,
       appVersion: Application.nativeApplicationVersion as string,
       storage: {

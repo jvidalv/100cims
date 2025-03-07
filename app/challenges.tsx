@@ -22,6 +22,16 @@ const colors = [
   "#FFFFBA", // Light Yellow
   "#BAFFC9", // Mint Green
   "#FFDFBA", // Pastel Peach
+  "#BAE1FF", // Baby Blue
+  "#E2C2FF", // Lavender
+  "#FFFFBA", // Light Yellow
+  "#BAFFC9", // Mint Green
+  "#FFDFBA", // Pastel Peach
+  "#BAE1FF", // Baby Blue
+  "#E2C2FF", // Lavender
+  "#FFFFBA", // Light Yellow
+  "#BAFFC9", // Mint Green
+  "#FFDFBA", // Pastel Peach
 ];
 
 export default function ChallengesScreen() {
