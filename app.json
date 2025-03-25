@@ -38,9 +38,9 @@
     "plugins": [
       "expo-localization",
       "expo-apple-authentication",
-      [
-        "expo-router"
-      ],
+      "expo-router",
+      "expo-localization",
+      "expo-font",
       [
         "expo-image-picker",
         {
@@ -55,9 +55,7 @@
           "resizeMode": "contain",
           "backgroundColor": "#f43f5e"
         }
-      ],
-      "expo-localization",
-      "expo-font"
+      ]
     ],
     "experiments": {
       "typedRoutes": true
