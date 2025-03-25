@@ -33,7 +33,11 @@ import { useOnAppActive } from "@/hooks/use-on-app-active";
 import { hasDynamicIsland } from "@/lib/device";
 import { getInitials } from "@/lib/strings";
 
-const MountainsDone = () => {
+const MountainsDone = ({
+  showAllMountains = true,
+}: {
+  showAllMountains?: boolean;
+}) => {
   const { data: userSummits } = useUserChallengeSummits();
 
   const { data: user } = useUserMe();
@@ -66,20 +70,22 @@ const MountainsDone = () => {
               {challenge?.totalEssentialMountains}
             </ThemedText>
           </View>
-          <View className="flex-row items-center gap-1 rounded-xl border-2 border-border px-2 py-1">
-            <View className="mr-1">
-              <Icon name="mountain.2.fill" muted size={20} />
+          {showAllMountains && (
+            <View className="flex-row items-center gap-1 rounded-xl border-2 border-border px-2 py-1">
+              <View className="mr-1">
+                <Icon name="mountain.2.fill" muted size={20} />
+              </View>
+              <ThemedText className="text-lg">
+                {isAuthenticated ? userSummits?.uniquePeaksCount : 0}
+              </ThemedText>
+              <ThemedText className="text-lg font-medium text-muted-foreground">
+                <FormattedMessage defaultMessage="of" />
+              </ThemedText>
+              <ThemedText className="text-lg">
+                {challenge?.totalMountains}
+              </ThemedText>
             </View>
-            <ThemedText className="text-lg">
-              {isAuthenticated ? userSummits?.uniquePeaksCount : 0}
-            </ThemedText>
-            <ThemedText className="text-lg font-medium text-muted-foreground">
-              <FormattedMessage defaultMessage="of" />
-            </ThemedText>
-            <ThemedText className="text-lg">
-              {challenge?.totalMountains}
-            </ThemedText>
-          </View>
+          )}
         </View>
       ) : (
         <View className="flex-row gap-2">
@@ -239,7 +245,7 @@ export default function IndexScreen() {
       >
         <View className="flex-row items-center justify-between">
           <Animated.View className="flex-1" style={topLeftSectionStyle}>
-            <MountainsDone />
+            <MountainsDone showAllMountains={false} />
           </Animated.View>
           <View className="flex-1 flex-row items-center justify-end gap-2">
             <TouchableOpacity
