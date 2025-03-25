@@ -274,8 +274,9 @@ export default function IndexScreen() {
                 initials={
                   isAuthenticated && user
                     ? getInitials(fullName || user.email || "Y")
-                    : "🏔️"
+                    : "100"
                 }
+                className="bg-primary"
                 imageUrl={user?.imageUrl}
               />
             </Link>
