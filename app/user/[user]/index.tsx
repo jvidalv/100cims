@@ -36,14 +36,18 @@ export default function UserScreen() {
       headerClassName="flex items-center justify-center bg-primary"
       contentClassName="px-6 py-6"
       headerImage={
-        <ExpoImage
-          source={user.imageUrl}
-          placeholder={{ blurhash: `L~I64nWEWXaz_NWEWWazbvWBaxfQ` }}
-          style={{ flex: 1, width: "100%" }}
-          contentFit="cover"
-          contentPosition="center"
-          transition={500}
-        />
+        user.imageUrl ? (
+          <ExpoImage
+            source={user.imageUrl}
+            placeholder={{ blurhash: `L~I64nWEWXaz_NWEWWazbvWBaxfQ` }}
+            style={{ flex: 1, width: "100%" }}
+            contentFit="cover"
+            contentPosition="center"
+            transition={500}
+          />
+        ) : (
+          <View className="flex-1 bg-primary" />
+        )
       }
     >
       <ThemedText className="mb-4 text-2xl font-semibold">
