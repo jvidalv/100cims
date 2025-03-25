@@ -15,10 +15,12 @@ export const SearchInput = ({
   onChangeText,
   className,
   autoFocus,
+  onBlur,
 }: {
   className?: string;
   autoFocus?: boolean;
   onChangeText: (text: string) => void;
+  onBlur?: () => void;
 }) => {
   const { colorScheme } = useColorScheme();
   const intl = useIntl();
@@ -46,6 +48,7 @@ export const SearchInput = ({
         }}
         onBlur={() => {
           setFocused(false);
+          onBlur?.();
         }}
         style={{ fontFamily, fontSize: 16 }}
         onChangeText={onChangeText}
