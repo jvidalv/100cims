@@ -1,9 +1,8 @@
-import { Image } from "expo-image";
 import { Link } from "expo-router";
 import { FormattedMessage } from "react-intl";
-import { TouchableOpacity, View } from "react-native";
+import { Image, TouchableOpacity, View } from "react-native";
 
-import { ThemedText } from "@/components/ui/atoms";
+import { Icon, ThemedText } from "@/components/ui/atoms";
 import { useUserChallengeSummits } from "@/domains/user/user.api";
 
 export const MountainItemList = ({
@@ -36,13 +35,20 @@ export const MountainItemList = ({
       asChild
     >
       <TouchableOpacity className="flex-row gap-4">
-        <Image
-          source={imageUrl}
-          style={{ width: 100, height: 100, borderRadius: 16 }}
-          contentFit="cover"
-          contentPosition="center"
-          placeholder={{ blurhash: `L~I64nWEWXaz_NWEWWazbvWBaxfQ` }}
-        />
+        {imageUrl ? (
+          <Image
+            source={{ uri: imageUrl }}
+            className="items-center justify-center bg-gray-500"
+            style={{ width: 100, height: 100, borderRadius: 16 }}
+          />
+        ) : (
+          <View
+            className="items-center justify-center bg-gray-500"
+            style={{ width: 100, height: 100, borderRadius: 16 }}
+          >
+            <Icon name="camera" color="white" muted size={32} />
+          </View>
+        )}
         <View className="flex-1 justify-center">
           <View className="gap-1">
             {isSummited && (
