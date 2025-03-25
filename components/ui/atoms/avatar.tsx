@@ -39,14 +39,14 @@ export const Avatar: FC<AvatarProps> = ({
   style,
 }) => {
   const [isImageError, setIsImageError] = useState(false);
-  const [isImageLoading, setIsImageLoading] = useState(false);
+  const [isImageLoading, setIsImageLoading] = useState(!!imageUrl);
 
   return (
     <View
       style={style}
       className={twMerge(
         avatarStyles({ size }),
-        (!imageUrl || isImageError) && "bg-gray-400 ",
+        (!imageUrl || isImageError || isImageLoading) && "bg-gray-500",
         className,
       )}
     >
