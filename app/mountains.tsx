@@ -104,6 +104,11 @@ export default function MountainsScreen() {
           scrollEventThrottle={16}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
+          getItemLayout={(_, index) => ({
+            length: 100,
+            offset: 100 * index,
+            index,
+          })}
           ListHeaderComponent={
             <ThemedView className="pb-2">
               <ThemedText className="mx-6 mb-2 text-4xl font-bold">
@@ -112,7 +117,13 @@ export default function MountainsScreen() {
                   {filteredMountains?.length}
                 </ThemedText>
               </ThemedText>
-              <SearchInput onChangeText={setQuery} className="mx-6 mb-2" />
+              <SearchInput
+                onChangeText={(text) => {
+                  setQuery(text);
+                  analytics.action("mountain-query", { query: text });
+                }}
+                className="mx-6 mb-2"
+              />
               <ScrollView
                 keyboardShouldPersistTaps="handled"
                 showsHorizontalScrollIndicator={false}
