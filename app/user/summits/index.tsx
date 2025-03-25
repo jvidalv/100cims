@@ -1,5 +1,6 @@
 import { format } from "date-fns/format";
 import { Link, Redirect } from "expo-router";
+import { analytics } from "expofast-analytics";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
 import { twMerge } from "tailwind-merge";
@@ -41,6 +42,7 @@ export default function UserSummitsScreen() {
           text: intl.formatMessage({ defaultMessage: "Yes" }),
           style: "default",
           onPress: async () => {
+            analytics.action("delete-summit", { summitId });
             await api.protected.summit.delete.post({ summitId });
             void refetchSummits();
           },

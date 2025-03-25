@@ -137,6 +137,7 @@ export default function UserMeScreen() {
           text: intl.formatMessage({ defaultMessage: "Yes, I'm sure" }),
           style: "default",
           onPress: async () => {
+            analytics.action("delete-account");
             await api.protected.user.delete.get();
             router.dismissAll();
             logout();
