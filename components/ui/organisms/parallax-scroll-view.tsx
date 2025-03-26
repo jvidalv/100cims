@@ -17,7 +17,6 @@ import { Icon } from "@/components/ui/atoms/icon";
 import { ThemedView } from "@/components/ui/atoms/themed-view";
 import { hasDynamicIsland, isAndroid } from "@/lib/device";
 
-const HEADER_HEIGHT = 300;
 const DEFAULT_BLURRED_HEADER_CLASSNAME = "font-medium text-lg";
 
 type Props = PropsWithChildren<{
@@ -25,6 +24,8 @@ type Props = PropsWithChildren<{
   contentClassName?: string;
   headerClassName: string;
   title: string;
+  subtitle?: string;
+  height?: number;
   headerRightElement?: ReactElement;
   headerCenterElement?: ({
     title,
@@ -39,16 +40,18 @@ export default function ParallaxScrollView({
   headerImage,
   headerClassName,
   title,
+  subtitle,
   headerCenterElement,
   headerRightElement,
   contentClassName,
+  height = 300,
 }: Props) {
   const router = useRouter();
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useScrollViewOffset(scrollRef);
 
   const parallaxFloatingElementsStyle = useAnimatedStyle(() => {
-    if (scrollOffset.value < 200) {
+    if (scrollOffset.value < height - 100) {
       return {
         opacity: withTiming(1, { duration: 300 }),
       };
@@ -59,7 +62,7 @@ export default function ParallaxScrollView({
   });
 
   const headerElementsStyle = useAnimatedStyle(() => {
-    if (scrollOffset.value > 190) {
+    if (scrollOffset.value > height - 110) {
       return {
         opacity: withTiming(1, { duration: 300 }),
       };
@@ -76,15 +79,21 @@ export default function ParallaxScrollView({
           headerClassName={headerClassName}
           headerImage={headerImage}
           scrollOffset={scrollOffset}
+          height={height}
         />
         <Animated.View
-          style={parallaxFloatingElementsStyle}
-          className="absolute h-[300px] w-full items-start justify-end px-6 pb-4"
+          style={[parallaxFloatingElementsStyle, { height }]}
+          className="absolute w-full items-start justify-end px-6 pb-4"
         >
           <LinearGradient
             colors={["transparent", "transparent", "rgba(0,0,0,0.4)"]}
             style={StyleSheet.absoluteFill}
           />
+          {!!subtitle && (
+            <ThemedText className="text-xl font-bold text-white/80">
+              {subtitle}
+            </ThemedText>
+          )}
           <ThemedText className="text-4xl font-bold text-white">
             {title}
           </ThemedText>
@@ -148,7 +157,9 @@ const AnimatedHeaderBackground = ({
   headerImage,
   headerClassName,
   scrollOffset,
+  height,
 }: {
+  height: number;
   headerImage: ReactElement;
   headerClassName: string;
   scrollOffset: SharedValue<number>;
@@ -159,14 +170,14 @@ const AnimatedHeaderBackground = ({
         {
           translateY: interpolate(
             scrollOffset.value,
-            [-HEADER_HEIGHT, 0, HEADER_HEIGHT],
-            [-HEADER_HEIGHT / 2, 0, HEADER_HEIGHT * 0.75],
+            [-height, 0, height],
+            [-height / 2, 0, height * 0.75],
           ),
         },
         {
           scale: interpolate(
             scrollOffset.value,
-            [-HEADER_HEIGHT, 0, HEADER_HEIGHT],
+            [-height, 0, height],
             [2, 1, 1],
           ),
         },
@@ -176,8 +187,8 @@ const AnimatedHeaderBackground = ({
 
   return (
     <Animated.View
-      className={twMerge("h-[300px] overflow-hidden", headerClassName)}
-      style={headerAnimatedStyle}
+      className={twMerge("overflow-hidden", headerClassName)}
+      style={[headerAnimatedStyle, { height }]}
     >
       {headerImage}
     </Animated.View>

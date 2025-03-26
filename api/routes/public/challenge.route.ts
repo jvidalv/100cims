@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { Elysia, t } from "elysia";
+import { Elysia } from "elysia";
 
 import { db } from "@/api/db";
 import {

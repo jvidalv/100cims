@@ -85,38 +85,26 @@ export const mountainsRoute = new Elysia({ prefix: "/mountains" })
       query: t.Object({
         challengeId: t.String(),
       }),
-      response: t.Object({
-        success: t.Boolean(),
-        message: t.Array(
-          t.Object({
-            id: t.String(),
-            name: t.String(),
-            slug: t.String(),
-            location: t.String(),
-            essential: t.Boolean(),
-            height: t.String(),
-            latitude: t.String(),
-            longitude: t.String(),
-            imageUrl: t.Nullable(t.String()),
-          }),
-        ),
-      }),
     },
   )
   .get(
     "/summits",
     async ({ query }) => {
       const mountainId =
-        query.mountainId === "undefined" ? undefined : query.mountainId;
-      const limit = (query?.limit || 0) * 3 || 50;
+        !query.mountainId || query.mountainId === "undefined"
+          ? undefined
+          : query.mountainId;
+      const limit = (query?.limit || 0) * 3 || 500;
 
       const results = await db
         .select({
           summitId: summitTable.id,
           summitedAt: summitTable.summitedAt,
+          summitImageUrl: summitTable.imageUrl,
           createdAt: summitTable.createdAt,
           mountainId: summitTable.mountainId,
           mountainName: mountainTable.name,
+          mountainSlug: mountainTable.slug,
           userId: userTable.id,
           userFirstName: userTable.firstName,
           userLastName: userTable.lastName,
@@ -165,6 +153,8 @@ export const mountainsRoute = new Elysia({ prefix: "/mountains" })
               summitedAt: row.summitedAt,
               createdAt: row.createdAt,
               mountainName: row.mountainName,
+              mountainSlug: row.mountainSlug,
+              summitImageUrl: row.summitImageUrl,
               users: [user],
             });
           }
@@ -173,6 +163,8 @@ export const mountainsRoute = new Elysia({ prefix: "/mountains" })
         [] as {
           summitId: string;
           mountainId: string;
+          mountainSlug: string;
+          summitImageUrl: string;
           summitedAt: string;
           createdAt: Date;
           mountainName: string;
@@ -193,8 +185,8 @@ export const mountainsRoute = new Elysia({ prefix: "/mountains" })
     {
       query: t.Object({
         challengeId: t.String(),
-        mountainId: t.Optional(t.String()),
-        limit: t.Optional(t.Number()),
+        mountainId: t.Optional(t.Nullable(t.String())),
+        limit: t.Optional(t.Nullable(t.Number())),
       }),
     },
   );

@@ -15,24 +15,30 @@ export const SUMMITS_KEY = ({
   limit?: number;
 }) => ["summits", challengeId, mountainId, limit];
 
-export const useSummitsGet = ({
-  mountainId,
-  limit,
-}: {
-  mountainId?: string;
-  limit?: number;
-}) => {
+export const useSummitsGet = (
+  {
+    mountainId,
+    limit,
+  }: {
+    mountainId?: string;
+    limit?: number;
+  } = { mountainId: undefined, limit: undefined },
+) => {
   const { challengeId } = useChallenge();
-
+  let query: { challengeId: string; mountainId?: string; limit?: number } = {
+    challengeId,
+  };
+  if (mountainId) {
+    query.mountainId = mountainId;
+  }
+  if (limit) {
+    query.limit = limit;
+  }
   const args = useQuery({
     queryKey: SUMMITS_KEY({ mountainId, limit, challengeId }),
     queryFn: () =>
       api.public.mountains.summits.get({
-        query: {
-          challengeId,
-          mountainId,
-          limit,
-        },
+        query,
       }),
   });
 

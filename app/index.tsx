@@ -316,9 +316,19 @@ export default function IndexScreen() {
         </Animated.View>
         {!!latestSummits?.length && (
           <View className="gap-4">
-            <ThemedText className="text-2xl font-bold">
-              <FormattedMessage defaultMessage="Latest summits" />
-            </ThemedText>
+            <View className="flex-row items-center justify-between">
+              <ThemedText className="text-2xl font-bold">
+                <FormattedMessage defaultMessage="Latest summits" />
+              </ThemedText>
+              <Link href="/summits" className="z-10 -mx-2 px-2">
+                <View className="flex-row items-center gap-1">
+                  <ThemedText className="text-muted-foreground">
+                    <FormattedMessage defaultMessage="More" />
+                  </ThemedText>
+                  <Icon name="arrow.forward" size={12} weight="bold" muted />
+                </View>
+              </Link>
+            </View>
             <View className="gap-3">
               {latestSummits?.map(
                 ({ summitId, mountainName, summitedAt, users }) => {

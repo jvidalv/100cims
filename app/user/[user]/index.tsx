@@ -4,7 +4,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { FormattedMessage } from "react-intl";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 
-import { Skeleton, ThemedText, ThemedView } from "@/components/ui/atoms";
+import { Skeleton, ThemedText } from "@/components/ui/atoms";
 import { AvatarGroup } from "@/components/ui/molecules";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
 import { useAnyUserSummits, useUserOneGet } from "@/domains/user/user.api";
@@ -13,32 +13,20 @@ import { getFullName } from "@/domains/user/user.utils";
 export default function UserScreen() {
   const router = useRouter();
   const { user: userId } = useLocalSearchParams<{ user: string }>();
-  const { data: user, isPending: isPendingUser } = useUserOneGet({ userId });
+  const { data: user } = useUserOneGet({ userId });
   const { data: summits, isPending: isPendingSummits } = useAnyUserSummits({
     userId,
   });
 
-  if (!user || isPendingUser || isPendingSummits) {
-    return (
-      <ThemedView className="flex-1">
-        <Skeleton className="mb-6 h-[300px] w-full" />
-        <ThemedText className="mb-4 px-6 text-2xl font-semibold">
-          <FormattedMessage defaultMessage="Summits" />
-        </ThemedText>
-        <Skeleton className="mx-6 h-32 w-1/3" />
-      </ThemedView>
-    );
-  }
-
   return (
     <ParallaxScrollView
-      title={user.firstName || "..."}
+      title={user?.firstName || "..."}
       headerClassName="flex items-center justify-center bg-primary"
-      contentClassName="px-6 py-6"
+      contentClassName="py-6"
       headerImage={
-        user.imageUrl ? (
+        user?.imageUrl ? (
           <ExpoImage
-            source={user.imageUrl}
+            source={user?.imageUrl}
             placeholder={{ blurhash: `L~I64nWEWXaz_NWEWWazbvWBaxfQ` }}
             style={{ flex: 1, width: "100%" }}
             contentFit="cover"
@@ -50,14 +38,27 @@ export default function UserScreen() {
         )
       }
     >
-      <ThemedText className="mb-4 text-2xl font-semibold">
+      <ThemedText className="mb-4 px-6 text-2xl font-semibold">
         <FormattedMessage defaultMessage="Summits" />
         <ThemedText className="font-medium text-muted-foreground">
           {"  "}
           {summits?.length}
         </ThemedText>
       </ThemedText>
-      <View className="flex flex-row flex-wrap overflow-hidden rounded-lg">
+      <View className="flex flex-row flex-wrap">
+        {isPendingSummits && (
+          <>
+            <Skeleton className="h-32 w-1/3 rounded-none" />
+            <Skeleton className="h-32 w-1/3 rounded-none border-l border-background" />
+            <Skeleton className="h-32 w-1/3 rounded-none border-l border-background" />
+            <Skeleton className="h-32 w-1/3 rounded-none border-t border-background" />
+            <Skeleton className="h-32 w-1/3 rounded-none border-l border-t border-background" />
+            <Skeleton className="h-32 w-1/3 rounded-none border-l border-t border-background" />
+            <Skeleton className="h-32 w-1/3 rounded-none border-t border-background" />
+            <Skeleton className="h-32 w-1/3 rounded-none border-l border-t border-background" />
+            <Skeleton className="h-32 w-1/3 rounded-none border-l border-t border-background" />
+          </>
+        )}
         {!summits?.length && !isPendingSummits && (
           <ThemedText className="text-muted-foreground">
             <FormattedMessage defaultMessage="No summits yet." />
@@ -93,10 +94,22 @@ export default function UserScreen() {
           ),
         )}
       </View>
-      <ThemedText className="mb-4 mt-6 text-2xl font-semibold">
+      <ThemedText className="mb-4 mt-6 px-6 text-2xl font-semibold">
         <FormattedMessage defaultMessage="Photos" />
       </ThemedText>
-      <View className="flex flex-row flex-wrap overflow-hidden rounded-lg">
+      <View className="flex flex-row flex-wrap">
+        {isPendingSummits && (
+          <>
+            <Skeleton className="h-44 w-1/2 rounded-none" />
+            <Skeleton className="h-44 w-1/2 rounded-none border-l border-background" />
+            <Skeleton className="h-44 w-1/2 rounded-none border-t border-background" />
+            <Skeleton className="h-44 w-1/2 rounded-none border-l border-t border-background" />
+            <Skeleton className="h-44 w-1/2 rounded-none border-t border-background" />
+            <Skeleton className="h-44 w-1/2 rounded-none border-l border-t border-background" />
+            <Skeleton className="h-44 w-1/2 rounded-none border-t border-background" />
+            <Skeleton className="h-44 w-1/2 rounded-none border-l border-t border-background" />
+          </>
+        )}
         {!summits?.length && !isPendingSummits && (
           <ThemedText className="text-muted-foreground">
             <FormattedMessage defaultMessage="No photos yet." />
@@ -132,10 +145,12 @@ export default function UserScreen() {
                     name: getFullName(participant),
                     imageUrl: participant.imageUrl,
                   })),
-                  {
-                    name: getFullName(user),
-                    imageUrl: user.imageUrl,
-                  },
+                  user
+                    ? {
+                        name: getFullName(user),
+                        imageUrl: user.imageUrl,
+                      }
+                    : { name: "..." },
                 ]}
               />
             </View>

@@ -9,6 +9,7 @@ export const app = new Elysia({ prefix: "/api" })
   .use(cors())
   .onError(({ request, error }) => {
     if (error instanceof ValidationError) {
+      console.log(error.validator.Schema());
       void addRowToSheets(ERRORS_SPREADSHEET, [
         "validation",
         error.status,
