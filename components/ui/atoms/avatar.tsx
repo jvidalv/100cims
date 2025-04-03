@@ -46,7 +46,8 @@ export const Avatar: FC<AvatarProps> = ({
       style={style}
       className={twMerge(
         avatarStyles({ size }),
-        (!imageUrl || isImageError || isImageLoading) && "bg-gray-500",
+        (!imageUrl || isImageError || isImageLoading) &&
+          "bg-gray-400 dark:bg-gray-500",
         className,
       )}
     >
@@ -70,7 +71,7 @@ export const Avatar: FC<AvatarProps> = ({
           )}
         >
           <Image
-            source={{ uri: imageUrl }}
+            source={{ uri: imageUrl, cache: "force-cache" }}
             className="size-full flex-1 rounded-full"
             onLoadEnd={() => setIsImageLoading(false)}
             onError={() => setIsImageError(true)}

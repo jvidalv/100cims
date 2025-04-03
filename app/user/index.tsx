@@ -1,5 +1,6 @@
 import * as Application from "expo-application";
 import { Link, useRouter } from "expo-router";
+import { analytics } from "expofast-analytics";
 import { Fragment } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Alert, TouchableOpacity, View } from "react-native";
@@ -12,6 +13,7 @@ import {
   IconSymbolName,
 } from "@/components/ui/atoms";
 import { ScreenHeader } from "@/components/ui/molecules";
+import { usePlanChatUnread } from "@/domains/plan/plan-chat.api";
 import { useUserMe } from "@/domains/user/user.api";
 
 export default function UserIndexScreen() {
@@ -19,10 +21,14 @@ export default function UserIndexScreen() {
   const { logout } = useAuth();
   const router = useRouter();
   const { data } = useUserMe();
+  const { data: plansUnread } = usePlanChatUnread();
+  const hasUnreadMessages = !!plansUnread?.data?.message?.length;
+
   const items: {
     iconName: IconSymbolName;
     text: string;
     onPress: () => void;
+    showDot?: boolean;
   }[] = [
     {
       iconName: "person.fill",
@@ -35,13 +41,19 @@ export default function UserIndexScreen() {
       onPress: () => router.push("/user/summits"),
     },
     {
+      iconName: "backpack.fill",
+      text: intl.formatMessage({ defaultMessage: "My plans" }),
+      onPress: () => router.push("/user/plans"),
+      showDot: hasUnreadMessages,
+    },
+    {
       iconName: "info.circle.fill",
       text: intl.formatMessage({ defaultMessage: "About the app" }),
       onPress: () => router.push("/user/about-the-app"),
     },
     {
       iconName: "text.bubble.fill",
-      text: intl.formatMessage({ defaultMessage: "Suggestions" }),
+      text: intl.formatMessage({ defaultMessage: "Help & Suggestions" }),
       onPress: () => router.push("/user/suggestions"),
     },
   ];
@@ -61,6 +73,7 @@ export default function UserIndexScreen() {
           text: intl.formatMessage({ defaultMessage: "Yes" }),
           style: "default",
           onPress: () => {
+            analytics.action("user-logout");
             logout();
             router.dismissAll();
           },
@@ -90,7 +103,7 @@ export default function UserIndexScreen() {
           </Link>
         </View>
         <View className="mb-4 rounded-xl border-2 border-border">
-          {items.map(({ iconName, text, onPress }, index) => (
+          {items.map(({ iconName, showDot, text, onPress }, index) => (
             <Fragment key={text}>
               <TouchableOpacity
                 onPress={onPress}
@@ -101,6 +114,9 @@ export default function UserIndexScreen() {
                   <ThemedText className="text-xl font-semibold">
                     {text}
                   </ThemedText>
+                  {showDot && (
+                    <View className="-ml-2 size-3 rounded-full bg-primary" />
+                  )}
                   <View className="ml-auto opacity-25">
                     <Icon name="chevron.right" weight="semibold" size={16} />
                   </View>

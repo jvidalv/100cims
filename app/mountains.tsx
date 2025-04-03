@@ -118,11 +118,13 @@ export default function MountainsScreen() {
                 </ThemedText>
               </ThemedText>
               <SearchInput
+                className="mx-6 mb-2"
                 onChangeText={(text) => {
                   setQuery(text);
-                  analytics.action("mountain-query", { query: text });
                 }}
-                className="mx-6 mb-2"
+                onFocus={() => {
+                  analytics.action("mountain-query-search");
+                }}
               />
               <ScrollView
                 keyboardShouldPersistTaps="handled"
@@ -136,7 +138,7 @@ export default function MountainsScreen() {
                   return (
                     <Pressable
                       className={twMerge(
-                        "rounded-xl py-2 px-2.5 mr-1 disabled:opacity-50",
+                        "rounded-lg py-2 px-2.5 mr-1 disabled:opacity-50",
                         isSelected ? "bg-primary" : "bg-border",
                       )}
                       disabled={disabledIf?.()}

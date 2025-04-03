@@ -1,5 +1,4 @@
 import { format } from "date-fns/format";
-import { Image } from "expo-image";
 import * as Linking from "expo-linking";
 import { Link, useLocalSearchParams } from "expo-router";
 import { setStatusBarStyle } from "expo-status-bar";
@@ -7,7 +6,7 @@ import { analytics } from "expofast-analytics";
 import { useColorScheme } from "nativewind";
 import { useEffect } from "react";
 import { FormattedMessage } from "react-intl";
-import { TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, Image, View } from "react-native";
 
 import { useAuth } from "@/components/providers/auth-provider";
 import { ThemedText, Icon, Button, Skeleton } from "@/components/ui/atoms";
@@ -18,6 +17,7 @@ import { useSummitsGet } from "@/domains/summit/summit.api";
 import { useUserChallengeSummits } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
 import { isIOS } from "@/lib/device";
+import { askForReview } from "@/lib/reviews";
 
 export default function MountainScreen() {
   const { colorScheme } = useColorScheme();
@@ -52,6 +52,12 @@ export default function MountainScreen() {
     ({ mountainSlug }) => slug === mountainSlug,
   );
 
+  useEffect(() => {
+    if (isSummited) {
+      void askForReview();
+    }
+  }, [isSummited]);
+
   if (!mountain) {
     return null;
   }
@@ -60,16 +66,17 @@ export default function MountainScreen() {
     <ParallaxScrollView
       title={mountain.name}
       headerClassName="flex items-center justify-center bg-primary"
-      contentClassName="gap-12 px-6 py-6"
+      contentClassName="gap-8 px-6 py-6"
       headerImage={
-        <Image
-          source={mountain.imageUrl}
-          placeholder={{ blurhash: `L~I64nWEWXaz_NWEWWazbvWBaxfQ` }}
-          style={{ flex: 1, width: "100%" }}
-          contentFit="cover"
-          contentPosition="center"
-          transition={500}
-        />
+        mountain.imageUrl ? (
+          <Image
+            source={{ uri: mountain.imageUrl, cache: "force-cache" }}
+            style={{ flex: 1, width: "100%" }}
+            className="bg-gray-200 dark:bg-gray-900"
+          />
+        ) : (
+          <View className="flex-1 bg-gray-200 dark:bg-gray-900" />
+        )
       }
     >
       <View className="gap-4">

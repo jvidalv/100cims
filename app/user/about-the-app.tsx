@@ -1,6 +1,7 @@
 import * as Linking from "expo-linking";
+import { Link } from "expo-router";
 import { FormattedMessage } from "react-intl";
-import { TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View, Image } from "react-native";
 
 import { ThemedText, ThemedView } from "@/components/ui/atoms";
 import { ScreenHeader } from "@/components/ui/molecules";
@@ -15,7 +16,7 @@ export default function AboutTheAppScreen() {
         </ThemedText>
         <ThemedText className="mb-2 text-muted-foreground">
           <FormattedMessage
-            defaultMessage="In 2006, the FEEC launched the “100 cims” challenge, whose main goal
+            defaultMessage="Inspired by the FEEC “100 cims” challenge, whose main goal
           is to promote knowledge of the territory while practicing hiking."
           />
         </ThemedText>
@@ -24,44 +25,59 @@ export default function AboutTheAppScreen() {
             Linking.openURL(`https://www.feec.cat/activitats/100-cims/`)
           }
         >
-          <ThemedText className="mb-4 underline">
+          <ThemedText className="mb-6 underline">
             <FormattedMessage defaultMessage="Read more on FEEC website." />
           </ThemedText>
         </TouchableOpacity>
-        <ThemedText className="mb-2 text-muted-foreground">
-          <FormattedMessage
-            defaultMessage="This is a non-profit app designed to help you track your progress,
-          discover new mountains, and embrace the challenge of conquering the
-          100 summits."
-          />
+        <ThemedText className="mb-3 text-2xl font-semibold">
+          <FormattedMessage defaultMessage="The author" />
         </ThemedText>
-        <ThemedText className="mb-3 text-muted-foreground">
-          <FormattedMessage
-            defaultMessage="Build by Josep Vidal, a software engineer
-          passionate about creating impactful projects that blend technology and
-          adventure."
+        <View className="mb-4 flex items-center rounded-lg border border-border p-6">
+          <Image
+            source={require("@/assets/images/me.jpg")}
+            className="mb-4 size-32 rounded-full"
           />
-        </ThemedText>
-        <View className="flex-1 flex-row flex-wrap gap-x-1">
-          <ThemedText className="text-muted-foreground">
-            <FormattedMessage defaultMessage="Contact Josep on" />
-          </ThemedText>
-          <TouchableOpacity
-            onPress={() =>
-              Linking.openURL("https://www.linkedin.com/in/josepvidalvidal/")
-            }
-          >
-            <ThemedText className="font-medium underline">
-              <FormattedMessage defaultMessage="Linkedin" />
+          <View className="items-center">
+            <ThemedText className="mb-1 text-xl font-semibold">
+              Josep Vidal
             </ThemedText>
-          </TouchableOpacity>
-          <ThemedText className="text-muted-foreground">
-            <FormattedMessage defaultMessage="or by email at" />
+            <ThemedText className="mb-4 text-blue-500">
+              <FormattedMessage defaultMessage="Product engineer" />
+            </ThemedText>
+            <View className="flex flex-row gap-4">
+              <Link
+                href={{
+                  pathname: "/user/[user]",
+                  params: { user: "26315621-1e82-4c30-9c58-83055b21742c" },
+                }}
+              >
+                <ThemedText className="font-medium underline">
+                  <FormattedMessage defaultMessage="Profile" />
+                </ThemedText>
+              </Link>
+              <Link href="https://www.linkedin.com/in/josepvidalvidal/">
+                <ThemedText className="font-medium underline">
+                  <FormattedMessage defaultMessage="Linkedin" />
+                </ThemedText>
+              </Link>
+              <Link href="mailto:josepvidalvidal@gmail.com">
+                <ThemedText className="font-medium underline">
+                  <FormattedMessage defaultMessage="Email" />
+                </ThemedText>
+              </Link>
+            </View>
+          </View>
+        </View>
+        <View className="relative gap-1 rounded-xl border border-border p-4">
+          <View className="absolute -right-3 -top-3">
+            <ThemedText>👨‍💻</ThemedText>
+          </View>
+          <ThemedText className="font-medium">
+            <FormattedMessage defaultMessage="Do you want a good looking app?" />
           </ThemedText>
-          <ThemedText selectable className="font-medium underline">
-            josepvidalvidal@gmail.com
+          <ThemedText className="text-muted-foreground ">
+            <FormattedMessage defaultMessage="I’m open to freelance work—if you like what you see and need help with your next app idea, feel free to reach out." />
           </ThemedText>
-          <ThemedText>.</ThemedText>
         </View>
       </View>
     </ThemedView>

@@ -1,4 +1,10 @@
 {
+  "+Z/Wja": {
+    "defaultMessage": "I don't know exactly when."
+  },
+  "+pZqnP": {
+    "defaultMessage": "You have total control over it"
+  },
   "///zLu": {
     "defaultMessage": "Challenges"
   },
@@ -14,17 +20,41 @@
   "0UNObB": {
     "defaultMessage": "No summits yet."
   },
+  "1grsgd": {
+    "defaultMessage": "I’m open to freelance work—if you like what you see and need help with your next app idea, feel free to reach out."
+  },
+  "2YBqTq": {
+    "defaultMessage": "Mountains"
+  },
+  "2slxzN": {
+    "defaultMessage": "Required information missing!"
+  },
   "3GLhZz": {
     "defaultMessage": "No one summited yet."
   },
+  "3IlAwo": {
+    "defaultMessage": "Something went wrong, try again later!"
+  },
   "3dqsvA": {
     "defaultMessage": "Donors"
+  },
+  "3wJHrF": {
+    "defaultMessage": "Join plan"
+  },
+  "4+p0E9": {
+    "defaultMessage": "Do you know?"
   },
   "47FYwb": {
     "defaultMessage": "Cancel"
   },
   "4AYwAm": {
     "defaultMessage": "Summits"
+  },
+  "4tflZQ": {
+    "defaultMessage": "Delete plan?"
+  },
+  "53YYSH": {
+    "defaultMessage": "Cancel plan"
   },
   "5lwgvM": {
     "defaultMessage": "Visible on people search?"
@@ -35,14 +65,32 @@
   "72jGas": {
     "defaultMessage": "essential"
   },
+  "7Ni8Cl": {
+    "defaultMessage": "No plans found for given status."
+  },
+  "7wLcIi": {
+    "defaultMessage": "Plans have an internal chat, but we recommend that you all share your phone number once ready."
+  },
   "80mxmc": {
     "defaultMessage": "Latest summits"
+  },
+  "82GzU3": {
+    "defaultMessage": "Upcoming plans"
+  },
+  "8Rj4Wg": {
+    "defaultMessage": "Copy message"
+  },
+  "9/For7": {
+    "defaultMessage": "I'll complete it later"
+  },
+  "95stPq": {
+    "defaultMessage": "Completed"
   },
   "9MidH4": {
     "defaultMessage": "Challenge"
   },
-  "9SDVYT": {
-    "defaultMessage": "Build by Josep Vidal, a software engineer passionate about creating impactful projects that blend technology and adventure."
+  "9RZWmW": {
+    "defaultMessage": "Participants will be notified."
   },
   "9khnVR": {
     "defaultMessage": "Photos"
@@ -56,6 +104,15 @@
   "AD7tFG": {
     "defaultMessage": "Error, try again."
   },
+  "AKQuur": {
+    "defaultMessage": "Any mountains?"
+  },
+  "AUwGVY": {
+    "defaultMessage": "Extra info"
+  },
+  "BWpuKl": {
+    "defaultMessage": "Update"
+  },
   "BxxZvf": {
     "defaultMessage": "Linkedin"
   },
@@ -65,8 +122,23 @@
   "C9WGEu": {
     "defaultMessage": "of"
   },
+  "CFPRDL": {
+    "defaultMessage": "Create plan"
+  },
+  "CWD4nE": {
+    "defaultMessage": "Inspired by the FEEC “100 cims” challenge, whose main goal is to promote knowledge of the territory while practicing hiking."
+  },
   "DJbyE/": {
     "defaultMessage": "You summited this mountain"
+  },
+  "DYrQVF": {
+    "defaultMessage": "Complete plan"
+  },
+  "DZXEFi": {
+    "defaultMessage": "Good communication helps everyone enjoy the experience. Feel free to share ideas, ask questions, or align expectations like speed and difficulty."
+  },
+  "Dlpujw": {
+    "defaultMessage": "You decide who comes, don't worry about removing users that joined if you feel like it."
   },
   "E1EEy4": {
     "defaultMessage": "Error, try again or use another image."
@@ -74,14 +146,29 @@
   "F4zKkr": {
     "defaultMessage": "Are you sure you want to continue? All the data will be lost."
   },
-  "FB2a6a": {
-    "defaultMessage": "In 2006, the FEEC launched the “100 cims” challenge, whose main goal is to promote knowledge of the territory while practicing hiking."
+  "FBFcMJ": {
+    "defaultMessage": "Completed on {date}"
+  },
+  "FDVuFX": {
+    "defaultMessage": "You can now create more plans and share them!"
   },
   "FgydNe": {
     "defaultMessage": "View"
   },
-  "Hv0XJn": {
-    "defaultMessage": "Suggestions"
+  "G5NVqu": {
+    "defaultMessage": "This can't be undone."
+  },
+  "Gn2VdB": {
+    "defaultMessage": "New plan"
+  },
+  "H5v61s": {
+    "defaultMessage": "Set plan date"
+  },
+  "HaD+k2": {
+    "defaultMessage": "For you to know"
+  },
+  "HpQONe": {
+    "defaultMessage": "Help & Suggestions"
   },
   "I3b4hn": {
     "defaultMessage": "Version"
@@ -89,17 +176,50 @@
   "I5NMJ8": {
     "defaultMessage": "More"
   },
+  "I8U72j": {
+    "defaultMessage": "Share it with your friends"
+  },
   "Iu60EH": {
     "defaultMessage": "Are you sure you want to continue?"
+  },
+  "J12A5M": {
+    "defaultMessage": "My plans"
   },
   "JXdbo8": {
     "defaultMessage": "Done"
   },
+  "JfG49w": {
+    "defaultMessage": "Open"
+  },
+  "JqiqNj": {
+    "defaultMessage": "Something went wrong"
+  },
+  "K3r6DQ": {
+    "defaultMessage": "Delete"
+  },
   "KS+YEv": {
     "defaultMessage": "A profile with your feats"
   },
+  "Lp3DO2": {
+    "defaultMessage": "Title is required"
+  },
   "M7VcNh": {
     "defaultMessage": "where you can compete with other mountain lovers."
+  },
+  "MPicaL": {
+    "defaultMessage": "Please add photo for all mountains"
+  },
+  "MUP7n7": {
+    "defaultMessage": "Still deciding a date"
+  },
+  "NDV5Mq": {
+    "defaultMessage": "Options"
+  },
+  "NTqesG": {
+    "defaultMessage": "Before starting"
+  },
+  "NWHHpt": {
+    "defaultMessage": "Chat within plans"
   },
   "NyrFn7": {
     "defaultMessage": "Also unblock..."
@@ -109,6 +229,9 @@
   },
   "OKhRC6": {
     "defaultMessage": "Share"
+  },
+  "Oj1HSZ": {
+    "defaultMessage": "No extra information added."
   },
   "OnO2dU": {
     "defaultMessage": "My information"
@@ -122,8 +245,20 @@
   "P7PLVj": {
     "defaultMessage": "Date"
   },
+  "PFtMy9": {
+    "defaultMessage": "Canceled"
+  },
+  "PL5jtt": {
+    "defaultMessage": "*Suggested date: {date}"
+  },
+  "Q5CLtp": {
+    "defaultMessage": "Plans"
+  },
   "QVgzSj": {
     "defaultMessage": "About the app"
+  },
+  "S+o8nA": {
+    "defaultMessage": "Delete message?"
   },
   "SDgHvJ": {
     "defaultMessage": "100 points"
@@ -137,17 +272,26 @@
   "Tpy00S": {
     "defaultMessage": "People"
   },
+  "U4bg5B": {
+    "defaultMessage": "Lets do it"
+  },
   "U52Gl4": {
     "defaultMessage": "I want to be visible on the hiscores"
+  },
+  "UXY08P": {
+    "defaultMessage": "Start the conversation"
   },
   "UYO8TM": {
     "defaultMessage": "Summit"
   },
-  "V3/qK6": {
-    "defaultMessage": "This is a non-profit app designed to help you track your progress, discover new mountains, and embrace the challenge of conquering the 100 summits."
+  "V8ZJQX": {
+    "defaultMessage": "Do you want a good looking app?"
   },
   "VKfWR3": {
     "defaultMessage": "Recommended"
+  },
+  "VuzjdC": {
+    "defaultMessage": "Ongoing"
   },
   "W0qW5N": {
     "defaultMessage": "maps"
@@ -155,14 +299,29 @@
   "WIwKkx": {
     "defaultMessage": "Your profile"
   },
+  "X52e7G": {
+    "defaultMessage": "The author"
+  },
+  "XYsvl5": {
+    "defaultMessage": "Delete message"
+  },
+  "Xai36g": {
+    "defaultMessage": "Cancel this plan?"
+  },
   "XicOeX": {
     "defaultMessage": "Last summits"
   },
   "YdQ8KR": {
     "defaultMessage": "No results, please change the search."
   },
+  "YddCHw": {
+    "defaultMessage": "Type here..."
+  },
   "YzLFgz": {
     "defaultMessage": "Image too big."
+  },
+  "ZPboiN": {
+    "defaultMessage": "Chat with others"
   },
   "ZbBhOX": {
     "defaultMessage": "Read more on FEEC website."
@@ -172,6 +331,12 @@
   },
   "a5msuh": {
     "defaultMessage": "Yes"
+  },
+  "a8DSxW": {
+    "defaultMessage": "Joined on {date}"
+  },
+  "aJxdzZ": {
+    "defaultMessage": "Select one"
   },
   "aaMNyT": {
     "defaultMessage": "Angels that with their contributions help 100cims stay alive."
@@ -191,20 +356,50 @@
   "cyR7Kh": {
     "defaultMessage": "Back"
   },
+  "d+z7v1": {
+    "defaultMessage": "Date not decided"
+  },
+  "dCN31n": {
+    "defaultMessage": "Create a new plan"
+  },
   "dEo+/0": {
     "defaultMessage": "and be part of a thriving community"
+  },
+  "dWajrw": {
+    "defaultMessage": "Complete your plan"
+  },
+  "diwwOr": {
+    "defaultMessage": "Modify plan"
   },
   "eXbuB9": {
     "defaultMessage": "Essentials"
   },
+  "edfPgP": {
+    "defaultMessage": "Leave plan?"
+  },
+  "fVJK/6": {
+    "defaultMessage": "Sharing plans with others is a great way to meet people with similar interests!"
+  },
+  "fnihsY": {
+    "defaultMessage": "Leave"
+  },
+  "gbRhVk": {
+    "defaultMessage": "*You can decide later"
+  },
   "gzZWtl": {
     "defaultMessage": "The ability to"
+  },
+  "iV2iNU": {
+    "defaultMessage": "Updating plan"
+  },
+  "iZPMxC": {
+    "defaultMessage": "Creating a plan"
   },
   "icHbvn": {
     "defaultMessage": "All summits"
   },
-  "jvo0vs": {
-    "defaultMessage": "Save"
+  "itPgxd": {
+    "defaultMessage": "Profile"
   },
   "k0m8DH": {
     "defaultMessage": "A community ranking"
@@ -212,8 +407,17 @@
   "kkpP2k": {
     "defaultMessage": "today"
   },
+  "kyYf9Q": {
+    "defaultMessage": "{points} pts"
+  },
+  "l3MiXo": {
+    "defaultMessage": "Not mandatory"
+  },
   "lnUmYp": {
     "defaultMessage": "I'll join later"
+  },
+  "nOxI4K": {
+    "defaultMessage": "Product engineer"
   },
   "nfhxxT": {
     "defaultMessage": "Login out"
@@ -221,11 +425,14 @@
   "oUWADl": {
     "defaultMessage": "No"
   },
-  "oi7NV3": {
-    "defaultMessage": "or by email at"
-  },
   "om7joI": {
     "defaultMessage": "that you can share with the world."
+  },
+  "orvpWh": {
+    "defaultMessage": "Go back"
+  },
+  "pNTyiX": {
+    "defaultMessage": "Keep"
   },
   "pONqz8": {
     "defaultMessage": "First name"
@@ -235,6 +442,21 @@
   },
   "q4aOMe": {
     "defaultMessage": "Each challenge is constrained within a region. You can switch betweem them freely, progress is saved."
+  },
+  "qbkIE0": {
+    "defaultMessage": "All plans"
+  },
+  "qdhixG": {
+    "defaultMessage": "Plans can be deleted later without any obligation."
+  },
+  "qpsZME": {
+    "defaultMessage": "I'm not doing a summit"
+  },
+  "qvc9uM": {
+    "defaultMessage": "This cannot be undone."
+  },
+  "rbrahO": {
+    "defaultMessage": "Close"
   },
   "rfzuQv": {
     "defaultMessage": "Essential"
@@ -254,8 +476,8 @@
   "txUL0F": {
     "defaultMessage": "Last name"
   },
-  "u955aq": {
-    "defaultMessage": "Contact Josep on"
+  "u11gQO": {
+    "defaultMessage": "Are you sure you want to leave this plan?"
   },
   "ukJ6eH": {
     "defaultMessage": "Not summited"
@@ -269,8 +491,17 @@
   "vZQbSE": {
     "defaultMessage": "Explore other challenges"
   },
+  "vZV/fy": {
+    "defaultMessage": "*You can modify this and all the other fields later"
+  },
   "vg1jsx": {
     "defaultMessage": "Summit photo"
+  },
+  "vutKfn": {
+    "defaultMessage": "Continue with {count}"
+  },
+  "w04v+E": {
+    "defaultMessage": "We hope it was amazing"
   },
   "w6oJwY": {
     "defaultMessage": "One summit of 1000 meters ="
@@ -281,6 +512,9 @@
   "wW8uQD": {
     "defaultMessage": "I'll summit later"
   },
+  "wYMg2j": {
+    "defaultMessage": "Town"
+  },
   "wyxJrL": {
     "defaultMessage": "Delete account"
   },
@@ -290,10 +524,19 @@
   "xiBL3d": {
     "defaultMessage": "Hiscores"
   },
+  "xkgeNE": {
+    "defaultMessage": "Activity title"
+  },
   "zQvVDJ": {
     "defaultMessage": "All"
   },
   "zRI7mV": {
     "defaultMessage": "and track the ones left."
+  },
+  "ziHJSK": {
+    "defaultMessage": "What are you doing?"
+  },
+  "zx0myy": {
+    "defaultMessage": "Participants"
   }
 }

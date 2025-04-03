@@ -1,6 +1,7 @@
 import { Link } from "expo-router";
+import { analytics } from "expofast-analytics";
 import { useEffect } from "react";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import { TouchableOpacity, View } from "react-native";
 import Animated, {
   useSharedValue,
@@ -11,6 +12,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { twMerge } from "tailwind-merge";
 
+import { useChallenge } from "@/components/providers/challenge-provider";
 import {
   ThemedView,
   ThemedText,
@@ -19,16 +21,26 @@ import {
   Skeleton,
 } from "@/components/ui/atoms";
 import { BottomDrawer, ScreenHeader } from "@/components/ui/molecules";
+import { useBottomDrawer } from "@/components/ui/molecules/bottom-drawer";
 import { Colors } from "@/constants/colors";
+import { useChallengesGet } from "@/domains/challenge/challenge.api";
 import { useHiscoresGet } from "@/domains/hiscores/hiscores.api";
 import { useUserMe } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
 import { getInitials } from "@/lib/strings";
 
 export default function HiscoresScreen() {
+  const intl = useIntl();
   const { data: user } = useUserMe();
   const { data: hiscores, isPending: isPendingHiscores } = useHiscoresGet();
+  const { data: challenges } = useChallengesGet();
+  const { challengeId } = useChallenge();
 
+  const challenge = challenges?.find(
+    (challenge) => challenge.id === challengeId,
+  );
+
+  const [isOpen, setIsOpen] = useBottomDrawer();
   const isVisibleOnHiscores = user?.visibleOnHiscores;
 
   const scrollY = useSharedValue(0);
@@ -82,15 +94,15 @@ export default function HiscoresScreen() {
                 <ThemedText className="mb-2 text-4xl font-bold">
                   <FormattedMessage defaultMessage="Hiscores" />
                 </ThemedText>
+                <TouchableOpacity
+                  className="-mt-1"
+                  onPress={() => setIsOpen((o) => !o)}
+                >
+                  <Icon name="info.circle.fill" size={20} muted />
+                </TouchableOpacity>
                 <BottomDrawer
-                  Trigger={({ setOpen }) => (
-                    <TouchableOpacity
-                      className="-mt-1"
-                      onPress={() => setOpen((o) => !o)}
-                    >
-                      <Icon name="info.circle.fill" size={20} muted />
-                    </TouchableOpacity>
-                  )}
+                  isOpen={isOpen}
+                  onRequestClose={() => setIsOpen(false)}
                 >
                   <View className="p-6">
                     <ThemedText className="mb-4">
@@ -114,7 +126,14 @@ export default function HiscoresScreen() {
               </View>
               {user && !isVisibleOnHiscores && (
                 <Link href="/user/me" asChild>
-                  <TouchableOpacity className="mb-4 flex-row items-center justify-between rounded-xl border-2 border-primary p-4">
+                  <TouchableOpacity
+                    onPress={() =>
+                      analytics.action(
+                        "alert-for-visible-on-hiscores-button-clicked",
+                      )
+                    }
+                    className="mb-4 flex-row items-center justify-between rounded-xl border-2 border-primary p-4"
+                  >
                     <ThemedText className="font-medium text-primary">
                       <FormattedMessage defaultMessage="I want to be visible on the hiscores" />
                     </ThemedText>
@@ -214,11 +233,13 @@ export default function HiscoresScreen() {
                           <ThemedText className="font-medium text-muted-foreground">
                             <FormattedMessage defaultMessage="of" />
                           </ThemedText>
-                          <ThemedText>522</ThemedText>
+                          <ThemedText>{challenge?.totalMountains}</ThemedText>
                         </View>
                         <View className="rounded-xl border-2 border-border bg-background px-2 py-1">
                           <ThemedText className="font-semibold text-primary">
-                            {totalScore}
+                            {Intl.NumberFormat(intl.locale, {
+                              maximumFractionDigits: 2,
+                            }).format(totalScore)}
                           </ThemedText>
                         </View>
                       </View>

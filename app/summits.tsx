@@ -1,9 +1,8 @@
 import { format } from "date-fns/format";
-import { Image as ExpoImage } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { FormattedMessage, useIntl } from "react-intl";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Image } from "react-native";
 
 import { useChallenge } from "@/components/providers/challenge-provider";
 import { Skeleton, ThemedText } from "@/components/ui/atoms";
@@ -61,9 +60,8 @@ export default function SummitsScreen() {
             }
             className="relative h-44 w-1/2"
           >
-            <ExpoImage
-              source={summitImageUrl}
-              placeholder={{ blurhash: `L~I64nWEWXaz_NWEWWazbvWBaxfQ` }}
+            <Image
+              source={{ uri: summitImageUrl }}
               style={{ height: "100%", width: "100%" }}
             />
             <View className="absolute size-full">

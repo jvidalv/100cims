@@ -109,3 +109,14 @@ export const useAnyUserSummits = ({ userId }: { userId: string }) => {
 
   return { ...props, data: props?.data?.data?.message };
 };
+
+export const USER_PROFILE_KEY = (userId: string) => ["user", "profile", userId];
+
+export const useUserProfile = ({ userId }: { userId: string }) => {
+  const props = useQuery({
+    queryKey: USER_PROFILE_KEY(userId),
+    queryFn: () => api.public.user["user-profile"].get({ query: { userId } }),
+  });
+
+  return { ...props, data: props?.data?.data?.message };
+};

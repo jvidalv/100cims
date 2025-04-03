@@ -6,7 +6,6 @@ import {
 } from "@react-navigation/native";
 import * as Application from "expo-application";
 import { useFonts } from "expo-font";
-import { Image } from "expo-image";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 // eslint-disable-next-line import/order
@@ -27,7 +26,7 @@ import React, {
   useMemo,
 } from "react";
 import { IntlProvider } from "react-intl";
-import { Animated, View } from "react-native";
+import { Animated, View, Image } from "react-native";
 import { Easing } from "react-native-reanimated";
 
 import { QueryClientProvider } from "@/components/providers";
@@ -41,16 +40,19 @@ import {
   useChallengesGet,
 } from "@/domains/challenge/challenge.api";
 import { useMountains } from "@/domains/mountain/mountain.api";
+import { usePlanChatUnread } from "@/domains/plan/plan-chat.api";
+import { usePlans } from "@/domains/plan/plan.api";
 import { useSummitsGet } from "@/domains/summit/summit.api";
 import { useUserMe, useUserChallengeSummits } from "@/domains/user/user.api";
 import { getJwt } from "@/lib/auth";
 import { isIpadOS, isWeb } from "@/lib/device";
-import { getLocale } from "@/lib/locale";
+import { getDateFnsLocale, getLocale } from "@/lib/locale";
 import ca from "@/translations/ca.json";
 import en from "@/translations/en.json";
 import es from "@/translations/es.json";
 
 import "../global.css";
+import { setDefaultOptions } from "date-fns/setDefaultOptions";
 
 const ANIMATION_DURATION = 1500;
 
@@ -112,12 +114,22 @@ function Content() {
   const { isAuthenticated } = useAuth();
   const { isPending: isPendingMountains } = useMountains();
   const { data: user, isPending: isPendingUser } = useUserMe();
-  const { isPending: isPendingHomepageSummits } = useSummitsGet({ limit: 3 });
+  const { isPending: isPendingHomepageSummits } = useSummitsGet({ limit: 4 });
   const { isPending: isPendingChallenges } = useChallengesGet();
+  usePlanChatUnread();
   useUserChallengeSummits();
+  usePlans({
+    limit: 3,
+    status: "open",
+    sort: "upcoming",
+  });
 
   useEffect(() => {
-    if (user?.id) {
+    setDefaultOptions({ locale: getDateFnsLocale() });
+  }, []);
+
+  useEffect(() => {
+    if (isAuthenticated && user?.id) {
       analytics.identify(user.id, {
         email: user?.email,
         firstName: user?.firstName,
@@ -126,7 +138,14 @@ function Content() {
         locale: getLocale(),
       });
     }
-  }, [user?.id, user?.email, user?.firstName, user?.lastName, user?.imageUrl]);
+  }, [
+    isAuthenticated,
+    user?.id,
+    user?.email,
+    user?.firstName,
+    user?.lastName,
+    user?.imageUrl,
+  ]);
 
   useEffect(() => {
     void SplashScreen.hideAsync();
@@ -160,6 +179,18 @@ function Content() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen
         name="mountain/[slug]/summit"
+        options={{ presentation: isIpadOS ? "fullScreenModal" : "modal" }}
+      />
+      <Stack.Screen
+        name="plan/create"
+        options={{ presentation: isIpadOS ? "fullScreenModal" : "modal" }}
+      />
+      <Stack.Screen
+        name="plan/[id]/edit"
+        options={{ presentation: isIpadOS ? "fullScreenModal" : "modal" }}
+      />
+      <Stack.Screen
+        name="plan/[id]/complete"
         options={{ presentation: isIpadOS ? "fullScreenModal" : "modal" }}
       />
       <Stack.Screen name="+not-found" />

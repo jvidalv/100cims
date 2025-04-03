@@ -2,13 +2,14 @@
   "expo": {
     "name": "100cims",
     "slug": "100cims",
-    "version": "1.2.0",
+    "version": "2.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "centcims",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
+      "appStoreUrl": "https://apps.apple.com/us/app/100cims/id6740161401",
       "supportsTablet": true,
       "usesAppleSignIn": true,
       "bundleIdentifier": "app.100cims.100cims",
@@ -23,6 +24,7 @@
       }
     },
     "android": {
+      "playStoreUrl": "https://play.google.com/store/apps/details?id=app.x100cims.x100cims",
       "googleServicesFile": "./google-services.json",
       "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {

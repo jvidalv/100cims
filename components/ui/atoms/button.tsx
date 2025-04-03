@@ -12,7 +12,7 @@ import { ActivityIndicator } from "@/components/ui/atoms/activity-indicator";
 import { Icon, IconSymbolName } from "@/components/ui/atoms/icon";
 
 const buttonVariants = tv({
-  base: "flex-row items-center justify-center gap-2 rounded-xl border-2 border-transparent p-4",
+  base: "flex-row items-center justify-center gap-2 rounded-lg border-2 border-transparent p-4",
   variants: {
     intent: {
       primary: "bg-primary",
@@ -20,6 +20,7 @@ const buttonVariants = tv({
       success: "bg-green-500",
       outline: "border-border bg-background",
       danger: "bg-red-500",
+      ghost: "bg-transparent",
     },
     disabled: {
       true: "opacity-70",
@@ -36,6 +37,7 @@ const buttonVariants = tv({
 type Props = VariantProps<typeof buttonVariants> & {
   isLoading?: boolean;
   iconName?: IconSymbolName;
+  textClassName?: string;
 } & TouchableOpacityProps;
 
 export const Button = forwardRef<View, Props>(
@@ -48,6 +50,7 @@ export const Button = forwardRef<View, Props>(
       iconName,
       onPress,
       className,
+      textClassName,
       ...props
     },
     ref,
@@ -77,7 +80,10 @@ export const Button = forwardRef<View, Props>(
           className={twMerge(
             "text-xl font-semibold text-white",
             isLoading && "opacity-0",
-            intent === "outline" && "text-foreground",
+            intent &&
+              ["outline", "ghost"].includes(intent) &&
+              "text-foreground",
+            textClassName,
           )}
         >
           {children}

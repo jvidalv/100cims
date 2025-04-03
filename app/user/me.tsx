@@ -18,6 +18,7 @@ import {
   Avatar,
 } from "@/components/ui/atoms";
 import { ScreenHeader } from "@/components/ui/molecules";
+import { useHiscoresGet } from "@/domains/hiscores/hiscores.api";
 import { SUMMITS_KEY } from "@/domains/summit/summit.api";
 import { USER_SUMMITS_KEY, useUserMe } from "@/domains/user/user.api";
 import { useApiWithAuth } from "@/hooks/use-api-with-auth";
@@ -29,6 +30,7 @@ export default function UserMeScreen() {
   const { logout } = useAuth();
   const { challengeId } = useChallenge();
   const intl = useIntl();
+  const { refetch: refetchHiscores } = useHiscoresGet();
   const api = useApiWithAuth();
   const { data: me, refetch } = useUserMe();
   const [image, setImage] = useState<string | null>(null);
@@ -107,11 +109,18 @@ export default function UserMeScreen() {
     });
   }, 500);
 
+  const onChangeTown = debounce(async (town: string) => {
+    await api.protected.user.me.post({
+      town,
+    });
+  }, 500);
+
   const onVisibleHiscoresChange = async (checked: boolean) => {
     analytics.action(`visible-on-highscores`, { value: checked });
-    void api.protected.user.me.post({
+    await api.protected.user.me.post({
       visibleOnHiscores: checked,
     });
+    void refetchHiscores();
   };
 
   const onVisiblePeopleSearchChange = async (checked: boolean) => {
@@ -194,6 +203,11 @@ export default function UserMeScreen() {
             defaultValue={me?.lastName}
             onChangeText={onChangeLastName}
           />
+          <ThemedTextInput
+            label={intl.formatMessage({ defaultMessage: "Town" })}
+            defaultValue={me?.town}
+            onChangeText={onChangeTown}
+          />
           <ThemedToggleInput
             label={intl.formatMessage({
               defaultMessage: "Visible on hiscores?",
@@ -208,8 +222,11 @@ export default function UserMeScreen() {
             defaultChecked={me?.visibleOnPeopleSearch}
             onChecked={onVisiblePeopleSearchChange}
           />
-          <TouchableOpacity onPress={onDeleteAccount}>
-            <ThemedText className="text-center text-muted-foreground underline">
+          <TouchableOpacity
+            onPress={onDeleteAccount}
+            className="flex-row items-center gap-1 opacity-50"
+          >
+            <ThemedText className="text-muted-foreground">
               <FormattedMessage defaultMessage="Delete account" />
             </ThemedText>
           </TouchableOpacity>

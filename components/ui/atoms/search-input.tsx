@@ -1,7 +1,12 @@
 import { useColorScheme } from "nativewind";
 import { useMemo, useState } from "react";
 import { useIntl } from "react-intl";
-import { TextInput, View } from "react-native";
+import {
+  NativeSyntheticEvent,
+  TextInput,
+  TextInputFocusEventData,
+  View,
+} from "react-native";
 import { twMerge } from "tailwind-merge";
 
 import { Icon } from "@/components/ui/atoms/icon";
@@ -16,11 +21,13 @@ export const SearchInput = ({
   className,
   autoFocus,
   onBlur,
+  onFocus,
 }: {
   className?: string;
   autoFocus?: boolean;
   onChangeText: (text: string) => void;
-  onBlur?: () => void;
+  onBlur?: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void;
+  onFocus?: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void;
 }) => {
   const { colorScheme } = useColorScheme();
   const intl = useIntl();
@@ -43,12 +50,13 @@ export const SearchInput = ({
       </View>
       <TextInput
         autoFocus={autoFocus}
-        onFocus={() => {
+        onFocus={(e) => {
           setFocused(true);
+          onFocus?.(e);
         }}
-        onBlur={() => {
+        onBlur={(e) => {
           setFocused(false);
-          onBlur?.();
+          onBlur?.(e);
         }}
         style={{ fontFamily, fontSize: 16 }}
         onChangeText={onChangeText}

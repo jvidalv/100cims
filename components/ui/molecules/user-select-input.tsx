@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { FormattedMessage } from "react-intl";
 import { Pressable, ScrollView, TouchableOpacity, View } from "react-native";
 import Animated, {
@@ -16,7 +16,7 @@ import { SearchInput } from "@/components/ui/atoms/search-input";
 import { Skeleton } from "@/components/ui/atoms/skeleton";
 import { ThemedText } from "@/components/ui/atoms/themed-text";
 import { ThemedView } from "@/components/ui/atoms/themed-view";
-import { BottomDrawer } from "@/components/ui/molecules";
+import { BottomDrawer } from "@/components/ui/molecules/bottom-drawer";
 import { useIsKeyboardVisible } from "@/hooks/use-is-keyboard-visible";
 import { getInitials } from "@/lib/strings";
 
@@ -53,6 +53,7 @@ export const UserSelectInput = ({
   const isKeyboardVisible = useIsKeyboardVisible();
   const height = useSharedValue(initialHeightSize);
   const totalHeightSize = initialHeightSize + 100;
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     if (isKeyboardVisible) {
@@ -75,51 +76,52 @@ export const UserSelectInput = ({
   });
 
   return (
-    <BottomDrawer
-      Trigger={({ setOpen }) => (
-        <Pressable
-          onPress={() => setOpen(true)}
-          className="flex-row items-center rounded-xl border-2 border-border bg-background py-2"
+    <>
+      <Pressable
+        onPress={() => setIsOpen(true)}
+        className="flex-row items-center rounded-xl border-2 border-border bg-background py-2"
+      >
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerClassName="flex-row gap-2 pl-4"
         >
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerClassName="flex-row gap-2 pl-4"
-          >
-            {selectedUsers?.map((user, index) => (
-              <TouchableOpacity
-                onPress={() =>
-                  onSelectedUsersChange?.(
-                    selectedUsers?.filter(({ id }) => id !== user.id),
-                  )
-                }
-                key={user.id}
-                className="relative"
-              >
-                <Avatar
-                  imageUrl={user?.imageUrl}
-                  initials={getInitials(user?.fullName)}
-                />
-                {(index !== 0 || firstSelectedRemovable === true) && (
-                  <View className="absolute right-0 top-0 size-4 items-center justify-center rounded-full bg-background/80">
-                    <Icon name="xmark" size={10} weight="semibold" />
-                  </View>
-                )}
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-          <TouchableOpacity
-            onPress={() => setOpen(true)}
-            className="mx-4 size-10 items-center justify-center rounded-xl bg-muted-foreground/30 shadow"
-          >
-            <Icon name="plus" weight="semibold" color="white" size={16} />
-          </TouchableOpacity>
-        </Pressable>
-      )}
-    >
-      {({ setOpen }) => (
+          {selectedUsers?.map((user, index) => (
+            <TouchableOpacity
+              onPress={() =>
+                onSelectedUsersChange?.(
+                  selectedUsers?.filter(({ id }) => id !== user.id),
+                )
+              }
+              key={user.id}
+              className="relative"
+            >
+              <Avatar
+                imageUrl={user?.imageUrl}
+                initials={getInitials(user?.fullName)}
+              />
+              {(index !== 0 || firstSelectedRemovable === true) && (
+                <View className="absolute right-0 top-0 size-4 items-center justify-center rounded-full bg-background/80">
+                  <Icon name="xmark" size={10} weight="semibold" />
+                </View>
+              )}
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+        <TouchableOpacity
+          onPress={() => setIsOpen(true)}
+          className="mx-4 size-10 items-center justify-center rounded-xl bg-muted-foreground/30 shadow"
+        >
+          <Icon name="plus" weight="semibold" color="white" size={16} />
+        </TouchableOpacity>
+      </Pressable>
+      <BottomDrawer
+        isOpen={isOpen}
+        onRequestClose={() => setIsOpen(false)}
+        height={totalHeightSize}
+      >
         <Animated.View style={animatedStyle}>
-          <View className="gap-4 px-6 pb-2 pt-6">
+          <View className="gap-4 px-6 pb-4 pt-6">
             <SearchInput autoFocus onChangeText={onQueryChange} />
             {!query && (
               <ThemedText className="text-muted-foreground/50">
@@ -211,12 +213,12 @@ export const UserSelectInput = ({
             })}
           </ScrollView>
           <ThemedView className="absolute bottom-0 h-32 w-full p-6">
-            <Button onPress={() => setOpen(false)} intent="outline">
+            <Button onPress={() => setIsOpen(false)} intent="outline">
               <FormattedMessage defaultMessage="Done" />
             </Button>
           </ThemedView>
         </Animated.View>
-      )}
-    </BottomDrawer>
+      </BottomDrawer>
+    </>
   );
 };

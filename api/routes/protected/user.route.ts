@@ -47,6 +47,7 @@ export const userRoute = new Elysia({ prefix: "/user" })
           imageUrl: image ? getPublicUrl(key) : undefined,
           visibleOnHiscores: body.visibleOnHiscores,
           visibleOnPeopleSearch: body.visibleOnPeopleSearch,
+          town: body.town,
         })
         .where(eq(userTable.id, user.id));
 
@@ -59,6 +60,7 @@ export const userRoute = new Elysia({ prefix: "/user" })
         firstName: t.Optional(t.String()),
         lastName: t.Optional(t.String()),
         image: t.Optional(t.String()),
+        town: t.Optional(t.String()),
         visibleOnHiscores: t.Optional(t.Boolean()),
         visibleOnPeopleSearch: t.Optional(t.Boolean()),
       }),

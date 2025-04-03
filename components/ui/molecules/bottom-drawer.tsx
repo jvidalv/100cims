@@ -1,16 +1,9 @@
-import {
-  Dispatch,
-  Fragment,
-  ReactNode,
-  SetStateAction,
-  useEffect,
-  useState,
-} from "react";
+import { ReactNode, useEffect, useState } from "react";
 import {
   Modal as RNModal,
   Pressable,
-  TouchableOpacity,
   View,
+  TouchableOpacity,
   PanResponder,
 } from "react-native";
 import Animated, {
@@ -21,47 +14,45 @@ import Animated, {
 
 import { Icon } from "@/components/ui/atoms";
 
+export function useBottomDrawer(initialOpen: boolean = false) {
+  return useState(initialOpen);
+}
+
+type BottomDrawerProps = {
+  isOpen: boolean;
+  height?: number;
+  onRequestClose?: () => void;
+  children: ReactNode;
+};
+
 export function BottomDrawer({
+  isOpen,
+  height = 300,
   onRequestClose,
   children,
-  Trigger,
-}: {
-  onRequestClose?: () => void;
-  children:
-    | ((props: {
-        open: boolean;
-        setOpen: Dispatch<SetStateAction<boolean>>;
-      }) => ReactNode)
-    | ReactNode;
-  Trigger: ({
-    open,
-    setOpen,
-  }: {
-    open: boolean;
-    setOpen: Dispatch<SetStateAction<boolean>>;
-  }) => ReactNode;
-}) {
-  const [innerOpen, setInnerOpen] = useState(false);
+}: BottomDrawerProps) {
+  const [visible, setVisible] = useState(isOpen);
 
-  const translateY = useSharedValue(0);
-  const opacity = useSharedValue(innerOpen ? 1 : 0);
+  const translateY = useSharedValue(height);
+  const opacity = useSharedValue(0);
 
-  // Update opacity when `innerOpen` changes
   useEffect(() => {
-    if (innerOpen) {
+    if (isOpen) {
+      setVisible(true);
       translateY.value = withTiming(0, { duration: 300 });
-      opacity.value = withTiming(1, { duration: 1000 });
+      opacity.value = withTiming(1, { duration: 300 });
     } else {
-      translateY.value = withTiming(300, { duration: 300 });
-      opacity.value = withTiming(0, { duration: 50 });
+      translateY.value = withTiming(height, { duration: 300 });
+      opacity.value = withTiming(0, { duration: 200 });
+      setTimeout(() => setVisible(false), 300);
     }
-  }, [innerOpen, opacity, translateY]);
+  }, [isOpen, height, translateY, opacity]);
 
-  const animatedStyle = useAnimatedStyle(() => ({
+  const animatedContainerStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: translateY.value }],
   }));
 
-  const backgroundStyle = useAnimatedStyle(() => ({
+  const animatedOverlayStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
   }));
 
@@ -74,53 +65,42 @@ export function BottomDrawer({
     },
     onPanResponderRelease: (_, gestureState) => {
       if (gestureState.dy > 100) {
-        setInnerOpen(false);
+        onRequestClose?.();
       } else {
         translateY.value = withTiming(0, { duration: 300 });
       }
     },
   });
 
+  if (!visible) return null;
+
   return (
-    <Fragment>
-      <RNModal
-        animationType="slide"
-        visible={innerOpen}
-        transparent
-        onRequestClose={onRequestClose}
-      >
-        <View className="flex-1 justify-end">
-          <Animated.View
-            className="absolute size-full bg-background/40"
-            style={backgroundStyle}
+    <RNModal animationType="none" visible transparent>
+      <View className="flex-1 justify-end">
+        <Animated.View
+          className="absolute size-full bg-background/40"
+          style={animatedOverlayStyle}
+        >
+          <Pressable className="size-full" onPress={onRequestClose} />
+        </Animated.View>
+        <Animated.View
+          {...panResponder.panHandlers}
+          style={animatedContainerStyle}
+          className="relative min-h-44 rounded-t-2xl border border-border bg-background shadow-sm"
+        >
+          <TouchableOpacity
+            onPress={onRequestClose}
+            className="absolute -top-8 right-4"
           >
-            <Pressable
-              onPress={() => setInnerOpen(false)}
-              className="size-full"
+            <Icon
+              name="xmark"
+              animationSpec={{ effect: { type: "bounce" } }}
+              size={18}
             />
-          </Animated.View>
-          <Animated.View
-            {...panResponder.panHandlers}
-            style={animatedStyle}
-            className="relative -mx-px min-h-44 rounded-t-2xl border border-border bg-background shadow-sm"
-          >
-            <TouchableOpacity
-              onPress={() => setInnerOpen(false)}
-              className="absolute -top-8 right-4"
-            >
-              <Icon
-                name="xmark"
-                animationSpec={{ effect: { type: "bounce" } }}
-                size={18}
-              />
-            </TouchableOpacity>
-            {typeof children === "function"
-              ? children({ open: innerOpen, setOpen: setInnerOpen })
-              : children}
-          </Animated.View>
-        </View>
-      </RNModal>
-      <Trigger open={innerOpen} setOpen={setInnerOpen} />
-    </Fragment>
+          </TouchableOpacity>
+          {children}
+        </Animated.View>
+      </View>
+    </RNModal>
   );
 }

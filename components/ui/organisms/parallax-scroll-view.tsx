@@ -17,15 +17,17 @@ import { Icon } from "@/components/ui/atoms/icon";
 import { ThemedView } from "@/components/ui/atoms/themed-view";
 import { hasDynamicIsland, isAndroid } from "@/lib/device";
 
-const DEFAULT_BLURRED_HEADER_CLASSNAME = "font-medium text-lg";
+const DEFAULT_BLURRED_HEADER_CLASSNAME = "font-medium text-lg max-w-56";
 
 type Props = PropsWithChildren<{
-  headerImage: ReactElement;
+  headerImage?: ReactElement;
   contentClassName?: string;
   headerClassName: string;
   title: string;
   subtitle?: string;
   height?: number;
+  parallaxRightElement?: ReactElement;
+  parallaxHeaderTitleClassName?: string;
   headerRightElement?: ReactElement;
   headerCenterElement?: ({
     title,
@@ -41,8 +43,10 @@ export default function ParallaxScrollView({
   headerClassName,
   title,
   subtitle,
+  parallaxRightElement,
   headerCenterElement,
   headerRightElement,
+  parallaxHeaderTitleClassName,
   contentClassName,
   height = 300,
 }: Props) {
@@ -73,7 +77,7 @@ export default function ParallaxScrollView({
   });
 
   return (
-    <ThemedView className="relative flex-1 pb-8">
+    <ThemedView className="relative flex-1">
       <Animated.ScrollView ref={scrollRef} scrollEventThrottle={16}>
         <AnimatedHeaderBackground
           headerClassName={headerClassName}
@@ -94,9 +98,18 @@ export default function ParallaxScrollView({
               {subtitle}
             </ThemedText>
           )}
-          <ThemedText className="text-4xl font-bold text-white">
-            {title}
-          </ThemedText>
+          <View className="flex-row items-end justify-between">
+            <ThemedText
+              numberOfLines={3}
+              className={twMerge(
+                "-mb-1 flex-1 items-end text-4xl font-bold text-white",
+                parallaxHeaderTitleClassName,
+              )}
+            >
+              {title}
+            </ThemedText>
+            {parallaxRightElement}
+          </View>
         </Animated.View>
         <ThemedView className={twMerge("flex-1", contentClassName)}>
           {children}
@@ -160,7 +173,7 @@ const AnimatedHeaderBackground = ({
   height,
 }: {
   height: number;
-  headerImage: ReactElement;
+  headerImage?: ReactElement;
   headerClassName: string;
   scrollOffset: SharedValue<number>;
 }) => {

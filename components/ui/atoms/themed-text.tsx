@@ -25,6 +25,7 @@ export const ThemedText = forwardRef<Text, TextProps & TextVariantsProps>(
       <Text
         ref={ref}
         style={[{ fontFamily, fontSize }, style]}
+        selectable
         className={twMerge(
           "text-foreground",
           className

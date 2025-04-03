@@ -1,11 +1,13 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { format } from "date-fns/format";
 import { Link, useRouter } from "expo-router";
+import { analytics } from "expofast-analytics";
 import { useColorScheme } from "nativewind";
 import { Fragment, useCallback, useEffect } from "react";
 import { FormattedMessage } from "react-intl";
 import { Pressable, TouchableOpacity, View } from "react-native";
 import Animated, {
+  SharedValue,
   useAnimatedRef,
   useAnimatedStyle,
   useScrollViewOffset,
@@ -22,9 +24,15 @@ import { ThemedText } from "@/components/ui/atoms/themed-text";
 import { ThemedView } from "@/components/ui/atoms/themed-view";
 import { MountainItemList } from "@/components/ui/molecules";
 import { AvatarGroup } from "@/components/ui/molecules/avatar-group";
+import {
+  PlanItemList,
+  PlanItemListSkeleton,
+} from "@/components/ui/molecules/plan-item-list";
 import { Colors } from "@/constants/colors";
 import { useChallengesGet } from "@/domains/challenge/challenge.api";
 import { useRecommendedPeaks } from "@/domains/mountain/mountain.api";
+import { usePlanChatUnread } from "@/domains/plan/plan-chat.api";
+import { useNewPlansCount, usePlans } from "@/domains/plan/plan.api";
 import { useSummitsGet } from "@/domains/summit/summit.api";
 import { useUserMe, useUserChallengeSummits } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
@@ -94,6 +102,48 @@ const MountainsDone = ({
         </View>
       )}
     </Link>
+  );
+};
+
+const PlansSection = () => {
+  const { data, isPending } = usePlans({
+    limit: 3,
+    status: "open",
+    sort: "upcoming",
+  });
+
+  const plans = data?.data?.message;
+  return (
+    <View>
+      <View className="gap-3">
+        {isPending && (
+          <>
+            <PlanItemListSkeleton />
+            <PlanItemListSkeleton />
+            <PlanItemListSkeleton />
+          </>
+        )}
+        {plans?.map(({ id, title, status, startDate, mountains, users }) => (
+          <PlanItemList
+            key={id}
+            id={id}
+            title={title}
+            status={status}
+            startDate={startDate}
+            mountains={mountains?.map(({ imageUrl }) => ({ imageUrl }))}
+            users={users}
+          />
+        ))}
+      </View>
+      <Link href="/plan/create" asChild>
+        <TouchableOpacity className="flex-row items-center gap-1 pb-4 pt-6">
+          <ThemedText className="text-muted-foreground">
+            <FormattedMessage defaultMessage="Create a new plan" />
+          </ThemedText>
+          <Icon name="plus" size={12} weight="bold" muted />
+        </TouchableOpacity>
+      </Link>
+    </View>
   );
 };
 
@@ -176,15 +226,114 @@ const TopSection = () => {
   );
 };
 
+const PageHeader = ({
+  scrollOffset,
+}: {
+  scrollOffset: SharedValue<number>;
+}) => {
+  const { data: plansUnread } = usePlanChatUnread();
+  const hasUnreadMessages = !!plansUnread?.data?.message?.length;
+  const { data: user } = useUserMe();
+  const fullName = user ? getFullName(user) : "";
+  const { isAuthenticated } = useAuth();
+
+  const { data: newPlansCount } = useNewPlansCount();
+
+  const hasNewPlans = !!newPlansCount?.data?.count;
+
+  const topLeftSectionStyle = useAnimatedStyle(() => {
+    if (scrollOffset.value > 100) {
+      return {
+        opacity: withTiming(1, { duration: 200 }),
+      };
+    }
+    return {
+      opacity: withTiming(0, { duration: 300 }),
+    };
+  });
+
+  const { setColorScheme, colorScheme } = useColorScheme();
+
+  return (
+    <BlurView
+      className={twMerge(
+        "absolute z-20 h-[7rem] w-full justify-end px-6 pb-2",
+        hasDynamicIsland && "h-[7.5rem]",
+      )}
+    >
+      <View className="flex-row items-center justify-between">
+        <Animated.View className="flex-1" style={topLeftSectionStyle}>
+          <MountainsDone showAllMountains={false} />
+        </Animated.View>
+        <View className="flex-1 flex-row items-center justify-end gap-2">
+          <TouchableOpacity
+            className="size-12 items-center justify-center rounded-full border-2 border-border opacity-80"
+            onPress={() =>
+              setColorScheme(colorScheme === "dark" ? "light" : "dark")
+            }
+          >
+            {colorScheme === "dark" && (
+              <Icon
+                name="sun.max.fill"
+                muted
+                animationSpec={{ effect: { type: "bounce" } }}
+              />
+            )}
+            {colorScheme === "light" && (
+              <Icon
+                name="moon.fill"
+                muted
+                animationSpec={{ effect: { type: "bounce" } }}
+              />
+            )}
+          </TouchableOpacity>
+          <Link href="/plans" asChild>
+            <TouchableOpacity
+              onPress={() => analytics.action("header-plans-clicked")}
+              className="relative size-12 items-center justify-center rounded-full border-2 border-border opacity-80"
+            >
+              {hasNewPlans && (
+                <View className="absolute -right-0.5 -top-0.5 size-4 rounded-full bg-blue-500" />
+              )}
+              <Icon
+                name="backpack"
+                muted
+                animationSpec={
+                  hasNewPlans
+                    ? { effect: { type: "bounce" }, repeatCount: 3 }
+                    : undefined
+                }
+              />
+            </TouchableOpacity>
+          </Link>
+          <Link href={isAuthenticated ? "/user" : "/join"} asChild>
+            <TouchableOpacity className="relative">
+              <Avatar
+                initials={
+                  isAuthenticated && user
+                    ? getInitials(fullName || user.email || "Y")
+                    : "100"
+                }
+                className="bg-primary"
+                imageUrl={user?.imageUrl}
+              />
+              {hasUnreadMessages && (
+                <View className="absolute -right-0.5 -top-0.5 size-4 rounded-full bg-primary" />
+              )}
+            </TouchableOpacity>
+          </Link>
+        </View>
+      </View>
+    </BlurView>
+  );
+};
+
 export default function IndexScreen() {
   const recommendedPeaks = useRecommendedPeaks();
-  const { isAuthenticated } = useAuth();
-  const { data: user, refetch: refetchUser } = useUserMe();
-  const fullName = user ? getFullName(user) : "";
+  const { refetch: refetchUser } = useUserMe();
   const { refetch: refetchChallengeSummits } = useUserChallengeSummits();
-
   const { data: latestSummits, refetch: refetchLatestSummits } = useSummitsGet({
-    limit: 5,
+    limit: 4,
   });
 
   const isCurrentRoute = useIsCurrentScreen("/");
@@ -222,71 +371,13 @@ export default function IndexScreen() {
     };
   });
 
-  const topLeftSectionStyle = useAnimatedStyle(() => {
-    if (scrollOffset.value > 100) {
-      return {
-        opacity: withTiming(1, { duration: 200 }),
-      };
-    }
-    return {
-      opacity: withTiming(0, { duration: 300 }),
-    };
-  });
-
-  const { setColorScheme, colorScheme } = useColorScheme();
-
   return (
     <ThemedView className="flex-1">
-      <BlurView
-        className={twMerge(
-          "absolute z-20 h-[7rem] w-full justify-end px-6 pb-2",
-          hasDynamicIsland && "h-[7.5rem]",
-        )}
-      >
-        <View className="flex-row items-center justify-between">
-          <Animated.View className="flex-1" style={topLeftSectionStyle}>
-            <MountainsDone showAllMountains={false} />
-          </Animated.View>
-          <View className="flex-1 flex-row items-center justify-end gap-2">
-            <TouchableOpacity
-              className="size-12 items-center justify-center rounded-full border-2 border-border opacity-80"
-              onPress={() =>
-                setColorScheme(colorScheme === "dark" ? "light" : "dark")
-              }
-            >
-              {colorScheme === "dark" && (
-                <Icon
-                  name="sun.max.fill"
-                  muted
-                  animationSpec={{ effect: { type: "bounce" } }}
-                />
-              )}
-              {colorScheme === "light" && (
-                <Icon
-                  name="moon.fill"
-                  muted
-                  animationSpec={{ effect: { type: "bounce" } }}
-                />
-              )}
-            </TouchableOpacity>
-            <Link href={isAuthenticated ? "/user" : "/join"}>
-              <Avatar
-                initials={
-                  isAuthenticated && user
-                    ? getInitials(fullName || user.email || "Y")
-                    : "100"
-                }
-                className="bg-primary"
-                imageUrl={user?.imageUrl}
-              />
-            </Link>
-          </View>
-        </View>
-      </BlurView>
+      <PageHeader scrollOffset={scrollOffset} />
       <Animated.ScrollView
         ref={scrollRef}
-        className="gap-10 px-6 pb-12"
-        contentContainerClassName="gap-10"
+        className="px-6 pb-12"
+        contentContainerClassName="gap-8"
         showsVerticalScrollIndicator={false}
       >
         <View className="h-24" />
@@ -383,7 +474,7 @@ export default function IndexScreen() {
               </View>
             </Link>
           </View>
-          <View className="gap-4 pb-16">
+          <View className="gap-2">
             {recommendedPeaks?.map(
               ({ id, name, height, slug, imageUrl, essential, location }) => (
                 <MountainItemList
@@ -398,6 +489,22 @@ export default function IndexScreen() {
               ),
             )}
           </View>
+        </View>
+        <View className="gap-4 pb-16">
+          <View className="flex-row items-end justify-between">
+            <ThemedText className="text-2xl font-bold">
+              <FormattedMessage defaultMessage="Upcoming plans" />
+            </ThemedText>
+            <Link href="/plans" className="-mx-2 -mb-2 p-2">
+              <View className="flex-row items-center gap-1">
+                <ThemedText className="text-muted-foreground">
+                  <FormattedMessage defaultMessage="All plans" />
+                </ThemedText>
+                <Icon name="arrow.forward" size={12} weight="bold" muted />
+              </View>
+            </Link>
+          </View>
+          <PlansSection />
         </View>
       </Animated.ScrollView>
     </ThemedView>

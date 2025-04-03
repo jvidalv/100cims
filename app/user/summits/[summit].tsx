@@ -1,14 +1,13 @@
 import { format } from "date-fns/format";
-import { Image } from "expo-image";
 import { Link, Redirect, useLocalSearchParams, useRouter } from "expo-router";
 import { FormattedMessage } from "react-intl";
-import { ScrollView, TouchableOpacity, View } from "react-native";
+import { ScrollView, TouchableOpacity, Image, View } from "react-native";
 
 import { useAuth } from "@/components/providers/auth-provider";
 import {
   Avatar,
   Button,
-  Icon,
+  DynamicImage,
   Skeleton,
   ThemedText,
   ThemedView,
@@ -29,8 +28,13 @@ const Content = () => {
       <ThemedView className="flex-1">
         <ScreenHeader />
         <View className="px-6">
-          <Skeleton className="mb-1 h-10 w-64" />
-          <Skeleton className="mb-8 h-6 w-20" />
+          <View className="flex-row justify-between">
+            <View>
+              <Skeleton className="mb-1 h-9 w-64" />
+              <Skeleton className="mb-8 h-6 w-20" />
+            </View>
+            <Skeleton className="size-16 rounded-lg" />
+          </View>
           <ThemedText className="mb-2 text-2xl font-semibold">
             <FormattedMessage defaultMessage="People" />
           </ThemedText>
@@ -39,14 +43,19 @@ const Content = () => {
             <FormattedMessage defaultMessage="Photo" />
           </ThemedText>
         </View>
+        <Skeleton className="size-full min-h-[500px]" />
       </ThemedView>
     );
   }
 
   return (
-    <ThemedView className="flex-1 pb-16">
+    <ThemedView className="flex-1">
       <ScreenHeader />
-      <ScrollView className="flex-1 px-6">
+      <ScrollView
+        stickyHeaderIndices={[0]}
+        showsVerticalScrollIndicator={false}
+        contentContainerClassName="pb-12"
+      >
         <Link
           href={{
             pathname: "/mountain/[slug]",
@@ -54,61 +63,70 @@ const Content = () => {
           }}
           asChild
         >
-          <TouchableOpacity className="mb-8">
-            <ThemedText className="text-3xl font-bold">
-              {data.mountainName}
-            </ThemedText>
-            <View className="flex-row items-center gap-1">
-              <ThemedText className="text-lg font-semibold text-muted-foreground">
-                {format(data.summitedAt, "dd MMM yyyy")}
+          <TouchableOpacity className="mb-4 flex-row justify-between bg-background px-6 pb-2">
+            <View>
+              <ThemedText className="text-3xl font-bold">
+                {data.mountainName}
               </ThemedText>
-              <Icon name="arrow.forward" size={20} muted />
+              <View className="flex-row items-center gap-1">
+                <ThemedText className="text-lg font-semibold text-muted-foreground">
+                  {format(data.summitedAt, "dd MMM yyyy")}
+                </ThemedText>
+              </View>
             </View>
+
+            {data.mountainImageUrl ? (
+              <Image
+                className="size-16 rounded-lg"
+                source={{ uri: data.mountainImageUrl }}
+              />
+            ) : (
+              <View className="rounded-lg bg-neutral-500" />
+            )}
           </TouchableOpacity>
         </Link>
-        <ThemedText className="mb-2 text-2xl font-semibold">
-          <FormattedMessage defaultMessage="People" />
-        </ThemedText>
-        <View className="mb-6 gap-3">
-          {data.users.map((user) => (
-            <Link
-              href={{ pathname: "/user/[user]", params: { user: user.userId } }}
-              key={user.userId}
-              asChild
-            >
-              <TouchableOpacity className="flex-row items-center gap-3">
-                <Avatar
-                  size="sm"
-                  imageUrl={user.imageUrl}
-                  initials={getInitials(getFullName(user))}
-                />
-                <ThemedText className="text-lg">
-                  {getFullName(user)} →
-                </ThemedText>
-              </TouchableOpacity>
-            </Link>
-          ))}
+        <View className="px-6">
+          <ThemedText className="mb-3 text-2xl font-semibold">
+            <FormattedMessage defaultMessage="People" />
+          </ThemedText>
+          <View className="mb-6 gap-3">
+            {data.users.map((user) => (
+              <Link
+                href={{
+                  pathname: "/user/[user]",
+                  params: { user: user.userId },
+                }}
+                key={user.userId}
+                asChild
+              >
+                <TouchableOpacity className="flex-row items-center gap-3">
+                  <Avatar
+                    size="sm"
+                    imageUrl={user.imageUrl}
+                    initials={getInitials(getFullName(user))}
+                  />
+                  <ThemedText className="text-lg">
+                    {getFullName(user)}
+                  </ThemedText>
+                </TouchableOpacity>
+              </Link>
+            ))}
+          </View>
         </View>
-        <ThemedText className="mb-2 text-2xl font-semibold">
+        <ThemedText className="mb-3 px-6 text-2xl font-semibold">
           <FormattedMessage defaultMessage="Photo" />
         </ThemedText>
-        <View className="mb-6 overflow-hidden rounded-xl">
-          <Image
-            source={data.summitImageUrl}
-            placeholder={{ blurhash: `L~I64nWEWXaz_NWEWWazbvWBaxfQ` }}
-            style={{ height: 500, width: "100%" }}
-            contentFit="cover"
-            contentPosition="center"
-            transition={500}
-          />
+        <View className="mb-6 overflow-hidden rounded-lg">
+          <DynamicImage uri={data.summitImageUrl} />
         </View>
-        <Button intent="outline" onPress={router.back}>
-          ← <FormattedMessage defaultMessage="Back" />
+        <Button intent="ghost" onPress={router.back}>
+          <FormattedMessage defaultMessage="Go back" />
         </Button>
       </ScrollView>
     </ThemedView>
   );
 };
+
 export default function SummitsSummitPage() {
   const { isAuthenticated } = useAuth();
 

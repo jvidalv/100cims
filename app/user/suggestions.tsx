@@ -36,7 +36,7 @@ export default function SuggestionsScreen() {
       <ScreenHeader />
       <View className="flex-1 px-6">
         <ThemedText className="mb-8 text-4xl font-bold">
-          <FormattedMessage defaultMessage="Suggestions" />
+          <FormattedMessage defaultMessage="Help & Suggestions" />
         </ThemedText>
         <ThemedTextInput
           className="mb-6"

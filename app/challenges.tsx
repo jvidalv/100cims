@@ -12,27 +12,10 @@ import {
   ThemedText,
   ThemedView,
 } from "@/components/ui/atoms";
+import { pastelColors } from "@/constants/colors";
 import { useChallengesGet } from "@/domains/challenge/challenge.api";
 import { countryToEmoji } from "@/domains/challenge/challenge.model";
 import { isAndroid } from "@/lib/device";
-
-const colors = [
-  "#BAE1FF", // Baby Blue
-  "#E2C2FF", // Lavender
-  "#FFFFBA", // Light Yellow
-  "#BAFFC9", // Mint Green
-  "#FFDFBA", // Pastel Peach
-  "#98cdf8",
-  "#d5abff",
-  "#bac8ff",
-  "#e3ffba",
-  "#babbff",
-  "#ffbaba",
-  "#c2ffe8",
-  "#d1ffba",
-  "#ffd9ba",
-  "#eebaff",
-];
 
 export default function ChallengesScreen() {
   const router = useRouter();
@@ -75,7 +58,9 @@ export default function ChallengesScreen() {
             <View className="flex-row items-center gap-4">
               <View
                 className="size-12 items-center justify-center rounded-xl"
-                style={{ backgroundColor: colors[index] }}
+                style={{
+                  backgroundColor: pastelColors[index]?.bg || "#BAE1FF",
+                }}
               >
                 <ThemedText>{countryToEmoji(challenge.country)}</ThemedText>
               </View>
