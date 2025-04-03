@@ -9,9 +9,11 @@ import {
   planUserLogTable,
 } from "@/api/db/schema";
 import { formatDateForPostgres } from "@/api/lib/dates";
+import { JWT } from "@/api/routes/@shared/jwt";
 import { getStoreUser } from "@/api/routes/@shared/store";
 
 export const planPrivateRoute = new Elysia({ prefix: "/plans" })
+  .use(JWT())
   .post(
     "/create",
     async ({ body, store }) => {

@@ -7,6 +7,7 @@ import { App } from "@/api/routes";
 export const request = (config?: Treaty.Config) =>
   treaty<App>(process.env.EXPO_PUBLIC_API_URL || "", {
     onResponse: (response) => {
+      // console.log(response.url, response.status);
       if (!response.ok) {
         if (response.status === 422) {
           Alert.alert(

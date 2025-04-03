@@ -182,7 +182,7 @@ const AnimatedTooltip = () => {
   return (
     <Animated.View
       style={animatedTooltipStyle}
-      className="absolute left-[85%] top-4 z-10 translate-y-1/2"
+      className="absolute left-[85%] top-4 z-20 translate-y-1/2"
     >
       <Pressable
         onPress={hideTooltip}

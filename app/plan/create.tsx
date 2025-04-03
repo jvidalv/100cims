@@ -248,22 +248,6 @@ const DetailsStep = ({
           defaultMessage: "I don't know exactly when.",
         })}
       />
-      <View className="relative mt-auto rounded-xl border-2 border-border p-4">
-        <View className="absolute -right-3 -top-3">
-          <Icon
-            name="star.fill"
-            color="gold"
-            size={24}
-            animationSpec={{ effect: { type: "bounce" } }}
-          />
-        </View>
-        <ThemedText className="mb-1 font-semibold">
-          <FormattedMessage defaultMessage="Do you know?" />
-        </ThemedText>
-        <ThemedText>
-          <FormattedMessage defaultMessage="Sharing plans with others is a great way to meet people with similar interests!" />
-        </ThemedText>
-      </View>
     </View>
   );
 };

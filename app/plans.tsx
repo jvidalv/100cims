@@ -11,6 +11,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { twMerge } from "tailwind-merge";
 
+import { useAuth } from "@/components/providers/auth-provider";
 import { Icon, ThemedText } from "@/components/ui/atoms";
 import {
   PlanItemList,
@@ -86,6 +87,7 @@ const FloatingAlert = ({ onClose }: { onClose: () => void }) => {
 export default function PlansScreen() {
   const intl = useIntl();
   const [status, setStatus] = useState("open");
+  const { isAuthenticated } = useAuth();
   const [showAlert, setShowAlert] = useState(false);
   const { mutate: markAsVisited } = useMarkPlansAsVisited();
   const { data, isPending: isPendingPlans } = usePlans({ status });
@@ -103,8 +105,10 @@ export default function PlansScreen() {
   }, []);
 
   useEffect(() => {
-    markAsVisited();
-  }, [markAsVisited]);
+    if (isAuthenticated) {
+      markAsVisited();
+    }
+  }, [isAuthenticated, markAsVisited]);
 
   const statuses = [
     {

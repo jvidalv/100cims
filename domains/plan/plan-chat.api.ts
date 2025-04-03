@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 
+import { useAuth } from "@/components/providers/auth-provider";
 import { queryClient } from "@/components/providers/query-client-provider";
 import { useApiWithAuth } from "@/hooks/use-api-with-auth";
 
@@ -23,20 +24,27 @@ export const usePlanChatRead = () => {
 
 export const usePlanChatUnread = () => {
   const apiWithAuth = useApiWithAuth();
+  const { isAuthenticated } = useAuth();
 
   return useQuery({
     queryKey: ["plan-chat", "unread"],
-    queryFn: () => apiWithAuth.protected.plans.chat.unread.get(),
+    enabled: () => isAuthenticated,
+    queryFn: () =>
+      isAuthenticated ? apiWithAuth.protected.plans.chat.unread.get() : null,
   });
 };
 
 export const usePlanChatMessages = (planId: string) => {
   const apiWithAuth = useApiWithAuth();
+  const { isAuthenticated } = useAuth();
 
   return useQuery({
     queryKey: ["plan-chat", "messages", planId],
+    enabled: () => isAuthenticated,
     queryFn: () =>
-      apiWithAuth.protected.plans.chat.all.get({ query: { planId } }),
+      isAuthenticated
+        ? apiWithAuth.protected.plans.chat.all.get({ query: { planId } })
+        : null,
     refetchInterval: 2500,
   });
 };

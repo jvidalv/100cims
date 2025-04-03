@@ -8,9 +8,11 @@ import {
   planUserMessageReadTable,
   userTable,
 } from "@/api/db/schema";
+import { JWT } from "@/api/routes/@shared/jwt";
 import { getStoreUser } from "@/api/routes/@shared/store";
 
 export const planChatRoute = new Elysia({ prefix: "/plans/chat" })
+  .use(JWT())
   .post(
     "/read",
     async ({ body, store }) => {
