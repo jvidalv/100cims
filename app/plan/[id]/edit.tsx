@@ -232,7 +232,9 @@ export default function PlanEditPage() {
                 <FormattedMessage defaultMessage="Cancel" />
               </ThemedText>
             </TouchableOpacity>
-            <ThemedText className="text-muted-foreground/50">or</ThemedText>
+            <ThemedText className="text-muted-foreground/50">
+              <FormattedMessage defaultMessage="or" />
+            </ThemedText>
             <TouchableOpacity onPress={handleDelete} className="px-2 py-4">
               <ThemedText className="text-muted-foreground">
                 <FormattedMessage defaultMessage="Delete" />

@@ -58,7 +58,6 @@ export default function UserScreen() {
       title={user ? getFullName(user) : "..."}
       headerClassName="flex items-center justify-center bg-primary"
       contentClassName="py-6"
-      height={200}
       parallaxRightElement={
         <View className="flex-row  items-end gap-4 opacity-80">
           {isMe && (

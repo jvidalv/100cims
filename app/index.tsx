@@ -38,7 +38,6 @@ import { useUserMe, useUserChallengeSummits } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
 import { useIsCurrentScreen } from "@/hooks/use-is-current-screen";
 import { useOnAppActive } from "@/hooks/use-on-app-active";
-import { hasDynamicIsland } from "@/lib/device";
 import { getInitials } from "@/lib/strings";
 
 const MountainsDone = ({
@@ -67,31 +66,27 @@ const MountainsDone = ({
       {userSummits || !isAuthenticated ? (
         <View className="flex-row items-center gap-2">
           <View className="flex-row items-center gap-1 rounded-xl border-2 border-border px-2 py-1">
-            <View className="mr-1 size-4 rounded-full bg-primary" />
-            <ThemedText className="text-lg">
+            <View className="mr-0.5 size-4 rounded-full bg-primary" />
+            <ThemedText>
               {isAuthenticated ? userSummits?.essentialPeaksCount : 0}
             </ThemedText>
-            <ThemedText className="text-lg font-medium text-muted-foreground">
+            <ThemedText className="font-medium text-muted-foreground">
               <FormattedMessage defaultMessage="of" />
             </ThemedText>
-            <ThemedText className="text-lg">
-              {challenge?.totalEssentialMountains}
-            </ThemedText>
+            <ThemedText>{challenge?.totalEssentialMountains}</ThemedText>
           </View>
           {showAllMountains && (
             <View className="flex-row items-center gap-1 rounded-xl border-2 border-border px-2 py-1">
-              <View className="mr-1">
+              <View>
                 <Icon name="mountain.2.fill" muted size={20} />
               </View>
-              <ThemedText className="text-lg">
+              <ThemedText>
                 {isAuthenticated ? userSummits?.uniquePeaksCount : 0}
               </ThemedText>
-              <ThemedText className="text-lg font-medium text-muted-foreground">
+              <ThemedText className="font-medium text-muted-foreground">
                 <FormattedMessage defaultMessage="of" />
               </ThemedText>
-              <ThemedText className="text-lg">
-                {challenge?.totalMountains}
-              </ThemedText>
+              <ThemedText>{challenge?.totalMountains}</ThemedText>
             </View>
           )}
         </View>
@@ -255,19 +250,14 @@ const PageHeader = ({
   const { setColorScheme, colorScheme } = useColorScheme();
 
   return (
-    <BlurView
-      className={twMerge(
-        "absolute z-20 h-[7rem] w-full justify-end px-6 pb-2",
-        hasDynamicIsland && "h-[7.5rem]",
-      )}
-    >
+    <BlurView className="absolute z-20 h-28 w-full justify-end px-6 pb-2">
       <View className="flex-row items-center justify-between">
         <Animated.View className="flex-1" style={topLeftSectionStyle}>
           <MountainsDone showAllMountains={false} />
         </Animated.View>
         <View className="flex-1 flex-row items-center justify-end gap-2">
           <TouchableOpacity
-            className="size-12 items-center justify-center rounded-full border-2 border-border opacity-80"
+            className="size-10 items-center justify-center rounded-full border-2 border-border opacity-60"
             onPress={() =>
               setColorScheme(colorScheme === "dark" ? "light" : "dark")
             }
@@ -290,10 +280,10 @@ const PageHeader = ({
           <Link href="/plans" asChild>
             <TouchableOpacity
               onPress={() => analytics.action("header-plans-clicked")}
-              className="relative size-12 items-center justify-center rounded-full border-2 border-border opacity-80"
+              className="relative size-10 items-center justify-center rounded-full border-2 border-border"
             >
               {hasNewPlans && (
-                <View className="absolute -right-0.5 -top-0.5 size-4 rounded-full bg-blue-500" />
+                <View className="absolute -right-0.5 -top-0.5 size-3 rounded-full bg-blue-500" />
               )}
               <Icon
                 name="backpack"
@@ -309,6 +299,7 @@ const PageHeader = ({
           <Link href={isAuthenticated ? "/user" : "/join"} asChild>
             <TouchableOpacity className="relative">
               <Avatar
+                size="sm"
                 initials={
                   isAuthenticated && user
                     ? getInitials(fullName || user.email || "Y")
@@ -318,7 +309,7 @@ const PageHeader = ({
                 imageUrl={user?.imageUrl}
               />
               {hasUnreadMessages && (
-                <View className="absolute -right-0.5 -top-0.5 size-4 rounded-full bg-primary" />
+                <View className="absolute -right-0.5 -top-0.5 size-3 rounded-full bg-primary" />
               )}
             </TouchableOpacity>
           </Link>

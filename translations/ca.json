@@ -154,7 +154,7 @@
   "XYsvl5": "Esborra el missatge",
   "Xai36g": "Cancel·lar aquest pla?",
   "YddCHw": "Escriu aquí...",
-  "ZPboiN": "Xateja amb altres",
+  "ZPboiN": "Xateja amb els altres",
   "a8DSxW": "Unit el {date}",
   "aJxdzZ": "Selecciona’n un",
   "d+z7v1": "Data no decidida",
@@ -169,7 +169,7 @@
   "itPgxd": "Perfil",
   "kyYf9Q": "{points} pts",
   "l3MiXo": "No obligatori",
-  "nOxI4K": "Enginyer de producte",
+  "nOxI4K": "Product engineer",
   "orvpWh": "Torna enrere",
   "pNTyiX": "Conserva",
   "qdhixG": "Els plans es poden esborrar més endavant sense cap obligació.",
@@ -188,5 +188,6 @@
   "dCN31n": "Crear un pla nou",
   "Gn2VdB": "Nou pla",
   "qbkIE0": "Tots",
-  "Oj1HSZ": "Sense informació."
+  "Oj1HSZ": "Sense informació.",
+  "Ntjkqd": "o"
 }

@@ -2,7 +2,7 @@ import { Link, useRouter } from "expo-router";
 import { analytics } from "expofast-analytics";
 import { useState } from "react";
 import { FormattedMessage } from "react-intl";
-import { TouchableOpacity, View } from "react-native";
+import { ScrollView, TouchableOpacity, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
 import { useChallenge } from "@/components/providers/challenge-provider";
@@ -47,7 +47,7 @@ export default function ChallengesScreen() {
           <FormattedMessage defaultMessage="Each challenge is constrained within a region. You can switch betweem them freely, progress is saved." />
         </ThemedText>
       </View>
-      <View className="gap-2">
+      <ScrollView contentContainerClassName="gap-2">
         {challenges?.map((challenge, index) => (
           <TouchableOpacity
             key={challenge.id}
@@ -95,7 +95,7 @@ export default function ChallengesScreen() {
             <FormattedMessage defaultMessage="Suggest a new challenge" />
           </ThemedText>
         </Link>
-      </View>
+      </ScrollView>
     </ThemedView>
   );
 }
