@@ -74,7 +74,7 @@ export const joinRoute = new Elysia().use(JWT()).post(
           firstName: firstName,
           lastName: lastName,
           imageUrl: imageUrl,
-          // locale: body.locale,
+          locale: body.locale,
         })
         .returning();
       user = insert[0];
@@ -96,7 +96,7 @@ export const joinRoute = new Elysia().use(JWT()).post(
       identityToken: t.String(),
       firstName: t.Optional(t.String()),
       lastName: t.Optional(t.String()),
-      // locale: t.Optional(t.String()),
+      locale: t.Optional(t.String()),
     }),
   },
 );

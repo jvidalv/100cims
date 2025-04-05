@@ -1,6 +1,6 @@
 import { format } from "date-fns/format";
 import { nextSunday } from "date-fns/nextSunday";
-import { useRouter } from "expo-router";
+import { useRouter, Redirect } from "expo-router";
 import { analytics } from "expofast-analytics";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
@@ -19,6 +19,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { twMerge } from "tailwind-merge";
 
+import { useAuth } from "@/components/providers/auth-provider";
 import {
   Button,
   Icon,
@@ -292,7 +293,7 @@ const stepOrder = ["start", "mountains", "details"] as const;
 export default function PlanCreatePage() {
   const router = useRouter();
   const intl = useIntl();
-
+  const { isAuthenticated } = useAuth();
   const [step, setStep] = useState<Step>(stepOrder[0]);
 
   const [date, setDate] = useState<Date | null | undefined>(nextSundayDate);
@@ -418,6 +419,10 @@ export default function PlanCreatePage() {
 
     return <FormattedMessage defaultMessage="Create plan" />;
   };
+
+  if (!isAuthenticated) {
+    return <Redirect href="/join" />;
+  }
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
