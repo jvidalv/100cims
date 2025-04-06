@@ -23,7 +23,9 @@ import {
 } from "@/components/ui/atoms";
 import {
   AvatarGroup,
+  BottomDrawer,
   MountainItemListAsTouchable,
+  ScreenHeader,
 } from "@/components/ui/molecules";
 import { UserSelectInput, UserForSelectInput } from "@/components/ui/molecules";
 import { useMountains } from "@/domains/mountain/mountain.api";
@@ -95,7 +97,7 @@ export default function PlanEditPage() {
       id,
       title,
       description,
-      startDate: date ? date.toISOString() : undefined,
+      startDate: date ? date.toString() : undefined,
       mountainIds,
       userIds: users.map((u) => u.id),
     });
@@ -156,100 +158,105 @@ export default function PlanEditPage() {
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <ThemedKeyboardAvoidingView>
-        <View className="px-6 pt-6">
-          <ThemedText className="text-4xl font-semibold text-foreground">
-            <FormattedMessage defaultMessage="Updating plan" />
-          </ThemedText>
-        </View>
-        <ScrollView
-          className="p-6"
-          keyboardShouldPersistTaps="handled"
-          contentContainerClassName="gap-4 pb-24"
-        >
-          <ThemedTextInput
-            label={intl.formatMessage({ defaultMessage: "Activity title" })}
-            value={title}
-            onChangeText={setTitle}
-          />
-          <ThemedTextInput
-            label={intl.formatMessage({ defaultMessage: "Extra info" })}
-            multiline
-            value={description}
-            onChangeText={setDescription}
-          />
-          <ThemedDateInput value={date} onDateValid={(date) => setDate(date)} />
-
-          <View className="mb-2">
-            <ThemedText className="mb-2 text-lg font-medium">
-              <FormattedMessage defaultMessage="Participants" />
-            </ThemedText>
-            <UserSelection
-              creatorId={plan.creatorId}
-              selectedUsers={users}
-              onChange={setUsers}
-            />
-          </View>
-
-          <View className="mb-2">
-            <ThemedText className="mb-2 text-lg font-medium">
-              <FormattedMessage defaultMessage="Mountains" />
-            </ThemedText>
-            <TouchableOpacity
-              onPress={() => setEditingMountains(true)}
-              className="flex-row items-center justify-between gap-4 rounded-xl border-2 border-border px-4 py-2"
-            >
-              {!!selectedMountains?.length ? (
-                <AvatarGroup
-                  limit={6}
-                  items={selectedMountains.map((m) => ({
-                    name: m.name,
-                    imageUrl: m.imageUrl,
-                  }))}
-                />
-              ) : (
-                <View className="h-8" />
-              )}
-              <View className="size-10 items-center justify-center rounded-xl bg-muted-foreground/30 shadow">
-                <Icon name="plus" weight="semibold" color="white" size={16} />
-              </View>
-            </TouchableOpacity>
-          </View>
-          <Button
-            className="mt-6"
-            intent="success"
-            onPress={handleUpdate}
-            isLoading={isPendingUpdate}
+      <View className="flex-1">
+        <ScreenHeader>
+          <FormattedMessage defaultMessage="Updating plan" />
+        </ScreenHeader>
+        <ThemedKeyboardAvoidingView>
+          <ScrollView
+            className="p-6"
+            keyboardShouldPersistTaps="handled"
+            contentContainerClassName="gap-4 pb-24"
           >
-            <FormattedMessage defaultMessage="Update" />
-          </Button>
-          <Button intent="outline" onPress={() => router.dismiss()}>
-            <FormattedMessage defaultMessage="Close" />
-          </Button>
-          <View className="flex-row items-center justify-center">
-            <TouchableOpacity onPress={handleCancel} className="px-2 py-4">
-              <ThemedText className="text-muted-foreground">
-                <FormattedMessage defaultMessage="Cancel" />
+            <ThemedTextInput
+              label={intl.formatMessage({ defaultMessage: "Activity title" })}
+              value={title}
+              onChangeText={setTitle}
+            />
+            <ThemedTextInput
+              label={intl.formatMessage({ defaultMessage: "Extra info" })}
+              multiline
+              value={description}
+              onChangeText={setDescription}
+            />
+            <ThemedDateInput
+              value={date}
+              onDateValid={(date) => setDate(date)}
+            />
+
+            <View className="mb-2">
+              <ThemedText className="mb-2 text-lg font-medium">
+                <FormattedMessage defaultMessage="Participants" />
               </ThemedText>
-            </TouchableOpacity>
-            <ThemedText className="text-muted-foreground/50">
-              <FormattedMessage defaultMessage="or" />
-            </ThemedText>
-            <TouchableOpacity onPress={handleDelete} className="px-2 py-4">
-              <ThemedText className="text-muted-foreground">
-                <FormattedMessage defaultMessage="Delete" />
+              <UserSelection
+                creatorId={plan.creatorId}
+                selectedUsers={users}
+                onChange={setUsers}
+              />
+            </View>
+
+            <View className="mb-2">
+              <ThemedText className="mb-2 text-lg font-medium">
+                <FormattedMessage defaultMessage="Mountains" />
               </ThemedText>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-        {editingMountains && (
-          <MountainsList
-            mountainIds={mountainIds}
-            setMountainIds={setMountainIds}
-            doneEditing={() => setEditingMountains(false)}
-          />
-        )}
-      </ThemedKeyboardAvoidingView>
+              <TouchableOpacity
+                onPress={() => setEditingMountains(true)}
+                className="flex-row items-center justify-between gap-4 rounded-xl border-2 border-border px-4 py-2"
+              >
+                {!!selectedMountains?.length ? (
+                  <AvatarGroup
+                    limit={6}
+                    items={selectedMountains.map((m) => ({
+                      name: m.name,
+                      imageUrl: m.imageUrl,
+                    }))}
+                  />
+                ) : (
+                  <View className="h-8" />
+                )}
+                <View className="size-10 items-center justify-center rounded-xl bg-muted-foreground/30 shadow">
+                  <Icon name="plus" weight="semibold" color="white" size={16} />
+                </View>
+              </TouchableOpacity>
+            </View>
+            <Button
+              className="mt-6"
+              intent="success"
+              onPress={handleUpdate}
+              isLoading={isPendingUpdate}
+            >
+              <FormattedMessage defaultMessage="Update" />
+            </Button>
+            <Button intent="outline" onPress={() => router.dismiss()}>
+              <FormattedMessage defaultMessage="Close" />
+            </Button>
+            <View className="flex-row items-center justify-center">
+              <TouchableOpacity onPress={handleCancel} className="px-2 py-4">
+                <ThemedText className="text-muted-foreground">
+                  <FormattedMessage defaultMessage="Cancel" />
+                </ThemedText>
+              </TouchableOpacity>
+              <ThemedText className="text-muted-foreground/50">
+                <FormattedMessage defaultMessage="or" />
+              </ThemedText>
+              <TouchableOpacity onPress={handleDelete} className="px-2 py-4">
+                <ThemedText className="text-muted-foreground">
+                  <FormattedMessage defaultMessage="Delete" />
+                </ThemedText>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+          <BottomDrawer
+            isOpen={editingMountains}
+            onRequestClose={() => setEditingMountains(false)}
+          >
+            <MountainsList
+              mountainIds={mountainIds}
+              setMountainIds={setMountainIds}
+            />
+          </BottomDrawer>
+        </ThemedKeyboardAvoidingView>
+      </View>
     </TouchableWithoutFeedback>
   );
 }
@@ -292,11 +299,9 @@ const UserSelection = ({
 const MountainsList = ({
   setMountainIds,
   mountainIds,
-  doneEditing,
 }: {
   setMountainIds: Dispatch<SetStateAction<string[]>>;
   mountainIds: string[];
-  doneEditing: () => void;
 }) => {
   const [query, setQuery] = useState("");
   const { data: mountainsData } = useMountains();
@@ -306,16 +311,23 @@ const MountainsList = ({
   );
 
   const filteredMountains = useMemo(() => {
-    if (!query.trim()) return allMountains;
-    return allMountains.filter(({ name, location }) =>
-      cleanText(`${name} ${location}`)
-        .toLowerCase()
-        .includes(cleanText(query).toLowerCase()),
-    );
-  }, [query, allMountains]);
+    const filtered = !query.trim()
+      ? allMountains
+      : allMountains.filter(({ name, location }) =>
+          cleanText(`${name} ${location}`)
+            .toLowerCase()
+            .includes(cleanText(query).toLowerCase()),
+        );
+
+    return filtered.sort((a, b) => {
+      const aSelected = mountainIds.includes(a.id) ? 0 : 1;
+      const bSelected = mountainIds.includes(b.id) ? 0 : 1;
+      return aSelected - bSelected;
+    });
+  }, [query, allMountains, mountainIds]);
 
   return (
-    <View className="absolute inset-0 bg-background p-6">
+    <View className="max-h-[70vh] bg-background p-6">
       <ThemedText className="mb-2 text-2xl font-semibold">
         <FormattedMessage defaultMessage="Mountains" />
       </ThemedText>
@@ -373,11 +385,6 @@ const MountainsList = ({
           );
         }}
       />
-      <View className="absolute left-6 top-[80vh] w-full">
-        <Button className="mt-4" onPress={doneEditing}>
-          <FormattedMessage defaultMessage="Done" />
-        </Button>
-      </View>
     </View>
   );
 };

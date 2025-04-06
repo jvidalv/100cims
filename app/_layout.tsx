@@ -4,6 +4,7 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
+import { setDefaultOptions } from "date-fns/setDefaultOptions";
 import * as Application from "expo-application";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
@@ -52,7 +53,6 @@ import en from "@/translations/en.json";
 import es from "@/translations/es.json";
 
 import "../global.css";
-import { setDefaultOptions } from "date-fns/setDefaultOptions";
 
 const ANIMATION_DURATION = 1500;
 
@@ -179,14 +179,6 @@ function Content() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen
         name="mountain/[slug]/summit"
-        options={{ presentation: isIpadOS ? "fullScreenModal" : "modal" }}
-      />
-      <Stack.Screen
-        name="plan/create"
-        options={{ presentation: isIpadOS ? "fullScreenModal" : "modal" }}
-      />
-      <Stack.Screen
-        name="plan/[id]/edit"
         options={{ presentation: isIpadOS ? "fullScreenModal" : "modal" }}
       />
       <Stack.Screen

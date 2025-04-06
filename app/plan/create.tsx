@@ -21,6 +21,7 @@ import { twMerge } from "tailwind-merge";
 
 import { useAuth } from "@/components/providers/auth-provider";
 import {
+  BlurView,
   Button,
   Icon,
   SearchInput,
@@ -30,9 +31,11 @@ import {
 } from "@/components/ui/atoms";
 import { ThemedCheckbox } from "@/components/ui/atoms/themed-checkbox";
 import { ThemedDateInput } from "@/components/ui/atoms/themed-date-input";
+import { ScreenHeader } from "@/components/ui/molecules";
 import { MountainItemListAsTouchable } from "@/components/ui/molecules/mountain-item-list";
 import { useMountains } from "@/domains/mountain/mountain.api";
 import { useMarkPlansAsVisited, usePlanCreate } from "@/domains/plan/plan.api";
+import { useIsKeyboardVisible } from "@/hooks/use-is-keyboard-visible";
 import { cleanText } from "@/lib";
 import { isAndroid } from "@/lib/device";
 import { getDateFnsLocale, getLocale } from "@/lib/locale";
@@ -96,16 +99,22 @@ const MountainsStep = memo(
     const queriedMountains = useMemo(() => {
       const mountains = data?.data?.message;
 
-      if (!query) {
-        return mountains;
-      }
+      if (!mountains) return [];
 
-      return mountains?.filter(({ name, location }) =>
-        cleanText(`${name} ${location}`)
-          .toLowerCase()
-          .includes(cleanText(query).toLowerCase()),
-      );
-    }, [query, data?.data?.message]);
+      const filtered = !query
+        ? mountains
+        : mountains.filter(({ name, location }) =>
+            cleanText(`${name} ${location}`)
+              .toLowerCase()
+              .includes(cleanText(query).toLowerCase()),
+          );
+
+      return filtered.sort((a, b) => {
+        const aSelected = value.includes(a.id) ? 0 : 1;
+        const bSelected = value.includes(b.id) ? 0 : 1;
+        return aSelected - bSelected;
+      });
+    }, [query, data?.data?.message, value]);
 
     return (
       <View>
@@ -155,9 +164,10 @@ const MountainsStep = memo(
                 />
                 {isSelected && (
                   <View
-                    className="pointer-events-none absolute left-0 top-2 items-center justify-center bg-blue-500"
+                    className="pointer-events-none absolute left-0 top-2 items-center justify-center overflow-hidden"
                     style={{ width: 100, height: 100, borderRadius: 12 }}
                   >
+                    <View className="absolute size-full bg-blue-500 opacity-50" />
                     <Icon
                       name="checkmark"
                       size={32}
@@ -215,6 +225,7 @@ const DetailsStep = ({
         label="Extra information about your plan"
         multiline
         value={values.description}
+        inputClassName="h-[180px]"
         onChangeText={(description) =>
           onDetailsChange({ ...values, description })
         }
@@ -310,6 +321,8 @@ export default function PlanCreatePage() {
     start: intl.formatMessage({ defaultMessage: "Before starting" }),
   };
 
+  const isKeyboardVisible = useIsKeyboardVisible();
+
   const isStepMountains = step === "mountains";
   const isStepDetails = step === "details";
   const isStepStart = step === "start";
@@ -363,7 +376,7 @@ export default function PlanCreatePage() {
       const response = await mutateAsync({
         title,
         description,
-        startDate: date ? date.toISOString() : undefined,
+        startDate: date ? date.toString() : undefined,
         mountainIds: mountains,
       });
 
@@ -427,7 +440,8 @@ export default function PlanCreatePage() {
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <ThemedView className="flex-1">
-        <View className={twMerge("px-6 pt-6 pb-4", isAndroid && "pt-24")}>
+        <ScreenHeader />
+        <View className={twMerge("px-6 pt-2 pb-4", isAndroid && "pt-24")}>
           <ThemedText className="mb-1 text-muted-foreground">
             <FormattedMessage defaultMessage="Creating a plan" />
           </ThemedText>
@@ -454,7 +468,12 @@ export default function PlanCreatePage() {
             />
           )}
         </View>
-        <View className="px-6 pb-8">
+        <BlurView
+          className={twMerge(
+            "px-6 pt-1 pb-8",
+            isKeyboardVisible && "opacity-0",
+          )}
+        >
           <Button isLoading={isPending} onPress={handleOnContinue}>
             <ContinueText />
           </Button>
@@ -465,7 +484,7 @@ export default function PlanCreatePage() {
           >
             <FormattedMessage defaultMessage="Back" />
           </Button>
-        </View>
+        </BlurView>
       </ThemedView>
     </TouchableWithoutFeedback>
   );

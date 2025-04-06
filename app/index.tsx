@@ -15,7 +15,6 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
-import { twMerge } from "tailwind-merge";
 
 import { useAuth } from "@/components/providers/auth-provider";
 import { useChallenge } from "@/components/providers/challenge-provider";
