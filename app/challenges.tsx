@@ -39,15 +39,21 @@ export default function ChallengesScreen() {
     <ThemedView
       className={twMerge("flex-1 gap-6 px-4 pt-6", isAndroid && "pt-24")}
     >
-      <View>
-        <ThemedText className="text-4xl font-black">
-          <FormattedMessage defaultMessage="Challenges" />
-        </ThemedText>
-        <ThemedText className="text-muted-foreground">
-          <FormattedMessage defaultMessage="Each challenge is constrained within a region. You can switch betweem them freely, progress is saved." />
-        </ThemedText>
-      </View>
-      <ScrollView contentContainerClassName="gap-2">
+      <ScrollView
+        contentContainerClassName="gap-2 pb-40"
+        showsVerticalScrollIndicator={false}
+        stickyHeaderIndices={[0]}
+      >
+        <ThemedView className="pb-2">
+          <ThemedText className="text-4xl font-black">
+            <FormattedMessage defaultMessage="Challenges" />
+          </ThemedText>
+        </ThemedView>
+        <View className="pb-2">
+          <ThemedText className="text-muted-foreground">
+            <FormattedMessage defaultMessage="Each challenge is constrained within a region. You can switch betweem them freely, progress is saved." />
+          </ThemedText>
+        </View>
         {challenges?.map((challenge, index) => (
           <TouchableOpacity
             key={challenge.id}

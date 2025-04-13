@@ -90,6 +90,9 @@ export const planTable = pgTable("plan", {
   creatorId: uuid()
     .references(() => userTable.id, { onDelete: "set null" })
     .notNull(),
+  challengeId: uuid().references(() => challengeTable.id, {
+    onDelete: "set null",
+  }), // ⬅️ New optional relation
   title: text().notNull(),
   description: text(),
   imageUrl: text(),
@@ -186,6 +189,10 @@ export const planRelations = relations(planTable, ({ one, many }) => ({
   creator: one(userTable, {
     fields: [planTable.creatorId],
     references: [userTable.id],
+  }),
+  challenge: one(challengeTable, {
+    fields: [planTable.challengeId],
+    references: [challengeTable.id],
   }),
   mountains: many(planHasMountainsTable),
   participants: many(planHasUsersTable),

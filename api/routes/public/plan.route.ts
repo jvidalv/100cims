@@ -23,6 +23,9 @@ export const plansRoute = new Elysia({ prefix: "/plans" })
             )
           : undefined,
         query.creatorId ? eq(planTable.creatorId, query.creatorId) : undefined,
+        query.challengeId
+          ? eq(planTable.challengeId, query.challengeId)
+          : undefined,
       ].filter(Boolean);
 
       const userFilter = query.userId
@@ -42,6 +45,7 @@ export const plansRoute = new Elysia({ prefix: "/plans" })
           creatorId: planTable.creatorId,
           createdAt: planTable.createdAt,
           updatedAt: planTable.updatedAt,
+          challengeId: planTable.challengeId, // ✅ expose in result
         })
         .from(planTable)
         .orderBy(
@@ -138,6 +142,7 @@ export const plansRoute = new Elysia({ prefix: "/plans" })
         creatorId: t.Optional(t.String()),
         userId: t.Optional(t.String()),
         sort: t.Optional(t.String()), // "upcoming" or undefined
+        challengeId: t.Optional(t.String()), // ✅ new
       }),
     },
   )

@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 
+import { useChallenge } from "@/components/providers/challenge-provider";
 import { queryClient } from "@/components/providers/query-client-provider";
 import { useUserMe } from "@/domains/user/user.api";
 import { useApiWithAuth } from "@/hooks/use-api-with-auth";
@@ -12,13 +13,21 @@ export const usePlans = (
     creatorId?: string;
     userId?: string;
     sort?: "upcoming";
+    challengeId?: string;
   },
   { enabled }: { enabled?: boolean } = {},
 ) => {
+  const { challengeId } = useChallenge();
+
+  if (params) {
+    params.challengeId = challengeId;
+  }
+
   return useQuery({
     queryKey: ["plans", params],
     enabled,
-    queryFn: () => api.public.plans.all.get({ query: params ?? {} }),
+    queryFn: () =>
+      api.public.plans.all.get({ query: params ?? { challengeId } }),
   });
 };
 

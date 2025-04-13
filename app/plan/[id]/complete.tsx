@@ -186,10 +186,12 @@ export default function PlanCompleteScreen() {
                     </ThemedText>
                   </View>
                 </View>
-
                 <TouchableOpacity
                   disabled={isHandlingImages === m.id}
-                  className="h-48 w-full items-center justify-center overflow-hidden rounded-xl border-2 border-border bg-background"
+                  className={twMerge(
+                    "w-full items-center justify-center overflow-hidden rounded-xl border-2 border-border bg-background",
+                    mountains?.length === 1 ? "h-96" : "h-48",
+                  )}
                   onPress={() => handlePickImage(m.id)}
                 >
                   {images[m.id] ? (

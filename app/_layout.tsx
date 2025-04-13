@@ -114,7 +114,7 @@ function Content() {
   const { isAuthenticated } = useAuth();
   const { isPending: isPendingMountains } = useMountains();
   const { data: user, isPending: isPendingUser } = useUserMe();
-  const { isPending: isPendingHomepageSummits } = useSummitsGet({ limit: 4 });
+  const { isPending: isPendingHomepageSummits } = useSummitsGet({ limit: 5 });
   const { isPending: isPendingChallenges } = useChallengesGet();
   usePlanChatUnread();
   useUserChallengeSummits();

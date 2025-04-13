@@ -58,25 +58,3 @@ export const mountainRoute = new Elysia({ prefix: "/mountain" })
       }),
     },
   );
-//
-// async function hasAddedSummitRecently(userId: string): Promise<boolean> {
-//   const oneMinuteAgo = new Date(Date.now() - 2 * 60 * 1000); // 1 minute ago
-//
-//   const results = await db
-//     .select({
-//       recentSummit: summitTable.id,
-//     })
-//     .from(summitTable)
-//     .innerJoin(
-//       summitHasUsersTable,
-//       eq(summitTable.id, summitHasUsersTable.summitId),
-//     )
-//     .where(
-//       and(
-//         eq(summitHasUsersTable.userId, userId),
-//         gt(summitTable.createdAt, oneMinuteAgo),
-//       ),
-//     );
-//
-//   return results.length > 0;
-// }

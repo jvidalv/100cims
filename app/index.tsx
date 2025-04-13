@@ -91,8 +91,8 @@ const MountainsDone = ({
         </View>
       ) : (
         <View className="flex-row gap-2">
-          <Skeleton className="h-9 w-28 rounded-xl" />
-          <Skeleton className="h-9 w-28 rounded-xl" />
+          <Skeleton className="h-8 w-28 rounded-xl" />
+          <Skeleton className="h-8 w-28 rounded-xl" />
         </View>
       )}
     </Link>
@@ -128,15 +128,34 @@ const PlansSection = () => {
             users={users}
           />
         ))}
+        {!isPending && !plans?.length && (
+          <Link href="/plan/create" asChild>
+            <TouchableOpacity className="flex-row gap-4">
+              <View
+                className="items-center justify-center bg-border"
+                style={{ width: 100, height: 100, borderRadius: 12 }}
+              >
+                <ThemedText className="text-5xl">+</ThemedText>
+              </View>
+              <View className="flex-1 justify-center">
+                <View className="items-start gap-1">
+                  <View className="flex-row gap-2">
+                    <ThemedText className="font-semibold text-blue-500">
+                      <FormattedMessage defaultMessage="None" />
+                    </ThemedText>
+                  </View>
+                  <ThemedText
+                    numberOfLines={2}
+                    className="text-lg font-semibold tracking-tight"
+                  >
+                    <FormattedMessage defaultMessage="Create your first plan" />
+                  </ThemedText>
+                </View>
+              </View>
+            </TouchableOpacity>
+          </Link>
+        )}
       </View>
-      <Link href="/plan/create" asChild>
-        <TouchableOpacity className="flex-row items-center gap-1 pb-4 pt-6">
-          <ThemedText className="text-muted-foreground">
-            <FormattedMessage defaultMessage="Create a new plan" />
-          </ThemedText>
-          <Icon name="plus" size={12} weight="bold" muted />
-        </TouchableOpacity>
-      </Link>
     </View>
   );
 };
@@ -323,7 +342,7 @@ export default function IndexScreen() {
   const { refetch: refetchUser } = useUserMe();
   const { refetch: refetchChallengeSummits } = useUserChallengeSummits();
   const { data: latestSummits, refetch: refetchLatestSummits } = useSummitsGet({
-    limit: 4,
+    limit: 5,
   });
 
   const isCurrentRoute = useIsCurrentScreen("/");

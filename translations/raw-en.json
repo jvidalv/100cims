@@ -44,6 +44,9 @@
   "4+p0E9": {
     "defaultMessage": "Do you know?"
   },
+  "450Fty": {
+    "defaultMessage": "None"
+  },
   "47FYwb": {
     "defaultMessage": "Cancel"
   },
@@ -362,9 +365,6 @@
   "d+z7v1": {
     "defaultMessage": "Date not decided"
   },
-  "dCN31n": {
-    "defaultMessage": "Create a new plan"
-  },
   "dEo+/0": {
     "defaultMessage": "and be part of a thriving community"
   },
@@ -421,6 +421,9 @@
   },
   "nOxI4K": {
     "defaultMessage": "Product engineer"
+  },
+  "nYqRsC": {
+    "defaultMessage": "Create your first plan"
   },
   "nfhxxT": {
     "defaultMessage": "Login out"

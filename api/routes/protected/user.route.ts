@@ -111,7 +111,8 @@ export const userRoute = new Elysia({ prefix: "/user" })
           mountainTable.height,
           mountainTable.essential,
         )
-        .orderBy(desc(summitTable.createdAt));
+        .orderBy(desc(summitTable.summitedAt), desc(summitTable.createdAt));
+
       const summitsWithScore = results.map((props) => {
         return {
           ...props,

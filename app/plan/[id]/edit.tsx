@@ -97,7 +97,7 @@ export default function PlanEditPage() {
       id,
       title,
       description,
-      startDate: date ? date.toString() : undefined,
+      startDate: date ? date.toISOString() : undefined,
       mountainIds,
       userIds: users.map((u) => u.id),
     });
@@ -327,7 +327,7 @@ const MountainsList = ({
   }, [query, allMountains, mountainIds]);
 
   return (
-    <View className="max-h-[70vh] bg-background p-6">
+    <View className="max-h-[70vh] min-h-[70vh] bg-background p-6">
       <ThemedText className="mb-2 text-2xl font-semibold">
         <FormattedMessage defaultMessage="Mountains" />
       </ThemedText>

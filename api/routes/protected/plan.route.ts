@@ -30,6 +30,7 @@ export const planPrivateRoute = new Elysia({ prefix: "/plans" })
             : null,
           speed: "normal",
           status: "open",
+          challengeId: body.challengeId ?? null, // ✅ Add challengeId support
         })
         .returning();
 
@@ -56,6 +57,7 @@ export const planPrivateRoute = new Elysia({ prefix: "/plans" })
         description: t.String(),
         startDate: t.Optional(t.String()),
         mountainIds: t.Optional(t.Array(t.String())),
+        challengeId: t.Optional(t.String()),
       }),
     },
   )

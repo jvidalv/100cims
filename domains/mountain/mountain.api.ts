@@ -40,7 +40,7 @@ export const useRecommendedPeaks = () => {
         !userSummits?.summits.some(({ mountainSlug }) => mountainSlug === slug),
     )
     ?.sort((a, b) => parseInt(b.height) - parseInt(a.height))
-    .slice(0, 1);
+    .slice(0, 3);
 };
 
 export const useSummitPost = (mountainSlug: string) => {

@@ -113,7 +113,7 @@ export default function SummitMountainScreen() {
 
     try {
       const response = await mutateAsync({
-        date: date.toString(),
+        date: date.toISOString(),
         image: image.base64,
         mountainId: mountain?.id,
         usersId: selectedUsers.map((user) => user.id),

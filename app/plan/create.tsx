@@ -20,6 +20,7 @@ import Animated, {
 import { twMerge } from "tailwind-merge";
 
 import { useAuth } from "@/components/providers/auth-provider";
+import { useChallenge } from "@/components/providers/challenge-provider";
 import {
   BlurView,
   Button,
@@ -225,7 +226,7 @@ const DetailsStep = ({
         label="Extra information about your plan"
         multiline
         value={values.description}
-        inputClassName="h-[180px]"
+        inputClassName="h-[140px]"
         onChangeText={(description) =>
           onDetailsChange({ ...values, description })
         }
@@ -304,6 +305,7 @@ const stepOrder = ["start", "mountains", "details"] as const;
 export default function PlanCreatePage() {
   const router = useRouter();
   const intl = useIntl();
+  const { challengeId } = useChallenge();
   const { isAuthenticated } = useAuth();
   const [step, setStep] = useState<Step>(stepOrder[0]);
 
@@ -376,8 +378,9 @@ export default function PlanCreatePage() {
       const response = await mutateAsync({
         title,
         description,
-        startDate: date ? date.toString() : undefined,
+        startDate: date ? date.toISOString() : undefined,
         mountainIds: mountains,
+        challengeId,
       });
 
       void markAsVisited();
