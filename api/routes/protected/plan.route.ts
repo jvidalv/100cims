@@ -8,7 +8,7 @@ import {
   planHasMountainsTable,
   planUserLogTable,
 } from "@/api/db/schema";
-import { formatDateForPostgres } from "@/api/lib/dates";
+import { formatDateForPostgresFromISOString } from "@/api/lib/dates";
 import { JWT } from "@/api/routes/@shared/jwt";
 import { getStoreUser } from "@/api/routes/@shared/store";
 
@@ -26,7 +26,7 @@ export const planPrivateRoute = new Elysia({ prefix: "/plans" })
           title: body.title,
           description: body.description,
           startDate: body.startDate
-            ? formatDateForPostgres(new Date(body.startDate))
+            ? formatDateForPostgresFromISOString(body.startDate)
             : null,
           speed: "normal",
           status: "open",
@@ -85,7 +85,7 @@ export const planPrivateRoute = new Elysia({ prefix: "/plans" })
           imageUrl: body.imageUrl ?? undefined,
           routeUrl: body.routeUrl ?? undefined,
           startDate: body.startDate
-            ? formatDateForPostgres(new Date(body.startDate))
+            ? formatDateForPostgresFromISOString(body.startDate)
             : undefined,
           updatedAt: new Date(),
         })

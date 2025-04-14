@@ -84,6 +84,16 @@ export const usePlanUpdate = () => {
     mutationFn: apiWithAuth.protected.plans.update.post,
     onSuccess: (_data, variables) => {
       void queryClient.invalidateQueries({ queryKey: ["plans"] });
+      void queryClient.invalidateQueries({
+        queryKey: [
+          "plans",
+          {
+            limit: 3,
+            status: "open",
+            sort: "upcoming",
+          },
+        ],
+      });
       void queryClient.invalidateQueries({ queryKey: ["plan", variables.id] });
     },
   });

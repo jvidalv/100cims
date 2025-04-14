@@ -3,7 +3,7 @@ import { uuidv7 } from "uuidv7";
 
 import { db } from "@/api/db";
 import { summitHasUsersTable, summitTable } from "@/api/db/schema";
-import { formatDateForPostgres } from "@/api/lib/dates";
+import { formatDateForPostgresFromISOString } from "@/api/lib/dates";
 import { isBase64SizeValid } from "@/api/lib/images";
 import { IMAGE_TO_BIG } from "@/api/routes/@shared/error-codes";
 import { JWT } from "@/api/routes/@shared/jwt";
@@ -30,7 +30,7 @@ export const mountainRoute = new Elysia({ prefix: "/mountain" })
           id,
           mountainId: body.mountainId,
           imageUrl: getPublicUrl(key),
-          summitedAt: formatDateForPostgres(new Date(body.date)),
+          summitedAt: formatDateForPostgresFromISOString(body.date),
         })
         .returning();
 

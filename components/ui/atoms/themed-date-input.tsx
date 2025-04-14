@@ -69,14 +69,13 @@ export const ThemedDateInput = ({
       nextDay.length > 0 && nextMonth.length > 0 && nextYear.length > 0;
 
     if (!isComplete) return;
-
-    const date = new Date(y, m, d);
+    const date = new Date(Date.UTC(y, m, d));
 
     const valid =
       isValid(date) &&
-      date.getDate() === d &&
-      date.getMonth() === m &&
-      date.getFullYear() === y;
+      date.getUTCDate() === d &&
+      date.getUTCMonth() === m &&
+      date.getUTCFullYear() === y;
 
     if (valid) {
       onDateValid(date);
