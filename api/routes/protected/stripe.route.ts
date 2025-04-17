@@ -3,7 +3,7 @@ import Stripe from "stripe";
 
 import { INVALID_AMOUNT_PROVIDED } from "@/api/routes/@shared/error-codes";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
+const stripe = new Stripe((process.env.STRIPE_SECRET_KEY as string) || "");
 
 export const stripeRoute = new Elysia({ prefix: "/stripe" }).get(
   "/donation",
