@@ -31,7 +31,7 @@ yarn start # or: expo start
 
 ## 🌐 Environment Variables
 
-Before running the project, create a `.env` file at the root and fill in:
+Before running the project, leverage the`.env.example` file to fill the required environment variables:
 
 ```env
 EXPO_PUBLIC_API_URL=http://localhost:8081/

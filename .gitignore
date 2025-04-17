@@ -36,12 +36,12 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
-app-example
-
 .idea
 .vercel
-
 
 # compilation
 ios
 android
+
+# auth
+google-services.json
