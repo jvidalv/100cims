@@ -41,7 +41,6 @@
       "expo-localization",
       "expo-apple-authentication",
       "expo-router",
-      "expo-localization",
       "expo-font",
       [
         "expo-image-picker",
