@@ -52,7 +52,7 @@ EXPO_PUBLIC_EXPOFAST_ANALYTICS_KEY=
 
 - `AWS_*` → used to store summit images on S3.
 - `SHEETS_*` → optional: logs API errors to Google Sheets.
-- `EXPO_PUBLIC_EXPOFAST_ANALYTICS_KEY` → integrates [expofast analytics](https://expofast.app/analytics).
+- `EXPO_PUBLIC_EXPOFAST_ANALYTICS_KEY` → integrates [expofast analytics](https://expofast.app/#join).
 
 ## 🔐 Auth
 
@@ -67,6 +67,12 @@ Authentication supports both **Google** and **Apple** sign-in.
   Also, generate and include your `google-services.json`.
 
 - For **Apple OAuth**, follow [Expo’s official Apple Auth setup guide](https://docs.expo.dev/versions/latest/sdk/apple-authentication/).
+
+- For JWT auth, generate a UUID and assign it to `AUTH_SECRET`:
+  ```env
+  AUTH_SECRET=
+  ```
+  
 
 ## 🌍 Translations
 
