@@ -1,5 +1,5 @@
 <p align='center'>
-  <img src="https://i.imgur.com/UtFHXCj.png" alt="expofa.st logo"  />
+  <img src="https://i.imgur.com/UtFHXCj.png" alt="100cims"  />
 </p>
 
 # [100cims](https://100cims.app)
@@ -109,3 +109,13 @@ Want to build apps like this, faster? Visit [expofast.app](https://expofast.app)
 ---
 
 Made with ❤️ by [@jvidalv](https://www.linkedin.com/in/josepvidalvidal/)
+
+
+## 🖼️ Media
+
+<p align='center'>
+  <img src="https://i.imgur.com/Ff7d87p.png" alt="media 1"  />
+  <img src="https://i.imgur.com/URj0pL0.png" alt="media 2"  />
+  <img src="https://i.imgur.com/PipStcD.png" alt="media 3"  />
+</p>
+
