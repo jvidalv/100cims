@@ -25,10 +25,10 @@ export default function ChallengesScreen() {
 
   const onChallengeSelect = async (id: string) => {
     try {
+      setIsLoading(true);
       analytics.action("selected-challenge", { challengeId: id });
       setChallengeId(id);
-      setIsLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1500));
       router.dismiss();
     } finally {
       setIsLoading(false);

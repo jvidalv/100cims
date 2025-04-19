@@ -15,6 +15,7 @@ export const challengeRoute = new Elysia({ prefix: "/challenge" }).get(
       .select({
         id: challengeTable.id,
         name: challengeTable.name,
+        slug: challengeTable.slug,
         country: challengeTable.country,
         totalMountains: sql<string>`COUNT(${challengeHasMountainTable.mountainId})`,
         totalEssentialMountains: sql<string>`SUM(CASE WHEN ${mountainTable.essential} THEN 1 ELSE 0 END)`,
@@ -28,11 +29,30 @@ export const challengeRoute = new Elysia({ prefix: "/challenge" }).get(
         mountainTable,
         sql`${challengeHasMountainTable.mountainId} = ${mountainTable.id}`,
       )
-      .groupBy(challengeTable.id);
+      .groupBy(challengeTable.id, challengeTable.slug);
+
+    const prioritySlugs = ["100-cims", "100-cims-usa"];
+
+    const sorted = challengesWithCounts.sort((a, b) => {
+      const indexA = prioritySlugs.indexOf(a.slug);
+      const indexB = prioritySlugs.indexOf(b.slug);
+
+      const isAInList = indexA !== -1;
+      const isBInList = indexB !== -1;
+
+      if (isAInList && isBInList) {
+        return indexA - indexB;
+      }
+
+      if (isAInList) return -1;
+      if (isBInList) return 1;
+
+      return 0; // keep relative order of others
+    });
 
     return {
       success: true,
-      message: challengesWithCounts,
+      message: sorted,
     };
   },
 );

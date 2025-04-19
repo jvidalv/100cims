@@ -139,11 +139,6 @@ const PlansSection = () => {
               </View>
               <View className="flex-1 justify-center">
                 <View className="items-start gap-1">
-                  <View className="flex-row gap-2">
-                    <ThemedText className="font-semibold text-blue-500">
-                      <FormattedMessage defaultMessage="None" />
-                    </ThemedText>
-                  </View>
                   <ThemedText
                     numberOfLines={2}
                     className="text-lg font-semibold tracking-tight"

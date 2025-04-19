@@ -7,5 +7,9 @@ export const countryToEmoji = (country: string) => {
     return "🇫🇷";
   }
 
+  if (country === "USA") {
+    return "🇺🇸";
+  }
+
   return "🌍";
 };
