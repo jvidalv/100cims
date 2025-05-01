@@ -1,12 +1,13 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 
 import { db } from "@/api/db";
 import {
+  planHasUsersTable,
   planMessageTable,
   planTable,
   planUserMessageReadTable,
-  userTable,
+  userTable
 } from "@/api/db/schema";
 import { JWT } from "@/api/routes/@shared/jwt";
 import { getStoreUser } from "@/api/routes/@shared/store";
@@ -53,6 +54,7 @@ export const planChatRoute = new Elysia({ prefix: "/plans/chat" })
   .get("/unread", async ({ store }) => {
     const user = getStoreUser(store);
 
+    // Get all plan memberships and last read timestamps for this user
     const lastReads = await db
       .select({
         planId: planUserMessageReadTable.planId,
@@ -65,12 +67,26 @@ export const planChatRoute = new Elysia({ prefix: "/plans/chat" })
       lastReads.map(({ planId, lastReadAt }) => [planId, lastReadAt]),
     );
 
+    // Get all plans the user is part of
+    const userPlans = await db
+      .select({ planId: planHasUsersTable.planId })
+      .from(planHasUsersTable)
+      .where(eq(planHasUsersTable.userId, user.id));
+
+    const planIds = userPlans.map((p) => p.planId);
+
+    if (planIds.length === 0) {
+      return { success: true, message: [] };
+    }
+
+    // Get messages from those plans
     const messages = await db
       .select({
         planId: planMessageTable.planId,
         createdAt: planMessageTable.createdAt,
       })
-      .from(planMessageTable);
+      .from(planMessageTable)
+      .where(inArray(planMessageTable.planId, planIds));
 
     const unread = messages.reduce((acc, message) => {
       const lastSeen = lastReadMap.get(message.planId);
