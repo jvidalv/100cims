@@ -6,11 +6,11 @@ import { analytics } from "expofast-analytics";
 import { useColorScheme } from "nativewind";
 import { useEffect, useState } from "react";
 import { FormattedMessage } from "react-intl";
-import { TouchableOpacity, View, Text, Image } from "react-native";
+import { TouchableOpacity, View, Text, Image, ScrollView } from "react-native";
 import { twMerge } from "tailwind-merge";
 
 import { useAuth } from "@/components/providers/auth-provider";
-import { ThemedView, ThemedText, Button } from "@/components/ui/atoms";
+import { ThemedText, Button } from "@/components/ui/atoms";
 import { AvatarGroup } from "@/components/ui/molecules";
 import { api } from "@/lib";
 import { isAndroid, isIOS } from "@/lib/device";
@@ -90,7 +90,7 @@ const AppleSignIn = () => {
           ? AppleAuthentication.AppleAuthenticationButtonStyle.WHITE
           : AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
       }
-      cornerRadius={10}
+      cornerRadius={6}
       style={{
         height: 48,
       }}
@@ -245,8 +245,11 @@ export default function JoinScreen() {
   }
 
   return (
-    <ThemedView
-      className={twMerge("flex-1 gap-6 px-4 pt-6", isAndroid && "pt-24")}
+    <ScrollView
+      contentContainerClassName={twMerge(
+        "gap-6 px-4 pt-6 pb-32",
+        isAndroid && "pt-24",
+      )}
     >
       <View className="items-center">
         <View className="items-center justify-center overflow-hidden rounded-full border-4 border-primary">
@@ -301,6 +304,6 @@ export default function JoinScreen() {
           </ThemedText>
         </TouchableOpacity>
       </View>
-    </ThemedView>
+    </ScrollView>
   );
 }

@@ -7,7 +7,7 @@ import {
   planMessageTable,
   planTable,
   planUserMessageReadTable,
-  userTable
+  userTable,
 } from "@/api/db/schema";
 import { JWT } from "@/api/routes/@shared/jwt";
 import { getStoreUser } from "@/api/routes/@shared/store";

@@ -6066,10 +6066,10 @@ expo@~52.0.42:
     web-streams-polyfill "^3.3.2"
     whatwg-url-without-unicode "8.0.0-3"
 
-expofast-analytics@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/expofast-analytics/-/expofast-analytics-0.2.1.tgz#ae90b01479560dde3b433244636187658cbc01e8"
-  integrity sha512-x69f+D8SC+HhXEAk7y1SEEG0TDVzquxTmI13AOrRefg0o5iiLlLZ3Wm5F+ROj7cBamTky6GFAETefwzUweohHw==
+expofast-analytics@^0.3:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/expofast-analytics/-/expofast-analytics-0.3.0.tgz#e3672c202936bf6ae3521921f43755aabbdd1b85"
+  integrity sha512-uSkRXhixf7eS5W+cSLrnS+8n4alz/EjlMtn9w8AQko6CMENBV9vhJV4++DelsfkrUPKkHFFdzE+L03qgEkEdhg==
 
 exponential-backoff@^3.1.1:
   version "3.1.2"

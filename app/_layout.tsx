@@ -5,7 +5,6 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { setDefaultOptions } from "date-fns/setDefaultOptions";
-import * as Application from "expo-application";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -284,7 +283,6 @@ export default function Root() {
     return createAnalyticsClient({
       asyncStorageInstance: AsyncStorage,
       apiKey: process.env.EXPO_PUBLIC_EXPOFAST_ANALYTICS_KEY as string,
-      appVersion: Application.nativeApplicationVersion as string,
     });
   }, []);
 
