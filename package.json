@@ -4,6 +4,7 @@
   "version": "2.0.3",
   "private": false,
   "license": "MIT",
+  "packageManager": "yarn@1.22.22",
   "scripts": {
     "start": "npx expo start --clear",
     "start:prod": "npx expo start --no-dev --minify",
@@ -14,7 +15,7 @@
     "translations:extract": "formatjs extract './{components,app}/**/*.ts*' --ignore='**/*.d.ts' --out-file translations/raw-en.json",
     "translations:generate": "formatjs compile './translations/raw-en.json' --out-file translations/en.json",
     "translations": "yarn translations:extract && yarn translations:generate",
-    "db:push": "EXPO_PUBLIC_API_URL=http://localhost:8081/ DATABASE_URL=postgresql://admin:admin@localhost:5432/my_local_db npx drizzle-kit push",
+    "db:push": "EXPO_PUBLIC_API_URL=http://localhost:8081/ DATABASE_URL=postgresql://admin:admin@localhost:5433/my_local_db npx drizzle-kit push",
     "db:push:prod": "npx drizzle-kit push",
     "db:local:up": "docker-compose up -d",
     "build:development:ios": "npx expo run:ios",

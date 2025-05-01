@@ -6,7 +6,7 @@ services:
     container_name: postgres_local
     restart: always
     ports:
-      - "5432:5432" # Maps PostgreSQL's default port to localhost
+      - "5433:5432" # Maps PostgreSQL's default port to localhost
     environment:
       POSTGRES_USER: admin       # Default username
       POSTGRES_PASSWORD: admin   # Default password
