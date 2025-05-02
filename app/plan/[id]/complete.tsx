@@ -15,8 +15,8 @@ import {
   Button,
   ThemedText,
   ThemedView,
+  Icon,
 } from "@/components/ui/atoms";
-import { Icon } from "@/components/ui/atoms";
 import { useSummitPost } from "@/domains/mountain/mountain.api";
 import { getMountainPts } from "@/domains/mountain/mountain.util";
 import { usePlanOne, usePlanUpdate } from "@/domains/plan/plan.api";

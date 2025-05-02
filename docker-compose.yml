@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   postgres:
@@ -8,9 +8,9 @@ services:
     ports:
       - "5433:5432" # Maps PostgreSQL's default port to localhost
     environment:
-      POSTGRES_USER: admin       # Default username
-      POSTGRES_PASSWORD: admin   # Default password
-      POSTGRES_DB: my_local_db   # Default database name
+      POSTGRES_USER: admin # Default username
+      POSTGRES_PASSWORD: admin # Default password
+      POSTGRES_DB: my_local_db # Default database name
     volumes:
       - pgdata:/var/lib/postgresql/data # Persist data across container restarts
 #      - ./api/db/init-script.sql # Optional: Initialize database with scripts

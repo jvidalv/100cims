@@ -15,11 +15,7 @@
       "bundleIdentifier": "app.100cims.100cims",
       "infoPlist": {
         "CFBundleAllowMixedLocalizations": true,
-        "CFBundleLocalizations": [
-          "en",
-          "ca",
-          "es"
-        ],
+        "CFBundleLocalizations": ["en", "ca", "es"],
         "ITSAppUsesNonExemptEncryption": false
       }
     },

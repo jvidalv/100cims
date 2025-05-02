@@ -5,8 +5,7 @@ import { FlatList, Pressable, ScrollView, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
 import { ThemedView, ThemedText, SearchInput } from "@/components/ui/atoms";
-import { MountainItemList } from "@/components/ui/molecules";
-import { ScreenHeader } from "@/components/ui/molecules";
+import { MountainItemList, ScreenHeader } from "@/components/ui/molecules";
 import { useMountains } from "@/domains/mountain/mountain.api";
 import { useUserChallengeSummits } from "@/domains/user/user.api";
 import { cleanText } from "@/lib";

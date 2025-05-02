@@ -23,6 +23,7 @@
 ```bash
 yarn
 ```
+
 Then:
 
 ```bash
@@ -59,11 +60,13 @@ EXPO_PUBLIC_EXPOFAST_ANALYTICS_KEY=
 Authentication supports both **Google** and **Apple** sign-in.
 
 - For **Google OAuth**, you need:
+
   ```env
   EXPO_PUBLIC_ANDROID_CLIENT_ID=
   EXPO_PUBLIC_IOS_CLIENT_ID=
   EXPO_PUBLIC_WEB_CLIENT_ID=
   ```
+
   Also, generate and include your `google-services.json`.
 
 - For **Apple OAuth**, follow [Expo’s official Apple Auth setup guide](https://docs.expo.dev/versions/latest/sdk/apple-authentication/).
@@ -72,7 +75,6 @@ Authentication supports both **Google** and **Apple** sign-in.
   ```env
   AUTH_SECRET=
   ```
-  
 
 ## 🌍 Translations
 
@@ -116,7 +118,6 @@ Want to build apps like this, faster? Visit [expofast.app](https://expofast.app)
 
 Made with ❤️ by [@jvidalv](https://www.linkedin.com/in/josepvidalvidal/)
 
-
 ## 🖼️ Media
 
 <p align='center'>
@@ -124,4 +125,3 @@ Made with ❤️ by [@jvidalv](https://www.linkedin.com/in/josepvidalvidal/)
   <img src="https://i.imgur.com/URj0pL0.png" alt="media 2"  />
   <img src="https://i.imgur.com/PipStcD.png" alt="media 3"  />
 </p>
-

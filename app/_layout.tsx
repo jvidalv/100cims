@@ -8,10 +8,7 @@ import { setDefaultOptions } from "date-fns/setDefaultOptions";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-// eslint-disable-next-line import/order
 import { StatusBar } from "expo-status-bar";
-
-import "react-native-reanimated";
 import {
   ExpofastAnalyticsProvider,
   analytics,
