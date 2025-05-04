@@ -5864,10 +5864,10 @@ expo-blur@~14.0.3:
   resolved "https://registry.yarnpkg.com/expo-blur/-/expo-blur-14.0.3.tgz#656d6b2442bfbbfb2a6608c6bc1151b29bce6698"
   integrity sha512-BL3xnqBJbYm3Hg9t/HjNjdeY7N/q8eK5tsLYxswWG1yElISWZmMvrXYekl7XaVCPfyFyz8vQeaxd7q74ZY3Wrw==
 
-expo-clipboard@^7.0.1:
-  version "7.1.4"
-  resolved "https://registry.yarnpkg.com/expo-clipboard/-/expo-clipboard-7.1.4.tgz#f2cda0d3cbfd2d307aa85dd7ba6843d6bbaf4227"
-  integrity sha512-NHhfKnrzb4o0PacUKD93ByadU0JmPBoFTFYbbFJZ9OAX6SImpSqG5gfrMUR3vVj4Qx9f1LpMcdAv5lBzv868ow==
+expo-clipboard@7.0.1:
+  version "7.0.1"
+  resolved "https://registry.yarnpkg.com/expo-clipboard/-/expo-clipboard-7.0.1.tgz#31d61270e77a37d2a6b7ae9abf79e060497ef43b"
+  integrity sha512-rqYk0+WoqitPcPKxmMxSpLonX1E5Ije3LBYfnYMbH3xU5Gr8EAH9QnOWOi4BgahUPvcot6nbFEnx+DqARrmxKQ==
 
 expo-constants@~17.0.5, expo-constants@~17.0.8:
   version "17.0.8"
@@ -5997,7 +5997,7 @@ expo-localization@~16.0.1:
   dependencies:
     rtl-detect "^1.0.2"
 
-expo-location@~18.0.10:
+expo-location@18.0.10:
   version "18.0.10"
   resolved "https://registry.yarnpkg.com/expo-location/-/expo-location-18.0.10.tgz#330f35f5dba2d575bd0ffd3c65d5df9299a0bf47"
   integrity sha512-R0Iioz0UZ9Ts8TACPngh8uDFbajJhVa5/igLqWB8Pq/gp8UHuwj7PC8XbZV7avsFoShYjaxrOhf4U7IONeKLgg==
