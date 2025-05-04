@@ -92,40 +92,41 @@ export default function SummitsScreen() {
                 index % 2 !== 0 && "pl-1.5",
               )}
             >
-              <View className="relative">
-                <Image
-                  source={{ uri: summitImageUrl }}
-                  className="bg-neutral-200 dark:bg-neutral-800"
-                  style={{
-                    height: 200,
-                    width: "100%",
-                    borderTopRightRadius: 6,
-                    borderTopLeftRadius: 6,
-                  }}
+              <Image
+                source={{ uri: summitImageUrl }}
+                className="bg-neutral-200 dark:bg-neutral-800"
+                style={{
+                  height: 200,
+                  width: "100%",
+                  borderTopRightRadius: 6,
+                  borderTopLeftRadius: 6,
+                }}
+              />
+              <View className="flex-1 overflow-ellipsis w-full flex-row items-center justify-between gap-4 border border-t-0 border-gray-200 rounded-b-lg dark:border-0 dark:bg-neutral-800 p-2">
+                <View className="flex-1">
+                  <View className="mb-0.5">
+                    <ThemedText
+                      numberOfLines={1}
+                      className="text-sm font-medium overflow-ellipsis"
+                    >
+                      {mountainName}
+                    </ThemedText>
+                  </View>
+                  <View className="flex-row items-center justify-between gap-2">
+                    <ThemedText className="text-muted-foreground text-xs">
+                      {format(summitedAt, "dd MMM yyyy")}
+                    </ThemedText>
+                  </View>
+                </View>
+                <AvatarGroup
+                  size="xs"
+                  items={users?.map((participant) => ({
+                    name: getFullName(participant),
+                    imageUrl: participant.imageUrl,
+                    id: participant.id,
+                  }))}
+                  onPress={({ id }) => router.push(`/user/${id}`)}
                 />
-                <View className="absolute bottom-2 left-2">
-                  <AvatarGroup
-                    size="xs"
-                    avatarClassName="border-background/50"
-                    items={users?.map((participant) => ({
-                      name: getFullName(participant),
-                      imageUrl: participant.imageUrl,
-                    }))}
-                  />
-                </View>
-              </View>
-
-              <View className="w-full border border-t-0 border-gray-200 rounded-b-lg dark:border-0 dark:bg-neutral-800 p-2">
-                <View className="mb-0.5">
-                  <ThemedText numberOfLines={1} className="text-sm font-medium">
-                    {mountainName}
-                  </ThemedText>
-                </View>
-                <View className="flex-row items-center justify-between gap-2">
-                  <ThemedText className="text-muted-foreground text-xs">
-                    {format(summitedAt, "dd MMM yyyy")}
-                  </ThemedText>
-                </View>
               </View>
             </TouchableOpacity>
           ),

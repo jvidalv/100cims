@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Link } from "expo-router";
 import { useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { View, Pressable, TouchableOpacity } from "react-native";
+import { View, Pressable, TouchableOpacity, ScrollView } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -12,7 +12,8 @@ import Animated, {
 import { twMerge } from "tailwind-merge";
 
 import { useAuth } from "@/components/providers/auth-provider";
-import { Icon, ThemedText } from "@/components/ui/atoms";
+import { Icon, ThemedText, ThemedView } from "@/components/ui/atoms";
+import { ScreenHeader } from "@/components/ui/molecules";
 import {
   PlanItemList,
   PlanItemListSkeleton,
@@ -126,125 +127,115 @@ export default function PlansScreen() {
   ];
 
   return (
-    <>
-      <ParallaxScrollView
-        title={intl.formatMessage({ defaultMessage: "Plans" })}
-        headerClassName="flex items-center justify-center bg-primary"
-        contentClassName="pt-4 pb-28"
-        parallaxRightElement={
-          <Link href="/plan/create" asChild>
-            <TouchableOpacity className="flex-row items-center gap-1">
-              <ThemedText className="text-white">
-                <FormattedMessage defaultMessage="New plan" />
-              </ThemedText>
-              <Icon
-                name="plus"
-                size={isAndroid ? 22 : 14}
-                color="white"
-                animationSpec={{ effect: { type: "bounce" } }}
-              />
-            </TouchableOpacity>
-          </Link>
-        }
-        headerRightElement={
-          <Link href="/plan/create" asChild>
-            <TouchableOpacity className="ml-auto pb-1 pr-4">
-              <Icon name="plus" size={isAndroid ? 24 : 16} />
-            </TouchableOpacity>
-          </Link>
-        }
-        height={150}
-      >
-        <View className="mb-6 flex-row gap-1 px-6">
-          {statuses.map(({ type, name }) => {
-            const isSelected = status === type;
+    <ThemedView className="flex-1">
+      <ScreenHeader />
+      <View className="flex-row items-center justify-between mx-6 mb-2">
+        <ThemedText className="text-4xl font-bold">
+          <FormattedMessage defaultMessage="All plans" />
+        </ThemedText>
+        <Link href="/plan/create" asChild>
+          <TouchableOpacity className="flex-row items-center gap-1">
+            <ThemedText>
+              <FormattedMessage defaultMessage="New plan" />
+            </ThemedText>
+            <Icon
+              name="plus"
+              size={isAndroid ? 22 : 14}
+              animationSpec={{ effect: { type: "bounce" } }}
+            />
+          </TouchableOpacity>
+        </Link>
+      </View>
 
-            return (
-              <Pressable
+      <View className="mb-4 flex-row gap-1 px-6">
+        {statuses.map(({ type, name }) => {
+          const isSelected = status === type;
+
+          return (
+            <Pressable
+              className={twMerge(
+                "rounded-lg py-2 px-2.5 mr-1 disabled:opacity-50",
+                isSelected ? "bg-primary" : "bg-border",
+              )}
+              onPress={() => {
+                setStatus(type);
+              }}
+              key={name}
+            >
+              <ThemedText
                 className={twMerge(
-                  "rounded-lg py-2 px-2.5 mr-1 disabled:opacity-50",
-                  isSelected ? "bg-primary" : "bg-border",
+                  "font-medium text-foreground",
+                  isSelected && "text-white",
                 )}
-                onPress={() => {
-                  setStatus(type);
-                }}
-                key={name}
               >
-                <ThemedText
-                  className={twMerge(
-                    "font-medium text-foreground",
-                    isSelected && "text-white",
-                  )}
-                >
-                  {name}
-                </ThemedText>
-              </Pressable>
-            );
-          })}
-        </View>
-        <View className="gap-3 px-6">
-          {isPendingPlans && (
-            <>
-              <PlanItemListSkeleton />
-              <PlanItemListSkeleton />
-              <PlanItemListSkeleton />
-              <PlanItemListSkeleton />
-              <PlanItemListSkeleton />
-              <PlanItemListSkeleton />
-            </>
-          )}
-          {!isPendingPlans &&
-            !data?.data?.message?.length &&
-            status !== "open" && (
-              <ThemedText>
-                <FormattedMessage defaultMessage="No plans found for given status." />
+                {name}
               </ThemedText>
-            )}
-          {!isPendingPlans &&
-            !data?.data?.message?.length &&
-            status === "open" && (
-              <Link href="/plan/create" asChild>
-                <TouchableOpacity className="flex-row gap-4">
-                  <View
-                    className="items-center justify-center bg-border"
-                    style={{ width: 100, height: 100, borderRadius: 6 }}
-                  >
-                    <ThemedText className="text-5xl">+</ThemedText>
-                  </View>
-                  <View className="flex-1 justify-center">
-                    <View className="items-start gap-1">
-                      <View className="flex-row gap-2">
-                        <ThemedText className="font-semibold text-blue-500">
-                          <FormattedMessage defaultMessage="None" />
-                        </ThemedText>
-                      </View>
-                      <ThemedText
-                        numberOfLines={2}
-                        className="text-lg font-semibold tracking-tight"
-                      >
-                        <FormattedMessage defaultMessage="Create your first plan" />
+            </Pressable>
+          );
+        })}
+      </View>
+      <ScrollView contentContainerClassName="gap-3 mx-6">
+        {isPendingPlans && (
+          <>
+            <PlanItemListSkeleton />
+            <PlanItemListSkeleton />
+            <PlanItemListSkeleton />
+            <PlanItemListSkeleton />
+            <PlanItemListSkeleton />
+            <PlanItemListSkeleton />
+          </>
+        )}
+        {!isPendingPlans &&
+          !data?.data?.message?.length &&
+          status !== "open" && (
+            <ThemedText>
+              <FormattedMessage defaultMessage="No plans found for given status." />
+            </ThemedText>
+          )}
+        {!isPendingPlans &&
+          !data?.data?.message?.length &&
+          status === "open" && (
+            <Link href="/plan/create" asChild>
+              <TouchableOpacity className="flex-row gap-4">
+                <View
+                  className="items-center justify-center bg-border"
+                  style={{ width: 100, height: 100, borderRadius: 6 }}
+                >
+                  <ThemedText className="text-5xl">+</ThemedText>
+                </View>
+                <View className="flex-1 justify-center">
+                  <View className="items-start gap-1">
+                    <View className="flex-row gap-2">
+                      <ThemedText className="font-semibold text-blue-500">
+                        <FormattedMessage defaultMessage="None" />
                       </ThemedText>
                     </View>
+                    <ThemedText
+                      numberOfLines={2}
+                      className="text-lg font-semibold tracking-tight"
+                    >
+                      <FormattedMessage defaultMessage="Create your first plan" />
+                    </ThemedText>
                   </View>
-                </TouchableOpacity>
-              </Link>
-            )}
-          {data?.data?.message?.map(
-            ({ id, title, status, startDate, mountains, users }) => (
-              <PlanItemList
-                key={id}
-                id={id}
-                title={title}
-                status={status}
-                startDate={startDate}
-                mountains={mountains?.map(({ imageUrl }) => ({ imageUrl }))}
-                users={users}
-              />
-            ),
+                </View>
+              </TouchableOpacity>
+            </Link>
           )}
-        </View>
-      </ParallaxScrollView>
+        {data?.data?.message?.map(
+          ({ id, title, status, startDate, mountains, users }) => (
+            <PlanItemList
+              key={id}
+              id={id}
+              title={title}
+              status={status}
+              startDate={startDate}
+              mountains={mountains?.map(({ imageUrl }) => ({ imageUrl }))}
+              users={users}
+            />
+          ),
+        )}
+      </ScrollView>
       {showAlert && <FloatingAlert onClose={() => setShowAlert(false)} />}
-    </>
+    </ThemedView>
   );
 }
