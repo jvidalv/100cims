@@ -13,5 +13,5 @@ export const getFullName = (user: Partial<User>) => {
     return user.lastName;
   }
 
-  return user.email || "";
+  return user.email || "🥷";
 };
