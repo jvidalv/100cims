@@ -18,7 +18,6 @@ import {
   PlanItemList,
   PlanItemListSkeleton,
 } from "@/components/ui/molecules/plan-item-list";
-import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
 import { useMarkPlansAsVisited, usePlans } from "@/domains/plan/plan.api";
 import { isAndroid } from "@/lib/device";
 
@@ -146,7 +145,6 @@ export default function PlansScreen() {
           </TouchableOpacity>
         </Link>
       </View>
-
       <View className="mb-4 flex-row gap-1 px-6">
         {statuses.map(({ type, name }) => {
           const isSelected = status === type;

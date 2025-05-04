@@ -28,6 +28,7 @@ export const DynamicImage = ({ uri }: { uri: string }) => {
 
   return (
     <ScrollView
+      key={uri}
       horizontal={false}
       maximumZoomScale={3}
       minimumZoomScale={1}
