@@ -2,7 +2,7 @@
   "expo": {
     "name": "100cims",
     "slug": "100cims",
-    "version": "2.0.4",
+    "version": "2.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "centcims",
@@ -51,6 +51,12 @@
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#f43f5e"
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
         }
       ]
     ],
