@@ -207,7 +207,7 @@ export default function PlansScreen() {
                 <TouchableOpacity className="flex-row gap-4">
                   <View
                     className="items-center justify-center bg-border"
-                    style={{ width: 100, height: 100, borderRadius: 12 }}
+                    style={{ width: 100, height: 100, borderRadius: 6 }}
                   >
                     <ThemedText className="text-5xl">+</ThemedText>
                   </View>

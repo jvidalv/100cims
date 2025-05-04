@@ -176,7 +176,7 @@ export default function SummitMountainScreen() {
       <ScrollView className="flex-1" keyboardShouldPersistTaps="handled">
         <View className="gap-6 px-6 pt-6">
           <View className="flex-row items-center justify-between gap-6">
-            <View>
+            <View className="flex-1">
               <ThemedText className="mb-1 text-lg font-bold text-muted-foreground">
                 <FormattedMessage defaultMessage="Summit" />
               </ThemedText>

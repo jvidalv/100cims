@@ -9,6 +9,8 @@ interface InternalProps {
   slug: string;
   name: string;
   location: string;
+  latitude?: string;
+  longitude?: string;
   height: string;
   essential: boolean;
   imageUrl: string | null;
@@ -44,13 +46,13 @@ export const MountainItemListCore = ({
       {imageUrl ? (
         <Image
           source={{ uri: imageUrl, cache: "force-cache" }}
-          className="items-center justify-center bg-gray-300 dark:bg-gray-800"
-          style={{ width: 100, height: 100, borderRadius: 12 }}
+          className="items-center justify-center bg-neutral-300 dark:bg-neutral-800"
+          style={{ width: 100, height: 100, borderRadius: 6 }}
         />
       ) : (
         <View
-          className="items-center justify-center bg-gray-300 dark:bg-gray-800"
-          style={{ width: 100, height: 100, borderRadius: 12 }}
+          className="items-center justify-center bg-neutral-300 dark:bg-neutral-800"
+          style={{ width: 100, height: 100, borderRadius: 6 }}
         >
           <Icon name="camera" color="white" muted size={32} />
         </View>

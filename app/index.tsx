@@ -1,11 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { format } from "date-fns/format";
 import { Link, useRouter } from "expo-router";
 import { analytics } from "expofast-analytics";
 import { useColorScheme } from "nativewind";
 import { Fragment, useCallback, useEffect } from "react";
 import { FormattedMessage } from "react-intl";
-import { Pressable, TouchableOpacity, View } from "react-native";
+import { Image, Pressable, TouchableOpacity, View } from "react-native";
 import Animated, {
   SharedValue,
   useAnimatedRef,
@@ -22,7 +21,6 @@ import { Avatar, BlurView, Icon, Skeleton } from "@/components/ui/atoms";
 import { ThemedText } from "@/components/ui/atoms/themed-text";
 import { ThemedView } from "@/components/ui/atoms/themed-view";
 import { MountainItemList } from "@/components/ui/molecules";
-import { AvatarGroup } from "@/components/ui/molecules/avatar-group";
 import {
   PlanItemList,
   PlanItemListSkeleton,
@@ -133,7 +131,7 @@ const PlansSection = () => {
             <TouchableOpacity className="flex-row gap-4">
               <View
                 className="items-center justify-center bg-border"
-                style={{ width: 100, height: 100, borderRadius: 12 }}
+                style={{ width: 100, height: 100, borderRadius: 6 }}
               >
                 <ThemedText className="text-5xl">+</ThemedText>
               </View>
@@ -298,15 +296,7 @@ const PageHeader = ({
               {hasNewPlans && (
                 <View className="absolute -right-0.5 -top-0.5 size-3 rounded-full bg-blue-500" />
               )}
-              <Icon
-                name="backpack"
-                muted
-                animationSpec={
-                  hasNewPlans
-                    ? { effect: { type: "bounce" }, repeatCount: 3 }
-                    : undefined
-                }
-              />
+              <Icon name="backpack" muted />
             </TouchableOpacity>
           </Link>
           <Link href={isAuthenticated ? "/user" : "/join"} asChild>
@@ -337,7 +327,7 @@ export default function IndexScreen() {
   const { refetch: refetchUser } = useUserMe();
   const { refetch: refetchChallengeSummits } = useUserChallengeSummits();
   const { data: latestSummits, refetch: refetchLatestSummits } = useSummitsGet({
-    limit: 5,
+    limit: 8,
   });
 
   const isCurrentRoute = useIsCurrentScreen("/");
@@ -410,7 +400,7 @@ export default function IndexScreen() {
           <TopSection />
         </Animated.View>
         {!!latestSummits?.length && (
-          <View className="gap-4">
+          <View className="flex-1 gap-4">
             <View className="flex-row items-center justify-between">
               <ThemedText className="text-2xl font-bold">
                 <FormattedMessage defaultMessage="Latest summits" />
@@ -424,43 +414,27 @@ export default function IndexScreen() {
                 </View>
               </Link>
             </View>
-            <View className="gap-3">
-              {latestSummits?.map(
-                ({ summitId, mountainName, summitedAt, users }) => {
-                  return (
-                    <Link
-                      href={{
-                        pathname: "/user/summits/[summit]",
-                        params: { summit: summitId },
+            <View className="flex-1 gap-2 flex-row flex-wrap">
+              {latestSummits?.map(({ summitId, summitImageUrl }) => {
+                return (
+                  <Link
+                    href={{
+                      pathname: "/user/summits/[summit]",
+                      params: { summit: summitId },
+                    }}
+                    key={summitId}
+                    className="w-[23%]"
+                  >
+                    <Image
+                      source={{ uri: summitImageUrl }}
+                      className="w-full h-24 rounded bg-neutral-300 dark:bg-neutral-800"
+                      style={{
+                        resizeMode: "center",
                       }}
-                      key={summitId}
-                    >
-                      <View className="flex-row items-center gap-4">
-                        <View className="flex-1">
-                          <ThemedText
-                            className="flex-1 font-medium"
-                            numberOfLines={1}
-                          >
-                            {mountainName}
-                          </ThemedText>
-                          <ThemedText className="text-sm text-muted-foreground">
-                            {format(summitedAt, "dd MMM yyyy")}
-                          </ThemedText>
-                        </View>
-                        <View className="ml-auto">
-                          <AvatarGroup
-                            size="sm"
-                            items={users.map((user) => ({
-                              name: getFullName(user),
-                              imageUrl: user.imageUrl,
-                            }))}
-                          />
-                        </View>
-                      </View>
-                    </Link>
-                  );
-                },
-              )}
+                    />
+                  </Link>
+                );
+              })}
             </View>
           </View>
         )}
@@ -480,7 +454,17 @@ export default function IndexScreen() {
           </View>
           <View className="gap-2">
             {recommendedPeaks?.map(
-              ({ id, name, height, slug, imageUrl, essential, location }) => (
+              ({
+                id,
+                name,
+                height,
+                slug,
+                imageUrl,
+                essential,
+                location,
+                latitude,
+                longitude,
+              }) => (
                 <MountainItemList
                   key={id}
                   name={name}
@@ -489,6 +473,8 @@ export default function IndexScreen() {
                   imageUrl={imageUrl}
                   essential={essential}
                   location={location}
+                  latitude={latitude}
+                  longitude={longitude}
                 />
               ),
             )}

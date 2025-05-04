@@ -135,10 +135,7 @@ export default function PlanCompleteScreen() {
           <ThemedText className="text-3xl font-bold">{plan.title}</ThemedText>
           {!!plan.startDate && (
             <ThemedText className="text-muted-foreground">
-              <FormattedMessage
-                defaultMessage="Completed on {date}"
-                values={{ date: format(plan.startDate, "d MMMM yyyy") }}
-              />
+              {format(plan.startDate, "d MMMM yyyy")}
             </ThemedText>
           )}
         </View>

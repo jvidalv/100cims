@@ -8,47 +8,62 @@ import { ThemedView, ThemedText, SearchInput } from "@/components/ui/atoms";
 import { MountainItemList, ScreenHeader } from "@/components/ui/molecules";
 import { useMountains } from "@/domains/mountain/mountain.api";
 import { useUserChallengeSummits } from "@/domains/user/user.api";
+import { useLocation } from "@/hooks/use-location";
 import { cleanText } from "@/lib";
+import { getDistanceInKm } from "@/lib/location";
 
-type FilterType = "higher-first" | "essentials" | "not-summited" | "summited";
+type FilterType =
+  | "closest-first"
+  | "higher-first"
+  | "essentials"
+  | "not-summited"
+  | "summited";
 
 export default function MountainsScreen() {
   const intl = useIntl();
   const { data } = useMountains();
   const [query, setQuery] = useState("");
-  const [filtersSelected, setFiltersSelected] = useState<FilterType[]>([]);
+  const [filtersSelected, setFiltersSelected] = useState<FilterType[]>([
+    "closest-first",
+  ]);
   const { data: userSummits } = useUserChallengeSummits();
+  const { location: userLocation } = useLocation();
+
   const filters: {
     type: FilterType;
     name: string;
-    disabledIf?: () => boolean;
+    onSelectDeselect?: FilterType[];
   }[] = [
-    {
-      type: "higher-first",
-      name: intl.formatMessage({ defaultMessage: "Higher first" }),
-    },
     {
       type: "essentials",
       name: intl.formatMessage({ defaultMessage: "Essentials" }),
     },
     {
+      type: "closest-first",
+      name: intl.formatMessage({ defaultMessage: "Closest first" }),
+      onSelectDeselect: ["higher-first"],
+    },
+    {
+      type: "higher-first",
+      name: intl.formatMessage({ defaultMessage: "Higher first" }),
+      onSelectDeselect: ["closest-first"],
+    },
+    {
       type: "not-summited",
       name: intl.formatMessage({ defaultMessage: "Not summited" }),
-      disabledIf: () => filtersSelected.includes("summited"),
+      onSelectDeselect: ["summited"],
     },
     {
       type: "summited",
       name: intl.formatMessage({ defaultMessage: "Summited" }),
-      disabledIf: () => filtersSelected.includes("not-summited"),
+      onSelectDeselect: ["not-summited"],
     },
   ];
 
   const queriedMountains = useMemo(() => {
     const mountains = data?.data?.message;
 
-    if (!query) {
-      return mountains;
-    }
+    if (!query) return mountains;
 
     return mountains?.filter(({ name, location }) =>
       cleanText(`${name} ${location}`)
@@ -60,18 +75,14 @@ export default function MountainsScreen() {
   const filteredMountains = useMemo(() => {
     let filtered = [...(queriedMountains || [])];
 
-    if (!filtersSelected.length) {
-      return filtered;
-    }
-
     if (filtersSelected.includes("summited")) {
-      filtered = filtered?.filter(({ slug }) =>
+      filtered = filtered.filter(({ slug }) =>
         userSummits?.summits?.some(({ mountainSlug }) => mountainSlug === slug),
       );
     }
 
     if (filtersSelected.includes("not-summited")) {
-      filtered = filtered?.filter(
+      filtered = filtered.filter(
         ({ slug }) =>
           !userSummits?.summits?.some(
             ({ mountainSlug }) => mountainSlug === slug,
@@ -80,17 +91,31 @@ export default function MountainsScreen() {
     }
 
     if (filtersSelected.includes("essentials")) {
-      filtered = filtered?.filter(({ essential }) => essential);
+      filtered = filtered.filter(({ essential }) => essential);
     }
 
     if (filtersSelected.includes("higher-first")) {
-      filtered = filtered?.sort(
+      filtered = filtered.sort(
         (a, b) => parseInt(b.height) - parseInt(a.height),
       );
     }
 
+    if (filtersSelected.includes("closest-first") && userLocation) {
+      filtered = filtered.sort((a, b) => {
+        const distA = getDistanceInKm(userLocation.coords, {
+          latitude: parseFloat(a.latitude),
+          longitude: parseFloat(a.longitude),
+        });
+        const distB = getDistanceInKm(userLocation.coords, {
+          latitude: parseFloat(b.latitude),
+          longitude: parseFloat(b.longitude),
+        });
+        return distA - distB;
+      });
+    }
+
     return filtered;
-  }, [queriedMountains, filtersSelected, userSummits?.summits]);
+  }, [queriedMountains, filtersSelected, userSummits?.summits, userLocation]);
 
   return (
     <ThemedView className="flex-1">
@@ -131,16 +156,14 @@ export default function MountainsScreen() {
                 contentContainerClassName="pl-6 pr-4"
                 horizontal
               >
-                {filters.map(({ type, name, disabledIf }) => {
+                {filters.map(({ type, name, onSelectDeselect }) => {
                   const isSelected = filtersSelected.includes(type);
-
                   return (
                     <Pressable
                       className={twMerge(
-                        "rounded-lg py-2 px-2.5 mr-1 disabled:opacity-50",
+                        "rounded-lg flex-row gap-1 items-center py-2 px-2.5 mr-1 disabled:opacity-50",
                         isSelected ? "bg-primary" : "bg-border",
                       )}
-                      disabled={disabledIf?.()}
                       onPress={() => {
                         if (isSelected) {
                           setFiltersSelected((filters) =>
@@ -148,12 +171,24 @@ export default function MountainsScreen() {
                           );
                         } else {
                           analytics.action(`mountain-filter-${type}`);
-
-                          setFiltersSelected((filters) => [...filters, type]);
+                          setFiltersSelected((filters) => [
+                            ...filters.filter(
+                              (f) => !onSelectDeselect?.includes(f),
+                            ),
+                            type,
+                          ]);
                         }
                       }}
                       key={name}
                     >
+                      {type === "essentials" && (
+                        <View
+                          className={twMerge(
+                            "bg-primary rounded-full size-3",
+                            isSelected && "bg-white",
+                          )}
+                        />
+                      )}
                       <ThemedText
                         className={twMerge(
                           "font-medium text-foreground",
@@ -171,7 +206,16 @@ export default function MountainsScreen() {
           ListFooterComponent={<View className="h-32" />}
           keyExtractor={({ id }) => id}
           renderItem={({
-            item: { name, slug, essential, location, height, imageUrl },
+            item: {
+              name,
+              slug,
+              essential,
+              location,
+              height,
+              latitude,
+              longitude,
+              imageUrl,
+            },
           }) => (
             <View className="px-6 py-2">
               <MountainItemList
@@ -180,6 +224,8 @@ export default function MountainsScreen() {
                 imageUrl={imageUrl}
                 essential={essential}
                 slug={slug}
+                latitude={latitude}
+                longitude={longitude}
                 height={height}
               />
             </View>

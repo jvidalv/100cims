@@ -206,7 +206,7 @@ export default function PlanIdPage() {
                   <Image
                     key={imageUrl}
                     source={{ uri: imageUrl!, cache: "force-cache" }}
-                    className="absolute bg-gray-300 dark:bg-gray-800"
+                    className="absolute bg-neutral-300 dark:bg-neutral-800"
                     style={{ width: "100%", height: "100%" }}
                   />
                 );
@@ -216,7 +216,7 @@ export default function PlanIdPage() {
                   <Image
                     key={imageUrl}
                     source={{ uri: imageUrl!, cache: "force-cache" }}
-                    className="bg-gray-300 dark:bg-gray-800"
+                    className="bg-neutral-300 dark:bg-neutral-800"
                     style={{ width: "50%", height: "100%" }}
                   />
                 );
@@ -237,7 +237,7 @@ export default function PlanIdPage() {
                 <Image
                   key={imageUrl}
                   source={{ uri: imageUrl!, cache: "force-cache" }}
-                  className="absolute bg-gray-300 dark:bg-gray-800"
+                  className="absolute bg-neutral-300 dark:bg-neutral-800"
                   style={{
                     width: hasOnlyThree && isLast ? "100%" : half,
                     height: half,
@@ -260,7 +260,7 @@ export default function PlanIdPage() {
           </View>
         ) : (
           <View
-            className="size-full flex-1 items-center justify-center bg-gray-300 dark:bg-gray-800"
+            className="size-full flex-1 items-center justify-center bg-neutral-300 dark:bg-neutral-800"
             style={{ backgroundColor: "#ffd097" }}
           />
         )

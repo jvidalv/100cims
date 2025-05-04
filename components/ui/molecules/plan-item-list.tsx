@@ -59,7 +59,7 @@ export const PlanItemList = ({
         <View className="absolute bottom-2 left-2">
           <AvatarGroup
             size="xs"
-            avatarClassName="border border-white"
+            avatarClassName="border-background/50"
             items={users.map((user) => ({
               name: getFullName(user),
               imageUrl: user.imageUrl,
@@ -70,7 +70,7 @@ export const PlanItemList = ({
           {mountainsWithImages?.length ? (
             <View
               className="relative flex flex-row overflow-hidden"
-              style={{ width: 100, height: 100, borderRadius: 12 }}
+              style={{ width: 100, height: 100, borderRadius: 6 }}
             >
               {mountainsWithImages.slice(0, 4).map(({ imageUrl }, i, arr) => {
                 const count = arr.length;
@@ -80,7 +80,7 @@ export const PlanItemList = ({
                     <Image
                       key={imageUrl}
                       source={{ uri: imageUrl!, cache: "force-cache" }}
-                      className="absolute bg-gray-300 dark:bg-gray-800"
+                      className="absolute bg-neutral-300 dark:bg-neutral-800"
                       style={{ width: "100%", height: "100%" }}
                     />
                   );
@@ -91,7 +91,7 @@ export const PlanItemList = ({
                     <Image
                       key={imageUrl}
                       source={{ uri: imageUrl!, cache: "force-cache" }}
-                      className=" bg-gray-300 dark:bg-gray-800"
+                      className=" bg-neutral-300 dark:bg-neutral-800"
                       style={{
                         width: "50%",
                         height: "100%",
@@ -116,7 +116,7 @@ export const PlanItemList = ({
                   <Image
                     key={imageUrl}
                     source={{ uri: imageUrl!, cache: "force-cache" }}
-                    className="absolute bg-gray-300 dark:bg-gray-800"
+                    className="absolute bg-neutral-300 dark:bg-neutral-800"
                     style={{
                       width: hasOnlyThree && isLast ? "100%" : half,
                       height: half,
@@ -139,11 +139,11 @@ export const PlanItemList = ({
             </View>
           ) : (
             <View
-              className="items-center justify-center bg-gray-300 dark:bg-gray-800"
+              className="items-center justify-center bg-neutral-300 dark:bg-neutral-800"
               style={{
                 width: 100,
                 height: 100,
-                borderRadius: 16,
+                borderRadius: 6,
                 backgroundColor: "#ffd097",
               }}
             >

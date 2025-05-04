@@ -166,7 +166,7 @@ const MountainsStep = memo(
                 {isSelected && (
                   <View
                     className="pointer-events-none absolute left-0 top-2 items-center justify-center overflow-hidden"
-                    style={{ width: 100, height: 100, borderRadius: 12 }}
+                    style={{ width: 100, height: 100, borderRadius: 6 }}
                   >
                     <View className="absolute size-full bg-blue-500 opacity-50" />
                     <Icon

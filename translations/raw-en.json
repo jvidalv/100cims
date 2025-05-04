@@ -149,9 +149,6 @@
   "F4zKkr": {
     "defaultMessage": "Are you sure you want to continue? All the data will be lost."
   },
-  "FBFcMJ": {
-    "defaultMessage": "Completed on {date}"
-  },
   "FDVuFX": {
     "defaultMessage": "You can now create more plans and share them!"
   },
@@ -215,6 +212,9 @@
   "MUP7n7": {
     "defaultMessage": "Still deciding a date"
   },
+  "N0iU61": {
+    "defaultMessage": "{distance}km away from you"
+  },
   "NDV5Mq": {
     "defaultMessage": "Options"
   },
@@ -232,6 +232,9 @@
   },
   "OHvDJa": {
     "defaultMessage": "Suggest a new challenge"
+  },
+  "OKgp0R": {
+    "defaultMessage": "Closest first"
   },
   "OKhRC6": {
     "defaultMessage": "Share"
@@ -313,9 +316,6 @@
   },
   "Xai36g": {
     "defaultMessage": "Cancel this plan?"
-  },
-  "XicOeX": {
-    "defaultMessage": "Last summits"
   },
   "YdQ8KR": {
     "defaultMessage": "No results, please change the search."
@@ -523,6 +523,9 @@
   },
   "wyxJrL": {
     "defaultMessage": "Delete account"
+  },
+  "x4j+4r": {
+    "defaultMessage": "Nearby summits"
   },
   "xSRKf4": {
     "defaultMessage": "Visible on hiscores?"

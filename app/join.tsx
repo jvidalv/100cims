@@ -246,6 +246,7 @@ export default function JoinScreen() {
 
   return (
     <ScrollView
+      className="bg-background"
       contentContainerClassName={twMerge(
         "gap-6 px-4 pt-6 pb-32",
         isAndroid && "pt-24",
@@ -277,7 +278,7 @@ export default function JoinScreen() {
           <ThemedText className="mb-2 text-left text-lg font-medium text-muted-foreground">
             <FormattedMessage defaultMessage="Also unblock..." />
           </ThemedText>
-          <View className="w-[350px] gap-2">
+          <View className="min-w-full gap-2">
             {features.map(({ emoji, text }, index) => (
               <View key={index} className="flex-row items-start gap-2">
                 <ThemedText>{emoji}</ThemedText>

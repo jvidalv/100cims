@@ -366,13 +366,15 @@ const MountainsList = ({
                 location={item.location}
                 imageUrl={item.imageUrl}
                 essential={item.essential}
+                latitude={item.latitude}
+                longitude={item.longitude}
                 slug={item.slug}
                 height={item.height}
               />
               {isSelected && (
                 <View
                   className="pointer-events-none absolute left-0 top-2 items-center justify-center bg-blue-500"
-                  style={{ width: 100, height: 100, borderRadius: 12 }}
+                  style={{ width: 100, height: 100, borderRadius: 6 }}
                 >
                   <Icon
                     name="checkmark"

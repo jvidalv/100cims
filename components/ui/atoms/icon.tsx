@@ -49,6 +49,9 @@ const MAPPING = {
   "questionmark.circle": "account-question",
   backpack: "bag-personal-outline",
   "backpack.fill": "bag-personal",
+  "arrowshape.up.fill": "arrow-up-thick",
+  "map.fill": "map-outline",
+  "location.fill": "map-marker-distance",
 } as Partial<
   Record<
     import("expo-symbols").SymbolViewProps["name"],

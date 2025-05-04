@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { ViewStyle } from "react-native/Libraries/StyleSheet/StyleSheetTypes";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -8,7 +9,13 @@ import Animated, {
 } from "react-native-reanimated";
 import { twMerge } from "tailwind-merge";
 
-export const Skeleton = ({ className }: { className?: string }) => {
+export const Skeleton = ({
+  className,
+  style,
+}: {
+  className?: string;
+  style?: ViewStyle;
+}) => {
   const opacity = useSharedValue(1); // Initial opacity
 
   useEffect(() => {
@@ -26,7 +33,7 @@ export const Skeleton = ({ className }: { className?: string }) => {
   return (
     <Animated.View
       className={twMerge("w-full h-24 rounded-lg bg-border", className)}
-      style={animatedStyle}
+      style={[animatedStyle, style]}
     />
   );
 };

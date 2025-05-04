@@ -64,7 +64,7 @@ const Content = () => {
           asChild
         >
           <TouchableOpacity className="mb-4 flex-row justify-between bg-background px-6 pb-2">
-            <View>
+            <View className="flex-1">
               <ThemedText className="text-3xl font-bold">
                 {data.mountainName}
               </ThemedText>
@@ -74,7 +74,6 @@ const Content = () => {
                 </ThemedText>
               </View>
             </View>
-
             {data.mountainImageUrl ? (
               <Image
                 className="size-16 rounded-lg"
