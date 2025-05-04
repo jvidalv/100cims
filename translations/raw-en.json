@@ -212,9 +212,6 @@
   "MUP7n7": {
     "defaultMessage": "Still deciding a date"
   },
-  "N0iU61": {
-    "defaultMessage": "{distance}km away from you"
-  },
   "NDV5Mq": {
     "defaultMessage": "Options"
   },
@@ -376,6 +373,9 @@
   },
   "edfPgP": {
     "defaultMessage": "Leave plan?"
+  },
+  "f3iukN": {
+    "defaultMessage": "{distance} km away from you"
   },
   "fVJK/6": {
     "defaultMessage": "Sharing plans with others is a great way to meet people with similar interests!"

@@ -178,7 +178,7 @@ export default function MountainScreen() {
           <View className="flex-row gap-2">
             <Icon name="arrowshape.up.fill" muted />
             <ThemedText className="text-xl font-medium">
-              {mountain.height}m
+              {mountain.height} m
             </ThemedText>
           </View>
           {mountain.essential && (
@@ -201,7 +201,7 @@ export default function MountainScreen() {
             <Icon name="location.fill" muted />
             <ThemedText className="text-xl font-medium">
               <FormattedMessage
-                defaultMessage="{distance}km away from you"
+                defaultMessage="{distance} km away from you"
                 values={{ distance: distanceFromUser }}
               />
             </ThemedText>
@@ -318,7 +318,7 @@ export default function MountainScreen() {
                 </View>
                 <View className="absolute bottom-1 left-2">
                   <ThemedText className="text-white font-medium">
-                    {distance}km
+                    {distance} km
                   </ThemedText>
                 </View>
               </View>

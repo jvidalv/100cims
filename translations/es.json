@@ -22,7 +22,6 @@
   "C81/uG": "Cerrar sesión",
   "C9WGEu": "de",
   "DJbyE/": "Completada",
-  "E1EEy4": "Error, intenta de nuevo o usa otra imagen.",
   "F4zKkr": "¿Estás seguro de que quieres continuar? Todos los datos se perderán.",
   "FB2a6a": "En 2006, la FEEC lanzó el desafío “100 cims”, cuyo objetivo principal es promover el conocimiento del territorio mientras se practica senderismo.",
   "FgydNe": "Ver",
@@ -95,7 +94,6 @@
   "xSRKf4": "¿Visible en el ranking?",
   "xiBL3d": "Ranking",
   "zQvVDJ": "Todas",
-  "zRI7mV": "y rastrear las que faltan.",
   "I5NMJ8": "Más",
   "XicOeX": "Últimas cimas",
   "+Z/Wja": "No sé exactamente cuándo.",
@@ -124,7 +122,6 @@
   "DZXEFi": "Una buena comunicación ayuda a todos a disfrutar de la experiencia. Comparte ideas, haz preguntas o alinead expectativas como el ritmo y la dificultad.",
   "Dlpujw": "Tú decides quién viene, no te preocupes por eliminar usuarios si lo ves necesario.",
   "E1EEy4": "Error, vuelve a intentarlo o usa otra imagen.",
-  "F4zKkr": "¿Seguro que quieres continuar? Se perderán todos los datos.",
   "FBFcMJ": "Completado el {date}",
   "FDVuFX": "¡Ahora puedes crear más planes y compartirlos!",
   "G5NVqu": "Esto no se puede deshacer.",
@@ -191,5 +188,8 @@
   "Oj1HSZ": "No hay más información.",
   "Ntjkqd": "o",
   "450Fty": "Ninguno",
-  "nYqRsC": "Crea tu primer plan"
+  "nYqRsC": "Crea tu primer plan",
+  "f3iukN": "{distance} km de ti",
+  "OKgp0R": "Los más cercanos primero",
+  "x4j+4r": "Cimas cercanas"
 }

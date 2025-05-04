@@ -209,7 +209,7 @@ export default function UserScreen() {
                 />
               </View>
               <ThemedText className="absolute bottom-2 pl-2 text-xl font-bold text-white">
-                {mountainHeight}m
+                {mountainHeight} m
               </ThemedText>
             </TouchableOpacity>
           ),
