@@ -1,5 +1,9 @@
-import { SymbolView, SymbolViewProps, SymbolWeight } from "expo-symbols";
-import { AnimationSpec } from "expo-symbols/build/SymbolModule.types";
+import {
+  SymbolView,
+  SymbolViewProps,
+  SymbolWeight,
+  type AnimationSpec,
+} from "expo-symbols";
 import { useColorScheme } from "nativewind";
 import { StyleProp, ViewStyle } from "react-native";
 

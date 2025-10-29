@@ -1,17 +1,10 @@
 import React, { forwardRef, useMemo } from "react";
 import { Text, type TextProps } from "react-native";
 import { twMerge } from "tailwind-merge";
-import { tv, type VariantProps } from "tailwind-variants";
 
 import { getFontFamily, getFontSize } from "@/lib/fonts";
 
-export const textVariants = tv({
-  base: "text-foreground",
-});
-
-export type TextVariantsProps = VariantProps<typeof textVariants>;
-
-export const ThemedText = forwardRef<Text, TextProps & TextVariantsProps>(
+export const ThemedText = forwardRef<Text, TextProps>(
   ({ className, style, ...props }, ref) => {
     const fontFamily = useMemo(() => {
       return getFontFamily(className);

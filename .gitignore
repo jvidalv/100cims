@@ -39,9 +39,5 @@ yarn-error.*
 .idea
 .vercel
 
-# compilation
-ios
-android
-
 # auth
 google-services.json
