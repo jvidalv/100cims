@@ -1,6 +1,6 @@
+import { analytics } from "@jvidalv/react-analytics";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Link, useRouter } from "expo-router";
-import { analytics } from "expofast-analytics";
 import { useColorScheme } from "nativewind";
 import { Fragment, useCallback, useEffect } from "react";
 import { FormattedMessage } from "react-intl";
@@ -9,11 +9,12 @@ import Animated, {
   SharedValue,
   useAnimatedRef,
   useAnimatedStyle,
-  useScrollViewOffset,
+  useScrollOffset,
   useSharedValue,
   withSpring,
   withTiming,
 } from "react-native-reanimated";
+import { twMerge } from "tailwind-merge";
 
 import { useAuth } from "@/components/providers/auth-provider";
 import { useChallenge } from "@/components/providers/challenge-provider";
@@ -34,6 +35,7 @@ import { useSummitsGet } from "@/domains/summit/summit.api";
 import { useUserMe, useUserChallengeSummits } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
 import { useIsCurrentScreen } from "@/hooks/use-is-current-screen";
+import { useMapNotificationBadge } from "@/hooks/use-map-notification-badge";
 import { useOnAppActive } from "@/hooks/use-on-app-active";
 import { getInitials } from "@/lib/strings";
 
@@ -62,7 +64,12 @@ const MountainsDone = ({
     >
       {userSummits || !isAuthenticated ? (
         <View className="flex-row items-center gap-2">
-          <View className="flex-row items-center gap-1 rounded-xl border-2 border-border px-2 py-1">
+          <View
+            className={twMerge(
+              "flex-row items-center gap-1 rounded-xl border-2 px-2 py-1",
+              showAllMountains ? "border-border" : "border-transparent",
+            )}
+          >
             <View className="mr-0.5 size-4 rounded-full bg-primary" />
             <ThemedText>
               {isAuthenticated ? userSummits?.essentialPeaksCount : 0}
@@ -104,7 +111,7 @@ const PlansSection = () => {
     sort: "upcoming",
   });
 
-  const plans = data?.data?.message;
+  const plans = data;
   return (
     <View>
       <View className="gap-3">
@@ -234,18 +241,22 @@ const TopSection = () => {
 
 const PageHeader = ({
   scrollOffset,
+  showBadge,
+  markAsSeen,
 }: {
   scrollOffset: SharedValue<number>;
+  showBadge: boolean;
+  markAsSeen: () => void;
 }) => {
   const { data: plansUnread } = usePlanChatUnread();
-  const hasUnreadMessages = !!plansUnread?.data?.message?.length;
+  const hasUnreadMessages = !!plansUnread?.length;
   const { data: user } = useUserMe();
   const fullName = user ? getFullName(user) : "";
   const { isAuthenticated } = useAuth();
 
   const { data: newPlansCount } = useNewPlansCount();
 
-  const hasNewPlans = !!newPlansCount?.data?.count;
+  const hasNewPlans = !!newPlansCount?.count;
 
   const topLeftSectionStyle = useAnimatedStyle(() => {
     if (scrollOffset.value > 100) {
@@ -288,9 +299,28 @@ const PageHeader = ({
               />
             )}
           </TouchableOpacity>
+          <Link
+            href={{ pathname: "/mountains", params: { view: "map" } }}
+            asChild
+          >
+            <TouchableOpacity
+              onPress={() => {
+                analytics.action("header-map-clicked");
+                void markAsSeen();
+              }}
+              className="relative size-10 items-center justify-center rounded-full border-2 border-border"
+            >
+              {showBadge && (
+                <View className="absolute -right-0.5 -top-0.5 size-3 rounded-full bg-yellow-400" />
+              )}
+              <Icon name="map" muted />
+            </TouchableOpacity>
+          </Link>
           <Link href="/plans" asChild>
             <TouchableOpacity
-              onPress={() => analytics.action("header-plans-clicked")}
+              onPress={() => {
+                analytics.action("header-plans-clicked");
+              }}
               className="relative size-10 items-center justify-center rounded-full border-2 border-border"
             >
               {hasNewPlans && (
@@ -331,6 +361,7 @@ export default function IndexScreen() {
   });
 
   const isCurrentRoute = useIsCurrentScreen("/");
+  const { showBadge, markAsSeen } = useMapNotificationBadge();
 
   useOnAppActive(() => {
     void refetchUser();
@@ -352,7 +383,7 @@ export default function IndexScreen() {
   ]);
 
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
-  const scrollOffset = useScrollViewOffset(scrollRef);
+  const scrollOffset = useScrollOffset(scrollRef);
 
   const scoreSectionStyle = useAnimatedStyle(() => {
     if (scrollOffset.value > 100) {
@@ -367,7 +398,11 @@ export default function IndexScreen() {
 
   return (
     <ThemedView className="flex-1">
-      <PageHeader scrollOffset={scrollOffset} />
+      <PageHeader
+        scrollOffset={scrollOffset}
+        showBadge={showBadge}
+        markAsSeen={markAsSeen}
+      />
       <Animated.ScrollView
         ref={scrollRef}
         className="px-6 pb-12"

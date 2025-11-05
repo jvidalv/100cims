@@ -1,6 +1,6 @@
 import { format } from "date-fns/format";
 import { Link, Redirect } from "expo-router";
-import { analytics } from "expofast-analytics";
+import { analytics } from "@jvidalv/react-analytics";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
 import { twMerge } from "tailwind-merge";
@@ -13,13 +13,13 @@ import {
   Icon,
 } from "@/components/ui/atoms";
 import { ScreenHeader } from "@/components/ui/molecules";
+import { useDeleteSummitMutation } from "@/domains/summit/summit.api";
 import { useUserMe, useUserSummits } from "@/domains/user/user.api";
-import { useApiWithAuth } from "@/hooks/use-api-with-auth";
 
 export default function UserSummitsScreen() {
   const intl = useIntl();
-  const api = useApiWithAuth();
   const { data: me } = useUserMe();
+  const { mutateAsync: deleteSummit } = useDeleteSummitMutation();
 
   const {
     data: userSummits,
@@ -43,7 +43,7 @@ export default function UserSummitsScreen() {
           style: "default",
           onPress: async () => {
             analytics.action("delete-summit", { summitId });
-            await api.protected.summit.delete.post({ summitId });
+            await deleteSummit({ summitId });
             void refetchSummits();
           },
         },
@@ -66,7 +66,7 @@ export default function UserSummitsScreen() {
           </ThemedText>
         </ThemedText>
         <View className="gap-4">
-          {isPendingUserSummits && !userSummits?.summits?.length && (
+          {isPendingUserSummits && (
             <View className="flex-row items-center justify-between">
               <View className="flex-row gap-2">
                 <Skeleton className="size-10 rounded-full" />

@@ -1,20 +1,10 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
+import { AnalyticsProvider, analytics } from "@jvidalv/react-analytics";
 import { setDefaultOptions } from "date-fns/setDefaultOptions";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import {
-  ExpofastAnalyticsProvider,
-  analytics,
-  createAnalyticsClient,
-} from "expofast-analytics";
-import { useColorScheme } from "nativewind";
+// import { useColorScheme } from "nativewind";
 import React, {
   useRef,
   useEffect,
@@ -41,6 +31,7 @@ import { usePlanChatUnread } from "@/domains/plan/plan-chat.api";
 import { usePlans } from "@/domains/plan/plan.api";
 import { useSummitsGet } from "@/domains/summit/summit.api";
 import { useUserMe, useUserChallengeSummits } from "@/domains/user/user.api";
+import { setAuthToken } from "@/lib/api-client";
 import { getJwt } from "@/lib/auth";
 import { isIpadOS, isWeb } from "@/lib/device";
 import { getDateFnsLocale, getLocale } from "@/lib/locale";
@@ -79,7 +70,7 @@ const SplashAnimation = () => {
   return (
     <View className="flex-1 items-center justify-center bg-primary">
       <Animated.Image
-        source={require("@/assets/images/one-hundred.png")}
+        source={require("@/assets/images/cims-letters.png")}
         style={[
           { width: 200, height: 200, position: "absolute" },
           {
@@ -203,6 +194,7 @@ function AuthLayer({ children }: PropsWithChildren) {
       const localStorageJwt = await getJwt();
       if (localStorageJwt) {
         setJwt(localStorageJwt);
+        setAuthToken(localStorageJwt);
       }
 
       setIsJwtLoaded(true);
@@ -240,7 +232,6 @@ function ChallengeLayer({ children }: PropsWithChildren) {
 }
 
 function RootProviders() {
-  const { colorScheme } = useColorScheme();
   const locale = getLocale();
 
   const messages = useMemo(() => {
@@ -262,12 +253,8 @@ function RootProviders() {
       <AuthLayer>
         <ChallengeLayer>
           <IntlProvider messages={messages} locale={locale} defaultLocale="en">
-            <ThemeProvider
-              value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-            >
-              <Content />
-              <StatusBar style="auto" />
-            </ThemeProvider>
+            <Content />
+            <StatusBar style="auto" />
           </IntlProvider>
         </ChallengeLayer>
       </AuthLayer>
@@ -276,16 +263,13 @@ function RootProviders() {
 }
 
 export default function Root() {
-  const analyticsClient = useMemo(() => {
-    return createAnalyticsClient({
-      asyncStorageInstance: AsyncStorage,
-      apiKey: process.env.EXPO_PUBLIC_EXPOFAST_ANALYTICS_KEY as string,
-    });
-  }, []);
-
   return (
-    <ExpofastAnalyticsProvider client={analyticsClient}>
+    <AnalyticsProvider
+      config={{
+        apiKey: process.env.EXPO_PUBLIC_REACT_ANALYTICS_KEY as string,
+      }}
+    >
       <RootProviders />
-    </ExpofastAnalyticsProvider>
+    </AnalyticsProvider>
   );
 }

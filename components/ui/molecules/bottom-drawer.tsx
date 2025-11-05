@@ -12,7 +12,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-import { Icon } from "@/components/ui/atoms";
+import { Icon } from "@/components/ui/atoms/icon";
 
 export function useBottomDrawer(initialOpen: boolean = false) {
   return useState(initialOpen);

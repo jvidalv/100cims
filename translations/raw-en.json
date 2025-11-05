@@ -128,9 +128,6 @@
   "CFPRDL": {
     "defaultMessage": "Create plan"
   },
-  "CWD4nE": {
-    "defaultMessage": "Inspired by the FEEC “100 cims” challenge, whose main goal is to promote knowledge of the territory while practicing hiking."
-  },
   "DJbyE/": {
     "defaultMessage": "You summited this mountain"
   },
@@ -323,9 +320,6 @@
   "ZPboiN": {
     "defaultMessage": "Chat with others"
   },
-  "ZbBhOX": {
-    "defaultMessage": "Read more on FEEC website."
-  },
   "Zh+5A6": {
     "defaultMessage": "On"
   },
@@ -367,6 +361,9 @@
   },
   "diwwOr": {
     "defaultMessage": "Modify plan"
+  },
+  "e2LofZ": {
+    "defaultMessage": "Non-lucrative app whose main goal is to promote knowledge of the territory while practicing hiking."
   },
   "eXbuB9": {
     "defaultMessage": "Essentials"

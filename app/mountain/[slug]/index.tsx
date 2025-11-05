@@ -3,7 +3,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import * as Linking from "expo-linking";
 import { Link, useLocalSearchParams } from "expo-router";
 import { setStatusBarStyle } from "expo-status-bar";
-import { analytics } from "expofast-analytics";
+import { analytics } from "@jvidalv/react-analytics";
 import { useColorScheme } from "nativewind";
 import { useEffect, useMemo } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
@@ -40,9 +40,7 @@ export default function MountainScreen() {
     };
   }, [colorScheme]);
 
-  const localMountain = mountains?.data?.message?.find(
-    (mountain) => slug === mountain.slug,
-  );
+  const localMountain = mountains?.find((mountain) => slug === mountain.slug);
 
   const mountain = localMountain || fetchedMountain;
 
@@ -58,9 +56,9 @@ export default function MountainScreen() {
   }, [userLocation, mountain]);
 
   const closestMountains = useMemo(() => {
-    if (!mountains?.data?.message || !mountain) return [];
+    if (!mountains || !mountain) return [];
 
-    return mountains.data.message
+    return mountains
       .filter((m) => m.slug !== mountain.slug)
       .map((m) => ({
         ...m,
@@ -77,7 +75,7 @@ export default function MountainScreen() {
       }))
       .sort((a, b) => a.distance - b.distance)
       .slice(0, 2);
-  }, [mountains?.data?.message, mountain]);
+  }, [mountains, mountain]);
 
   const { data: latestSummits, isPending: isPendingLatestSummits } =
     useSummitsGet({
@@ -233,8 +231,11 @@ export default function MountainScreen() {
           <TouchableOpacity
             onPress={() => {
               analytics.action("mountain-view-on-wikiloc");
+              const locale = intl.locale as "en" | "es" | "ca";
+              const wikilocSubdomain =
+                locale === "ca" || locale === "es" ? locale : "en";
               void Linking.openURL(
-                `https://es.wikiloc.com/wikiloc/map.do?q=${mountain.name}, ${mountain.location}&fitMapToTrails=1&page=1`,
+                `https://${wikilocSubdomain}.wikiloc.com/wikiloc/map.do?q=${mountain.name}, ${mountain.location}&fitMapToTrails=1&page=1`,
               );
             }}
             className="flex-1 flex-row items-center justify-between rounded-xl border-2 border-border p-4"

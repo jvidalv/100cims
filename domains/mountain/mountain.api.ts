@@ -2,21 +2,23 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 
 import { useChallenge } from "@/components/providers/challenge-provider";
 import { useUserChallengeSummits } from "@/domains/user/user.api";
-import { useApiWithAuth } from "@/hooks/use-api-with-auth";
 import { useLocation } from "@/hooks/use-location";
-import { api } from "@/lib";
+import apiClient from "@/lib/api-client";
 import { getDistanceInKm } from "@/lib/location";
 
 export const useMountainOne = ({ mountainSlug }: { mountainSlug: string }) => {
   const props = useQuery({
     queryKey: ["mountain", mountainSlug],
-    queryFn: () => api.public.mountains.one.get({ query: { mountainSlug } }),
+    queryFn: async () => {
+      const { data, error } = await apiClient.GET("/api/public/mountains/one", {
+        params: { query: { mountainSlug } },
+      });
+      if (error) throw error;
+      return data.message;
+    },
   });
 
-  return {
-    ...props,
-    data: props.data?.data?.message,
-  };
+  return props;
 };
 
 export const useMountains = () => {
@@ -24,7 +26,13 @@ export const useMountains = () => {
 
   return useQuery({
     queryKey: ["mountains", challengeId],
-    queryFn: () => api.public.mountains.all.get({ query: { challengeId } }),
+    queryFn: async () => {
+      const { data, error } = await apiClient.GET("/api/public/mountains/all", {
+        params: { query: { challengeId } },
+      });
+      if (error) throw error;
+      return data.message;
+    },
     retryOnMount: false,
     staleTime: 10000 * 60 * 60,
     refetchOnWindowFocus: false,
@@ -32,20 +40,20 @@ export const useMountains = () => {
 };
 
 export const useRecommendedPeaks = () => {
-  const { data: mountainData } = useMountains();
+  const { data: mountains } = useMountains();
   const { data: userSummits } = useUserChallengeSummits();
   const { location: userLocation } = useLocation();
 
-  const mountains = mountainData?.data?.message?.filter(
+  const filteredMountains = mountains?.filter(
     ({ slug, essential }) =>
       essential &&
       !userSummits?.summits?.some(({ mountainSlug }) => mountainSlug === slug),
   );
 
-  if (!mountains?.length) return [];
+  if (!filteredMountains?.length) return [];
 
   if (userLocation) {
-    const sortedByDistance = [...mountains].sort((a, b) => {
+    const sortedByDistance = [...filteredMountains].sort((a, b) => {
       const distA = getDistanceInKm(userLocation.coords, {
         latitude: parseFloat(a.latitude),
         longitude: parseFloat(a.longitude),
@@ -61,16 +69,26 @@ export const useRecommendedPeaks = () => {
   }
 
   // Fallback to highest if no location
-  return [...mountains]
+  return [...filteredMountains]
     .sort((a, b) => parseInt(b.height) - parseInt(a.height))
     .slice(0, 3);
 };
 
 export const useSummitPost = (mountainSlug: string) => {
-  const apiWithAuth = useApiWithAuth();
-
   return useMutation({
     mutationKey: ["summit", mountainSlug],
-    mutationFn: apiWithAuth.protected.mountain.summit.post,
+    mutationFn: async (input: {
+      mountainId: string;
+      usersId: string[];
+      date: string;
+      image: string;
+    }) => {
+      const { data, error } = await apiClient.POST(
+        "/api/protected/mountain/summit",
+        { body: input },
+      );
+      if (error) throw error;
+      return data;
+    },
   });
 };

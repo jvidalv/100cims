@@ -1,5 +1,5 @@
 import { Link, useRouter } from "expo-router";
-import { analytics } from "expofast-analytics";
+import { analytics } from "@jvidalv/react-analytics";
 import { useState } from "react";
 import { FormattedMessage } from "react-intl";
 import { ScrollView, TouchableOpacity, View } from "react-native";

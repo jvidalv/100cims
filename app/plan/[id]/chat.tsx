@@ -58,7 +58,7 @@ export default function PlanChatPage() {
 
   const { data: user } = useUserMe();
   const { data: planData } = usePlanOne({ id });
-  const plan = planData?.data?.message;
+  const plan = planData;
 
   const { data: messagesData, isPending: isPendingMessages } =
     usePlanChatMessages(id);
@@ -69,8 +69,8 @@ export default function PlanChatPage() {
 
   const isKeyboardVisible = useIsKeyboardVisible();
   const messages = useMemo(
-    () => [...(messagesData?.data?.message ?? [])].reverse(),
-    [messagesData?.data?.message],
+    () => [...(messagesData ?? [])].reverse(),
+    [messagesData],
   );
 
   useEffect(() => {

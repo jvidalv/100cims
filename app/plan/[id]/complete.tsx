@@ -1,7 +1,7 @@
 import { format } from "date-fns/format";
 import * as ImagePicker from "expo-image-picker";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { analytics } from "expofast-analytics";
+import { analytics } from "@jvidalv/react-analytics";
 import { useState } from "react";
 import { useIntl, FormattedMessage } from "react-intl";
 import { Alert, ScrollView, TouchableOpacity, View, Image } from "react-native";
@@ -33,7 +33,7 @@ export default function PlanCompleteScreen() {
   const [isHandlingImages, setIsHandlingImages] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const plan = planData?.data?.message;
+  const plan = planData;
   const mountains = plan?.mountains ?? [];
   const hasMountains = !!mountains.length;
 

@@ -50,7 +50,7 @@ export default function UserPlansScreen() {
             <PlanItemListSkeleton />
           </>
         )}
-        {!isPendingPlans && !data?.data?.message?.length && (
+        {!isPendingPlans && !data?.length && (
           <View className="relative mt-auto rounded-xl border-2 border-border p-4">
             <View className="absolute right-2 top-2">
               <Icon
@@ -68,19 +68,17 @@ export default function UserPlansScreen() {
             </ThemedText>
           </View>
         )}
-        {data?.data?.message?.map(
-          ({ id, title, status, startDate, mountains, users }) => (
-            <PlanItemList
-              key={id}
-              id={id}
-              title={title}
-              status={status}
-              startDate={startDate}
-              mountains={mountains?.map(({ imageUrl }) => ({ imageUrl }))}
-              users={users}
-            />
-          ),
-        )}
+        {data?.map(({ id, title, status, startDate, mountains, users }) => (
+          <PlanItemList
+            key={id}
+            id={id}
+            title={title}
+            status={status}
+            startDate={startDate}
+            mountains={mountains?.map(({ imageUrl }) => ({ imageUrl }))}
+            users={users}
+          />
+        ))}
       </ScrollView>
     </ThemedView>
   );

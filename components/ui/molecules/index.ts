@@ -7,3 +7,4 @@ export {
 export { BottomDrawer } from "./bottom-drawer";
 export { ScreenHeader } from "./screen-header";
 export { UserSelectInput, type UserForSelectInput } from "./user-select-input";
+export { FilterableListHeader, type Filter } from "./filterable-list-header";

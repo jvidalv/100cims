@@ -61,7 +61,7 @@ import { getInitials } from "@/lib/strings";
 //         applePay: {
 //           merchantCountryCode: "ES",
 //         },
-//         paymentIntentClientSecret: response.data.message, // retrieve this from your server
+//         paymentIntentClientSecret: response, // retrieve this from your server
 //       });
 //
 //       if (initPaymentError) {

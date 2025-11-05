@@ -1,13 +1,12 @@
+import { analytics } from "@jvidalv/react-analytics";
 import * as ImagePicker from "expo-image-picker";
 import { ImagePickerAsset } from "expo-image-picker";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { analytics } from "expofast-analytics";
 import { useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Alert, Image, ScrollView, TouchableOpacity, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
-import { IMAGE_TO_BIG } from "@/api/routes/@shared/error-codes";
 import { useChallenge } from "@/components/providers/challenge-provider";
 import { queryClient } from "@/components/providers/query-client-provider";
 import {
@@ -58,9 +57,7 @@ export default function SummitMountainScreen() {
       : [],
   );
 
-  const mountain = mountains?.data?.message?.find(
-    (mountain) => slug === mountain.slug,
-  );
+  const mountain = mountains?.find((mountain) => slug === mountain.slug);
 
   if (!mountain || !user) {
     return null;
@@ -112,57 +109,33 @@ export default function SummitMountainScreen() {
     }
 
     try {
-      const response = await mutateAsync({
+      await mutateAsync({
         date: date.toISOString(),
         image: image.base64,
         mountainId: mountain?.id,
         usersId: selectedUsers.map((user) => user.id),
       });
 
-      if (response.error) {
-        switch (response.error.status) {
-          case 500:
-            if (response.error.value.message === IMAGE_TO_BIG) {
-              analytics.error(`mountain-summit-error-${IMAGE_TO_BIG}`, {
-                status: response.error.status,
-              });
-            } else {
-              analytics.error(`mountain-summit-error-unknown`, {
-                status: response.error.value.message,
-              });
-            }
+      analytics.action("summit-mountain-summited-successfully");
 
-            return response.error.value.message === IMAGE_TO_BIG
-              ? Alert.alert(
-                  intl.formatMessage({
-                    defaultMessage: "Image too big.",
-                  }),
-                )
-              : Alert.alert(
-                  intl.formatMessage({
-                    defaultMessage: "Error, try again.",
-                  }),
-                );
-        }
-      } else {
-        analytics.action("summit-mountain-summited-successfully");
-
-        void queryClient.refetchQueries({
-          queryKey: SUMMITS_KEY({ limit: 4, challengeId }),
-        });
-        void queryClient.refetchQueries({
-          queryKey: SUMMITS_KEY({
-            mountainId: mountain.id,
-            limit: 100,
-            challengeId,
-          }),
-        });
-        void queryClient.refetchQueries({
-          queryKey: USER_SUMMITS_KEY(challengeId),
-        });
-        router.dismiss();
-      }
-    } catch {
+      void queryClient.refetchQueries({
+        queryKey: SUMMITS_KEY({ limit: 4, challengeId }),
+      });
+      void queryClient.refetchQueries({
+        queryKey: SUMMITS_KEY({
+          mountainId: mountain.id,
+          limit: 100,
+          challengeId,
+        }),
+      });
+      void queryClient.refetchQueries({
+        queryKey: USER_SUMMITS_KEY(challengeId),
+      });
+      router.dismiss();
+    } catch (error) {
+      analytics.error(`mountain-summit-error`, {
+        error,
+      });
       return Alert.alert(
         intl.formatMessage({
           defaultMessage: "Error, try again.",
@@ -197,7 +170,7 @@ export default function SummitMountainScreen() {
             <ThemedText className="text-lg font-bold">
               <FormattedMessage defaultMessage="Date" />
             </ThemedText>
-            <ThemedDateInput value={date} onDateValid={setDate} />
+            <ThemedDateInput value={date} onDateValid={setDate} noFutureDates />
           </View>
           <View className="gap-2">
             <ThemedText

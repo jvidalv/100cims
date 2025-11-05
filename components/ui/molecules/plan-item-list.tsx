@@ -33,7 +33,7 @@ export const PlanItemList = ({
   }[];
 }) => {
   const { data } = usePlanChatUnread();
-  const hasUnreadMessages = data?.data?.message?.includes(id);
+  const hasUnreadMessages = data?.includes(id);
 
   const intl = useIntl();
   const mountainsWithImages = mountains?.filter(({ imageUrl }) => imageUrl);

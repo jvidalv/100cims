@@ -1,10 +1,10 @@
 import { format } from "date-fns/format";
-import { LinearGradient } from "expo-linear-gradient";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
-import { analytics } from "expofast-analytics";
+import { analytics } from "@jvidalv/react-analytics";
 import { FormattedMessage, useIntl } from "react-intl";
-import { View, StyleSheet, TouchableOpacity, Image, Share } from "react-native";
+import { View, TouchableOpacity, Image, Share } from "react-native";
 
+import { SummitCard } from "@/components/summit";
 import { Icon, Skeleton, ThemedText } from "@/components/ui/atoms";
 import { AvatarGroup } from "@/components/ui/molecules";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
@@ -46,11 +46,11 @@ export default function UserScreen() {
       message: msg,
     });
 
-    if (response.action === "sharedAction")
-      analytics.action(`user-shared-done`, { id: userId });
+    // if (response.action === "sharedAction")
+    //   analytics.action(`user-shared-done`, { id: userId });
 
-    if (response.action === "dismissedAction")
-      analytics.action(`user-shared-canceled`, { id: userId });
+    // if (response.action === "dismissedAction")
+    //   analytics.action(`user-shared-canceled`, { id: userId });
   };
 
   return (
@@ -122,7 +122,12 @@ export default function UserScreen() {
             <ThemedText className="text-xl font-medium">
               <FormattedMessage
                 defaultMessage="Joined on {date}"
-                values={{ date: format(user.createdAt, "dd MMMM yyyy") }}
+                values={{
+                  date: format(
+                    new Date(user.createdAt as string | number),
+                    "dd MMMM yyyy",
+                  ),
+                }}
               />
             </ThemedText>
           </View>
@@ -164,117 +169,77 @@ export default function UserScreen() {
           </ThemedText>
         </ThemedText>
       </View>
-      <View className="flex flex-row flex-wrap">
+      <View className="flex flex-row flex-wrap px-6">
         {isPendingSummits && (
           <>
-            <Skeleton className="h-32 w-1/3 rounded-none" />
-            <Skeleton className="h-32 w-1/3 rounded-none border-l border-background" />
-            <Skeleton className="h-32 w-1/3 rounded-none border-l border-background" />
-            <Skeleton className="h-32 w-1/3 rounded-none border-t border-background" />
-            <Skeleton className="h-32 w-1/3 rounded-none border-l border-t border-background" />
-            <Skeleton className="h-32 w-1/3 rounded-none border-l border-t border-background" />
-            <Skeleton className="h-32 w-1/3 rounded-none border-t border-background" />
-            <Skeleton className="h-32 w-1/3 rounded-none border-l border-t border-background" />
-            <Skeleton className="h-32 w-1/3 rounded-none border-l border-t border-background" />
+            <View className="w-1/2">
+              <Skeleton
+                className="w-full border-background mb-2"
+                style={{ height: 243, borderRadius: 6 }}
+              />
+            </View>
+            <View className="w-1/2 pl-1.5">
+              <Skeleton
+                className="w-full border-background mb-2"
+                style={{ height: 243, borderRadius: 6 }}
+              />
+            </View>
+            <View className="w-1/2">
+              <Skeleton
+                className="w-full border-background mb-2"
+                style={{ height: 243, borderRadius: 6 }}
+              />
+            </View>
+            <View className="w-1/2 pl-1.5">
+              <Skeleton
+                className="w-full border-background mb-2"
+                style={{ height: 243, borderRadius: 6 }}
+              />
+            </View>
+            <View className="w-1/2">
+              <Skeleton
+                className="w-full border-background mb-2"
+                style={{ height: 243, borderRadius: 6 }}
+              />
+            </View>
+            <View className="w-1/2 pl-1.5">
+              <Skeleton
+                className="w-full border-background mb-2"
+                style={{ height: 243, borderRadius: 6 }}
+              />
+            </View>
+            <View className="w-1/2">
+              <Skeleton
+                className="w-full border-background mb-2"
+                style={{ height: 243, borderRadius: 6 }}
+              />
+            </View>
+            <View className="w-1/2 pl-1.5">
+              <Skeleton
+                className="w-full border-background mb-2"
+                style={{ height: 243, borderRadius: 6 }}
+              />
+            </View>
           </>
         )}
         {!summits?.length && !isPendingSummits && (
-          <ThemedText className="px-6 text-muted-foreground">
+          <ThemedText className="text-muted-foreground">
             <FormattedMessage defaultMessage="No summits yet." />
           </ThemedText>
         )}
-        {summits?.map(
-          ({ summitId, mountainSlug, mountainImageUrl, mountainHeight }) => (
-            <TouchableOpacity
-              key={summitId}
-              onPress={() =>
-                router.push({
-                  pathname: "/mountain/[slug]",
-                  params: { slug: mountainSlug },
-                })
-              }
-              className="relative h-32 w-1/3"
-            >
-              {!!mountainImageUrl && (
-                <Image
-                  source={{ uri: mountainImageUrl }}
-                  className="bg-neutral-200 dark:bg-neutral-900"
-                  style={{ height: "100%", width: "100%" }}
-                />
-              )}
-              <View className="absolute size-full">
-                <LinearGradient
-                  colors={["transparent", "transparent", "rgba(0,0,0,0.6)"]}
-                  style={StyleSheet.absoluteFill}
-                />
-              </View>
-              <ThemedText className="absolute bottom-2 pl-2 text-xl font-bold text-white">
-                {mountainHeight} m
-              </ThemedText>
-            </TouchableOpacity>
-          ),
-        )}
-      </View>
-      <ThemedText className="mb-4 mt-6 px-6 text-2xl font-semibold">
-        <FormattedMessage defaultMessage="Photos" />
-      </ThemedText>
-      <View className="flex flex-row flex-wrap">
-        {isPendingSummits && (
-          <>
-            <Skeleton className="h-44 w-1/2 rounded-none" />
-            <Skeleton className="h-44 w-1/2 rounded-none border-l border-background" />
-            <Skeleton className="h-44 w-1/2 rounded-none border-t border-background" />
-            <Skeleton className="h-44 w-1/2 rounded-none border-l border-t border-background" />
-            <Skeleton className="h-44 w-1/2 rounded-none border-t border-background" />
-            <Skeleton className="h-44 w-1/2 rounded-none border-l border-t border-background" />
-            <Skeleton className="h-44 w-1/2 rounded-none border-t border-background" />
-            <Skeleton className="h-44 w-1/2 rounded-none border-l border-t border-background" />
-          </>
-        )}
-        {!summits?.length && !isPendingSummits && (
-          <ThemedText className="px-6 text-muted-foreground">
-            <FormattedMessage defaultMessage="No photos yet." />
-          </ThemedText>
-        )}
-        {summits?.map(({ summitId, summitedImageUrl, participants }) => (
-          <TouchableOpacity
-            key={summitId}
+        {summits?.map((summit, index) => (
+          <SummitCard
+            key={summit.summitId}
+            summit={summit}
+            index={index}
             onPress={() =>
               router.push({
                 pathname: "/user/summits/[summit]",
-                params: { summit: summitId },
+                params: { summit: summit.summitId },
               })
             }
-            className="relative h-44 w-1/2"
-          >
-            <Image
-              source={{ uri: summitedImageUrl }}
-              style={{ height: "100%", width: "100%" }}
-            />
-            <View className="absolute size-full">
-              <LinearGradient
-                colors={["transparent", "transparent", "rgba(0,0,0,0.3)"]}
-                style={StyleSheet.absoluteFill}
-              />
-            </View>
-            <View className="absolute bottom-2 pl-2">
-              <AvatarGroup
-                size="sm"
-                items={[
-                  ...participants?.map((participant) => ({
-                    name: getFullName(participant),
-                    imageUrl: participant.imageUrl,
-                  })),
-                  user
-                    ? {
-                        name: getFullName(user),
-                        imageUrl: user.imageUrl,
-                      }
-                    : { name: "..." },
-                ]}
-              />
-            </View>
-          </TouchableOpacity>
+            onParticipantPress={(userId) => router.push(`/user/${userId}`)}
+          />
         ))}
       </View>
     </ParallaxScrollView>

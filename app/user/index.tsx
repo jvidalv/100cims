@@ -1,6 +1,6 @@
 import * as Application from "expo-application";
 import { Link, useRouter } from "expo-router";
-import { analytics } from "expofast-analytics";
+import { analytics } from "@jvidalv/react-analytics";
 import { Fragment } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Alert, TouchableOpacity, View } from "react-native";
@@ -22,7 +22,7 @@ export default function UserIndexScreen() {
   const router = useRouter();
   const { data } = useUserMe();
   const { data: plansUnread } = usePlanChatUnread();
-  const hasUnreadMessages = !!plansUnread?.data?.message?.length;
+  const hasUnreadMessages = !!plansUnread?.length;
 
   const items: {
     iconName: IconSymbolName;

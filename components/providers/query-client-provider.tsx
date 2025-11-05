@@ -17,7 +17,13 @@ if (Platform.OS !== "web") {
   });
 }
 
-export const queryClient = new QueryClient();
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000,
+    },
+  },
+});
 
 export const QueryClientProvider = ({ children }: PropsWithChildren) => {
   return (

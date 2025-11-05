@@ -3,8 +3,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useChallenge } from "@/components/providers/challenge-provider";
 import { queryClient } from "@/components/providers/query-client-provider";
 import { useUserMe } from "@/domains/user/user.api";
-import { useApiWithAuth } from "@/hooks/use-api-with-auth";
-import { api } from "@/lib";
+import apiClient from "@/lib/api-client";
 
 export const usePlans = (
   params?: {
@@ -26,15 +25,26 @@ export const usePlans = (
   return useQuery({
     queryKey: ["plans", params],
     enabled,
-    queryFn: () =>
-      api.public.plans.all.get({ query: params ?? { challengeId } }),
+    queryFn: async () => {
+      const { data, error } = await apiClient.GET("/api/public/plans/all", {
+        params: { query: params ?? { challengeId } },
+      });
+      if (error) throw error;
+      return data.message;
+    },
   });
 };
 
 export const usePlanOne = ({ id }: { id: string }) => {
   return useQuery({
     queryKey: ["plan", id],
-    queryFn: () => api.public.plans.one.get({ query: { id } }),
+    queryFn: async () => {
+      const { data, error } = await apiClient.GET("/api/public/plans/one", {
+        params: { query: { id } },
+      });
+      if (error) throw error;
+      return data.message;
+    },
   });
 };
 
@@ -43,10 +53,16 @@ export const useNewPlansCount = () => {
 
   return useQuery({
     queryKey: ["plans", "count-new", user?.id],
-    queryFn: () =>
-      api.public.plans["count-new"].get({
-        query: user?.id ? { userId: user.id } : {},
-      }),
+    queryFn: async () => {
+      const { data, error } = await apiClient.GET(
+        "/api/public/plans/count-new",
+        {
+          params: { query: user?.id ? { userId: user.id } : {} },
+        },
+      );
+      if (error) throw error;
+      return data;
+    },
   });
 };
 
@@ -55,7 +71,14 @@ export const useMarkPlansAsVisited = () => {
 
   return useMutation({
     mutationKey: ["plans", "mark-visited"],
-    mutationFn: () => api.public.plans["count-new"].post({ userId: user!.id }),
+    mutationFn: async () => {
+      const { data, error } = await apiClient.POST(
+        "/api/public/plans/count-new",
+        { body: { userId: user!.id } },
+      );
+      if (error) throw error;
+      return data;
+    },
     onSuccess: () => {
       void queryClient.invalidateQueries({
         queryKey: ["plans", "count-new", user?.id],
@@ -65,11 +88,23 @@ export const useMarkPlansAsVisited = () => {
 };
 
 export const usePlanCreate = () => {
-  const apiWithAuth = useApiWithAuth();
-
   return useMutation({
     mutationKey: ["plan", "create"],
-    mutationFn: apiWithAuth.protected.plans.create.post,
+    mutationFn: async (input: {
+      title: string;
+      description: string;
+      startDate?: string;
+      mountainIds?: string[];
+      challengeId?: string;
+      userIds?: string[];
+    }) => {
+      const { data, error } = await apiClient.POST(
+        "/api/protected/plans/create",
+        { body: input },
+      );
+      if (error) throw error;
+      return data.message;
+    },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["plans"] });
     },
@@ -77,11 +112,24 @@ export const usePlanCreate = () => {
 };
 
 export const usePlanUpdate = () => {
-  const apiWithAuth = useApiWithAuth();
-
   return useMutation({
     mutationKey: ["plan", "update"],
-    mutationFn: apiWithAuth.protected.plans.update.post,
+    mutationFn: async (input: {
+      id: string;
+      title?: string;
+      description?: string;
+      mountainIds?: string[];
+      startDate?: string;
+      userIds?: string[];
+      status?: string;
+    }) => {
+      const { data, error } = await apiClient.POST(
+        "/api/protected/plans/update",
+        { body: input },
+      );
+      if (error) throw error;
+      return data;
+    },
     onSuccess: (_data, variables) => {
       void queryClient.invalidateQueries({ queryKey: ["plans"] });
       void queryClient.invalidateQueries({
@@ -100,11 +148,16 @@ export const usePlanUpdate = () => {
 };
 
 export const usePlanDelete = () => {
-  const apiWithAuth = useApiWithAuth();
-
   return useMutation({
     mutationKey: ["plan", "delete"],
-    mutationFn: apiWithAuth.protected.plans.delete.post,
+    mutationFn: async (input: { id: string }) => {
+      const { data, error } = await apiClient.POST(
+        "/api/protected/plans/delete",
+        { body: input },
+      );
+      if (error) throw error;
+      return data;
+    },
     onSuccess: (_data, variables) => {
       void queryClient.invalidateQueries({ queryKey: ["plans"] });
       void queryClient.removeQueries({ queryKey: ["plan", variables.id] });
@@ -113,11 +166,16 @@ export const usePlanDelete = () => {
 };
 
 export const usePlanJoin = (planId: string) => {
-  const apiWithAuth = useApiWithAuth();
-
   return useMutation({
     mutationKey: ["plan", "join"],
-    mutationFn: () => apiWithAuth.protected.plans.join.post({ id: planId }),
+    mutationFn: async () => {
+      const { data, error } = await apiClient.POST(
+        "/api/protected/plans/join",
+        { body: { id: planId } },
+      );
+      if (error) throw error;
+      return data;
+    },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["plans"] });
       void queryClient.invalidateQueries({ queryKey: ["plan", planId] });
@@ -126,11 +184,16 @@ export const usePlanJoin = (planId: string) => {
 };
 
 export const usePlanLeave = (planId: string) => {
-  const apiWithAuth = useApiWithAuth();
-
   return useMutation({
     mutationKey: ["plan", "leave"],
-    mutationFn: () => apiWithAuth.protected.plans.leave.post({ id: planId }),
+    mutationFn: async () => {
+      const { data, error } = await apiClient.POST(
+        "/api/protected/plans/leave",
+        { body: { id: planId } },
+      );
+      if (error) throw error;
+      return data;
+    },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["plans"] });
       void queryClient.invalidateQueries({ queryKey: ["plan", planId] });

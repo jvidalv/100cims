@@ -1,32 +1,101 @@
 import { format } from "date-fns/format";
 import { Link, Redirect, useLocalSearchParams, useRouter } from "expo-router";
-import { FormattedMessage } from "react-intl";
-import { ScrollView, TouchableOpacity, Image, View } from "react-native";
+import { useState } from "react";
+import { FormattedMessage, useIntl } from "react-intl";
+import { Alert, ScrollView, TouchableOpacity, Image, View } from "react-native";
 
 import { useAuth } from "@/components/providers/auth-provider";
 import {
   Avatar,
   Button,
   DynamicImage,
+  Icon,
   Skeleton,
+  ThemedDateInput,
   ThemedText,
   ThemedView,
 } from "@/components/ui/atoms";
-import { ScreenHeader } from "@/components/ui/molecules";
-import { useSummitGet } from "@/domains/summit/summit.api";
+import { BottomDrawer, ScreenHeader } from "@/components/ui/molecules";
+import { useBottomDrawer } from "@/components/ui/molecules/bottom-drawer";
+import {
+  useDeleteSummitMutation,
+  useSummitGet,
+  useUpdateSummitMutation,
+} from "@/domains/summit/summit.api";
+import { useUserMe } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
 import { getInitials } from "@/lib/strings";
 
 const Content = () => {
+  const intl = useIntl();
   const router = useRouter();
   const { summit } = useLocalSearchParams<{ summit: string }>();
 
   const { data, isPending } = useSummitGet({ summitId: summit });
+  const { data: me } = useUserMe();
+  const { mutateAsync: deleteSummit } = useDeleteSummitMutation();
+  const { mutateAsync: updateSummit } = useUpdateSummitMutation();
+
+  const [isDrawerOpen, setIsDrawerOpen] = useBottomDrawer();
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+
+  const isUserParticipant = data?.users.some((user) => user.userId === me?.id);
+
+  const handleDelete = () => {
+    Alert.alert(
+      intl.formatMessage({ defaultMessage: "Deleting summit" }),
+      intl.formatMessage({
+        defaultMessage: "Are you sure you want to continue?",
+      }),
+      [
+        {
+          text: intl.formatMessage({ defaultMessage: "Cancel" }),
+          style: "cancel",
+        },
+        {
+          text: intl.formatMessage({ defaultMessage: "Yes" }),
+          style: "default",
+          onPress: async () => {
+            await deleteSummit({ summitId: summit });
+            router.back();
+          },
+        },
+      ],
+    );
+  };
+
+  const handleUpdate = async () => {
+    if (!selectedDate) return;
+    await updateSummit({
+      summitId: summit,
+      summitedAt: selectedDate.toISOString(),
+    });
+    setIsDrawerOpen(false);
+    router.back();
+  };
 
   if (isPending || !data) {
     return (
       <ThemedView className="flex-1">
-        <ScreenHeader />
+        <ScreenHeader
+          rightElement={
+            isUserParticipant ? (
+              <View className="flex-row items-center gap-4 pr-4">
+                <TouchableOpacity
+                  onPress={() => {
+                    setSelectedDate(new Date(data?.summitedAt || Date.now()));
+                    setIsDrawerOpen(true);
+                  }}
+                >
+                  <Icon name="gearshape" size={20} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleDelete}>
+                  <Icon name="trash" size={20} />
+                </TouchableOpacity>
+              </View>
+            ) : undefined
+          }
+        />
         <View className="px-6">
           <View className="flex-row justify-between">
             <View>
@@ -35,13 +104,7 @@ const Content = () => {
             </View>
             <Skeleton className="size-16 rounded-lg" />
           </View>
-          <ThemedText className="mb-2 text-2xl font-semibold">
-            <FormattedMessage defaultMessage="People" />
-          </ThemedText>
           <Skeleton className="mb-6 size-10 rounded-full" />
-          <ThemedText className="mb-2 text-2xl font-semibold">
-            <FormattedMessage defaultMessage="Photo" />
-          </ThemedText>
         </View>
         <Skeleton className="size-full min-h-[500px]" />
       </ThemedView>
@@ -50,11 +113,29 @@ const Content = () => {
 
   return (
     <ThemedView className="flex-1">
-      <ScreenHeader />
+      <ScreenHeader
+        rightElement={
+          isUserParticipant ? (
+            <View className="flex-row items-center gap-4 pr-4">
+              <TouchableOpacity
+                onPress={() => {
+                  setSelectedDate(new Date(data.summitedAt));
+                  setIsDrawerOpen(true);
+                }}
+              >
+                <Icon name="gearshape" size={20} />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleDelete}>
+                <Icon name="trash" size={20} />
+              </TouchableOpacity>
+            </View>
+          ) : undefined
+        }
+      />
       <ScrollView
         stickyHeaderIndices={[0]}
         showsVerticalScrollIndicator={false}
-        contentContainerClassName="pb-12"
+        contentContainerClassName="pb-12 pt-2"
       >
         <Link
           href={{
@@ -85,9 +166,6 @@ const Content = () => {
           </TouchableOpacity>
         </Link>
         <View className="px-6">
-          <ThemedText className="mb-3 text-2xl font-semibold">
-            <FormattedMessage defaultMessage="People" />
-          </ThemedText>
           <View className="mb-6 gap-3">
             {data.users.map((user) => (
               <Link
@@ -112,9 +190,6 @@ const Content = () => {
             ))}
           </View>
         </View>
-        <ThemedText className="mb-3 px-6 text-2xl font-semibold">
-          <FormattedMessage defaultMessage="Photo" />
-        </ThemedText>
         <View className="mb-6 overflow-hidden rounded-lg">
           <DynamicImage uri={data.summitImageUrl} />
         </View>
@@ -122,6 +197,24 @@ const Content = () => {
           <FormattedMessage defaultMessage="Go back" />
         </Button>
       </ScrollView>
+      <BottomDrawer
+        isOpen={isDrawerOpen}
+        onRequestClose={() => setIsDrawerOpen(false)}
+      >
+        <View className="p-6">
+          <ThemedText className="mb-4 text-xl font-semibold">
+            <FormattedMessage defaultMessage="Update summit date" />
+          </ThemedText>
+          <ThemedDateInput
+            value={selectedDate}
+            onDateValid={setSelectedDate}
+            noFutureDates
+          />
+          <Button className="mt-4" onPress={handleUpdate}>
+            <FormattedMessage defaultMessage="Save" />
+          </Button>
+        </View>
+      </BottomDrawer>
     </ThemedView>
   );
 };

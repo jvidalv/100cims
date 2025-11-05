@@ -1,7 +1,7 @@
 import { format } from "date-fns/format";
 import { nextSunday } from "date-fns/nextSunday";
 import { useRouter, Redirect } from "expo-router";
-import { analytics } from "expofast-analytics";
+import { analytics } from "@jvidalv/react-analytics";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
@@ -98,7 +98,7 @@ const MountainsStep = memo(
     const [query, setQuery] = useState("");
 
     const queriedMountains = useMemo(() => {
-      const mountains = data?.data?.message;
+      const mountains = data;
 
       if (!mountains) return [];
 
@@ -115,7 +115,7 @@ const MountainsStep = memo(
         const bSelected = value.includes(b.id) ? 0 : 1;
         return aSelected - bSelected;
       });
-    }, [query, data?.data?.message, value]);
+    }, [query, data, value]);
 
     return (
       <View>
@@ -237,6 +237,7 @@ const DetailsStep = ({
       <ThemedDateInput
         value={values.date}
         onDateValid={(date) => onDetailsChange({ ...values, date })}
+        noPastDates
       />
       <ThemedText className="mb-2 mt-1 text-xs text-muted-foreground/80">
         {values?.date ? (
@@ -335,12 +336,12 @@ export default function PlanCreatePage() {
     (mountainsIds: string[]) => {
       setMountains(mountainsIds);
 
-      if (!data?.data?.message) return;
+      if (!data) return;
 
-      const title = buildTitleFromMountains(mountainsIds, data.data.message);
+      const title = buildTitleFromMountains(mountainsIds, data);
       setTitle(title);
     },
-    [data?.data?.message],
+    [data],
   );
 
   useEffect(() => {
@@ -385,7 +386,7 @@ export default function PlanCreatePage() {
 
       void markAsVisited();
 
-      const planId = response?.data?.message?.id;
+      const planId = response?.id;
       if (planId) {
         router.dismiss();
         analytics.action(`plan-created`);

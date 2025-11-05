@@ -20,6 +20,7 @@ const MAPPING = {
   "map.circle.fill": "map-search",
   "chevron.right": "chevron-right",
   "chevron.left": "chevron-left",
+  "list.bullet": "format-list-bulleted",
   magnifyingglass: "magnify",
   "arrow.right": "arrow-right",
   camera: "camera",

@@ -10,24 +10,23 @@ import {
   ThemedView,
 } from "@/components/ui/atoms";
 import { ScreenHeader } from "@/components/ui/molecules";
-import { useApiWithAuth } from "@/hooks/use-api-with-auth";
+import { useSubmitSuggestionMutation } from "@/domains/user/user.api";
 
 export default function SuggestionsScreen() {
   const intl = useIntl();
-  const api = useApiWithAuth();
+  const { mutateAsync: submitSuggestion, isPending } =
+    useSubmitSuggestionMutation();
   const [suggestion, setSuggestion] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const [isSummited, setIsSummited] = useState(false);
 
   const onSubmit = async () => {
     try {
       setIsSummited(false);
-      setIsLoading(true);
-      await api.protected.user.suggestion.post({ suggestion });
+      await submitSuggestion({ suggestion });
       setIsSummited(true);
       setSuggestion("");
-    } finally {
-      setIsLoading(false);
+    } catch {
+      // Handle error silently
     }
   };
 
@@ -52,7 +51,7 @@ export default function SuggestionsScreen() {
           className="mb-4"
           disabled={!suggestion}
           onPress={onSubmit}
-          isLoading={isLoading}
+          isLoading={isPending}
         >
           <FormattedMessage defaultMessage="Share" />
         </Button>

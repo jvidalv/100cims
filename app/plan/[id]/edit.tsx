@@ -50,11 +50,8 @@ export default function PlanEditPage() {
   const intl = useIntl();
   const router = useRouter();
 
-  const plan = planData?.data?.message;
-  const allMountains = useMemo(
-    () => mountainsData?.data?.message ?? [],
-    [mountainsData],
-  );
+  const plan = planData;
+  const allMountains = useMemo(() => mountainsData ?? [], [mountainsData]);
 
   const [title, setTitle] = useState(plan?.title);
   const [description, setDescription] = useState(
@@ -103,7 +100,7 @@ export default function PlanEditPage() {
       userIds: users.map((u) => u.id),
     });
 
-    if (response.data?.success) router.dismiss();
+    if (response.success) router.dismiss();
     else
       Alert.alert(
         intl.formatMessage({ defaultMessage: "Something went wrong" }),
@@ -183,6 +180,7 @@ export default function PlanEditPage() {
             <ThemedDateInput
               value={date}
               onDateValid={(date) => setDate(date)}
+              noPastDates
             />
 
             <View className="mb-2">
@@ -306,10 +304,7 @@ const MountainsList = ({
 }) => {
   const [query, setQuery] = useState("");
   const { data: mountainsData } = useMountains();
-  const allMountains = useMemo(
-    () => mountainsData?.data?.message ?? [],
-    [mountainsData],
-  );
+  const allMountains = useMemo(() => mountainsData ?? [], [mountainsData]);
 
   const filteredMountains = useMemo(() => {
     const filtered = !query.trim()

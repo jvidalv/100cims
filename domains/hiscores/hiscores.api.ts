@@ -1,14 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { useChallenge } from "@/components/providers/challenge-provider";
-import { api } from "@/lib";
+import apiClient from "@/lib/api-client";
 
 export const useHiscoresGet = () => {
   const { challengeId } = useChallenge();
-  const args = useQuery({
-    queryKey: ["hiscores", challengeId],
-    queryFn: () => api.public.hiscores.all.get({ query: { challengeId } }),
-  });
 
-  return { ...args, data: args.data?.data?.message };
+  return useQuery({
+    queryKey: ["hiscores", challengeId],
+    queryFn: async () => {
+      const { data, error } = await apiClient.GET("/api/public/hiscores/all", {
+        params: { query: { challengeId } },
+      });
+      if (error) throw error;
+      return data?.message;
+    },
+  });
 };

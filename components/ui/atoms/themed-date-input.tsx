@@ -1,11 +1,14 @@
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { isValid } from "date-fns/isValid";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Pressable, TextInput, TextInputProps, View } from "react-native";
+import { useEffect, useMemo, useState } from "react";
+import { FormattedMessage } from "react-intl";
+import { Platform, Pressable, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
+import { Button } from "@/components/ui/atoms/button";
 import { Icon } from "@/components/ui/atoms/icon";
 import { ThemedText } from "@/components/ui/atoms/themed-text";
-import { getFontFamily } from "@/lib/fonts";
+import { BottomDrawer } from "@/components/ui/molecules/bottom-drawer";
 
 type Props = {
   value?: Date | null | false;
@@ -13,10 +16,9 @@ type Props = {
   onDateError?: () => void;
   className?: string;
   autoFocus?: boolean;
+  noFutureDates?: boolean;
+  noPastDates?: boolean;
 };
-
-const inputClassName = "text-foreground font-medium";
-const fontFamily = getFontFamily(inputClassName);
 
 export const ThemedDateInput = ({
   value,
@@ -24,11 +26,10 @@ export const ThemedDateInput = ({
   onDateError,
   className,
   autoFocus,
+  noFutureDates,
+  noPastDates,
 }: Props) => {
-  const dayRef = useRef<TextInput>(null);
-  const monthRef = useRef<TextInput>(null);
-  const yearRef = useRef<TextInput>(null);
-
+  const [showPicker, setShowPicker] = useState(false);
   const [day, setDay] = useState("");
   const [month, setMonth] = useState("");
   const [year, setYear] = useState("");
@@ -54,54 +55,6 @@ export const ThemedDateInput = ({
     setYear(y);
   }, [value]);
 
-  const inputSharedProps: TextInputProps = {
-    returnKeyType: "done",
-    style: { fontFamily, fontSize: 16 },
-    keyboardType: "numeric",
-  };
-
-  const handleInput = (nextDay = day, nextMonth = month, nextYear = year) => {
-    const d = parseInt(nextDay);
-    const m = parseInt(nextMonth) - 1;
-    const y = parseInt(nextYear);
-
-    const isComplete =
-      nextDay.length > 0 && nextMonth.length > 0 && nextYear.length > 0;
-
-    if (!isComplete) return;
-    const date = new Date(Date.UTC(y, m, d));
-
-    const valid =
-      isValid(date) &&
-      date.getUTCDate() === d &&
-      date.getUTCMonth() === m &&
-      date.getUTCFullYear() === y;
-
-    if (valid) {
-      onDateValid(date);
-    } else {
-      onDateError?.();
-    }
-  };
-
-  const handleChange = (type: "day" | "month" | "year", val: string) => {
-    if (type === "day") {
-      setDay(val);
-      handleInput(val, month, year);
-    } else if (type === "month") {
-      setMonth(val);
-      handleInput(day, val, year);
-    } else {
-      setYear(val);
-      handleInput(day, month, val);
-    }
-  };
-
-  const isFocused =
-    dayRef.current?.isFocused() ||
-    monthRef.current?.isFocused() ||
-    yearRef.current?.isFocused();
-
   const isComplete = day && month && year;
   const d = parseInt(day);
   const m = parseInt(month) - 1;
@@ -119,75 +72,119 @@ export const ThemedDateInput = ({
       : null;
   }, [d, isComplete, m, y]);
 
-  const iconColor = isFocused
-    ? parsedDate || !isComplete
-      ? "#3b82f6"
-      : "#ef4444"
-    : undefined;
-
   const Separator = () => (
     <ThemedText
       className={twMerge(
-        "text-border",
-        isFocused && "text-blue-500",
+        "text-muted-foreground",
         isComplete && !parsedDate && "text-red-500",
-        isComplete && parsedDate && isFocused && "text-blue-500",
       )}
     >
       /
     </ThemedText>
   );
 
+  const handleDateChange = (event: { type: string }, selectedDate?: Date) => {
+    if (event.type === "set" && selectedDate) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const inputDate = new Date(selectedDate);
+      inputDate.setHours(0, 0, 0, 0);
+
+      let isValid = true;
+      if (noFutureDates && inputDate > today) isValid = false;
+      if (noPastDates && inputDate < today) isValid = false;
+
+      if (isValid) {
+        onDateValid(selectedDate);
+      } else {
+        onDateError?.();
+      }
+    } else if (event.type === "dismissed") {
+      setShowPicker(false);
+    }
+  };
+
   return (
-    <Pressable
-      onPress={() => {
-        if (!day) dayRef.current?.focus();
-        else if (!month) monthRef.current?.focus();
-        else yearRef.current?.focus();
-      }}
-      className={twMerge(
-        "border-2 border-border justify-center rounded-xl py-3 pl-10 relative",
-        isFocused && "border-blue-500",
-        isComplete && !parsedDate && "border-red-500",
-        isComplete && parsedDate && isFocused && "border-blue-500",
-        className,
+    <>
+      <Pressable
+        onPress={() => setShowPicker(true)}
+        className={twMerge(
+          "border-2 border-border justify-center rounded-xl py-3 pl-10 relative",
+          isComplete && !parsedDate && "border-red-500",
+          className,
+        )}
+      >
+        <View className="absolute left-4 h-full items-center justify-center">
+          <Icon name="calendar" size={20} muted />
+        </View>
+        <View className="flex-row items-center py-2">
+          <ThemedText
+            className={twMerge(
+              "text-foreground font-medium w-12 text-right pr-4",
+              !day && "text-muted-foreground",
+            )}
+          >
+            {day || "dd"}
+          </ThemedText>
+          <Separator />
+          <ThemedText
+            className={twMerge(
+              "text-foreground font-medium w-12 text-center px-1",
+              !month && "text-muted-foreground",
+            )}
+          >
+            {month || "mm"}
+          </ThemedText>
+          <Separator />
+          <ThemedText
+            className={twMerge(
+              "text-foreground font-medium pl-4 flex-1",
+              !year && "text-muted-foreground",
+            )}
+          >
+            {year || "yyyy"}
+          </ThemedText>
+        </View>
+      </Pressable>
+      {Platform.OS === "ios" ? (
+        <BottomDrawer
+          isOpen={showPicker}
+          onRequestClose={() => setShowPicker(false)}
+        >
+          <DateTimePicker
+            value={value || new Date()}
+            mode="date"
+            display="spinner"
+            onChange={handleDateChange}
+            minimumDate={noPastDates ? new Date() : undefined}
+            maximumDate={noFutureDates ? new Date() : undefined}
+          />
+          <Button
+            intent="success"
+            className="mx-4 mb-8"
+            onPress={() => setShowPicker(false)}
+          >
+            <FormattedMessage defaultMessage="Done" />
+          </Button>
+        </BottomDrawer>
+      ) : (
+        showPicker && (
+          <DateTimePicker
+            value={value || new Date()}
+            mode="date"
+            display="default"
+            onChange={(event, selectedDate) => {
+              // Android needs immediate close before processing
+              if (Platform.OS === "android") {
+                setShowPicker(false);
+              }
+              handleDateChange(event, selectedDate);
+            }}
+            minimumDate={noPastDates ? new Date() : undefined}
+            maximumDate={noFutureDates ? new Date() : undefined}
+          />
+        )
       )}
-    >
-      <View className="absolute left-4 h-full items-center justify-center">
-        <Icon name="calendar" size={20} muted={!isFocused} color={iconColor} />
-      </View>
-      <View className="flex-row items-center py-2">
-        <TextInput
-          ref={dayRef}
-          onChangeText={(val) => handleChange("day", val)}
-          placeholder="dd"
-          className={twMerge(inputClassName, "w-12 text-right pr-4")}
-          value={day}
-          maxLength={2}
-          autoFocus={autoFocus}
-          {...inputSharedProps}
-        />
-        <Separator />
-        <TextInput
-          ref={monthRef}
-          onChangeText={(val) => handleChange("month", val)}
-          placeholder="mm"
-          className={twMerge(inputClassName, "w-12 text-center px-1")}
-          value={month}
-          maxLength={2}
-          {...inputSharedProps}
-        />
-        <Separator />
-        <TextInput
-          ref={yearRef}
-          onChangeText={(val) => handleChange("year", val)}
-          placeholder="yyyy"
-          className={twMerge(inputClassName, "pl-4 flex-1 w-full")}
-          value={year}
-          maxLength={4}
-          {...inputSharedProps}
-        />
-      </View>
-    </Pressable>
+    </>
   );
 };

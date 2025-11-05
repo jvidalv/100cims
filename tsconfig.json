@@ -6,6 +6,7 @@
       "@/*": ["./*"]
     }
   },
+  "exclude": ["scripts/test-api-client.ts"],
   "include": [
     "**/*.ts",
     "**/*.tsx",

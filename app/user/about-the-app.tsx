@@ -1,7 +1,6 @@
-import * as Linking from "expo-linking";
 import { Link } from "expo-router";
 import { FormattedMessage } from "react-intl";
-import { TouchableOpacity, View, Image } from "react-native";
+import { View, Image } from "react-native";
 
 import { ThemedText, ThemedView } from "@/components/ui/atoms";
 import { ScreenHeader } from "@/components/ui/molecules";
@@ -14,21 +13,12 @@ export default function AboutTheAppScreen() {
         <ThemedText className="mb-4 text-4xl font-bold">
           <FormattedMessage defaultMessage="About the app" />
         </ThemedText>
-        <ThemedText className="mb-2 text-muted-foreground">
+        <ThemedText className="mb-4 text-muted-foreground">
           <FormattedMessage
-            defaultMessage="Inspired by the FEEC “100 cims” challenge, whose main goal
+            defaultMessage="Non-lucrative app whose main goal
           is to promote knowledge of the territory while practicing hiking."
           />
         </ThemedText>
-        <TouchableOpacity
-          onPress={() =>
-            Linking.openURL(`https://www.feec.cat/activitats/100-cims/`)
-          }
-        >
-          <ThemedText className="mb-6 underline">
-            <FormattedMessage defaultMessage="Read more on FEEC website." />
-          </ThemedText>
-        </TouchableOpacity>
         <ThemedText className="mb-3 text-2xl font-semibold">
           <FormattedMessage defaultMessage="The author" />
         </ThemedText>

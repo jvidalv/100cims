@@ -183,55 +183,49 @@ export default function PlansScreen() {
             <PlanItemListSkeleton />
           </>
         )}
-        {!isPendingPlans &&
-          !data?.data?.message?.length &&
-          status !== "open" && (
-            <ThemedText>
-              <FormattedMessage defaultMessage="No plans found for given status." />
-            </ThemedText>
-          )}
-        {!isPendingPlans &&
-          !data?.data?.message?.length &&
-          status === "open" && (
-            <Link href="/plan/create" asChild>
-              <TouchableOpacity className="flex-row gap-4">
-                <View
-                  className="items-center justify-center bg-border"
-                  style={{ width: 100, height: 100, borderRadius: 6 }}
-                >
-                  <ThemedText className="text-5xl">+</ThemedText>
-                </View>
-                <View className="flex-1 justify-center">
-                  <View className="items-start gap-1">
-                    <View className="flex-row gap-2">
-                      <ThemedText className="font-semibold text-blue-500">
-                        <FormattedMessage defaultMessage="None" />
-                      </ThemedText>
-                    </View>
-                    <ThemedText
-                      numberOfLines={2}
-                      className="text-lg font-semibold tracking-tight"
-                    >
-                      <FormattedMessage defaultMessage="Create your first plan" />
+        {!isPendingPlans && !data?.length && status !== "open" && (
+          <ThemedText>
+            <FormattedMessage defaultMessage="No plans found for given status." />
+          </ThemedText>
+        )}
+        {!isPendingPlans && !data?.length && status === "open" && (
+          <Link href="/plan/create" asChild>
+            <TouchableOpacity className="flex-row gap-4">
+              <View
+                className="items-center justify-center bg-border"
+                style={{ width: 100, height: 100, borderRadius: 6 }}
+              >
+                <ThemedText className="text-5xl">+</ThemedText>
+              </View>
+              <View className="flex-1 justify-center">
+                <View className="items-start gap-1">
+                  <View className="flex-row gap-2">
+                    <ThemedText className="font-semibold text-blue-500">
+                      <FormattedMessage defaultMessage="None" />
                     </ThemedText>
                   </View>
+                  <ThemedText
+                    numberOfLines={2}
+                    className="text-lg font-semibold tracking-tight"
+                  >
+                    <FormattedMessage defaultMessage="Create your first plan" />
+                  </ThemedText>
                 </View>
-              </TouchableOpacity>
-            </Link>
-          )}
-        {data?.data?.message?.map(
-          ({ id, title, status, startDate, mountains, users }) => (
-            <PlanItemList
-              key={id}
-              id={id}
-              title={title}
-              status={status}
-              startDate={startDate}
-              mountains={mountains?.map(({ imageUrl }) => ({ imageUrl }))}
-              users={users}
-            />
-          ),
+              </View>
+            </TouchableOpacity>
+          </Link>
         )}
+        {data?.map(({ id, title, status, startDate, mountains, users }) => (
+          <PlanItemList
+            key={id}
+            id={id}
+            title={title}
+            status={status}
+            startDate={startDate}
+            mountains={mountains?.map(({ imageUrl }) => ({ imageUrl }))}
+            users={users}
+          />
+        ))}
       </ScrollView>
       {showAlert && <FloatingAlert onClose={() => setShowAlert(false)} />}
     </ThemedView>

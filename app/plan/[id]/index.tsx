@@ -1,7 +1,7 @@
 import { isToday } from "date-fns/isToday";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, Link, useRouter } from "expo-router";
-import { analytics } from "expofast-analytics";
+import { analytics } from "@jvidalv/react-analytics";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
   Alert,
@@ -90,7 +90,7 @@ export default function PlanIdPage() {
   const { data } = usePlanOne({ id });
   const { isAuthenticated } = useAuth();
   const { data: chatsUnread } = usePlanChatUnread();
-  const hasUnreadMessages = chatsUnread?.data?.message?.includes(id);
+  const hasUnreadMessages = chatsUnread?.includes(id);
   const { data: user } = useUserMe();
   const { mutateAsync: joinPlan, isPending: isLoadingJoinPlan } =
     usePlanJoin(id);
@@ -98,7 +98,7 @@ export default function PlanIdPage() {
     usePlanLeave(id);
   const intl = useIntl();
 
-  const plan = data?.data?.message;
+  const plan = data;
   const isCreator = user?.id === plan?.creatorId;
   const hasJoined = plan?.users.some((u) => u.id === user?.id);
 
@@ -128,11 +128,11 @@ export default function PlanIdPage() {
       message: msg,
     });
 
-    if (response.action === "sharedAction")
-      analytics.action(`plan-shared-done`, { id: plan?.id });
+    // if (response.action === "sharedAction")
+    //   analytics.action(`plan-shared-done`, { id: plan?.id });
 
-    if (response.action === "dismissedAction")
-      analytics.action(`plan-shared-canceled`, { id: plan?.id });
+    // if (response.action === "dismissedAction")
+    //   analytics.action(`plan-shared-canceled`, { id: plan?.id });
   };
 
   const handleJoin = () => {

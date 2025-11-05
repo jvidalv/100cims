@@ -1,8 +1,8 @@
+import { analytics } from "@jvidalv/react-analytics";
 import * as AppleAuthentication from "expo-apple-authentication";
 import * as Google from "expo-auth-session/providers/google";
 import { Redirect, useRouter } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
-import { analytics } from "expofast-analytics";
 import { useColorScheme } from "nativewind";
 import { useEffect, useState } from "react";
 import { FormattedMessage } from "react-intl";
@@ -12,7 +12,7 @@ import { twMerge } from "tailwind-merge";
 import { useAuth } from "@/components/providers/auth-provider";
 import { ThemedText, Button } from "@/components/ui/atoms";
 import { AvatarGroup } from "@/components/ui/molecules";
-import { api } from "@/lib";
+import { useJoinMutation } from "@/domains/user/user.api";
 import { isAndroid, isIOS } from "@/lib/device";
 import { getLocale } from "@/lib/locale";
 
@@ -79,6 +79,7 @@ const AppleSignIn = () => {
   const { setAuthenticated } = useAuth();
   const { colorScheme } = useColorScheme();
   const router = useRouter();
+  const { mutateAsync: joinMutate } = useJoinMutation();
 
   const isDark = colorScheme === "dark";
 
@@ -109,15 +110,13 @@ const AppleSignIn = () => {
             return;
           }
 
-          const response = await api.public.join.post({
+          const jwt = await joinMutate({
             provider: "apple",
             identityToken: credentials.identityToken,
             firstName: credentials?.fullName?.givenName || undefined,
             lastName: credentials?.fullName?.familyName || undefined,
             locale: getLocale(),
           });
-
-          const jwt = response?.data?.message;
           if (!jwt) {
             return;
           }
@@ -138,6 +137,7 @@ const GoogleSignIn = () => {
   const router = useRouter();
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const { setAuthenticated } = useAuth();
+  const { mutateAsync: joinMutate } = useJoinMutation();
   const [, response, promptAsync] = Google.useAuthRequest({
     androidClientId: process.env.EXPO_PUBLIC_ANDROID_CLIENT_ID as string,
     iosClientId: process.env.EXPO_PUBLIC_IOS_CLIENT_ID as string,
@@ -153,13 +153,11 @@ const GoogleSignIn = () => {
           response?.authentication?.accessToken
         ) {
           setIsAuthenticating(true);
-          const jwtResponse = await api.public.join.post({
+          const jwt = await joinMutate({
             provider: "google",
             identityToken: response?.authentication?.accessToken,
             locale: getLocale(),
           });
-
-          const jwt = jwtResponse?.data?.message;
           if (!jwt) {
             return;
           }
@@ -264,7 +262,7 @@ export default function JoinScreen() {
         <ThemedText className="items-center justify-center text-center text-4xl font-black">
           <FormattedMessage defaultMessage="Join" />{" "}
           <ThemedText className="text-4xl font-black text-primary">
-            100cims{" "}
+            Cims{" "}
           </ThemedText>
           <FormattedMessage defaultMessage="today" />
         </ThemedText>

@@ -1,11 +1,10 @@
+import { analytics } from "@jvidalv/react-analytics";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
-import { analytics } from "expofast-analytics";
 import React, { useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
 
-import { IMAGE_TO_BIG } from "@/api/routes/@shared/error-codes";
 import { useAuth } from "@/components/providers/auth-provider";
 import { useChallenge } from "@/components/providers/challenge-provider";
 import { queryClient } from "@/components/providers/query-client-provider";
@@ -20,9 +19,14 @@ import {
 import { ScreenHeader } from "@/components/ui/molecules";
 import { useHiscoresGet } from "@/domains/hiscores/hiscores.api";
 import { SUMMITS_KEY } from "@/domains/summit/summit.api";
-import { USER_SUMMITS_KEY, useUserMe } from "@/domains/user/user.api";
-import { useApiWithAuth } from "@/hooks/use-api-with-auth";
+import {
+  USER_SUMMITS_KEY,
+  useDeleteAccountMutation,
+  useUpdateUserMeMutation,
+  useUserMe,
+} from "@/domains/user/user.api";
 import { debounce } from "@/lib/debounce";
+import { IMAGE_TO_BIG } from "@/lib/error-codes";
 import { getImageOptimized } from "@/lib/images";
 
 export default function UserMeScreen() {
@@ -31,7 +35,8 @@ export default function UserMeScreen() {
   const { challengeId } = useChallenge();
   const intl = useIntl();
   const { refetch: refetchHiscores } = useHiscoresGet();
-  const api = useApiWithAuth();
+  const { mutateAsync: updateUserMe } = useUpdateUserMeMutation();
+  const { mutateAsync: deleteAccount } = useDeleteAccountMutation();
   const { data: me, refetch } = useUserMe();
   const [image, setImage] = useState<string | null>(null);
 
@@ -62,28 +67,32 @@ export default function UserMeScreen() {
         const imageOptimized = await getImageOptimized(pickedImage);
 
         if (imageOptimized.base64) {
-          const response = await api.protected.user.me.post({
-            image: imageOptimized.base64,
-          });
-          if (
-            response.error &&
-            response.error.status === 500 &&
-            response.error.value.message === IMAGE_TO_BIG
-          ) {
-            return Alert.alert(
-              intl.formatMessage({
-                defaultMessage: "Image too big.",
-              }),
-            );
-          }
+          try {
+            await updateUserMe({
+              imageUrl: imageOptimized.base64,
+            });
 
-          void refetch();
-          void queryClient.refetchQueries({
-            queryKey: USER_SUMMITS_KEY(challengeId),
-          });
-          void queryClient.refetchQueries({
-            queryKey: SUMMITS_KEY({ limit: 5, challengeId }),
-          });
+            void refetch();
+            void queryClient.refetchQueries({
+              queryKey: USER_SUMMITS_KEY(challengeId),
+            });
+            void queryClient.refetchQueries({
+              queryKey: SUMMITS_KEY({
+                limit: 5,
+                challengeId,
+                mountainId: undefined,
+              }),
+            });
+          } catch (error: any) {
+            if (error?.message === IMAGE_TO_BIG) {
+              return Alert.alert(
+                intl.formatMessage({
+                  defaultMessage: "Image too big.",
+                }),
+              );
+            }
+            throw error;
+          }
         }
       }
     } catch (error) {
@@ -98,26 +107,26 @@ export default function UserMeScreen() {
   };
 
   const onChangeFirstName = debounce(async (firstName: string) => {
-    await api.protected.user.me.post({
+    await updateUserMe({
       firstName,
     });
   }, 500);
 
   const onChangeLastName = debounce(async (lastName: string) => {
-    await api.protected.user.me.post({
+    await updateUserMe({
       lastName,
     });
   }, 500);
 
   const onChangeTown = debounce(async (town: string) => {
-    await api.protected.user.me.post({
+    await updateUserMe({
       town,
     });
   }, 500);
 
   const onVisibleHiscoresChange = async (checked: boolean) => {
     analytics.action(`visible-on-highscores`, { value: checked });
-    await api.protected.user.me.post({
+    await updateUserMe({
       visibleOnHiscores: checked,
     });
     void refetchHiscores();
@@ -125,7 +134,7 @@ export default function UserMeScreen() {
 
   const onVisiblePeopleSearchChange = async (checked: boolean) => {
     analytics.action(`visible-on-people-search`, { value: checked });
-    void api.protected.user.me.post({
+    void updateUserMe({
       visibleOnPeopleSearch: checked,
     });
   };
@@ -147,7 +156,7 @@ export default function UserMeScreen() {
           style: "default",
           onPress: async () => {
             analytics.action("delete-account");
-            await api.protected.user.delete.get();
+            await deleteAccount();
             router.dismissAll();
             logout();
           },

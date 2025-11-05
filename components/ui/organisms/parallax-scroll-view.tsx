@@ -7,7 +7,7 @@ import Animated, {
   SharedValue,
   useAnimatedRef,
   useAnimatedStyle,
-  useScrollViewOffset,
+  useScrollOffset,
   withTiming,
 } from "react-native-reanimated";
 import { twMerge } from "tailwind-merge";
@@ -52,7 +52,7 @@ export default function ParallaxScrollView({
 }: Props) {
   const router = useRouter();
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
-  const scrollOffset = useScrollViewOffset(scrollRef);
+  const scrollOffset = useScrollOffset(scrollRef);
 
   const parallaxFloatingElementsStyle = useAnimatedStyle(() => {
     if (scrollOffset.value < height - 100) {

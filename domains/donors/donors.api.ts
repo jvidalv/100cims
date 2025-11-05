@@ -1,26 +1,34 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { useApiWithAuth } from "@/hooks/use-api-with-auth";
+import apiClient from "@/lib/api-client";
 
 export const DONORS_KEY = ["donors"];
 export const DONORS_MONTHLY_KEY = ["donors", "monthly"];
 
 export const useDonorsGet = () => {
-  const api = useApiWithAuth();
   const args = useQuery({
     queryKey: DONORS_KEY,
-    queryFn: () => api.protected.donors.all.get(),
+    queryFn: async () => {
+      const { data, error } = await apiClient.GET("/api/protected/donors/all");
+      if (error) throw error;
+      return data?.message;
+    },
   });
 
-  return { ...args, data: args.data?.data?.message };
+  return args;
 };
 
 export const useDonorsCurrentMonthGet = () => {
-  const api = useApiWithAuth();
   const args = useQuery({
     queryKey: DONORS_MONTHLY_KEY,
-    queryFn: () => api.protected.donors["current-month"].get(),
+    queryFn: async () => {
+      const { data, error } = await apiClient.GET(
+        "/api/protected/donors/current-month",
+      );
+      if (error) throw error;
+      return data?.message;
+    },
   });
 
-  return { ...args, data: args.data?.data?.message };
+  return args;
 };
