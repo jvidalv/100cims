@@ -53,6 +53,7 @@ const MAPPING = {
   "arrowshape.up.fill": "arrow-up-thick",
   "map.fill": "map-outline",
   "location.fill": "map-marker-distance",
+  map: "map",
 } as Partial<
   Record<
     import("expo-symbols").SymbolViewProps["name"],

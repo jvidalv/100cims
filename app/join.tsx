@@ -158,6 +158,7 @@ const GoogleSignIn = () => {
             identityToken: response?.authentication?.accessToken,
             locale: getLocale(),
           });
+
           if (!jwt) {
             return;
           }
@@ -175,7 +176,7 @@ const GoogleSignIn = () => {
         setIsAuthenticating(false);
       }
     })();
-  }, [isAuthenticating, response, router, setAuthenticated]);
+  }, [isAuthenticating, joinMutate, response, router, setAuthenticated]);
 
   return (
     <Button
