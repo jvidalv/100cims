@@ -1,8 +1,7 @@
 import { analytics } from "@jvidalv/react-analytics";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import * as AppleAuthentication from "expo-apple-authentication";
-import * as Google from "expo-auth-session/providers/google";
 import { Redirect, useRouter } from "expo-router";
-import * as WebBrowser from "expo-web-browser";
 import { useColorScheme } from "nativewind";
 import { useEffect, useState } from "react";
 import { FormattedMessage } from "react-intl";
@@ -16,7 +15,11 @@ import { useJoinMutation } from "@/domains/user/user.api";
 import { isAndroid, isIOS } from "@/lib/device";
 import { getLocale } from "@/lib/locale";
 
-WebBrowser.maybeCompleteAuthSession();
+// Configure Google Sign-In
+GoogleSignin.configure({
+  webClientId: process.env.EXPO_PUBLIC_WEB_CLIENT_ID as string,
+  iosClientId: process.env.EXPO_PUBLIC_IOS_CLIENT_ID as string,
+});
 
 const users = [
   {
@@ -138,57 +141,63 @@ const GoogleSignIn = () => {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const { setAuthenticated } = useAuth();
   const { mutateAsync: joinMutate } = useJoinMutation();
-  const [, response, promptAsync] = Google.useAuthRequest({
-    androidClientId: process.env.EXPO_PUBLIC_ANDROID_CLIENT_ID as string,
-    iosClientId: process.env.EXPO_PUBLIC_IOS_CLIENT_ID as string,
-    webClientId: process.env.EXPO_PUBLIC_WEB_CLIENT_ID as string,
-  });
 
-  useEffect(() => {
-    (async () => {
-      if (isAuthenticating) return;
-      try {
-        if (
-          response?.type === "success" &&
-          response?.authentication?.accessToken
-        ) {
-          setIsAuthenticating(true);
-          const jwt = await joinMutate({
-            provider: "google",
-            identityToken: response?.authentication?.accessToken,
-            locale: getLocale(),
-          });
+  const handleGoogleSignIn = async () => {
+    try {
+      analytics.action(`click-on-google-sign-in`);
+      setIsAuthenticating(true);
 
-          if (!jwt) {
-            return;
-          }
+      // Check if Google Play Services are available (Android)
+      await GoogleSignin.hasPlayServices();
 
-          setAuthenticated(jwt);
-          if (isAndroid) {
-            router.dismiss();
-            router.dismiss();
-          } else {
-            router.dismiss();
-          }
-        }
-      } catch {
-        analytics.error(`Error on Google sign-in`);
+      // Sign in with Google
+      const response = await GoogleSignin.signIn();
+
+      // Handle cancellation
+      if (response.type === 'cancelled') {
+        analytics.action('google-sign-in-cancelled');
         setIsAuthenticating(false);
+        return;
       }
-    })();
-  }, [isAuthenticating, joinMutate, response, router, setAuthenticated]);
+
+      // Get the ID token
+      const idToken = response.data?.idToken;
+
+      if (!idToken) {
+        analytics.error(`Error on Google sign-in - no ID token`);
+        setIsAuthenticating(false);
+        return;
+      }
+
+      // Call backend to authenticate
+      const jwt = await joinMutate({
+        provider: "google",
+        identityToken: idToken,
+        locale: getLocale(),
+      });
+
+      if (!jwt) {
+        analytics.error('Google sign-in - no JWT from backend');
+        setIsAuthenticating(false);
+        return;
+      }
+
+      setAuthenticated(jwt);
+      router.dismiss();
+    } catch (error) {
+      analytics.error(`Error on Google sign-in`, {
+        error: (error as Error).message,
+        code: (error as any)?.code,
+      });
+      setIsAuthenticating(false);
+    }
+  };
 
   return (
     <Button
       intent="outline"
-      onPress={() => {
-        try {
-          analytics.action(`click-on-google-sign-in`);
-          void promptAsync();
-        } catch {
-          analytics.error(`Error on Google sign-in`);
-        }
-      }}
+      onPress={handleGoogleSignIn}
+      disabled={isAuthenticating}
     >
       <Text className="text-blue-500" style={{ fontSize: 18 }}>
         G{"  "}

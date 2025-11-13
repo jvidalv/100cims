@@ -27,6 +27,7 @@ export const AuthProvider: FC<PropsWithChildren<{ jwt: string | null }>> = ({
 
   const setAuthenticated = async (jwt: string) => {
     await setJwt(jwt);
+    queryClient.removeQueries({ queryKey: ["me"] });
     setAuthToken(jwt); // Configure API client with auth token
     setProviderJwt(jwt);
   };

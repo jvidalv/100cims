@@ -4,7 +4,7 @@ import { ExpoConfig } from "@expo/config-types";
 const config: ExpoConfig = {
   name: "100cims",
   slug: "100cims",
-  version: "2.2.0",
+  version: "2.2.1",
   orientation: "portrait",
   icon: "./assets/images/icon.png",
   scheme: "centcims",
@@ -24,8 +24,6 @@ const config: ExpoConfig = {
   android: {
     playStoreUrl:
       "https://play.google.com/store/apps/details?id=app.x100cims.x100cims",
-    googleServicesFile:
-      process.env.GOOGLE_SERVICES_JSON ?? "./google-services.json",
     softwareKeyboardLayoutMode: "pan",
     adaptiveIcon: {
       foregroundImage: "./assets/images/mountain.png",
@@ -72,6 +70,13 @@ const config: ExpoConfig = {
         iosGoogleMapsApiKey: process.env.EXPO_PUBLIC_IOS_GOOGLE_MAPS_API_KEY,
         androidGoogleMapsApiKey:
           process.env.EXPO_PUBLIC_ANDROID_GOOGLE_MAPS_API_KEY,
+      },
+    ],
+    [
+      "@react-native-google-signin/google-signin",
+      {
+        iosUrlScheme:
+          "com.googleusercontent.apps.914334353075-u32g2ki8cpmpns6kvo7lrmv27ecg3gfu",
       },
     ],
   ],

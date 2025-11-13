@@ -1,7 +1,7 @@
+import { analytics } from "@jvidalv/react-analytics";
 import { isToday } from "date-fns/isToday";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, Link, useRouter } from "expo-router";
-import { analytics } from "@jvidalv/react-analytics";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
   Alert,
@@ -21,6 +21,7 @@ import {
   Icon,
   Skeleton,
   ThemedText,
+  ThemedView,
 } from "@/components/ui/atoms";
 import { MountainItemList } from "@/components/ui/molecules";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
@@ -128,11 +129,13 @@ export default function PlanIdPage() {
       message: msg,
     });
 
-    // if (response.action === "sharedAction")
-    //   analytics.action(`plan-shared-done`, { id: plan?.id });
+    if (response.action === "sharedAction") {
+      analytics.action(`plan-shared-done`, { id: plan?.id });
+    }
 
-    // if (response.action === "dismissedAction")
-    //   analytics.action(`plan-shared-canceled`, { id: plan?.id });
+    if (response.action === "dismissedAction") {
+      analytics.action(`plan-shared-canceled`, { id: plan?.id });
+    }
   };
 
   const handleJoin = () => {
@@ -168,7 +171,7 @@ export default function PlanIdPage() {
 
   if (!plan)
     return (
-      <View>
+      <ThemedView>
         <Skeleton className="mb-6 h-[300px] w-full" />
         <View className="gap-4 px-6">
           <View className="flex-row gap-4">
@@ -183,7 +186,7 @@ export default function PlanIdPage() {
           </View>
           <Skeleton className="h-6 w-full" />
         </View>
-      </View>
+      </ThemedView>
     );
 
   return (

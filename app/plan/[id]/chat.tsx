@@ -185,7 +185,7 @@ export default function PlanChatPage() {
             <View className="h-12 flex-row items-center gap-2 rounded-2xl border border-border bg-border/50 pl-4">
               <TextInput
                 ref={inputRef}
-                className="h-12 flex-1 text-foreground"
+                className="h-12 flex-1 text-foreground text-base"
                 value={message}
                 onChangeText={setMessage}
                 placeholder={intl.formatMessage({
