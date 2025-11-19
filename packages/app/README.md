@@ -2,11 +2,11 @@
   <img src="https://i.imgur.com/UtFHXCj.png" alt="cims"  />
 </p>
 
-# [Cims](https://cims-sempre-amunt.app)
+# [Cims](https://cims-sempre-amunt.app) - Mobile App
 
-Cims is a mobile mountaineering app built with [Expo](https://expo.dev), powered by [expofast.app](https://expofast.app).
+> **Part of the 100cims monorepo.** See the [root README](../../README.md) for an overview of the full project structure.
 
-> This repo is part of the **[ExpoFast](https://expofast.app)** platform — a suite of tools to build, launch, and scale React Native apps 10x faster. From icon/splash generation to analytics and store asset automation — check it out.
+Cims is a mobile mountaineering app built with [Expo](https://expo.dev), with analytics powered by [reactanalytics.app](https://reactanalytics.app).
 
 ## 🏔️ What is Cims?
 
@@ -20,14 +20,20 @@ Cims is a mobile app to track your mountain summits and join hiking challenges. 
 
 ## 🧑‍💻 Getting Started
 
+From the **monorepo root**:
+
 ```bash
-yarn
+# Install all dependencies
+yarn install
+
+# Start the development server
+yarn dev:app
 ```
 
-Then:
+Or from this package directory:
 
 ```bash
-yarn start # or: expo start
+yarn start
 ```
 
 ## 🌐 Environment Variables
@@ -39,8 +45,8 @@ EXPO_PUBLIC_API_URL=http://localhost:3001/
 EXPO_PUBLIC_REACT_ANALYTICS_KEY=
 ```
 
-- `EXPO_PUBLIC_API_URL` → URL of the backend API server (separate Next.js project)
-- `EXPO_PUBLIC_REACT_ANALYTICS_KEY` → integrates [expofast analytics](https://expofast.app/#join)
+- `EXPO_PUBLIC_API_URL` → URL of the backend API server (see `packages/api`)
+- `EXPO_PUBLIC_REACT_ANALYTICS_KEY` → integrates [reactanalytics.app](https://reactanalytics.app)
 
 ## 🔐 Auth
 
@@ -80,11 +86,9 @@ This will extract messages and update `translations/raw-en.json`. Copy the new k
 - [Cims for iOS](https://apps.apple.com/us/app/100cims-mountain-challenges/id6740161401?platform=iphone)
 - [Cims for Android](https://play.google.com/store/apps/details?id=app.x100cims.x100cims)
 
-## 🚀 Powered by ExpoFast
+## 📊 Analytics
 
-Want to build apps like this, faster? Visit [expofast.app](https://expofast.app).
-
-> This project uses the full suite of ExpoFast services including analytics, asset automation, and store review flows.
+This app uses [reactanalytics.app](https://reactanalytics.app) for privacy-focused mobile analytics.
 
 ---
 
