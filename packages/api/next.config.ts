@@ -4,7 +4,7 @@ import createNextIntlPlugin from "next-intl/plugin";
 const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  outputFileTracingRoot: require("path").join(__dirname, "../../"),
 };
 
 export default withNextIntl(nextConfig);
