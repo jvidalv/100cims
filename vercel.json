@@ -1,0 +1,7 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "cd packages/api && yarn build",
+  "installCommand": "yarn install",
+  "framework": "nextjs",
+  "outputDirectory": "packages/api/.next"
+}

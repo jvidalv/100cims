@@ -1,5 +1,5 @@
 {
-  "name": "cims-sempre-amunt-landing",
+  "name": "@100cims/api",
   "version": "0.1.0",
   "private": true,
   "scripts": {

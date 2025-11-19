@@ -1,5 +1,5 @@
 {
-  "name": "100cims",
+  "name": "@100cims/app",
   "main": "expo-router/entry",
   "version": "2.2.0",
   "private": false,

@@ -1,13 +1,28 @@
-# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+# Monorepo - 100cims
 
-# dependencies
+# Dependencies
 node_modules/
+.pnp/
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
 
-# Expo
+# Expo (App)
 .expo/
 dist/
 web-build/
 expo-env.d.ts
+
+# Next.js (API)
+.next/
+out/
+
+# Build outputs
+build/
+coverage/
 
 # Native
 *.orig.*
@@ -20,25 +35,31 @@ expo-env.d.ts
 # Metro
 .metro-health-check*
 
-# debug
+# Debug logs
 npm-debug.*
 yarn-debug.*
 yarn-error.*
+.pnpm-debug.log*
 
 # macOS
 .DS_Store
 *.pem
 
-# local env files
+# Environment files
 .env*.local
 .env
 
-# typescript
+# TypeScript
 *.tsbuildinfo
+next-env.d.ts
 
+# IDE
 .idea
+.vscode
+
+# Deployment
 .vercel
 
-# apps
-./ios
-./android
+# Mobile apps
+ios/
+android/
