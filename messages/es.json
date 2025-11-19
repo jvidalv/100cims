@@ -1,0 +1,11 @@
+{
+  "home-page": {
+    "title": "Únete a <appName>Cims</appName> hoy",
+    "subtitle": "Sigue tu progreso en montañismo a través de múltiples desafíos y listas de más de 100 cumbres.",
+    "download": "Descargar ahora"
+  },
+  "privacy-policy": {
+    "title": "Política de privacidad",
+    "content": "Esta aplicación solo utiliza tus datos para la autenticación. No almacenamos, compartimos ni utilizamos tus datos para ningún otro propósito. Para preguntas, contacta: josepvidalvidal@gmail.com."
+  }
+}

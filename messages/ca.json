@@ -1,0 +1,11 @@
+{
+  "home-page": {
+    "title": "Uneix-te a <appName>Cims</appName> avui",
+    "subtitle": "Fes el seguiment del teu progrés en muntanyisme a través de múltiples reptes i llistes de més de 100 cims.",
+    "download": "Descarrega ara"
+  },
+  "privacy-policy": {
+    "title": "Política de privacitat",
+    "content": "Aquesta aplicació només utilitza les teves dades per a l'autenticació. No emmagatzemem, compartim ni utilitzem les teves dades per a cap altre propòsit. Per a preguntes, contacta: josepvidalvidal@gmail.com."
+  }
+}

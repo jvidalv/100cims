@@ -1,0 +1,11 @@
+{
+  "home-page": {
+    "title": "Join <appName>Cims</appName> today",
+    "subtitle": "Track your mountaineering progress across multiple challenges and summit lists.",
+    "download": "Download now"
+  },
+  "privacy-policy": {
+    "title": "Privacy policy",
+    "content": "This app only uses your data for authentication purposes. We do not store, share, or use your data for any other purpose. For questions, contact: josepvidalvidal@gmail.com."
+  }
+}
