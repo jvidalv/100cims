@@ -15,9 +15,9 @@
     "lint": "yarn workspaces run lint",
     "type-check": "yarn workspaces run type-check"
   },
-  "packageManager": "yarn@1.22.22",
+  "packageManager": "yarn@1.22.19",
   "engines": {
     "node": ">=18.0.0",
-    "yarn": "1.22.22"
+    "yarn": "1.22.19"
   }
 }
