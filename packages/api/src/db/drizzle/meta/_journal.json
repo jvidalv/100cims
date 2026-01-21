@@ -71,6 +71,13 @@
       "when": 1769013506544,
       "tag": "0009_furry_ego",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1769024450039,
+      "tag": "0010_milky_bug",
+      "breakpoints": true
     }
   ]
 }

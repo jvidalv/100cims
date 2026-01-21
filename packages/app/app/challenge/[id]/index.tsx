@@ -8,11 +8,13 @@ import { TouchableOpacity, Image, View, Share } from "react-native";
 
 import { useAuth } from "@/components/providers/auth-provider";
 import {
+  ActivityIndicator,
   ThemedText,
   Icon,
   Button,
   Avatar,
-  ActivityIndicator,
+  Skeleton,
+  ThemedView,
 } from "@/components/ui/atoms";
 import { MountainItemList } from "@/components/ui/molecules";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
@@ -57,9 +59,9 @@ export default function ChallengeDetailScreen() {
 
     const locale = intl.locale;
     const messages = {
-      en: `🏔️ Check out the ${challenge.name} challenge on cims!\n\n${getUrlDeeplink(`community-challenge/${id}`)}`,
-      es: `🏔️ Mira el reto ${challenge.name} en cims!\n\n${getUrlDeeplink(`community-challenge/${id}`)}`,
-      ca: `🏔️ Mira el repte ${challenge.name} a cims!\n\n${getUrlDeeplink(`community-challenge/${id}`)}`,
+      en: `🏔️ Check out the ${challenge.name} challenge on cims!\n\n${getUrlDeeplink(`challenge/${id}`)}`,
+      es: `🏔️ Mira el reto ${challenge.name} en cims!\n\n${getUrlDeeplink(`challenge/${id}`)}`,
+      ca: `🏔️ Mira el repte ${challenge.name} a cims!\n\n${getUrlDeeplink(`challenge/${id}`)}`,
     };
 
     const msg = messages[locale as "ca" | "es" | "en"] || messages.en;
@@ -92,9 +94,39 @@ export default function ChallengeDetailScreen() {
 
   if (isPending) {
     return (
-      <View className="flex-1 items-center justify-center bg-background">
-        <ActivityIndicator />
-      </View>
+      <ThemedView className="flex-1">
+        {/* Header skeleton */}
+        <Skeleton className="h-64 w-full" style={{ borderRadius: 0 }} />
+        {/* Content skeletons */}
+        <View className="gap-6 px-6 py-6">
+          {/* Details skeleton */}
+          <View className="gap-3">
+            <Skeleton className="h-8 w-48" />
+            <Skeleton className="h-6 w-36" />
+            <Skeleton className="h-16 w-full" />
+          </View>
+          {/* Button skeleton */}
+          <Skeleton className="h-14 w-full rounded-xl" />
+          {/* Participants skeleton */}
+          <View className="gap-3">
+            <Skeleton className="h-8 w-32" />
+            <View className="flex-row gap-2">
+              <Skeleton className="size-10 rounded-full" />
+              <Skeleton className="size-10 rounded-full" />
+              <Skeleton className="size-10 rounded-full" />
+              <Skeleton className="size-10 rounded-full" />
+              <Skeleton className="size-10 rounded-full" />
+            </View>
+          </View>
+          {/* Mountains skeleton */}
+          <View className="gap-3">
+            <Skeleton className="h-8 w-32" />
+            <Skeleton className="h-20 w-full rounded-xl" />
+            <Skeleton className="h-20 w-full rounded-xl" />
+            <Skeleton className="h-20 w-full rounded-xl" />
+          </View>
+        </View>
+      </ThemedView>
     );
   }
 

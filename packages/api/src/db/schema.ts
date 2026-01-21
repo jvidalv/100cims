@@ -8,6 +8,7 @@ import {
   timestamp,
   date,
   unique,
+  index,
 } from "drizzle-orm/pg-core";
 
 export const challengeTable = pgTable("challenge", {
@@ -62,36 +63,57 @@ export const userTable = pgTable("user", {
   updatedAt: timestamp().notNull().defaultNow(),
 });
 
-export const summitTable = pgTable("summit", {
-  id: uuid().primaryKey().defaultRandom(),
-  mountainId: uuid().references(() => mountainTable.id, {
-    onDelete: "cascade",
-  }),
-  userId: uuid().references(() => userTable.id, {
-    onDelete: "cascade",
-  }),
-  imageUrl: text().notNull(),
-  validated: boolean().notNull().default(true),
-  summitedAt: date().notNull(),
-  createdAt: timestamp().notNull().defaultNow(),
-});
+export const summitTable = pgTable(
+  "summit",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    mountainId: uuid().references(() => mountainTable.id, {
+      onDelete: "cascade",
+    }),
+    userId: uuid().references(() => userTable.id, {
+      onDelete: "cascade",
+    }),
+    imageUrl: text().notNull(),
+    validated: boolean().notNull().default(true),
+    summitedAt: date().notNull(),
+    createdAt: timestamp().notNull().defaultNow(),
+  },
+  (table) => [
+    index("summit_user_id_idx").on(table.userId),
+    index("summit_mountain_id_idx").on(table.mountainId),
+  ],
+);
 
-export const summitHasUsersTable = pgTable("summit_has_users", {
-  id: uuid().primaryKey().defaultRandom(),
-  summitId: uuid().references(() => summitTable.id, { onDelete: "cascade" }),
-  userId: uuid().references(() => userTable.id, { onDelete: "cascade" }),
-  createdAt: timestamp().notNull().defaultNow(),
-});
+export const summitHasUsersTable = pgTable(
+  "summit_has_users",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    summitId: uuid().references(() => summitTable.id, { onDelete: "cascade" }),
+    userId: uuid().references(() => userTable.id, { onDelete: "cascade" }),
+    createdAt: timestamp().notNull().defaultNow(),
+  },
+  (table) => [
+    index("summit_has_users_summit_id_idx").on(table.summitId),
+    index("summit_has_users_user_id_idx").on(table.userId),
+  ],
+);
 
-export const challengeHasMountainTable = pgTable("challenge_has_mountain", {
-  id: uuid().primaryKey().defaultRandom(),
-  challengeId: uuid().references(() => challengeTable.id, {
-    onDelete: "cascade",
-  }),
-  mountainId: uuid().references(() => mountainTable.id, {
-    onDelete: "cascade",
-  }),
-});
+export const challengeHasMountainTable = pgTable(
+  "challenge_has_mountain",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    challengeId: uuid().references(() => challengeTable.id, {
+      onDelete: "cascade",
+    }),
+    mountainId: uuid().references(() => mountainTable.id, {
+      onDelete: "cascade",
+    }),
+  },
+  (table) => [
+    index("challenge_has_mountain_challenge_id_idx").on(table.challengeId),
+    index("challenge_has_mountain_mountain_id_idx").on(table.mountainId),
+  ],
+);
 
 export const donorTable = pgTable("donor", {
   id: uuid().primaryKey().defaultRandom(),
@@ -122,37 +144,52 @@ export const planTable = pgTable("plan", {
   updatedAt: timestamp().notNull().defaultNow(),
 });
 
-export const planHasMountainsTable = pgTable("plan_has_mountains", {
-  id: uuid().primaryKey().defaultRandom(),
-  planId: uuid().references(() => planTable.id, { onDelete: "cascade" }),
-  mountainId: uuid().references(() => mountainTable.id, {
-    onDelete: "cascade",
-  }),
-});
+export const planHasMountainsTable = pgTable(
+  "plan_has_mountains",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    planId: uuid().references(() => planTable.id, { onDelete: "cascade" }),
+    mountainId: uuid().references(() => mountainTable.id, {
+      onDelete: "cascade",
+    }),
+  },
+  (table) => [index("plan_has_mountains_plan_id_idx").on(table.planId)],
+);
 
-export const planHasUsersTable = pgTable("plan_has_users", {
-  id: uuid().primaryKey().defaultRandom(),
-  planId: uuid()
-    .references(() => planTable.id, { onDelete: "cascade" })
-    .notNull(),
-  userId: uuid()
-    .references(() => userTable.id, { onDelete: "cascade" })
-    .notNull(),
-  joinedAt: timestamp().notNull().defaultNow(),
-  willBringDogs: boolean().notNull().default(false),
-});
+export const planHasUsersTable = pgTable(
+  "plan_has_users",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    planId: uuid()
+      .references(() => planTable.id, { onDelete: "cascade" })
+      .notNull(),
+    userId: uuid()
+      .references(() => userTable.id, { onDelete: "cascade" })
+      .notNull(),
+    joinedAt: timestamp().notNull().defaultNow(),
+    willBringDogs: boolean().notNull().default(false),
+  },
+  (table) => [
+    index("plan_has_users_plan_id_idx").on(table.planId),
+    index("plan_has_users_user_id_idx").on(table.userId),
+  ],
+);
 
-export const planMessageTable = pgTable("plan_message", {
-  id: uuid().primaryKey().defaultRandom(),
-  planId: uuid()
-    .references(() => planTable.id, { onDelete: "cascade" })
-    .notNull(),
-  userId: uuid()
-    .references(() => userTable.id, { onDelete: "cascade" })
-    .notNull(),
-  message: text().notNull(),
-  createdAt: timestamp().notNull().defaultNow(),
-});
+export const planMessageTable = pgTable(
+  "plan_message",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    planId: uuid()
+      .references(() => planTable.id, { onDelete: "cascade" })
+      .notNull(),
+    userId: uuid()
+      .references(() => userTable.id, { onDelete: "cascade" })
+      .notNull(),
+    message: text().notNull(),
+    createdAt: timestamp().notNull().defaultNow(),
+  },
+  (table) => [index("plan_message_plan_id_idx").on(table.planId)],
+);
 
 export const planUserLogTable = pgTable("plan_user_log", {
   id: uuid().primaryKey().defaultRandom(),
@@ -230,16 +267,25 @@ export const planRelations = relations(planTable, ({ one, many }) => ({
   logs: many(planUserLogTable),
 }));
 
-export const planUserMessageReadTable = pgTable("plan_user_message_read", {
-  id: uuid().primaryKey().defaultRandom(),
-  planId: uuid()
-    .notNull()
-    .references(() => planTable.id, { onDelete: "cascade" }),
-  userId: uuid()
-    .notNull()
-    .references(() => userTable.id, { onDelete: "cascade" }),
-  lastReadAt: timestamp().notNull().defaultNow(),
-});
+export const planUserMessageReadTable = pgTable(
+  "plan_user_message_read",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    planId: uuid()
+      .notNull()
+      .references(() => planTable.id, { onDelete: "cascade" }),
+    userId: uuid()
+      .notNull()
+      .references(() => userTable.id, { onDelete: "cascade" }),
+    lastReadAt: timestamp().notNull().defaultNow(),
+  },
+  (table) => [
+    index("plan_user_message_read_plan_user_idx").on(
+      table.planId,
+      table.userId,
+    ),
+  ],
+);
 
 export const planHasMountainsRelations = relations(
   planHasMountainsTable,
@@ -312,17 +358,24 @@ export const planUserMessageReadRelations = relations(
   }),
 );
 
-export const summitReactionTable = pgTable("summit_reaction", {
-  id: uuid().primaryKey().defaultRandom(),
-  summitId: uuid()
-    .notNull()
-    .references(() => summitTable.id, { onDelete: "cascade" }),
-  userId: uuid()
-    .notNull()
-    .references(() => userTable.id, { onDelete: "cascade" }),
-  emoji: text().notNull(),
-  createdAt: timestamp().notNull().defaultNow(),
-});
+export const summitReactionTable = pgTable(
+  "summit_reaction",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    summitId: uuid()
+      .notNull()
+      .references(() => summitTable.id, { onDelete: "cascade" }),
+    userId: uuid()
+      .notNull()
+      .references(() => userTable.id, { onDelete: "cascade" }),
+    emoji: text().notNull(),
+    createdAt: timestamp().notNull().defaultNow(),
+  },
+  (table) => [
+    index("summit_reaction_summit_id_idx").on(table.summitId),
+    index("summit_reaction_summit_user_idx").on(table.summitId, table.userId),
+  ],
+);
 
 export const summitReactionRelations = relations(
   summitReactionTable,

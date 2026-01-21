@@ -142,7 +142,7 @@ export default function ChallengesScreen() {
                 isOwner
                   ? () =>
                       router.push({
-                        pathname: "/community-challenge/[id]/edit",
+                        pathname: "/challenge/[id]/edit",
                         params: { id: challenge.id },
                       })
                   : undefined

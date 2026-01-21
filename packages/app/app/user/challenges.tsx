@@ -55,7 +55,7 @@ export default function UserChallengesScreen() {
         <ThemedText className="text-4xl font-bold">
           <FormattedMessage defaultMessage="My challenges" />
         </ThemedText>
-        <Link href="/community-challenge/create" asChild>
+        <Link href="/challenge/create" asChild>
           <TouchableOpacity className="flex-row items-center gap-1">
             <ThemedText>
               <FormattedMessage defaultMessage="New" />
@@ -112,7 +112,7 @@ export default function UserChallengesScreen() {
                 onPress={() => onChallengeSelect(item.id)}
                 onEditPress={() =>
                   router.push({
-                    pathname: "/community-challenge/[id]/edit",
+                    pathname: "/challenge/[id]/edit",
                     params: { id: item.id },
                   })
                 }
@@ -150,7 +150,7 @@ export default function UserChallengesScreen() {
                 onPress={() => onChallengeSelect(item.id)}
                 onEditPress={() =>
                   router.push({
-                    pathname: "/community-challenge/[id]/edit",
+                    pathname: "/challenge/[id]/edit",
                     params: { id: item.id },
                   })
                 }

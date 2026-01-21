@@ -20,26 +20,6 @@ export default function SupportScreen() {
   const intl = useIntl();
   const { isAuthenticated } = useAuth();
   const { mutateAsync: submitSuggestion, isPending } = useSubmitSuggestionMutation();
-
-  if (!isAuthenticated) {
-    return <Redirect href="/join" />;
-  }
-
-  const productNames: Record<ProductId, string> = {
-    "white-shirt": intl.formatMessage({ defaultMessage: "White T-Shirt" }),
-    "black-shirt": intl.formatMessage({ defaultMessage: "Black T-Shirt" }),
-    "black-mug": intl.formatMessage({ defaultMessage: "Black Mug" }),
-    "black-cap": intl.formatMessage({ defaultMessage: "Black Cap" }),
-    "black-buff": intl.formatMessage({ defaultMessage: "Black Buff" }),
-  };
-
-  const products = MERCH_PRODUCTS.map((product) => ({
-    ...product,
-    name: productNames[product.id],
-  }));
-
-  const sizes: Size[] = ["S", "M", "L", "XL"];
-
   const [selectedProduct, setSelectedProduct] = useState<ProductId | null>(null);
   const [selectedSize, setSelectedSize] = useState<Size | null>(null);
   const [purchasedProducts, setPurchasedProducts] = useState<Set<ProductId>>(new Set());
@@ -59,6 +39,25 @@ export default function SupportScreen() {
     };
     void loadPurchases();
   }, []);
+
+  if (!isAuthenticated) {
+    return <Redirect href="/join" />;
+  }
+
+  const productNames: Record<ProductId, string> = {
+    "white-shirt": intl.formatMessage({ defaultMessage: "White T-Shirt" }),
+    "black-shirt": intl.formatMessage({ defaultMessage: "Black T-Shirt" }),
+    "black-mug": intl.formatMessage({ defaultMessage: "Black Mug" }),
+    "black-cap": intl.formatMessage({ defaultMessage: "Black Cap" }),
+    "black-buff": intl.formatMessage({ defaultMessage: "Black Buff" }),
+  };
+
+  const products = MERCH_PRODUCTS.map((product) => ({
+    ...product,
+    name: productNames[product.id],
+  }));
+
+  const sizes: Size[] = ["S", "M", "L", "XL"];
 
   const selectedProductData = products.find((p) => p.id === selectedProduct);
   const needsSize = selectedProductData?.hasSize ?? false;

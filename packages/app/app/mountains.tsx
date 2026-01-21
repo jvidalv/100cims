@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { FlatList, View } from "react-native";
 
+import { useAuth } from "@/components/providers/auth-provider";
 import { ThemedView } from "@/components/ui/atoms";
 import {
   MountainItemList,
@@ -33,6 +34,7 @@ type SettingsFilter =
 export default function MountainsScreen() {
   const intl = useIntl();
   const router = useRouter();
+  const { isAuthenticated } = useAuth();
   const { view } = useLocalSearchParams<{ view?: string }>();
   const { data, isPending } = useMountains();
   const [query, setQuery] = useState("");
@@ -115,6 +117,16 @@ export default function MountainsScreen() {
   useEffect(() => {
     setViewMode(isMapView ? "map" : "list");
   }, [isMapView]);
+
+  const handleFiltersChange = (newFilters: FilterType[]) => {
+    const isSelectingMap =
+      newFilters.includes("map") && !filtersSelected.includes("map");
+    if (isSelectingMap && !isAuthenticated) {
+      router.push("/join");
+      return;
+    }
+    setFiltersSelected(newFilters);
+  };
 
   const filters: Filter<FilterType>[] = useMemo(
     () => [
@@ -225,7 +237,7 @@ export default function MountainsScreen() {
         onSearchChange={setQuery}
         filters={filters}
         filtersSelected={filtersSelected}
-        onFiltersChange={setFiltersSelected}
+        onFiltersChange={handleFiltersChange}
         settingsGroups={settingsGroups}
         settingsSelected={settingsFilters}
         onSettingsChange={setSettingsFilters}

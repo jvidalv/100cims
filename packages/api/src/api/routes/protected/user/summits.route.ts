@@ -1,8 +1,14 @@
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq, inArray } from "drizzle-orm";
 import { Elysia } from "elysia";
 
 import { db } from "@/db";
-import { mountainTable, summitHasUsersTable, summitTable } from "@/db/schema";
+import {
+  challengeHasMountainTable,
+  mountainTable,
+  summitHasUsersTable,
+  summitTable,
+} from "@/db/schema";
+import { resolveChallengeId } from "@/api/routes/@shared/challenge";
 import { JWT } from "@/api/routes/@shared/jwt";
 import { getStoreUser } from "@/api/routes/@shared/store";
 import { SuccessResponse } from "@/api/schemas/common.schema";
@@ -13,8 +19,32 @@ export const summitsRoute = new Elysia().use(JWT()).get(
   async ({ store }) => {
     const user = getStoreUser(store);
     const userId = user.id;
+    const challengeId = resolveChallengeId(null, user);
 
-    // Return ALL user summits regardless of challenge
+    // Get mountains that belong to the active challenge
+    const challengeMountains = await db
+      .select({ mountainId: challengeHasMountainTable.mountainId })
+      .from(challengeHasMountainTable)
+      .where(eq(challengeHasMountainTable.challengeId, challengeId));
+
+    const challengeMountainIds = challengeMountains
+      .map((m) => m.mountainId)
+      .filter((id): id is string => id !== null);
+
+    // If no mountains in challenge, return empty results
+    if (challengeMountainIds.length === 0) {
+      return {
+        success: true,
+        message: {
+          score: 0,
+          uniquePeaksCount: 0,
+          essentialPeaksCount: 0,
+          summits: [],
+        },
+      };
+    }
+
+    // Return user summits filtered by active challenge's mountains
     const results = await db
       .select({
         summitId: summitTable.id,
@@ -29,7 +59,12 @@ export const summitsRoute = new Elysia().use(JWT()).get(
       .from(summitHasUsersTable)
       .innerJoin(summitTable, eq(summitHasUsersTable.summitId, summitTable.id))
       .innerJoin(mountainTable, eq(summitTable.mountainId, mountainTable.id))
-      .where(eq(summitHasUsersTable.userId, userId))
+      .where(
+        and(
+          eq(summitHasUsersTable.userId, userId),
+          inArray(mountainTable.id, challengeMountainIds),
+        ),
+      )
       .orderBy(desc(summitTable.summitedAt), desc(summitTable.createdAt));
 
     const summitsWithScore = results.map((props) => {
