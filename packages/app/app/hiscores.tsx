@@ -12,7 +12,6 @@ import Animated, {
 } from "react-native-reanimated";
 import { twMerge } from "tailwind-merge";
 
-import { useChallenge } from "@/components/providers/challenge-provider";
 import {
   ThemedView,
   ThemedText,
@@ -23,8 +22,8 @@ import {
 import { BottomDrawer, ScreenHeader } from "@/components/ui/molecules";
 import { useBottomDrawer } from "@/components/ui/molecules/bottom-drawer";
 import { Colors } from "@/constants/colors";
-import { useChallengesGet } from "@/domains/challenge/challenge.api";
 import { useHiscoresGet } from "@/domains/hiscores/hiscores.api";
+import { useActiveChallenge } from "@/domains/challenge/challenge.api";
 import { useUserMe } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
 import { getInitials } from "@/lib/strings";
@@ -34,12 +33,7 @@ export default function HiscoresScreen() {
   const router = useRouter();
   const { data: user } = useUserMe();
   const { data: hiscores, isPending: isPendingHiscores } = useHiscoresGet();
-  const { data: challenges } = useChallengesGet();
-  const { challengeId } = useChallenge();
-
-  const challenge = challenges?.find(
-    (challenge) => challenge.id === challengeId,
-  );
+  const { data: challenge } = useActiveChallenge();
 
   const [isOpen, setIsOpen] = useBottomDrawer();
   const isVisibleOnHiscores = user?.visibleOnHiscores;

@@ -37,6 +37,7 @@ const buttonVariants = tv({
 type Props = VariantProps<typeof buttonVariants> & {
   isLoading?: boolean;
   iconName?: IconSymbolName;
+  iconSize?: number;
   textClassName?: string;
 } & TouchableOpacityProps;
 
@@ -48,6 +49,7 @@ export const Button = forwardRef<View, Props>(
       disabled,
       isLoading,
       iconName,
+      iconSize = 28,
       onPress,
       className,
       textClassName,
@@ -68,7 +70,7 @@ export const Button = forwardRef<View, Props>(
       >
         {iconName && (
           <View className={twMerge(isLoading && "opacity-0")}>
-            <Icon color={iconColor} name={iconName} size={28} />
+            <Icon color={iconColor} name={iconName} size={iconSize} />
           </View>
         )}
         {isLoading && (

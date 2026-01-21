@@ -5,5 +5,5 @@ export const getUrlDeeplink = (url: string) => {
     scheme: "centcims",
   });
 
-  return `https://100cims.app/deeplink?link=${planLink}`;
+  return `https://cims-sempre-amunt.app/deeplink?link=${planLink}`;
 };

@@ -1,0 +1,74 @@
+import { eq, isNull, sql } from "drizzle-orm";
+import { Elysia } from "elysia";
+
+import { db } from "@/db";
+import {
+  challengeHasMountainTable,
+  challengeTable,
+  mountainTable,
+  summitHasUsersTable,
+  summitTable,
+} from "@/db/schema";
+import { SuccessResponse } from "@/api/schemas/common.schema";
+import { ChallengesArraySchema } from "@/api/schemas/challenge.schema";
+
+export const allRoute = new Elysia().get(
+  "/all",
+  async () => {
+    const challengesWithCounts = await db
+      .select({
+        id: challengeTable.id,
+        name: challengeTable.name,
+        slug: challengeTable.slug,
+        country: challengeTable.country,
+        totalMountains: sql<string>`COUNT(DISTINCT ${challengeHasMountainTable.mountainId})`,
+        totalEssentialMountains: sql<string>`SUM(CASE WHEN ${mountainTable.essential} THEN 1 ELSE 0 END)`,
+        // Count users from both summit.userId and summitHasUsers.userId
+        totalUsers: sql<string>`COUNT(DISTINCT COALESCE(${summitHasUsersTable.userId}, ${summitTable.userId}))`,
+      })
+      .from(challengeTable)
+      .leftJoin(
+        challengeHasMountainTable,
+        eq(challengeTable.id, challengeHasMountainTable.challengeId)
+      )
+      .leftJoin(
+        mountainTable,
+        eq(challengeHasMountainTable.mountainId, mountainTable.id)
+      )
+      .leftJoin(summitTable, eq(mountainTable.id, summitTable.mountainId))
+      .leftJoin(
+        summitHasUsersTable,
+        eq(summitTable.id, summitHasUsersTable.summitId)
+      )
+      // Only return official challenges (creatorId IS NULL) for backwards compatibility
+      .where(isNull(challengeTable.creatorId))
+      .groupBy(challengeTable.id, challengeTable.slug);
+
+    const prioritySlugs = ["100-cims", "100-cims-usa"];
+
+    const sorted = challengesWithCounts.sort((a, b) => {
+      const indexA = prioritySlugs.indexOf(a.slug);
+      const indexB = prioritySlugs.indexOf(b.slug);
+
+      const isAInList = indexA !== -1;
+      const isBInList = indexB !== -1;
+
+      if (isAInList && isBInList) {
+        return indexA - indexB;
+      }
+
+      if (isAInList) return -1;
+      if (isBInList) return 1;
+
+      return 0; // keep relative order of others
+    });
+
+    return {
+      success: true,
+      message: sorted,
+    };
+  },
+  {
+    response: SuccessResponse(ChallengesArraySchema),
+  }
+);

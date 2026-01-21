@@ -9,6 +9,7 @@ import {
   planUserLogTable,
 } from "@/db/schema";
 import { formatDateForPostgresFromISOString } from "@/api/lib/dates";
+import { resolveChallengeId } from "@/api/routes/@shared/challenge";
 import { JWT } from "@/api/routes/@shared/jwt";
 import { getStoreUser } from "@/api/routes/@shared/store";
 import {
@@ -24,36 +25,41 @@ export const planPrivateRoute = new Elysia({ prefix: "/plans" })
     "/create",
     async ({ body, store }) => {
       const user = getStoreUser(store);
+      const challengeId = resolveChallengeId(body.challengeId, user);
 
-      const [insertedPlan] = await db
-        .insert(planTable)
-        .values({
-          creatorId: user.id,
-          title: body.title,
-          description: body.description,
-          startDate: body.startDate
-            ? formatDateForPostgresFromISOString(body.startDate)
-            : null,
-          speed: "normal",
-          status: "open",
-          challengeId: body.challengeId ?? null, // ✅ Add challengeId support
-        })
-        .returning();
+      const insertedPlan = await db.transaction(async (tx) => {
+        const [plan] = await tx
+          .insert(planTable)
+          .values({
+            creatorId: user.id,
+            title: body.title,
+            description: body.description,
+            startDate: body.startDate
+              ? formatDateForPostgresFromISOString(body.startDate)
+              : null,
+            speed: "normal",
+            status: "open",
+            challengeId,
+          })
+          .returning();
 
-      await db.insert(planHasUsersTable).values({
-        userId: user.id,
-        planId: insertedPlan.id,
-        willBringDogs: false,
+        await tx.insert(planHasUsersTable).values({
+          userId: user.id,
+          planId: plan.id,
+          willBringDogs: false,
+        });
+
+        if (body.mountainIds?.length) {
+          await tx.insert(planHasMountainsTable).values(
+            body.mountainIds.map((mountainId) => ({
+              planId: plan.id,
+              mountainId,
+            })),
+          );
+        }
+
+        return plan;
       });
-
-      if (body.mountainIds?.length) {
-        await db.insert(planHasMountainsTable).values(
-          body.mountainIds.map((mountainId) => ({
-            planId: insertedPlan.id,
-            mountainId,
-          })),
-        );
-      }
 
       return { success: true, message: insertedPlan };
     },
@@ -84,91 +90,95 @@ export const planPrivateRoute = new Elysia({ prefix: "/plans" })
         return { error: "Not authorized to update this plan" };
       }
 
-      const [updated] = await db
-        .update(planTable)
-        .set({
-          title: body.title,
-          description: body.description,
-          status: body.status as unknown as typeof planTable.status,
-          imageUrl: body.imageUrl ?? undefined,
-          routeUrl: body.routeUrl ?? undefined,
-          startDate: body.startDate
-            ? formatDateForPostgresFromISOString(body.startDate)
-            : undefined,
-          updatedAt: new Date(),
-        })
-        .where(eq(planTable.id, body.id))
-        .returning();
+      const updated = await db.transaction(async (tx) => {
+        const [plan] = await tx
+          .update(planTable)
+          .set({
+            title: body.title,
+            description: body.description,
+            status: body.status as unknown as typeof planTable.status,
+            imageUrl: body.imageUrl ?? undefined,
+            routeUrl: body.routeUrl ?? undefined,
+            startDate: body.startDate
+              ? formatDateForPostgresFromISOString(body.startDate)
+              : undefined,
+            updatedAt: new Date(),
+          })
+          .where(eq(planTable.id, body.id))
+          .returning();
 
-      // Update mountains
-      if (body.mountainIds) {
-        await db
-          .delete(planHasMountainsTable)
-          .where(eq(planHasMountainsTable.planId, body.id));
+        // Update mountains
+        if (body.mountainIds) {
+          await tx
+            .delete(planHasMountainsTable)
+            .where(eq(planHasMountainsTable.planId, body.id));
 
-        if (body.mountainIds.length) {
-          await db.insert(planHasMountainsTable).values(
-            body.mountainIds.map((mountainId) => ({
-              planId: body.id,
-              mountainId,
-            })),
-          );
+          if (body.mountainIds.length) {
+            await tx.insert(planHasMountainsTable).values(
+              body.mountainIds.map((mountainId) => ({
+                planId: body.id,
+                mountainId,
+              })),
+            );
+          }
         }
-      }
 
-      // Update users
-      if (body.userIds) {
-        const current = await db
-          .select({ userId: planHasUsersTable.userId })
-          .from(planHasUsersTable)
-          .where(eq(planHasUsersTable.planId, body.id))
-          .execute();
+        // Update users
+        if (body.userIds) {
+          const current = await tx
+            .select({ userId: planHasUsersTable.userId })
+            .from(planHasUsersTable)
+            .where(eq(planHasUsersTable.planId, body.id))
+            .execute();
 
-        const currentIds = current
-          .map((u) => u.userId)
-          .filter((id) => id !== user.id) as string[];
-        const nextIds = body.userIds.filter((id) => id !== user.id);
+          const currentIds = current
+            .map((u) => u.userId)
+            .filter((id) => id !== user.id) as string[];
+          const nextIds = body.userIds.filter((id) => id !== user.id);
 
-        const toAdd = nextIds.filter((id) => !currentIds.includes(id));
-        const toRemove = currentIds.filter((id) => !nextIds.includes(id));
+          const toAdd = nextIds.filter((id) => !currentIds.includes(id));
+          const toRemove = currentIds.filter((id) => !nextIds.includes(id));
 
-        if (toRemove.length) {
-          await db
-            .delete(planHasUsersTable)
-            .where(
-              and(
-                eq(planHasUsersTable.planId, body.id),
-                inArray(planHasUsersTable.userId, toRemove),
-              ),
+          if (toRemove.length) {
+            await tx
+              .delete(planHasUsersTable)
+              .where(
+                and(
+                  eq(planHasUsersTable.planId, body.id),
+                  inArray(planHasUsersTable.userId, toRemove),
+                ),
+              );
+
+            await tx.insert(planUserLogTable).values(
+              toRemove.map((id) => ({
+                planId: body.id,
+                userId: id,
+                action: "left",
+              })),
+            );
+          }
+
+          if (toAdd.length) {
+            await tx.insert(planHasUsersTable).values(
+              toAdd.map((id) => ({
+                planId: body.id,
+                userId: id,
+                willBringDogs: false,
+              })),
             );
 
-          await db.insert(planUserLogTable).values(
-            toRemove.map((id) => ({
-              planId: body.id,
-              userId: id,
-              action: "left",
-            })),
-          );
+            await tx.insert(planUserLogTable).values(
+              toAdd.map((id) => ({
+                planId: body.id,
+                userId: id,
+                action: "joined",
+              })),
+            );
+          }
         }
 
-        if (toAdd.length) {
-          await db.insert(planHasUsersTable).values(
-            toAdd.map((id) => ({
-              planId: body.id,
-              userId: id,
-              willBringDogs: false,
-            })),
-          );
-
-          await db.insert(planUserLogTable).values(
-            toAdd.map((id) => ({
-              planId: body.id,
-              userId: id,
-              action: "joined",
-            })),
-          );
-        }
-      }
+        return plan;
+      });
 
       return { success: true, message: updated };
     },
@@ -270,20 +280,18 @@ export const planPrivateRoute = new Elysia({ prefix: "/plans" })
         return { error: "You already joined this plan" };
       }
 
-      try {
-        await db.insert(planUserLogTable).values({
+      await db.transaction(async (tx) => {
+        await tx.insert(planUserLogTable).values({
           planId: body.id,
           userId: user.id,
           action: "joined",
         });
-      } catch {
-        // noop
-      }
 
-      await db.insert(planHasUsersTable).values({
-        userId: user.id,
-        planId: body.id,
-        willBringDogs: false,
+        await tx.insert(planHasUsersTable).values({
+          userId: user.id,
+          planId: body.id,
+          willBringDogs: false,
+        });
       });
 
       return { success: true };
@@ -326,24 +334,22 @@ export const planPrivateRoute = new Elysia({ prefix: "/plans" })
         return { error: "Creators cannot leave their own plan" };
       }
 
-      await db
-        .delete(planHasUsersTable)
-        .where(
-          and(
-            eq(planHasUsersTable.planId, body.id),
-            eq(planHasUsersTable.userId, user.id),
-          ),
-        );
+      await db.transaction(async (tx) => {
+        await tx
+          .delete(planHasUsersTable)
+          .where(
+            and(
+              eq(planHasUsersTable.planId, body.id),
+              eq(planHasUsersTable.userId, user.id),
+            ),
+          );
 
-      try {
-        await db.insert(planUserLogTable).values({
+        await tx.insert(planUserLogTable).values({
           planId: body.id,
           userId: user.id,
           action: "left",
         });
-      } catch {
-        // noop
-      }
+      });
 
       return { success: true };
     },

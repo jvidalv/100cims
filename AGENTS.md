@@ -251,3 +251,53 @@ updates:
 - Rotate service account keys regularly
 - Use environment variables for all secrets
 - Limit agent permissions to minimum required
+
+## API Development Guidelines
+
+### File Organization (CRITICAL)
+
+**Always create separate files for separate endpoints.** Each API endpoint should be in its own file within a folder structure.
+
+**Rules:**
+- **One file = one endpoint** - Never add new endpoints to existing route files
+- **Use folder structure** - Group related endpoints in folders (e.g., `mountains/create.route.ts`, `mountains/delete.route.ts`)
+- **Index files for composition** - Each folder should have an `index.ts` that composes all routes with a prefix
+
+**Example - Adding a new endpoint:**
+```
+# BAD: Adding to existing file
+packages/api/src/api/routes/protected/mountain.route.ts  # Don't add more endpoints here!
+
+# GOOD: Create new folder and files
+packages/api/src/api/routes/protected/mountains/
+├── index.ts           # Composes routes with prefix "/mountains"
+├── create.route.ts    # POST /create
+├── update.route.ts    # POST /update
+└── delete.route.ts    # POST /delete
+```
+
+### Backwards Compatibility (CRITICAL)
+
+**All API changes MUST be backwards compatible.** Mobile app versions in the wild cannot be updated reliably - users may be on old versions for months.
+
+**Rules:**
+- **Never remove fields** from API responses - old clients depend on them
+- **Never rename fields** - add new fields alongside old ones if needed
+- **Never change field types** - a string must stay a string
+- **Never remove endpoints** - deprecate but keep working
+- **New required fields** must have defaults or be optional initially
+- **Accept both old and new field names** in request bodies (e.g., `image` and `imageUrl`)
+
+**When adding new features:**
+- Add new optional fields, don't modify existing ones
+- New endpoints are safe, modifications are risky
+- Test with oldest supported app version if possible
+
+**Example - Adding a field:**
+```typescript
+// BAD: Renaming a field
+{ userName: string }  // was: { name: string } - breaks old clients!
+
+// GOOD: Adding alongside
+{ name: string, userName: string }  // old clients still work
+```

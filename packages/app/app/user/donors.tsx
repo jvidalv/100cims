@@ -153,7 +153,7 @@ export default function DonorsScreen() {
           <FormattedMessage defaultMessage="Donors" />
         </ThemedText>
         <ThemedText className="mb-8 text-muted-foreground">
-          <FormattedMessage defaultMessage="Angels that with their contributions help 100cims stay alive." />
+          <FormattedMessage defaultMessage="Angels that with their contributions help cims stay alive." />
         </ThemedText>
       </View>
       <ScrollView className="flex-1 px-6" contentContainerClassName="gap-4">

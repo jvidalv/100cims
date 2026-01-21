@@ -15,6 +15,13 @@ export const challengeTable = pgTable("challenge", {
   slug: text().unique().notNull(),
   webUrl: text(),
   country: text().notNull(),
+  // Community challenges fields
+  creatorId: uuid().references(() => userTable.id, { onDelete: "set null" }),
+  description: text(),
+  imageUrl: text(),
+  emoji: text(),
+  isPublic: boolean().notNull().default(true),
+  createdAt: timestamp().notNull().defaultNow(),
 });
 
 export const mountainTable = pgTable("mountain", {
@@ -30,6 +37,9 @@ export const mountainTable = pgTable("mountain", {
   utm31ty: numeric(),
   url: text(),
   imageUrl: text(),
+  // Community mountains fields
+  creatorId: uuid().references(() => userTable.id, { onDelete: "set null" }),
+  createdAt: timestamp().notNull().defaultNow(),
 });
 
 export const userTable = pgTable("user", {
@@ -46,6 +56,7 @@ export const userTable = pgTable("user", {
   town: text(),
   visibleOnHiscores: boolean().notNull().default(false),
   visibleOnPeopleSearch: boolean().notNull().default(true),
+  activeChallengeId: uuid(), // FK constraint in migration to avoid circular reference
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp().notNull().defaultNow(),
 });
@@ -53,6 +64,9 @@ export const userTable = pgTable("user", {
 export const summitTable = pgTable("summit", {
   id: uuid().primaryKey().defaultRandom(),
   mountainId: uuid().references(() => mountainTable.id, {
+    onDelete: "cascade",
+  }),
+  userId: uuid().references(() => userTable.id, {
     onDelete: "cascade",
   }),
   imageUrl: text().notNull(),
@@ -158,16 +172,26 @@ export const userRelations = relations(userTable, ({ many }) => ({
   planParticipants: many(planHasUsersTable),
   planMessages: many(planMessageTable),
   planLogs: many(planUserLogTable),
+  challengesCreated: many(challengeTable),
+  mountainsCreated: many(mountainTable),
 }));
 
-export const mountainRelations = relations(mountainTable, ({ many }) => ({
+export const mountainRelations = relations(mountainTable, ({ one, many }) => ({
   summit: many(summitTable),
   challengeHasMountain: many(challengeHasMountainTable),
   planHasMountains: many(planHasMountainsTable),
+  creator: one(userTable, {
+    fields: [mountainTable.creatorId],
+    references: [userTable.id],
+  }),
 }));
 
-export const challengeRelation = relations(challengeTable, ({ many }) => ({
+export const challengeRelation = relations(challengeTable, ({ one, many }) => ({
   challengeHasMountain: many(challengeHasMountainTable),
+  creator: one(userTable, {
+    fields: [challengeTable.creatorId],
+    references: [userTable.id],
+  }),
 }));
 
 export const summitRelations = relations(summitTable, ({ one, many }) => ({
@@ -175,6 +199,10 @@ export const summitRelations = relations(summitTable, ({ one, many }) => ({
   mountain: one(mountainTable, {
     fields: [summitTable.mountainId],
     references: [mountainTable.id],
+  }),
+  user: one(userTable, {
+    fields: [summitTable.userId],
+    references: [userTable.id],
   }),
 }));
 

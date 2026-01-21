@@ -182,21 +182,25 @@ export default function PlanChatPage() {
               isKeyboardVisible && "pb-2",
             )}
           >
-            <View className="h-12 flex-row items-center gap-2 rounded-2xl border border-border bg-border/50 pl-4">
+            <View className="min-h-12 flex-row items-end gap-2 rounded-2xl border border-border bg-border/50 pl-4 py-1">
               <TextInput
                 ref={inputRef}
-                className="h-12 flex-1 text-foreground text-base"
+                className="flex-1 text-foreground text-base py-2"
+                style={{ maxHeight: 100 }}
                 value={message}
                 onChangeText={setMessage}
                 placeholder={intl.formatMessage({
                   defaultMessage: "Type here...",
                 })}
+                multiline
+                blurOnSubmit={false}
+                submitBehavior="newline"
               />
               <TouchableOpacity
                 onPress={handleSend}
                 disabled={isSendingMessage}
                 className={twMerge(
-                  "h-10 w-12 items-center justify-center rounded-xl mr-1 border bg-border border-border",
+                  "h-10 w-12 items-center justify-center rounded-xl mr-1 border bg-border border-border mb-0.5",
                   !!message && "bg-emerald-500 border-emerald-500",
                   isSendingMessage && "opacity-70",
                 )}

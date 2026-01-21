@@ -2,9 +2,15 @@ import { analytics } from "@jvidalv/react-analytics";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Link, useRouter } from "expo-router";
 import { useColorScheme } from "nativewind";
-import { Fragment, useCallback, useEffect } from "react";
-import { FormattedMessage } from "react-intl";
-import { Image, Pressable, TouchableOpacity, View } from "react-native";
+import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
+import { FormattedMessage, useIntl } from "react-intl";
+import {
+  Image,
+  Pressable,
+  RefreshControl,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import Animated, {
   SharedValue,
   useAnimatedRef,
@@ -17,22 +23,32 @@ import Animated, {
 import { twMerge } from "tailwind-merge";
 
 import { useAuth } from "@/components/providers/auth-provider";
-import { useChallenge } from "@/components/providers/challenge-provider";
 import { Avatar, BlurView, Icon, Skeleton } from "@/components/ui/atoms";
 import { ThemedText } from "@/components/ui/atoms/themed-text";
 import { ThemedView } from "@/components/ui/atoms/themed-view";
-import { MountainItemList } from "@/components/ui/molecules";
+import {
+  MountainItemList,
+  UpdatesDialog,
+  type Update,
+} from "@/components/ui/molecules";
 import {
   PlanItemList,
   PlanItemListSkeleton,
 } from "@/components/ui/molecules/plan-item-list";
 import { Colors } from "@/constants/colors";
-import { useChallengesGet } from "@/domains/challenge/challenge.api";
-import { useRecommendedPeaks } from "@/domains/mountain/mountain.api";
+import { MERCH_PRODUCTS } from "@/constants/merch";
+import {
+  useMountains,
+  useRecommendedPeaks,
+} from "@/domains/mountain/mountain.api";
 import { usePlanChatUnread } from "@/domains/plan/plan-chat.api";
 import { useNewPlansCount, usePlans } from "@/domains/plan/plan.api";
 import { useSummitsGet } from "@/domains/summit/summit.api";
-import { useUserMe, useUserChallengeSummits } from "@/domains/user/user.api";
+import { useActiveChallenge } from "@/domains/challenge/challenge.api";
+import {
+  useUserMe,
+  useUserChallengeSummits,
+} from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
 import { useIsCurrentScreen } from "@/hooks/use-is-current-screen";
 import { useMapNotificationBadge } from "@/hooks/use-map-notification-badge";
@@ -48,12 +64,7 @@ const MountainsDone = ({
 
   const { data: user } = useUserMe();
   const { isAuthenticated } = useAuth();
-  const { data: challenges } = useChallengesGet();
-  const { challengeId } = useChallenge();
-
-  const challenge = challenges?.find(
-    (challenge) => challenge.id === challengeId,
-  );
+  const { data: challenge } = useActiveChallenge();
 
   return (
     <Link
@@ -162,6 +173,9 @@ const PlansSection = () => {
 
 const TOOLTIP_KEY = "challenges";
 
+const FALLBACK_UPDATE_IMAGE =
+  "https://josepvidal-public-dev-bucket.s3.eu-west-3.amazonaws.com/100cims/mountain/profile/el-tossal-gros.jpg";
+
 const AnimatedTooltip = () => {
   const router = useRouter();
   const translateX = useSharedValue(-20); // Start off-screen
@@ -218,11 +232,7 @@ const AnimatedTooltip = () => {
 };
 
 const TopSection = () => {
-  const { challengeId } = useChallenge();
-  const { data: challenges } = useChallengesGet();
-  const challenge = challenges?.find(
-    (challenge) => challenge.id === challengeId,
-  );
+  const { data: challenge } = useActiveChallenge();
 
   return (
     <Fragment>
@@ -353,15 +363,65 @@ const PageHeader = ({
 };
 
 export default function IndexScreen() {
+  const intl = useIntl();
+  const router = useRouter();
   const recommendedPeaks = useRecommendedPeaks();
   const { refetch: refetchUser } = useUserMe();
   const { refetch: refetchChallengeSummits } = useUserChallengeSummits();
   const { data: latestSummits, refetch: refetchLatestSummits } = useSummitsGet({
     limit: 8,
   });
+  const { data: mountains } = useMountains();
 
   const isCurrentRoute = useIsCurrentScreen("/");
   const { showBadge, markAsSeen } = useMapNotificationBadge();
+
+  // Updates dialog state - shows by default for demo
+  const [showUpdatesDialog, setShowUpdatesDialog] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const UPDATES = [
+    {
+      id: "update-002",
+      title: intl.formatMessage({ defaultMessage: "Community challenges" }),
+      body: intl.formatMessage({
+        defaultMessage:
+          "You can now create your own challenges and also your mountains, other people can join these challenges!",
+      }),
+      date: "2025-01-20",
+      actionLabel: intl.formatMessage({ defaultMessage: "Explore" }),
+      actionRoute: "/challenges" as const,
+    },
+  ];
+
+  const CURRENT_UPDATE = UPDATES[0];
+
+  const onRefresh = useCallback(async () => {
+    setIsRefreshing(true);
+    await Promise.all([
+      refetchUser(),
+      refetchLatestSummits(),
+      refetchChallengeSummits(),
+    ]);
+    setIsRefreshing(false);
+  }, [refetchUser, refetchLatestSummits, refetchChallengeSummits]);
+
+  // Get a random mountain image for the updates dialog
+  const updateWithImage = useMemo((): Update | null => {
+    if (!CURRENT_UPDATE) return null;
+
+    const randomImage = mountains?.length
+      ? mountains[Math.floor(Math.random() * mountains.length)].imageUrl
+      : null;
+
+    return {
+      id: CURRENT_UPDATE.id,
+      title: CURRENT_UPDATE.title,
+      date: CURRENT_UPDATE.date,
+      body: CURRENT_UPDATE.body,
+      imageUrl: randomImage || FALLBACK_UPDATE_IMAGE,
+    };
+  }, [CURRENT_UPDATE, mountains]);
 
   useOnAppActive(() => {
     void refetchUser();
@@ -398,6 +458,15 @@ export default function IndexScreen() {
 
   return (
     <ThemedView className="flex-1">
+      {updateWithImage && (
+        <UpdatesDialog
+          update={updateWithImage}
+          isOpen={showUpdatesDialog}
+          onClose={() => setShowUpdatesDialog(false)}
+          actionLabel={CURRENT_UPDATE.actionLabel}
+          onAction={() => router.push(CURRENT_UPDATE.actionRoute)}
+        />
+      )}
       <PageHeader
         scrollOffset={scrollOffset}
         showBadge={showBadge}
@@ -408,6 +477,11 @@ export default function IndexScreen() {
         className="px-6 pb-12"
         contentContainerClassName="gap-8"
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <View className="absolute top-32">
+            <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+          </View>
+        }
       >
         <View className="h-24" />
         <Animated.View className="gap-0.5" style={scoreSectionStyle}>
@@ -515,7 +589,7 @@ export default function IndexScreen() {
             )}
           </View>
         </View>
-        <View className="gap-4 pb-16">
+        <View className="gap-4">
           <View className="flex-row items-end justify-between">
             <ThemedText className="text-2xl font-bold">
               <FormattedMessage defaultMessage="Upcoming plans" />
@@ -530,6 +604,52 @@ export default function IndexScreen() {
             </Link>
           </View>
           <PlansSection />
+        </View>
+        <View className="gap-4 pb-16">
+          <View className="flex-row items-end justify-between">
+            <ThemedText className="text-2xl font-bold">
+              <FormattedMessage defaultMessage="Support Cims" />
+            </ThemedText>
+            <Link href="/support" className="-mx-2 -mb-2 p-2">
+              <View className="flex-row items-center gap-1">
+                <ThemedText className="text-muted-foreground">
+                  <FormattedMessage defaultMessage="View all" />
+                </ThemedText>
+                <Icon name="arrow.forward" size={12} weight="bold" muted />
+              </View>
+            </Link>
+          </View>
+          <Link href="/support">
+            <View className="gap-2">
+              <View className="aspect-square w-full overflow-hidden rounded-xl bg-border">
+                <Image
+                  source={MERCH_PRODUCTS[0].images[0]}
+                  className="size-full"
+                  resizeMode="cover"
+                />
+              </View>
+              <View className="flex-row gap-2">
+                {MERCH_PRODUCTS.slice(1, 3).map((product) => (
+                  <Image
+                    key={product.id}
+                    source={product.images[0]}
+                    className="aspect-square flex-1 rounded-xl bg-border"
+                    resizeMode="cover"
+                  />
+                ))}
+              </View>
+              <View className="flex-row gap-2">
+                {MERCH_PRODUCTS.slice(3).map((product) => (
+                  <Image
+                    key={product.id}
+                    source={product.images[0]}
+                    className="aspect-square flex-1 rounded-xl bg-border"
+                    resizeMode="cover"
+                  />
+                ))}
+              </View>
+            </View>
+          </Link>
         </View>
       </Animated.ScrollView>
     </ThemedView>

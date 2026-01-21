@@ -6,7 +6,6 @@ import { FormattedMessage, useIntl } from "react-intl";
 import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
 
 import { useAuth } from "@/components/providers/auth-provider";
-import { useChallenge } from "@/components/providers/challenge-provider";
 import { queryClient } from "@/components/providers/query-client-provider";
 import {
   ThemedText,
@@ -20,11 +19,11 @@ import { ScreenHeader } from "@/components/ui/molecules";
 import { useHiscoresGet } from "@/domains/hiscores/hiscores.api";
 import { SUMMITS_KEY } from "@/domains/summit/summit.api";
 import {
-  USER_SUMMITS_KEY,
   useDeleteAccountMutation,
   useUpdateUserMeMutation,
   useUserMe,
 } from "@/domains/user/user.api";
+import { userKeys } from "@/lib/query-keys";
 import { debounce } from "@/lib/debounce";
 import { IMAGE_TO_BIG } from "@/lib/error-codes";
 import { getImageOptimized } from "@/lib/images";
@@ -32,7 +31,6 @@ import { getImageOptimized } from "@/lib/images";
 export default function UserMeScreen() {
   const router = useRouter();
   const { logout } = useAuth();
-  const { challengeId } = useChallenge();
   const intl = useIntl();
   const { refetch: refetchHiscores } = useHiscoresGet();
   const { mutateAsync: updateUserMe } = useUpdateUserMeMutation();
@@ -44,10 +42,10 @@ export default function UserMeScreen() {
     return () => {
       void refetch();
       void queryClient.refetchQueries({
-        queryKey: USER_SUMMITS_KEY(challengeId),
+        queryKey: userKeys.summits(),
       });
     };
-  }, [challengeId, refetch]);
+  }, [refetch]);
 
   const pickImage = async () => {
     analytics.action("opened-change-avatar");
@@ -74,12 +72,11 @@ export default function UserMeScreen() {
 
             void refetch();
             void queryClient.refetchQueries({
-              queryKey: USER_SUMMITS_KEY(challengeId),
+              queryKey: userKeys.summits(),
             });
             void queryClient.refetchQueries({
               queryKey: SUMMITS_KEY({
                 limit: 5,
-                challengeId,
                 mountainId: undefined,
               }),
             });

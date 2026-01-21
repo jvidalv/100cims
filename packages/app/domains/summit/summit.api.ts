@@ -1,19 +1,16 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 import { useAuth } from "@/components/providers/auth-provider";
-import { useChallenge } from "@/components/providers/challenge-provider";
 import { queryClient } from "@/components/providers/query-client-provider";
 import apiClient from "@/lib/api-client";
 
 export const SUMMITS_KEY = ({
-  challengeId,
   mountainId,
   limit,
 }: {
-  challengeId: string;
   mountainId?: string;
   limit?: number;
-}) => ["summits", challengeId, mountainId, limit];
+}) => ["summits", mountainId, limit];
 
 export const useSummitsGet = (
   {
@@ -27,10 +24,7 @@ export const useSummitsGet = (
     enabled?: boolean;
   },
 ) => {
-  const { challengeId } = useChallenge();
-  let query: { challengeId: string; mountainId?: string; limit?: number } = {
-    challengeId,
-  };
+  const query: { mountainId?: string; limit?: number } = {};
 
   if (mountainId) {
     query.mountainId = mountainId;
@@ -41,7 +35,7 @@ export const useSummitsGet = (
   }
 
   return useQuery({
-    queryKey: SUMMITS_KEY({ mountainId, limit, challengeId }),
+    queryKey: SUMMITS_KEY({ mountainId, limit }),
     queryFn: async () => {
       const { data, error } = await apiClient.GET(
         "/api/public/mountains/summits",
@@ -75,8 +69,6 @@ export const useSummitGet = ({ summitId }: { summitId: string }) => {
 };
 
 export const useDeleteSummitMutation = () => {
-  const { challengeId } = useChallenge();
-
   return useMutation({
     mutationKey: ["summit", "delete"],
     mutationFn: async ({ summitId }: { summitId: string }) => {
@@ -92,7 +84,6 @@ export const useDeleteSummitMutation = () => {
     onSuccess: () => {
       void queryClient.invalidateQueries({
         queryKey: SUMMITS_KEY({
-          challengeId,
           mountainId: undefined,
           limit: undefined,
         }),
@@ -102,8 +93,6 @@ export const useDeleteSummitMutation = () => {
 };
 
 export const useUpdateSummitMutation = () => {
-  const { challengeId } = useChallenge();
-
   return useMutation({
     mutationKey: ["summit", "update"],
     mutationFn: async ({
@@ -125,7 +114,6 @@ export const useUpdateSummitMutation = () => {
     onSuccess: () => {
       void queryClient.invalidateQueries({
         queryKey: SUMMITS_KEY({
-          challengeId,
           mountainId: undefined,
           limit: undefined,
         }),

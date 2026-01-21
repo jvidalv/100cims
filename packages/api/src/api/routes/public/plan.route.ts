@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, gt, inArray, lt, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, gt, inArray, lt } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 
 import { db } from "@/db";
@@ -39,19 +39,19 @@ export const plansRoute = new Elysia({ prefix: "/plans" })
         );
 
       const whereConditions = [
-        query.status
+        query?.status
           ? eq(
               planTable.status,
               query.status as unknown as "open" | "canceled" | "completed",
             )
           : undefined,
-        query.creatorId ? eq(planTable.creatorId, query.creatorId) : undefined,
-        query.challengeId
+        query?.creatorId ? eq(planTable.creatorId, query.creatorId) : undefined,
+        query?.challengeId
           ? eq(planTable.challengeId, query.challengeId)
           : undefined,
       ].filter(Boolean);
 
-      const userFilter = query.userId
+      const userFilter = query?.userId
         ? eq(planHasUsersTable.userId, query.userId)
         : undefined;
 
@@ -72,12 +72,12 @@ export const plansRoute = new Elysia({ prefix: "/plans" })
         })
         .from(planTable)
         .orderBy(
-          ...(query.sort === "upcoming"
+          ...(query?.sort === "upcoming"
             ? [asc(planTable.startDate)]
             : [desc(planTable.createdAt)]),
         );
 
-      if (query.userId) {
+      if (query?.userId) {
         // @ts-expect-error -- Must join and filter plans where user is participant
         baseQuery = baseQuery
           .innerJoin(
@@ -90,7 +90,7 @@ export const plansRoute = new Elysia({ prefix: "/plans" })
         baseQuery = baseQuery.where(and(...whereConditions));
       }
 
-      if (query.limit) {
+      if (query?.limit) {
         // @ts-expect-error -- Drizzle query builder type narrowing issue
         baseQuery = baseQuery.limit(query.limit);
       }
@@ -159,14 +159,16 @@ export const plansRoute = new Elysia({ prefix: "/plans" })
       };
     },
     {
-      query: t.Object({
-        status: t.Optional(t.String()),
-        limit: t.Optional(t.Number()),
-        creatorId: t.Optional(t.String()),
-        userId: t.Optional(t.String()),
-        sort: t.Optional(t.String()), // "upcoming" or undefined
-        challengeId: t.Optional(t.String()), // ✅ new
-      }),
+      query: t.Optional(
+        t.Object({
+          status: t.Optional(t.String()),
+          limit: t.Optional(t.Number()),
+          creatorId: t.Optional(t.String()),
+          userId: t.Optional(t.String()),
+          sort: t.Optional(t.String()), // "upcoming" or undefined
+          challengeId: t.Optional(t.String()),
+        })
+      ),
       response: SuccessResponse(PlansArraySchema),
     },
   )
@@ -265,12 +267,12 @@ export const plansRoute = new Elysia({ prefix: "/plans" })
     "/count-new",
     async ({ query }) => {
       if (!query.userId) {
-        const [{ count }] = await db
-          .select({ count: sql<string>`count(*)` })
+        const [result] = await db
+          .select({ count: count() })
           .from(planTable)
           .where(eq(planTable.status, "open"));
 
-        return { success: true, count: parseInt(count) };
+        return { success: true, count: result.count };
       }
 
       const visit = await db
@@ -282,8 +284,8 @@ export const plansRoute = new Elysia({ prefix: "/plans" })
 
       const lastVisited = visit[0]?.lastVisitedAt ?? new Date(0);
 
-      const [{ count }] = await db
-        .select({ count: sql<string>`count(*)` })
+      const [result] = await db
+        .select({ count: count() })
         .from(planTable)
         .where(
           and(
@@ -292,7 +294,7 @@ export const plansRoute = new Elysia({ prefix: "/plans" })
           ),
         );
 
-      return { success: true, count: parseInt(count) };
+      return { success: true, count: result.count };
     },
     {
       query: t.Object({

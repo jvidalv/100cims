@@ -14,6 +14,7 @@ export const UserSchema = t.Object({
   visibleOnPeopleSearch: t.Boolean(),
   locale: t.Nullable(t.String()),
   username: t.Nullable(t.String()),
+  activeChallengeId: t.Nullable(t.String()),
   createdAt: t.Date(),
 });
 
@@ -108,3 +109,22 @@ export const UserProfileResponseSchema = t.Object({
   score: t.Number(),
   sharedUsers: t.Array(SharedUserSchema),
 });
+
+/**
+ * Schema for a challenge the user is part of
+ */
+export const UserChallengeSchema = t.Object({
+  id: t.String(),
+  name: t.String(),
+  slug: t.String(),
+  country: t.String(),
+  emoji: t.Nullable(t.String()),
+  imageUrl: t.Nullable(t.String()),
+  isOfficial: t.Boolean(),
+  summitCount: t.Number(),
+});
+
+/**
+ * Schema for array of user challenges
+ */
+export const UserChallengesArraySchema = t.Array(UserChallengeSchema);

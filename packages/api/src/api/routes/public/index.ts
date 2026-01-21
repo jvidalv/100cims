@@ -1,16 +1,16 @@
 import { Elysia } from "elysia";
 
-import { challengeRoute } from "@/api/routes/public/challenge.route";
-import { hiscoresRoute } from "@/api/routes/public/hiscores.route";
+import { challengeRoutes } from "@/api/routes/public/challenge";
+import { hiscoresRoutes } from "@/api/routes/public/hiscores";
 import { joinRoute } from "@/api/routes/public/join.route";
-import { mountainsRoute } from "@/api/routes/public/mountains.route";
+import { mountainsRoutes } from "@/api/routes/public/mountains";
 import { plansRoute } from "@/api/routes/public/plan.route";
 import { userRoute } from "@/api/routes/public/user.route";
 
 export const publicRoutes = new Elysia({ prefix: "/public" })
-  .use(mountainsRoute)
+  .use(mountainsRoutes)
   .use(joinRoute)
-  .use(hiscoresRoute)
-  .use(challengeRoute)
+  .use(hiscoresRoutes)
+  .use(challengeRoutes)
   .use(userRoute)
   .use(plansRoute);

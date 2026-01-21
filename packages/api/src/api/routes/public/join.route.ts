@@ -4,6 +4,7 @@ import { Elysia, t } from "elysia";
 import { db } from "@/db";
 import { userTable } from "@/db/schema";
 import { addRowToSheets, EMAILS_SPREADSHEET } from "@/api/lib/sheets";
+import { DEFAULT_CHALLENGE_ID } from "@/api/routes/@shared/challenge";
 import { JWT } from "@/api/routes/@shared/jwt";
 import { AuthSuccessSchema, AuthErrorSchema } from "@/api/schemas/auth.schema";
 
@@ -118,6 +119,7 @@ export const joinRoute = new Elysia().use(JWT()).post(
           lastName: lastName,
           imageUrl: imageUrl,
           locale: body.locale,
+          activeChallengeId: DEFAULT_CHALLENGE_ID,
         })
         .returning();
       user = insert[0];

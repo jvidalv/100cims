@@ -1,39 +1,67 @@
 import { Link, useRouter } from "expo-router";
 import { analytics } from "@jvidalv/react-analytics";
 import { useState } from "react";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import { ScrollView, TouchableOpacity, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
-import { useChallenge } from "@/components/providers/challenge-provider";
 import {
   ActivityIndicator,
+  Button,
   Icon,
   ThemedText,
   ThemedView,
 } from "@/components/ui/atoms";
-import { pastelColors } from "@/constants/colors";
-import { useChallengesGet } from "@/domains/challenge/challenge.api";
+import { ChallengeListItem } from "@/components/ui/molecules";
+import { useAuth } from "@/components/providers/auth-provider";
+import {
+  useActiveChallenge,
+  useChallengesGet,
+} from "@/domains/challenge/challenge.api";
 import { countryToEmoji } from "@/domains/challenge/challenge.model";
+import { useCommunityChallengesList } from "@/domains/community-challenge/community-challenge.api";
+import { useUpdateUserMeMutation } from "@/domains/user/user.api";
 import { isAndroid } from "@/lib/device";
+
+type Tab = "official" | "community";
 
 export default function ChallengesScreen() {
   const router = useRouter();
-  const { challengeId, setChallengeId } = useChallenge();
-  const { data: challenges } = useChallengesGet();
-  const [isLoading, setIsLoading] = useState(false);
+  const intl = useIntl();
+  const { isAuthenticated } = useAuth();
+  const { data: challenge } = useActiveChallenge();
+  const { data: officialChallenges } = useChallengesGet();
+  const { data: communityChallenges } = useCommunityChallengesList();
+  const {
+    mutateAsync: updateUser,
+    isPending,
+    variables,
+  } = useUpdateUserMeMutation();
+  const [activeTab, setActiveTab] = useState<Tab>("official");
+
+  const activeChallengeId = challenge?.id;
 
   const onChallengeSelect = async (id: string) => {
-    try {
-      setIsLoading(true);
-      analytics.action("selected-challenge", { challengeId: id });
-      setChallengeId(id);
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      router.dismiss();
-    } finally {
-      setIsLoading(false);
+    if (!isAuthenticated) {
+      router.push("/join");
+      return;
     }
+    analytics.action("selected-challenge", { challengeId: id });
+    await updateUser({ activeChallengeId: id });
+    router.dismiss();
   };
+
+  const onCreateChallenge = () => {
+    if (!isAuthenticated) {
+      router.push("/join");
+      return;
+    }
+    router.back();
+    router.push("/user/challenges");
+  };
+
+  const challenges =
+    activeTab === "official" ? officialChallenges : communityChallenges;
 
   return (
     <ThemedView
@@ -48,59 +76,108 @@ export default function ChallengesScreen() {
           <ThemedText className="text-4xl font-black">
             <FormattedMessage defaultMessage="Challenges" />
           </ThemedText>
-        </ThemedView>
-        <View className="pb-2">
           <ThemedText className="text-muted-foreground">
-            <FormattedMessage defaultMessage="Each challenge is constrained within a region. You can switch betweem them freely, progress is saved." />
+            <FormattedMessage defaultMessage="You can switch between them freely, progress is saved." />
           </ThemedText>
-        </View>
-        {challenges?.map((challenge, index) => (
+        </ThemedView>
+
+        {/* Tab Selector */}
+        <View className="mb-2 flex-row gap-2">
           <TouchableOpacity
-            key={challenge.id}
-            disabled={isLoading}
-            onPress={() => onChallengeSelect(challenge.id)}
-            className="flex-row items-center justify-between gap-4 rounded-xl border-2 border-border p-2"
-          >
-            <View className="flex-row items-center gap-4">
-              <View
-                className="size-12 items-center justify-center rounded-xl"
-                style={{
-                  backgroundColor: pastelColors[index]?.bg || "#BAE1FF",
-                }}
-              >
-                <ThemedText>{countryToEmoji(challenge.country)}</ThemedText>
-              </View>
-              <View>
-                <ThemedText
-                  className={twMerge(
-                    "text-xl font-black tracking-tighter",
-                    challengeId === challenge.id && "text-primary",
-                  )}
-                >
-                  {challenge.name}
-                </ThemedText>
-                <View className="flex-row items-center">
-                  <View className="w-20 flex-row items-center gap-1 rounded-xl">
-                    <Icon name="mountain.2.fill" muted size={22} />
-                    <ThemedText className="font-medium text-muted-foreground">
-                      {challenge?.totalMountains}
-                    </ThemedText>
-                  </View>
-                </View>
-              </View>
-            </View>
-            {isLoading && challengeId === challenge.id ? (
-              <ActivityIndicator className="opacity-30" />
-            ) : (
-              <Icon name="chevron.right" muted size={16} weight="medium" />
+            onPress={() => setActiveTab("official")}
+            className={twMerge(
+              "flex-1 rounded-lg border-2 border-border p-3",
+              activeTab === "official" && "border-primary bg-primary/10"
             )}
+          >
+            <ThemedText
+              className={twMerge(
+                "text-center font-semibold",
+                activeTab === "official" && "text-primary"
+              )}
+            >
+              🏆 {intl.formatMessage({ defaultMessage: "Official" })}
+            </ThemedText>
           </TouchableOpacity>
-        ))}
-        <Link href="/user/suggestions" asChild>
-          <ThemedText className="mt-4 text-center font-medium text-muted-foreground underline">
-            <FormattedMessage defaultMessage="Suggest a new challenge" />
-          </ThemedText>
-        </Link>
+          <TouchableOpacity
+            onPress={() => setActiveTab("community")}
+            className={twMerge(
+              "flex-1 rounded-lg border-2 border-border p-3",
+              activeTab === "community" && "border-primary bg-primary/10"
+            )}
+          >
+            <ThemedText
+              className={twMerge(
+                "text-center font-semibold",
+                activeTab === "community" && "text-primary"
+              )}
+            >
+              👥 {intl.formatMessage({ defaultMessage: "Community" })}
+            </ThemedText>
+          </TouchableOpacity>
+        </View>
+
+        {challenges?.map((challenge, index) => {
+          // Use custom emoji for community challenges if available, otherwise use country flag
+          const displayEmoji =
+            "emoji" in challenge && challenge.emoji
+              ? challenge.emoji
+              : countryToEmoji(challenge.country);
+
+          return (
+            <ChallengeListItem
+              key={challenge.id}
+              name={challenge.name}
+              emoji={displayEmoji}
+              totalMountains={challenge.totalMountains}
+              index={index}
+              isSelected={activeChallengeId === challenge.id}
+              onPress={() => onChallengeSelect(challenge.id)}
+              rightElement={
+                isPending && variables?.activeChallengeId === challenge.id ? (
+                  <ActivityIndicator className="opacity-30" />
+                ) : "totalUsers" in challenge &&
+                  Number(challenge.totalUsers) > 0 ? (
+                  <View className="flex-row items-center gap-1">
+                    <ThemedText className="font-medium text-muted-foreground">
+                      {challenge.totalUsers}
+                    </ThemedText>
+                    <Icon name="person.2.fill" muted size={18} />
+                  </View>
+                ) : null
+              }
+            />
+          );
+        })}
+
+        {activeTab === "official" && (
+          <Link href="/user/suggestions" asChild>
+            <ThemedText className="mt-4 text-center font-medium text-muted-foreground underline">
+              <FormattedMessage defaultMessage="Suggest a new challenge" />
+            </ThemedText>
+          </Link>
+        )}
+
+        {activeTab === "community" && (
+          <>
+            {(!challenges || challenges.length === 0) && (
+              <View className="mt-8 items-center">
+                <ThemedText className="text-center text-muted-foreground">
+                  <FormattedMessage defaultMessage="No community challenges yet. Be the first to create one!" />
+                </ThemedText>
+              </View>
+            )}
+            <Button
+              intent="outline"
+              iconName="plus"
+              iconSize={16}
+              onPress={onCreateChallenge}
+              className="mt-4"
+            >
+              <FormattedMessage defaultMessage="Create Challenge" />
+            </Button>
+          </>
+        )}
       </ScrollView>
     </ThemedView>
   );

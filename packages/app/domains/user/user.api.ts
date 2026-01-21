@@ -3,31 +3,14 @@ import { useEffect } from "react";
 
 import { queryClient } from "@/components/providers/query-client-provider";
 import { useAuth } from "@/components/providers/auth-provider";
-import { useChallenge } from "@/components/providers/challenge-provider";
 import apiClient from "@/lib/api-client";
-
-export const USER_ME_QUERY_KEY = ["me"];
-export const USER_SUMMITS_KEY = (challengeId?: string) => [
-  "user",
-  "summits",
-  "all",
-  challengeId,
-];
-
-export const USER_ANY_SUMMITS_KEY = (userId: string) => [
-  "user",
-  "summits",
-  "all",
-  userId,
-];
-
-export const USER_ONE_GET_KEY = (userId: string) => ["user", "one", userId];
+import { userKeys, challengeKeys, mountainKeys } from "@/lib/query-keys";
 
 export const useUserMe = () => {
   const { isAuthenticated, logout } = useAuth();
 
   const props = useQuery({
-    queryKey: USER_ME_QUERY_KEY,
+    queryKey: userKeys.me(),
     enabled: () => isAuthenticated,
     queryFn: async () => {
       if (!isAuthenticated) return null;
@@ -58,7 +41,7 @@ export const useUsers = ({ query }: { query?: string }) => {
   const { isAuthenticated } = useAuth();
 
   const args = useQuery({
-    queryKey: ["users", "all", query],
+    queryKey: userKeys.search(query || ""),
     enabled: () => isAuthenticated && !!query,
     queryFn: async () => {
       if (!isAuthenticated || !query) return null;
@@ -75,36 +58,14 @@ export const useUsers = ({ query }: { query?: string }) => {
 
 export const useUserChallengeSummits = () => {
   const { isAuthenticated } = useAuth();
-  const { challengeId } = useChallenge();
 
   const props = useQuery({
-    queryKey: USER_SUMMITS_KEY(challengeId),
+    queryKey: userKeys.summits(),
     enabled: () => isAuthenticated,
     queryFn: async () => {
       if (!isAuthenticated) return null;
       const { data, error } = await apiClient.GET(
         "/api/protected/user/summits",
-        { params: { query: { challengeId } } },
-      );
-      if (error) throw error;
-      return data.message;
-    },
-  });
-
-  return props;
-};
-
-export const useUserSummits = () => {
-  const { isAuthenticated } = useAuth();
-
-  const props = useQuery({
-    queryKey: USER_SUMMITS_KEY(),
-    enabled: () => isAuthenticated,
-    queryFn: async () => {
-      if (!isAuthenticated) return null;
-      const { data, error } = await apiClient.GET(
-        "/api/protected/user/summits",
-        { params: { query: {} } },
       );
       if (error) throw error;
       return data.message;
@@ -116,7 +77,7 @@ export const useUserSummits = () => {
 
 export const useUserOneGet = ({ userId }: { userId: string }) => {
   const props = useQuery({
-    queryKey: USER_ONE_GET_KEY(userId),
+    queryKey: userKeys.one(userId),
     queryFn: async () => {
       const { data, error } = await apiClient.GET("/api/public/user/one", {
         params: { query: { userId } },
@@ -131,7 +92,7 @@ export const useUserOneGet = ({ userId }: { userId: string }) => {
 
 export const useAnyUserSummits = ({ userId }: { userId: string }) => {
   const props = useQuery({
-    queryKey: USER_ANY_SUMMITS_KEY(userId),
+    queryKey: userKeys.summitsById(userId),
     queryFn: async () => {
       const { data, error } = await apiClient.GET("/api/public/user/summits", {
         params: { query: { userId } },
@@ -144,14 +105,28 @@ export const useAnyUserSummits = ({ userId }: { userId: string }) => {
   return props;
 };
 
-export const USER_PROFILE_KEY = (userId: string) => ["user", "profile", userId];
-
 export const useUserProfile = ({ userId }: { userId: string }) => {
   const props = useQuery({
-    queryKey: USER_PROFILE_KEY(userId),
+    queryKey: userKeys.profile(userId),
     queryFn: async () => {
       const { data, error } = await apiClient.GET(
         "/api/public/user/user-profile",
+        { params: { query: { userId } } },
+      );
+      if (error) throw error;
+      return data.message;
+    },
+  });
+
+  return props;
+};
+
+export const useUserChallenges = ({ userId }: { userId: string }) => {
+  const props = useQuery({
+    queryKey: userKeys.challenges(userId),
+    queryFn: async () => {
+      const { data, error } = await apiClient.GET(
+        "/api/public/user/challenges",
         { params: { query: { userId } } },
       );
       if (error) throw error;
@@ -192,6 +167,7 @@ export const useUpdateUserMeMutation = () => {
       town?: string;
       visibleOnHiscores?: boolean;
       visibleOnPeopleSearch?: boolean;
+      activeChallengeId?: string;
     }) => {
       const { data, error } = await apiClient.POST("/api/protected/user/me", {
         body: input,
@@ -199,8 +175,14 @@ export const useUpdateUserMeMutation = () => {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: USER_ME_QUERY_KEY });
+    onSuccess: (_, variables) => {
+      void queryClient.invalidateQueries({ queryKey: userKeys.me() });
+      // If activeChallengeId was updated, invalidate all challenge-dependent queries
+      if (variables.activeChallengeId) {
+        void queryClient.invalidateQueries({ queryKey: challengeKeys.active() });
+        void queryClient.invalidateQueries({ queryKey: userKeys.summits() });
+        void queryClient.invalidateQueries({ queryKey: mountainKeys.all });
+      }
     },
   });
 };
@@ -231,3 +213,4 @@ export const useSubmitSuggestionMutation = () => {
     },
   });
 };
+
