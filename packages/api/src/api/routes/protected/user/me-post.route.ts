@@ -29,12 +29,10 @@ export const mePostRoute = new Elysia().use(JWT()).post(
       const content = Buffer.from(imageBase64, "base64");
       try {
         image = await putImageOnS3(key, content);
-      } catch (err) {
-        console.log(err);
+      } catch {
+        // S3 upload failed, image will not be updated
       }
     }
-
-    console.log(3, body.image, image);
 
     await db
       .update(userTable)
