@@ -24,6 +24,9 @@ interface ImagePreviewModalProps {
   onClose: () => void;
 }
 
+const MIN_SCALE = 1;
+const MAX_SCALE = 5;
+
 export function ImagePreviewModal({
   visible,
   imageSource,
@@ -52,12 +55,17 @@ export function ImagePreviewModal({
 
   const pinchGesture = Gesture.Pinch()
     .onUpdate((e) => {
-      scale.value = savedScale.value * e.scale;
+      const newScale = savedScale.value * e.scale;
+      // Clamp scale between MIN_SCALE and MAX_SCALE
+      scale.value = Math.min(Math.max(newScale, MIN_SCALE * 0.5), MAX_SCALE);
     })
     .onEnd(() => {
-      if (scale.value < 1) {
-        scale.value = withTiming(1);
-        savedScale.value = 1;
+      if (scale.value < MIN_SCALE) {
+        scale.value = withTiming(MIN_SCALE);
+        savedScale.value = MIN_SCALE;
+      } else if (scale.value > MAX_SCALE) {
+        scale.value = withTiming(MAX_SCALE);
+        savedScale.value = MAX_SCALE;
       } else {
         savedScale.value = scale.value;
       }
@@ -78,11 +86,11 @@ export function ImagePreviewModal({
   const doubleTapGesture = Gesture.Tap()
     .numberOfTaps(2)
     .onEnd(() => {
-      if (scale.value > 1) {
+      if (scale.value > MIN_SCALE) {
         resetZoom();
       } else {
-        scale.value = withTiming(2.5);
-        savedScale.value = 2.5;
+        scale.value = withTiming(3);
+        savedScale.value = 3;
       }
     });
 
