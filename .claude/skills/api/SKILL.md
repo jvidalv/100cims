@@ -167,6 +167,37 @@ export const summitSchema = {
 };
 ```
 
+### Pagination Pattern
+
+For paginated endpoints, use this pattern for backwards compatibility:
+
+```typescript
+// Schema
+export const PaginatedItemsSchema = t.Object({
+  items: t.Array(ItemSchema),
+  pagination: t.Object({
+    page: t.Number(),
+    pageSize: t.Number(),
+    totalItems: t.Number(),
+    totalPages: t.Number(),
+    hasMore: t.Boolean(),
+  }),
+});
+
+// Route handler - backwards compatible
+const isPaginated = query.page !== undefined || query.limit !== undefined;
+
+if (isPaginated) {
+  // Return paginated results with count query
+  return { items: results, pagination: { page, pageSize, totalItems, totalPages, hasMore } };
+}
+
+// No pagination params = return ALL results (backwards compatible)
+return { items: results, pagination: { page: 1, pageSize: results.length, totalItems: results.length, totalPages: 1, hasMore: false } };
+```
+
+**Key**: Old clients without pagination params get all results. New clients can paginate.
+
 ## Common Tasks
 
 ### Add New Endpoint

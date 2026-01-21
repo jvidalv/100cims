@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build && yarn db:migrate",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint src",
     "generate-api-types": "openapi-typescript http://localhost:3000/api/swagger/json -o ./types/api.ts",
     "db": "docker compose up -d",
     "db:fresh": "docker compose down -v && docker compose up -d && sleep 3 && yarn db:migrate",

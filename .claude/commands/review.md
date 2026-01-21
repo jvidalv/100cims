@@ -1,6 +1,6 @@
 Review the files that you changed in this session for:
 
-1. **Bad patterns**: `as any`, `as Type`, non-null assertions (`!`), `// @ts-ignore`, `// @ts-expect-error`
+1. **Bad patterns**: "as any", "as Type", non-null assertions, ts-ignore, ts-expect-error
 2. **Type safety**: Missing error handling, untyped responses, manually edited `types/api.ts` (should be generated)
 3. **Code quality**: Hardcoded values that should be constants, missing async/await, console.log left in code
 4. **Mobile app (packages/app)**:

@@ -133,6 +133,43 @@ export const useUser = (userId: string) => {
 };
 ```
 
+### Infinite Scroll with Pagination
+
+```typescript
+import { useInfiniteQuery } from '@tanstack/react-query';
+
+export const useItemsList = () => {
+  return useInfiniteQuery({
+    queryKey: ['items', 'list'],
+    initialPageParam: 1,
+    queryFn: async ({ pageParam }) => {
+      const { data, error } = await apiClient.GET('/api/items', {
+        params: { query: { page: pageParam, limit: 50 } },
+      });
+      if (error) throw error;
+      return data.message;
+    },
+    getNextPageParam: (lastPage) => {
+      if (lastPage?.pagination?.hasMore) {
+        return lastPage.pagination.page + 1;
+      }
+      return undefined;
+    },
+  });
+};
+
+// In component:
+const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useItemsList();
+const items = data?.pages?.flatMap((p) => p?.items ?? []) ?? [];
+
+<FlatList
+  data={items}
+  onEndReached={() => hasNextPage && !isFetchingNextPage && fetchNextPage()}
+  onEndReachedThreshold={0.5}
+  ListFooterComponent={isFetchingNextPage ? <ActivityIndicator /> : null}
+/>
+```
+
 ### Authentication
 
 - JWT stored in AsyncStorage
