@@ -13,7 +13,7 @@ import { mountainsRoute } from "@/api/routes/protected/mountains";
 import { planChatRoute } from "@/api/routes/protected/plan-chat.route";
 import { planPrivateRoute } from "@/api/routes/protected/plan.route";
 import { summitRoute } from "@/api/routes/protected/summit.route";
-import { userRoute } from "@/api/routes/protected/user.route";
+import { userRoute } from "@/api/routes/protected/user";
 
 export const protectedRoutes = new Elysia({ prefix: "/protected" })
   .use(JWT())

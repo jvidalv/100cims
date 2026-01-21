@@ -116,6 +116,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/public/challenge/detail": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiPublicChallengeDetail"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/public/user/one": {
         parameters: {
             query?: never;
@@ -156,6 +172,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["getApiPublicUserUser-profile"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/public/user/challenges": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiPublicUserChallenges"];
         put?: never;
         post?: never;
         delete?: never;
@@ -292,6 +324,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/protected/user/unseen-updates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiProtectedUserUnseen-updates"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/protected/user/mark-update-seen": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["postApiProtectedUserMark-update-seen"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/protected/mountain/summit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["postApiProtectedMountainSummit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/protected/mountains/my-list": {
         parameters: {
             query?: never;
@@ -382,6 +462,38 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["postApiProtectedSummitUpdate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/protected/summit/reaction": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["postApiProtectedSummitReaction"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/protected/summit/reactions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiProtectedSummitReactions"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -981,6 +1093,8 @@ export interface operations {
         parameters: {
             query?: {
                 challengeId?: string;
+                page?: number;
+                limit?: number;
             };
             header?: never;
             path?: never;
@@ -996,41 +1110,68 @@ export interface operations {
                     "application/json": {
                         success: boolean;
                         message: {
-                            userId: string;
-                            firstName: (string | null) | null;
-                            lastName: (string | null) | null;
-                            imageUrl: (string | null) | null;
-                            summitsCount: string;
-                            uniquePeaksCount: string;
-                            essentialPeaksCount: string;
-                            totalScore: number;
-                        }[];
+                            items: {
+                                userId: string;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                summitsCount: string;
+                                uniquePeaksCount: string;
+                                essentialPeaksCount: string;
+                                totalScore: number;
+                            }[];
+                            pagination: {
+                                page: number;
+                                pageSize: number;
+                                totalItems: number;
+                                totalPages: number;
+                                hasMore: boolean;
+                            };
+                        };
                     };
                     "multipart/form-data": {
                         success: boolean;
                         message: {
-                            userId: string;
-                            firstName: (string | null) | null;
-                            lastName: (string | null) | null;
-                            imageUrl: (string | null) | null;
-                            summitsCount: string;
-                            uniquePeaksCount: string;
-                            essentialPeaksCount: string;
-                            totalScore: number;
-                        }[];
+                            items: {
+                                userId: string;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                summitsCount: string;
+                                uniquePeaksCount: string;
+                                essentialPeaksCount: string;
+                                totalScore: number;
+                            }[];
+                            pagination: {
+                                page: number;
+                                pageSize: number;
+                                totalItems: number;
+                                totalPages: number;
+                                hasMore: boolean;
+                            };
+                        };
                     };
                     "text/plain": {
                         success: boolean;
                         message: {
-                            userId: string;
-                            firstName: (string | null) | null;
-                            lastName: (string | null) | null;
-                            imageUrl: (string | null) | null;
-                            summitsCount: string;
-                            uniquePeaksCount: string;
-                            essentialPeaksCount: string;
-                            totalScore: number;
-                        }[];
+                            items: {
+                                userId: string;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                summitsCount: string;
+                                uniquePeaksCount: string;
+                                essentialPeaksCount: string;
+                                totalScore: number;
+                            }[];
+                            pagination: {
+                                page: number;
+                                pageSize: number;
+                                totalItems: number;
+                                totalPages: number;
+                                hasMore: boolean;
+                            };
+                        };
                     };
                 };
             };
@@ -1139,6 +1280,138 @@ export interface operations {
                             totalEssentialMountains: string;
                             totalUsers: string;
                         }[];
+                    };
+                };
+            };
+        };
+    };
+    getApiPublicChallengeDetail: {
+        parameters: {
+            query: {
+                id: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            name: string;
+                            slug: string;
+                            country: string;
+                            description: (string | null) | null;
+                            emoji: (string | null) | null;
+                            imageUrl: (string | null) | null;
+                            isOfficial: boolean;
+                            isPublic: boolean;
+                            totalMountains: number;
+                            totalUsers: number;
+                            mountains: {
+                                id: string;
+                                name: string;
+                                slug: string;
+                                location: string;
+                                height: string;
+                                imageUrl: (string | null) | null;
+                                essential: boolean;
+                            }[];
+                            users: {
+                                id: string;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                summitCount: number;
+                            }[];
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            name: string;
+                            slug: string;
+                            country: string;
+                            description: (string | null) | null;
+                            emoji: (string | null) | null;
+                            imageUrl: (string | null) | null;
+                            isOfficial: boolean;
+                            isPublic: boolean;
+                            totalMountains: number;
+                            totalUsers: number;
+                            mountains: {
+                                id: string;
+                                name: string;
+                                slug: string;
+                                location: string;
+                                height: string;
+                                imageUrl: (string | null) | null;
+                                essential: boolean;
+                            }[];
+                            users: {
+                                id: string;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                summitCount: number;
+                            }[];
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            name: string;
+                            slug: string;
+                            country: string;
+                            description: (string | null) | null;
+                            emoji: (string | null) | null;
+                            imageUrl: (string | null) | null;
+                            isOfficial: boolean;
+                            isPublic: boolean;
+                            totalMountains: number;
+                            totalUsers: number;
+                            mountains: {
+                                id: string;
+                                name: string;
+                                slug: string;
+                                location: string;
+                                height: string;
+                                imageUrl: (string | null) | null;
+                                essential: boolean;
+                            }[];
+                            users: {
+                                id: string;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                summitCount: number;
+                            }[];
+                        };
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
                     };
                 };
             };
@@ -1355,6 +1628,65 @@ export interface operations {
                                 score: number;
                             }[];
                         };
+                    };
+                };
+            };
+        };
+    };
+    getApiPublicUserChallenges: {
+        parameters: {
+            query: {
+                userId: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            name: string;
+                            slug: string;
+                            country: string;
+                            emoji: (string | null) | null;
+                            imageUrl: (string | null) | null;
+                            isOfficial: boolean;
+                            summitCount: number;
+                        }[];
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            name: string;
+                            slug: string;
+                            country: string;
+                            emoji: (string | null) | null;
+                            imageUrl: (string | null) | null;
+                            isOfficial: boolean;
+                            summitCount: number;
+                        }[];
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            name: string;
+                            slug: string;
+                            country: string;
+                            emoji: (string | null) | null;
+                            imageUrl: (string | null) | null;
+                            isOfficial: boolean;
+                            summitCount: number;
+                        }[];
                     };
                 };
             };
@@ -1834,9 +2166,7 @@ export interface operations {
     };
     getApiProtectedUserSummits: {
         parameters: {
-            query?: {
-                challengeId?: string;
-            };
+            query?: never;
             header?: never;
             path?: never;
             cookie?: never;
@@ -2033,6 +2363,141 @@ export interface operations {
                     };
                     "text/plain": {
                         success: boolean;
+                    };
+                };
+            };
+        };
+    };
+    "getApiProtectedUserUnseen-updates": {
+        parameters: {
+            query: {
+                updateIds: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: string[];
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: string[];
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: string[];
+                    };
+                };
+            };
+        };
+    };
+    "postApiProtectedUserMark-update-seen": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    updateId: string;
+                };
+                "multipart/form-data": {
+                    updateId: string;
+                };
+                "text/plain": {
+                    updateId: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+        };
+    };
+    postApiProtectedMountainSummit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    mountainId: string;
+                    usersId: string[];
+                    date: string;
+                    image: string;
+                };
+                "multipart/form-data": {
+                    mountainId: string;
+                    usersId: string[];
+                    date: string;
+                    image: string;
+                };
+                "text/plain": {
+                    mountainId: string;
+                    usersId: string[];
+                    date: string;
+                    image: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
                     };
                 };
             };
@@ -2483,6 +2948,101 @@ export interface operations {
                     "text/plain": {
                         success: boolean;
                         message: string;
+                    };
+                };
+            };
+        };
+    };
+    postApiProtectedSummitReaction: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    summitId: string;
+                    emoji: string;
+                };
+                "multipart/form-data": {
+                    summitId: string;
+                    emoji: string;
+                };
+                "text/plain": {
+                    summitId: string;
+                    emoji: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: string;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: string;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: string;
+                    };
+                };
+            };
+        };
+    };
+    getApiProtectedSummitReactions: {
+        parameters: {
+            query: {
+                summitId: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            reactions: {
+                                emoji: string;
+                                count: number;
+                            }[];
+                            userReactions: string[];
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            reactions: {
+                                emoji: string;
+                                count: number;
+                            }[];
+                            userReactions: string[];
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            reactions: {
+                                emoji: string;
+                                count: number;
+                            }[];
+                            userReactions: string[];
+                        };
                     };
                 };
             };

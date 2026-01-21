@@ -46,6 +46,7 @@ export const summitKeys = {
   all: ["summit"] as const,
   list: () => ["summit", "list"] as const,
   one: (id: string) => ["summit", id] as const,
+  reactions: (summitId: string) => ["summit", "reactions", summitId] as const,
 };
 
 // Plan keys
@@ -67,4 +68,11 @@ export const planChatKeys = {
 export const hiscoresKeys = {
   all: ["hiscores"] as const,
   list: () => ["hiscores", "list"] as const,
+};
+
+// Update keys
+export const updateKeys = {
+  all: ["updates"] as const,
+  unseen: (updateIds: string[]) =>
+    ["updates", "unseen", updateIds.join(",")] as const,
 };

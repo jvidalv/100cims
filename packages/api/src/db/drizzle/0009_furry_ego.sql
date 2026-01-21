@@ -1,0 +1,1 @@
+ALTER TABLE "update_seen" ADD CONSTRAINT "update_seen_updateId_userId_unique" UNIQUE("update_id","user_id");
