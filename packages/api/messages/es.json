@@ -1,8 +1,25 @@
 {
   "home-page": {
     "title": "Únete a <appName>Cims</appName> hoy",
-    "subtitle": "Sigue tu progreso en montañismo a través de múltiples desafíos y listas de más de 100 cumbres.",
-    "download": "Descargar ahora"
+    "subtitle": "Sigue tu progreso en montañismo a través de múltiples desafíos y listas de cumbres.",
+    "download": "Descargar ahora",
+    "features-title": "Funcionalidades",
+    "feature-1-title": "Registra tus Cumbres",
+    "feature-1-description": "Registra cada montaña que conquistas con fotos y fechas. Observa cómo crece tu progreso.",
+    "feature-2-title": "Múltiples Desafíos",
+    "feature-2-description": "De los 100 Cims a Top Spain - elige tu desafío y empieza a subir.",
+    "feature-3-title": "Descubre Montañas",
+    "feature-3-description": "Explora información detallada de cientos de cimas con mapas, altitud y rutas.",
+    "feature-4-title": "Planifica en Grupo",
+    "feature-4-description": "Crea planes de excursión, invita amigos y coordina tu próxima aventura.",
+    "cta-title": "¿Listo para empezar tu viaje?",
+    "cta-subtitle": "Descarga la app y empieza a registrar tus aventuras de montaña hoy.",
+    "available-on": "Disponible en iOS y Android"
+  },
+  "footer": {
+    "privacy-policy": "Política de Privacidad",
+    "terms-of-service": "Términos del Servicio",
+    "made-by": "Hecho por"
   },
   "privacy-policy": {
     "title": "Política de privacidad",

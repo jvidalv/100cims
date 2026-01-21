@@ -1,12 +1,11 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useIntl, FormattedMessage } from "react-intl";
 import {
   Alert,
   View,
   ScrollView,
   TouchableOpacity,
-  FlatList,
   Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
@@ -14,17 +13,15 @@ import {
 import {
   Button,
   Icon,
-  SearchInput,
   ThemedKeyboardAvoidingView,
   ThemedText,
   ThemedDateInput,
   ThemedTextInput,
-  ThemedView,
 } from "@/components/ui/atoms";
 import {
   AvatarGroup,
   BottomDrawer,
-  MountainItemListAsTouchable,
+  MountainSelectionDrawer,
   ScreenHeader,
   UserSelectInput,
   UserForSelectInput,
@@ -37,7 +34,6 @@ import {
 } from "@/domains/plan/plan.api";
 import { useUsers } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
-import { cleanText } from "@/lib";
 
 export default function PlanEditPage() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -249,9 +245,9 @@ export default function PlanEditPage() {
             isOpen={editingMountains}
             onRequestClose={() => setEditingMountains(false)}
           >
-            <MountainsList
-              mountainIds={mountainIds}
-              setMountainIds={setMountainIds}
+            <MountainSelectionDrawer
+              selectedIds={mountainIds}
+              onSelectionChange={setMountainIds}
             />
           </BottomDrawer>
         </ThemedKeyboardAvoidingView>
@@ -295,94 +291,3 @@ const UserSelection = ({
   );
 };
 
-const MountainsList = ({
-  setMountainIds,
-  mountainIds,
-}: {
-  setMountainIds: Dispatch<SetStateAction<string[]>>;
-  mountainIds: string[];
-}) => {
-  const [query, setQuery] = useState("");
-  const { data: mountainsData } = useMountains();
-  const allMountains = useMemo(() => mountainsData ?? [], [mountainsData]);
-
-  const filteredMountains = useMemo(() => {
-    const filtered = !query.trim()
-      ? allMountains
-      : allMountains.filter(({ name, location }) =>
-          cleanText(`${name} ${location}`)
-            .toLowerCase()
-            .includes(cleanText(query).toLowerCase()),
-        );
-
-    return filtered.sort((a, b) => {
-      const aSelected = mountainIds.includes(a.id) ? 0 : 1;
-      const bSelected = mountainIds.includes(b.id) ? 0 : 1;
-      return aSelected - bSelected;
-    });
-  }, [query, allMountains, mountainIds]);
-
-  return (
-    <View className="max-h-[70vh] min-h-[70vh] bg-background p-6">
-      <ThemedText className="mb-2 text-2xl font-semibold">
-        <FormattedMessage defaultMessage="Mountains" />
-      </ThemedText>
-      <FlatList
-        data={filteredMountains}
-        keyExtractor={(m) => m.id}
-        initialNumToRender={10}
-        stickyHeaderIndices={[0]}
-        scrollEventThrottle={16}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-        getItemLayout={(_, index) => ({
-          length: 100,
-          offset: 100 * index,
-          index,
-        })}
-        ListHeaderComponent={
-          <ThemedView className="z-20 pb-2">
-            <SearchInput onChangeText={(text) => setQuery(text)} />
-          </ThemedView>
-        }
-        renderItem={({ item }) => {
-          const isSelected = mountainIds.includes(item.id);
-          return (
-            <View className="relative py-2">
-              <MountainItemListAsTouchable
-                onPress={() => {
-                  setMountainIds((prev) =>
-                    isSelected
-                      ? prev.filter((id) => id !== item.id)
-                      : [...prev, item.id],
-                  );
-                }}
-                name={item.name}
-                location={item.location}
-                imageUrl={item.imageUrl}
-                essential={item.essential}
-                latitude={item.latitude}
-                longitude={item.longitude}
-                slug={item.slug}
-                height={item.height}
-              />
-              {isSelected && (
-                <View
-                  className="pointer-events-none absolute left-0 top-2 items-center justify-center bg-blue-500"
-                  style={{ width: 100, height: 100, borderRadius: 6 }}
-                >
-                  <Icon
-                    name="checkmark"
-                    size={32}
-                    color="white"
-                    animationSpec={{ effect: { type: "bounce" } }}
-                  />
-                </View>
-              )}
-            </View>
-          );
-        }}
-      />
-    </View>
-  );
-};

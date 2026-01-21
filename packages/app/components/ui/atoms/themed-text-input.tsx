@@ -12,6 +12,7 @@ type InputProps = {
   autoFocus?: boolean;
   className?: string;
   inputClassName?: string;
+  maxLength?: number;
   onFocus?: () => void;
   onBlur?: () => void;
   returnKeyType?: ReturnKeyType;
@@ -27,6 +28,7 @@ export const ThemedTextInput: FC<InputProps> = ({
   onChangeText,
   className,
   inputClassName,
+  maxLength,
   multiline,
   autoFocus,
   returnKeyType,
@@ -78,6 +80,7 @@ export const ThemedTextInput: FC<InputProps> = ({
         editable={!disabled}
         multiline={multiline}
         autoFocus={autoFocus}
+        maxLength={maxLength}
         keyboardType={keyboardType}
         returnKeyType={returnKeyType}
         className={twMerge(

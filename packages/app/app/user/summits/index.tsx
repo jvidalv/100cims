@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/atoms";
 import { ScreenHeader } from "@/components/ui/molecules";
 import { useDeleteSummitMutation } from "@/domains/summit/summit.api";
-import { useUserMe, useUserSummits } from "@/domains/user/user.api";
+import { useUserMe, useUserChallengeSummits } from "@/domains/user/user.api";
 
 export default function UserSummitsScreen() {
   const intl = useIntl();
@@ -25,7 +25,7 @@ export default function UserSummitsScreen() {
     data: userSummits,
     isPending: isPendingUserSummits,
     refetch: refetchSummits,
-  } = useUserSummits();
+  } = useUserChallengeSummits();
 
   const onDelete = (summitId: string) => {
     Alert.alert(

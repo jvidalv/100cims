@@ -99,26 +99,36 @@ export const summitRoute = new Elysia({ prefix: "/summit" })
         };
       }
 
-      // Count how many users are associated with this summit
-      const userCount = await db
-        .select({ count: count() })
-        .from(summitHasUsersTable)
-        .where(eq(summitHasUsersTable.summitId, summitId));
+      // Check if user is the summit owner
+      const summit = await db
+        .select({ ownerId: summitTable.userId })
+        .from(summitTable)
+        .where(eq(summitTable.id, summitId));
 
-      // Delete the summitHasUsers record
-      await db
-        .delete(summitHasUsersTable)
-        .where(
-          and(
-            eq(summitHasUsersTable.summitId, summitId),
-            eq(summitHasUsersTable.userId, userId),
-          ),
-        );
+      const isOwner = summit[0]?.ownerId === userId;
 
-      // If it's the last user associated with the summit, delete the summit itself
-      if (userCount[0].count === 1) {
-        await db.delete(summitTable).where(eq(summitTable.id, summitId));
-      }
+      await db.transaction(async (tx) => {
+        // Count how many users are associated with this summit
+        const userCount = await tx
+          .select({ count: count() })
+          .from(summitHasUsersTable)
+          .where(eq(summitHasUsersTable.summitId, summitId));
+
+        // Delete the summitHasUsers record
+        await tx
+          .delete(summitHasUsersTable)
+          .where(
+            and(
+              eq(summitHasUsersTable.summitId, summitId),
+              eq(summitHasUsersTable.userId, userId),
+            ),
+          );
+
+        // Delete the summit if user is the owner OR if it's the last user associated
+        if (isOwner || userCount[0].count === 1) {
+          await tx.delete(summitTable).where(eq(summitTable.id, summitId));
+        }
+      });
 
       return { success: true, message: "Summit record deleted successfully" };
     },

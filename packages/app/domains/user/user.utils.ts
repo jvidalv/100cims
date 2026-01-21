@@ -1,6 +1,10 @@
-import { User } from "@/api/routes/@shared/types";
+type UserLike = {
+  firstName?: string | null;
+  lastName?: string | null;
+  email?: string | null;
+};
 
-export const getFullName = (user: Partial<User>) => {
+export const getFullName = (user: UserLike) => {
   if (user.firstName && user.lastName) {
     return `${user.firstName} ${user.lastName}`;
   }

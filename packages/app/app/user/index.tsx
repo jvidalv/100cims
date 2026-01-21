@@ -36,7 +36,7 @@ export default function UserIndexScreen() {
       onPress: () => router.push("/user/me"),
     },
     {
-      iconName: "mountain.2.fill",
+      iconName: "list.bullet",
       text: intl.formatMessage({ defaultMessage: "My summits" }),
       onPress: () => router.push("/user/summits"),
     },
@@ -45,6 +45,16 @@ export default function UserIndexScreen() {
       text: intl.formatMessage({ defaultMessage: "My plans" }),
       onPress: () => router.push("/user/plans"),
       showDot: hasUnreadMessages,
+    },
+    {
+      iconName: "flag.fill",
+      text: intl.formatMessage({ defaultMessage: "My challenges" }),
+      onPress: () => router.push("/user/challenges"),
+    },
+    {
+      iconName: "mountain.2.fill",
+      text: intl.formatMessage({ defaultMessage: "My mountains" }),
+      onPress: () => router.push("/user/mountains"),
     },
     {
       iconName: "info.circle.fill",

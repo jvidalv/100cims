@@ -1,15 +1,16 @@
+import { analytics } from "@jvidalv/react-analytics";
 import { format } from "date-fns/format";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
-import { analytics } from "@jvidalv/react-analytics";
 import { FormattedMessage, useIntl } from "react-intl";
 import { View, TouchableOpacity, Image, Share } from "react-native";
 
 import { SummitCard } from "@/components/summit";
 import { Icon, Skeleton, ThemedText } from "@/components/ui/atoms";
-import { AvatarGroup } from "@/components/ui/molecules";
+import { AvatarGroup, ChallengeGroup } from "@/components/ui/molecules";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
 import {
   useAnyUserSummits,
+  useUserChallenges,
   useUserMe,
   useUserOneGet,
   useUserProfile,
@@ -27,6 +28,7 @@ export default function UserScreen() {
   const { data: summits, isPending: isPendingSummits } = useAnyUserSummits({
     userId,
   });
+  const { data: challenges } = useUserChallenges({ userId });
 
   const isMe = me?.id === userId;
 
@@ -34,23 +36,17 @@ export default function UserScreen() {
     analytics.action(`user-shared-started`, { id: userId });
 
     const messages = {
-      en: `🏞️ Check out my profile on 100cims!\n💪\n\n${getUrlDeeplink(`user/${userId}`)}`,
-      es: `🏞️ Mira mi perfil en 100cims!\n💪\n\n${getUrlDeeplink(`user/${userId}`)}`,
-      ca: `🏞️ Mira el meu perfil a 100cims!\n💪\n\n${getUrlDeeplink(`user/${userId}`)}`,
+      en: `🏞️ Check out my profile on cims!\n💪\n\n${getUrlDeeplink(`user/${userId}`)}`,
+      es: `🏞️ Mira mi perfil en cims!\n💪\n\n${getUrlDeeplink(`user/${userId}`)}`,
+      ca: `🏞️ Mira el meu perfil a cims!\n💪\n\n${getUrlDeeplink(`user/${userId}`)}`,
     };
 
     const locale = intl.locale;
     const msg = messages[locale as "ca" | "es" | "en"] || messages.en;
 
-    const response = await Share.share({
+    await Share.share({
       message: msg,
     });
-
-    // if (response.action === "sharedAction")
-    //   analytics.action(`user-shared-done`, { id: userId });
-
-    // if (response.action === "dismissedAction")
-    //   analytics.action(`user-shared-canceled`, { id: userId });
   };
 
   return (
@@ -132,27 +128,43 @@ export default function UserScreen() {
             </ThemedText>
           </View>
           {userDetails && !!userDetails?.sharedUsers?.length && (
-            <>
-              <View>
-                <View className="mb-1 flex-row gap-2">
-                  <Icon name="person.3.fill" muted size={24} />
-                  <ThemedText className="text-xl font-medium">
-                    <FormattedMessage defaultMessage="People" />
-                  </ThemedText>
-                </View>
-                <View>
-                  <AvatarGroup
-                    size="sm"
-                    items={userDetails.sharedUsers.map((person) => ({
-                      name: getFullName(person),
-                      imageUrl: person.imageUrl,
-                      id: person.userId,
-                    }))}
-                    onPress={({ id }) => router.push(`/user/${id}`)}
-                  />
-                </View>
+            <View>
+              <View className="mb-1 flex-row gap-2">
+                <Icon name="person.3.fill" muted size={24} />
+                <ThemedText className="text-xl font-medium">
+                  <FormattedMessage defaultMessage="People" />
+                </ThemedText>
               </View>
-            </>
+              <View>
+                <AvatarGroup
+                  size="sm"
+                  items={userDetails.sharedUsers.map((person) => ({
+                    name: getFullName(person),
+                    imageUrl: person.imageUrl,
+                    id: person.userId,
+                  }))}
+                  onPress={({ id }) => router.push(`/user/${id}`)}
+                />
+              </View>
+            </View>
+          )}
+          {challenges && challenges.length > 0 && (
+            <View>
+              <View className="mb-1 flex-row gap-2">
+                <Icon name="flag.fill" muted size={24} />
+                <ThemedText className="text-xl font-medium">
+                  <FormattedMessage defaultMessage="Challenges" />
+                </ThemedText>
+              </View>
+              <View>
+                <ChallengeGroup
+                  items={challenges}
+                  onPress={(challenge) =>
+                    router.push(`/community-challenge/${challenge.id}`)
+                  }
+                />
+              </View>
+            </View>
           )}
         </View>
       ) : (

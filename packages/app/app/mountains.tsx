@@ -1,16 +1,15 @@
-import { analytics } from "@jvidalv/react-analytics";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { FlatList, Pressable, ScrollView, View } from "react-native";
-import { twMerge } from "tailwind-merge";
+import { FlatList, View } from "react-native";
 
-import { ThemedView, ThemedText, SearchInput } from "@/components/ui/atoms";
+import { ThemedView } from "@/components/ui/atoms";
 import {
   MountainItemList,
   ScreenHeader,
   FilterableListHeader,
   type Filter,
+  type SettingsGroup,
 } from "@/components/ui/molecules";
 import { MountainsMap } from "@/domains/mountain/components/mountains-map";
 import { useMountains } from "@/domains/mountain/mountain.api";
@@ -19,13 +18,17 @@ import { useLocation } from "@/hooks/use-location";
 import { cleanText } from "@/lib";
 import { getDistanceInKm } from "@/lib/location";
 
-type FilterType =
-  | "map"
-  | "closest-first"
-  | "higher-first"
-  | "essentials"
+type FilterType = "map" | "essentials";
+
+type SettingsFilter =
+  | "alt-0-1000"
+  | "alt-1000-2000"
+  | "alt-2000-3000"
+  | "alt-3000+"
+  | "summited"
   | "not-summited"
-  | "summited";
+  | "higher-first"
+  | "closest-first";
 
 export default function MountainsScreen() {
   const intl = useIntl();
@@ -39,20 +42,82 @@ export default function MountainsScreen() {
     if (view === "map") {
       return ["map"];
     }
-    return ["closest-first"];
+    return [];
   });
   const { data: userSummits } = useUserChallengeSummits();
   const { location: userLocation } = useLocation();
+  const [settingsFilters, setSettingsFilters] = useState<SettingsFilter[]>([
+    "closest-first",
+  ]);
+
+  const isMapView = filtersSelected.includes("map");
+
+  const settingsGroups: SettingsGroup<SettingsFilter>[] = useMemo(
+    () => [
+      {
+        title: intl.formatMessage({ defaultMessage: "Status" }),
+        options: [
+          {
+            type: "summited",
+            name: intl.formatMessage({ defaultMessage: "Summited" }),
+            dotColor: "#22c55e",
+          },
+          {
+            type: "not-summited",
+            name: intl.formatMessage({ defaultMessage: "Not summited" }),
+            dotColor: "#ffffff",
+          },
+        ],
+      },
+      {
+        title: intl.formatMessage({ defaultMessage: "Altitude" }),
+        options: [
+          {
+            type: "alt-0-1000",
+            name: "< 1.000m",
+          },
+          {
+            type: "alt-1000-2000",
+            name: "1.000 - 2.000m",
+          },
+          {
+            type: "alt-2000-3000",
+            name: "2.000 - 3.000m",
+          },
+          {
+            type: "alt-3000+",
+            name: "> 3.000m",
+          },
+        ],
+      },
+      {
+        title: intl.formatMessage({ defaultMessage: "Sort" }),
+        options: [
+          {
+            type: "closest-first",
+            name: intl.formatMessage({ defaultMessage: "Closest first" }),
+            icon: "location.fill",
+            disabled: isMapView,
+          },
+          {
+            type: "higher-first",
+            name: intl.formatMessage({ defaultMessage: "Higher first" }),
+            icon: "chevron.up",
+            disabled: isMapView,
+          },
+        ],
+      },
+    ],
+    [intl, isMapView],
+  );
 
   // Sync view mode with filter selection
   useEffect(() => {
-    setViewMode(filtersSelected.includes("map") ? "map" : "list");
-  }, [filtersSelected]);
+    setViewMode(isMapView ? "map" : "list");
+  }, [isMapView]);
 
-  const filters: Filter<FilterType>[] = useMemo(() => {
-    const isMapView = filtersSelected.includes("map");
-
-    const allFilters: Filter<FilterType>[] = [
+  const filters: Filter<FilterType>[] = useMemo(
+    () => [
       {
         type: "map",
         name: intl.formatMessage({ defaultMessage: "Map" }),
@@ -63,37 +128,9 @@ export default function MountainsScreen() {
         name: intl.formatMessage({ defaultMessage: "Essentials" }),
         showDot: true,
       },
-      {
-        type: "closest-first",
-        name: intl.formatMessage({ defaultMessage: "Closest first" }),
-        onSelectDeselect: ["higher-first"],
-      },
-      {
-        type: "higher-first",
-        name: intl.formatMessage({ defaultMessage: "Higher first" }),
-        onSelectDeselect: ["closest-first"],
-      },
-      {
-        type: "not-summited",
-        name: intl.formatMessage({ defaultMessage: "Not summited" }),
-        onSelectDeselect: ["summited"],
-      },
-      {
-        type: "summited",
-        name: intl.formatMessage({ defaultMessage: "Summited" }),
-        onSelectDeselect: ["not-summited"],
-      },
-    ];
-
-    // Filter out sorting options when in map view
-    if (isMapView) {
-      return allFilters.filter(
-        (f) => f.type !== "closest-first" && f.type !== "higher-first",
-      );
-    }
-
-    return allFilters;
-  }, [filtersSelected, intl]);
+    ],
+    [intl],
+  );
 
   const queriedMountains = useMemo(() => {
     const mountains = data;
@@ -110,13 +147,13 @@ export default function MountainsScreen() {
   const filteredMountains = useMemo(() => {
     let filtered = [...(queriedMountains || [])];
 
-    if (filtersSelected.includes("summited")) {
+    if (settingsFilters.includes("summited")) {
       filtered = filtered.filter(({ slug }) =>
         userSummits?.summits?.some(({ mountainSlug }) => mountainSlug === slug),
       );
     }
 
-    if (filtersSelected.includes("not-summited")) {
+    if (settingsFilters.includes("not-summited")) {
       filtered = filtered.filter(
         ({ slug }) =>
           !userSummits?.summits?.some(
@@ -129,13 +166,35 @@ export default function MountainsScreen() {
       filtered = filtered.filter(({ essential }) => essential);
     }
 
-    if (filtersSelected.includes("higher-first")) {
+    // Altitude filtering
+    const altitudeFilters = settingsFilters.filter((f) => f.startsWith("alt-"));
+    if (altitudeFilters.length > 0) {
+      filtered = filtered.filter(({ height }) => {
+        const alt = parseInt(height);
+        return altitudeFilters.some((filter) => {
+          switch (filter) {
+            case "alt-0-1000":
+              return alt < 1000;
+            case "alt-1000-2000":
+              return alt >= 1000 && alt < 2000;
+            case "alt-2000-3000":
+              return alt >= 2000 && alt < 3000;
+            case "alt-3000+":
+              return alt >= 3000;
+            default:
+              return true;
+          }
+        });
+      });
+    }
+
+    if (settingsFilters.includes("higher-first")) {
       filtered = filtered.sort(
         (a, b) => parseInt(b.height) - parseInt(a.height),
       );
     }
 
-    if (filtersSelected.includes("closest-first") && userLocation) {
+    if (settingsFilters.includes("closest-first") && userLocation) {
       filtered = filtered.sort((a, b) => {
         const distA = getDistanceInKm(userLocation.coords, {
           latitude: parseFloat(a.latitude),
@@ -150,7 +209,7 @@ export default function MountainsScreen() {
     }
 
     return filtered;
-  }, [queriedMountains, filtersSelected, userSummits?.summits, userLocation]);
+  }, [queriedMountains, filtersSelected, userSummits?.summits, userLocation, settingsFilters]);
 
   // Get summited mountain slugs for map
   const summitedSlugs = useMemo(() => {
@@ -167,6 +226,9 @@ export default function MountainsScreen() {
         filters={filters}
         filtersSelected={filtersSelected}
         onFiltersChange={setFiltersSelected}
+        settingsGroups={settingsGroups}
+        settingsSelected={settingsFilters}
+        onSettingsChange={setSettingsFilters}
       />
 
       {viewMode === "list" ? (

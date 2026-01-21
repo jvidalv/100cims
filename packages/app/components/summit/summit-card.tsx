@@ -89,7 +89,9 @@ export function SummitCard({
             id: participant.id,
           }))}
           onPress={
-            onParticipantPress ? ({ id }) => onParticipantPress(id) : undefined
+            onParticipantPress
+              ? ({ id }) => id && onParticipantPress(id)
+              : undefined
           }
         />
       </View>

@@ -21,6 +21,70 @@ export const MountainSchema = t.Object({
 export const MountainsArraySchema = t.Array(MountainSchema);
 
 /**
+ * Schema for creating a custom mountain
+ */
+export const CreateMountainBody = t.Object({
+  name: t.String({ minLength: 1 }),
+  location: t.String({ minLength: 1 }),
+  height: t.Number({ minimum: 0, maximum: 10000 }),
+  latitude: t.Number({ minimum: -90, maximum: 90 }),
+  longitude: t.Number({ minimum: -180, maximum: 180 }),
+  essential: t.Optional(t.Boolean()),
+  image: t.String({ minLength: 1 }), // base64 encoded image, required
+});
+
+/**
+ * Schema for created mountain response
+ */
+export const CreatedMountainSchema = t.Object({
+  id: t.String(),
+  name: t.String(),
+  slug: t.String(),
+  location: t.String(),
+  height: t.String(),
+  latitude: t.String(),
+  longitude: t.String(),
+  imageUrl: t.Union([t.String(), t.Null()]),
+  essential: t.Boolean(),
+  creatorId: t.Union([t.String(), t.Null()]),
+});
+
+/**
+ * Schema for updating a mountain
+ */
+export const UpdateMountainBody = t.Object({
+  id: t.String(),
+  name: t.Optional(t.String({ minLength: 1 })),
+  location: t.Optional(t.String({ minLength: 1 })),
+  height: t.Optional(t.Number({ minimum: 0, maximum: 10000 })),
+  latitude: t.Optional(t.Number({ minimum: -90, maximum: 90 })),
+  longitude: t.Optional(t.Number({ minimum: -180, maximum: 180 })),
+  essential: t.Optional(t.Boolean()),
+  image: t.Optional(t.String({ minLength: 1 })), // base64 encoded image
+});
+
+/**
+ * Schema for mountain in my mountains list (includes challenge count)
+ */
+export const MyMountainSchema = t.Object({
+  id: t.String(),
+  name: t.String(),
+  slug: t.String(),
+  location: t.String(),
+  height: t.String(),
+  latitude: t.String(),
+  longitude: t.String(),
+  imageUrl: t.Union([t.String(), t.Null()]),
+  essential: t.Boolean(),
+  challengeCount: t.Number(),
+});
+
+/**
+ * Schema for array of my mountains
+ */
+export const MyMountainsArraySchema = t.Array(MyMountainSchema);
+
+/**
  * Schema for a user in a summit
  */
 export const SummitUserSchema = t.Object({

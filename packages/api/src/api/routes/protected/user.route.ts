@@ -1,9 +1,8 @@
-import { and, asc, desc, eq, or, sql, inArray } from "drizzle-orm";
+import { and, asc, desc, eq, or, sql, inArray, isNull } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 
 import { db } from "@/db";
 import {
-  challengeHasMountainTable,
   mountainTable,
   summitHasUsersTable,
   summitTable,
@@ -47,14 +46,21 @@ export const userRoute = new Elysia({ prefix: "/user" })
       const key = `${process.env.APP_NAME}/user/avatar/${user.id}.jpeg`;
 
       let image;
-      if (body.image) {
-        if (!isBase64SizeValid(body.image, 2048)) {
+      const imageBase64 = body.image || body.imageUrl;
+      if (imageBase64) {
+        if (!isBase64SizeValid(imageBase64, 2048)) {
           set.status = 500;
           return { error: IMAGE_TO_BIG };
         }
-        const content = Buffer.from(body.image, "base64");
-        image = await putImageOnS3(key, content);
+        const content = Buffer.from(imageBase64, "base64");
+        try {
+          image = await putImageOnS3(key, content);
+        } catch (err) {
+          console.log(err);
+        }
       }
+
+      console.log(3, body.image, image);
 
       await db
         .update(userTable)
@@ -65,6 +71,7 @@ export const userRoute = new Elysia({ prefix: "/user" })
           visibleOnHiscores: body.visibleOnHiscores,
           visibleOnPeopleSearch: body.visibleOnPeopleSearch,
           town: body.town,
+          activeChallengeId: body.activeChallengeId,
         })
         .where(eq(userTable.id, user.id));
 
@@ -77,9 +84,11 @@ export const userRoute = new Elysia({ prefix: "/user" })
         firstName: t.Optional(t.String()),
         lastName: t.Optional(t.String()),
         image: t.Optional(t.String()),
+        imageUrl: t.Optional(t.String()),
         town: t.Optional(t.String()),
         visibleOnHiscores: t.Optional(t.Boolean()),
         visibleOnPeopleSearch: t.Optional(t.Boolean()),
+        activeChallengeId: t.Optional(t.String()),
       }),
       response: {
         200: SimpleSuccessResponse,
@@ -89,10 +98,11 @@ export const userRoute = new Elysia({ prefix: "/user" })
   )
   .get(
     "/summits",
-    async ({ store, query }) => {
+    async ({ store }) => {
       const user = getStoreUser(store);
       const userId = user.id;
 
+      // Return ALL user summits regardless of challenge
       const results = await db
         .select({
           summitId: summitTable.id,
@@ -110,28 +120,7 @@ export const userRoute = new Elysia({ prefix: "/user" })
           eq(summitHasUsersTable.summitId, summitTable.id),
         )
         .innerJoin(mountainTable, eq(summitTable.mountainId, mountainTable.id))
-        .leftJoin(
-          challengeHasMountainTable,
-          eq(mountainTable.id, challengeHasMountainTable.mountainId),
-        )
-        .where(
-          and(
-            eq(summitHasUsersTable.userId, userId),
-            query.challengeId
-              ? eq(challengeHasMountainTable.challengeId, query.challengeId)
-              : undefined,
-          ),
-        )
-        .groupBy(
-          summitTable.id,
-          summitTable.summitedAt,
-          summitTable.validated,
-          mountainTable.name,
-          mountainTable.slug,
-          mountainTable.imageUrl,
-          mountainTable.height,
-          mountainTable.essential,
-        )
+        .where(eq(summitHasUsersTable.userId, userId))
         .orderBy(desc(summitTable.summitedAt), desc(summitTable.createdAt));
 
       const summitsWithScore = results.map((props) => {
@@ -171,11 +160,6 @@ export const userRoute = new Elysia({ prefix: "/user" })
       };
     },
     {
-      query: t.Optional(
-        t.Object({
-          challengeId: t.Optional(t.String()),
-        }),
-      ),
       response: SuccessResponse(UserSummitsResponseSchema),
     },
   )
@@ -235,31 +219,39 @@ export const userRoute = new Elysia({ prefix: "/user" })
     async ({ store, set }) => {
       const user = getStoreUser(store);
 
-      const deletedUser = await db
-        .delete(userTable)
-        .where(eq(userTable.id, user.id))
-        .returning();
+      const result = await db.transaction(async (tx) => {
+        const deletedUser = await tx
+          .delete(userTable)
+          .where(eq(userTable.id, user.id))
+          .returning();
 
-      if (!deletedUser) {
+        if (!deletedUser.length) {
+          return { error: true };
+        }
+
+        // Query to find all `summitTable` entries without corresponding `summitHasUsersTable` entries
+        const orphanedSummits = await tx
+          .select({ id: summitTable.id })
+          .from(summitTable)
+          .leftJoin(
+            summitHasUsersTable,
+            eq(summitTable.id, summitHasUsersTable.summitId),
+          )
+          .where(isNull(summitHasUsersTable.id));
+
+        const orphanedSummitIds = orphanedSummits.map((summit) => summit.id);
+        if (orphanedSummitIds.length > 0) {
+          await tx
+            .delete(summitTable)
+            .where(inArray(summitTable.id, orphanedSummitIds));
+        }
+
+        return { success: true };
+      });
+
+      if ("error" in result) {
         set.status = 500;
         return { error: true };
-      }
-
-      // Query to find all `summitTable` entries without corresponding `summitHasUsersTable` entries
-      const orphanedSummits = await db
-        .select({ id: summitTable.id })
-        .from(summitTable)
-        .leftJoin(
-          summitHasUsersTable,
-          eq(summitTable.id, summitHasUsersTable.summitId),
-        )
-        .where(sql`${summitHasUsersTable.id} IS NULL`);
-
-      const orphanedSummitIds = orphanedSummits.map((summit) => summit.id);
-      if (orphanedSummitIds.length > 0) {
-        await db
-          .delete(summitTable)
-          .where(inArray(summitTable.id, orphanedSummitIds));
       }
 
       return {

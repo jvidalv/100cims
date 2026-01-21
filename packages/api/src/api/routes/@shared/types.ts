@@ -9,5 +9,6 @@ export type User = {
   visibleOnPeopleSearch: boolean;
   username: string | null;
   locale: string | null;
+  activeChallengeId: string | null;
   createdAt: Date;
 };

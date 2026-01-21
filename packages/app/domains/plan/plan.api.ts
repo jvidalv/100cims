@@ -1,9 +1,9 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 
-import { useChallenge } from "@/components/providers/challenge-provider";
 import { queryClient } from "@/components/providers/query-client-provider";
 import { useUserMe } from "@/domains/user/user.api";
 import apiClient from "@/lib/api-client";
+import { planKeys } from "@/lib/query-keys";
 
 export const usePlans = (
   params?: {
@@ -12,22 +12,15 @@ export const usePlans = (
     creatorId?: string;
     userId?: string;
     sort?: "upcoming";
-    challengeId?: string;
   },
   { enabled }: { enabled?: boolean } = {},
 ) => {
-  const { challengeId } = useChallenge();
-
-  if (params) {
-    params.challengeId = challengeId;
-  }
-
   return useQuery({
-    queryKey: ["plans", params],
+    queryKey: planKeys.list(params),
     enabled,
     queryFn: async () => {
       const { data, error } = await apiClient.GET("/api/public/plans/all", {
-        params: { query: params ?? { challengeId } },
+        params: { query: params ?? {} },
       });
       if (error) throw error;
       return data.message;
@@ -37,7 +30,7 @@ export const usePlans = (
 
 export const usePlanOne = ({ id }: { id: string }) => {
   return useQuery({
-    queryKey: ["plan", id],
+    queryKey: planKeys.one(id),
     queryFn: async () => {
       const { data, error } = await apiClient.GET("/api/public/plans/one", {
         params: { query: { id } },
@@ -52,7 +45,7 @@ export const useNewPlansCount = () => {
   const { data: user } = useUserMe();
 
   return useQuery({
-    queryKey: ["plans", "count-new", user?.id],
+    queryKey: planKeys.countNew(user?.id),
     queryFn: async () => {
       const { data, error } = await apiClient.GET(
         "/api/public/plans/count-new",
@@ -81,7 +74,7 @@ export const useMarkPlansAsVisited = () => {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({
-        queryKey: ["plans", "count-new", user?.id],
+        queryKey: planKeys.countNew(user?.id),
       });
     },
   });
@@ -95,7 +88,6 @@ export const usePlanCreate = () => {
       description: string;
       startDate?: string;
       mountainIds?: string[];
-      challengeId?: string;
       userIds?: string[];
     }) => {
       const { data, error } = await apiClient.POST(
@@ -106,7 +98,7 @@ export const usePlanCreate = () => {
       return data.message;
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["plans"] });
+      void queryClient.invalidateQueries({ queryKey: planKeys.all });
     },
   });
 };
@@ -131,18 +123,8 @@ export const usePlanUpdate = () => {
       return data;
     },
     onSuccess: (_data, variables) => {
-      void queryClient.invalidateQueries({ queryKey: ["plans"] });
-      void queryClient.invalidateQueries({
-        queryKey: [
-          "plans",
-          {
-            limit: 3,
-            status: "open",
-            sort: "upcoming",
-          },
-        ],
-      });
-      void queryClient.invalidateQueries({ queryKey: ["plan", variables.id] });
+      void queryClient.invalidateQueries({ queryKey: planKeys.all });
+      void queryClient.invalidateQueries({ queryKey: planKeys.one(variables.id) });
     },
   });
 };
@@ -159,8 +141,8 @@ export const usePlanDelete = () => {
       return data;
     },
     onSuccess: (_data, variables) => {
-      void queryClient.invalidateQueries({ queryKey: ["plans"] });
-      void queryClient.removeQueries({ queryKey: ["plan", variables.id] });
+      void queryClient.invalidateQueries({ queryKey: planKeys.all });
+      void queryClient.removeQueries({ queryKey: planKeys.one(variables.id) });
     },
   });
 };
@@ -177,8 +159,8 @@ export const usePlanJoin = (planId: string) => {
       return data;
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["plans"] });
-      void queryClient.invalidateQueries({ queryKey: ["plan", planId] });
+      void queryClient.invalidateQueries({ queryKey: planKeys.all });
+      void queryClient.invalidateQueries({ queryKey: planKeys.one(planId) });
     },
   });
 };
@@ -195,8 +177,8 @@ export const usePlanLeave = (planId: string) => {
       return data;
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["plans"] });
-      void queryClient.invalidateQueries({ queryKey: ["plan", planId] });
+      void queryClient.invalidateQueries({ queryKey: planKeys.all });
+      void queryClient.invalidateQueries({ queryKey: planKeys.one(planId) });
     },
   });
 };

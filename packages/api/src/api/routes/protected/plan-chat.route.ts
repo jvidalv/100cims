@@ -67,24 +67,24 @@ export const planChatRoute = new Elysia({ prefix: "/plans/chat" })
     async ({ store }) => {
       const user = getStoreUser(store);
 
-      // Get all plan memberships and last read timestamps for this user
-      const lastReads = await db
-        .select({
-          planId: planUserMessageReadTable.planId,
-          lastReadAt: planUserMessageReadTable.lastReadAt,
-        })
-        .from(planUserMessageReadTable)
-        .where(eq(planUserMessageReadTable.userId, user.id));
+      // Get last read timestamps and user's plans in parallel
+      const [lastReads, userPlans] = await Promise.all([
+        db
+          .select({
+            planId: planUserMessageReadTable.planId,
+            lastReadAt: planUserMessageReadTable.lastReadAt,
+          })
+          .from(planUserMessageReadTable)
+          .where(eq(planUserMessageReadTable.userId, user.id)),
+        db
+          .select({ planId: planHasUsersTable.planId })
+          .from(planHasUsersTable)
+          .where(eq(planHasUsersTable.userId, user.id)),
+      ]);
 
       const lastReadMap = new Map(
         lastReads.map(({ planId, lastReadAt }) => [planId, lastReadAt]),
       );
-
-      // Get all plans the user is part of
-      const userPlans = await db
-        .select({ planId: planHasUsersTable.planId })
-        .from(planHasUsersTable)
-        .where(eq(planHasUsersTable.userId, user.id));
 
       const planIds = userPlans.map((p) => p.planId);
 

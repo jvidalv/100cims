@@ -6,8 +6,10 @@ import { db } from "@/db";
 import { userTable } from "@/db/schema";
 import { JWT } from "@/api/routes/@shared/jwt";
 import { User } from "@/api/routes/@shared/types";
+import { communityChallengeRoute } from "@/api/routes/protected/community-challenge";
 import { donorRoute } from "@/api/routes/protected/donor.route";
-import { mountainRoute } from "@/api/routes/protected/mountain.route";
+import { mountainLegacyRoute } from "@/api/routes/protected/mountain-legacy.route";
+import { mountainsRoute } from "@/api/routes/protected/mountains";
 import { planChatRoute } from "@/api/routes/protected/plan-chat.route";
 import { planPrivateRoute } from "@/api/routes/protected/plan.route";
 import { summitRoute } from "@/api/routes/protected/summit.route";
@@ -45,8 +47,10 @@ export const protectedRoutes = new Elysia({ prefix: "/protected" })
     }
   })
   .use(userRoute)
-  .use(mountainRoute)
+  .use(mountainLegacyRoute) // LEGACY: /mountain/summit for old app versions
+  .use(mountainsRoute)
   .use(summitRoute)
   .use(donorRoute)
   .use(planPrivateRoute)
-  .use(planChatRoute);
+  .use(planChatRoute)
+  .use(communityChallengeRoute);

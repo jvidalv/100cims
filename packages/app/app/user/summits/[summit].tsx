@@ -2,20 +2,24 @@ import { format } from "date-fns/format";
 import { Link, Redirect, useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { Alert, ScrollView, TouchableOpacity, Image, View } from "react-native";
+import { Alert, ScrollView, TouchableOpacity, Image, View, Pressable } from "react-native";
 
 import { useAuth } from "@/components/providers/auth-provider";
 import {
   Avatar,
   Button,
-  DynamicImage,
   Icon,
   Skeleton,
   ThemedDateInput,
   ThemedText,
   ThemedView,
 } from "@/components/ui/atoms";
-import { BottomDrawer, ScreenHeader } from "@/components/ui/molecules";
+import {
+  BottomDrawer,
+  ScreenHeader,
+  ImagePreviewModal,
+  useImagePreview,
+} from "@/components/ui/molecules";
 import { useBottomDrawer } from "@/components/ui/molecules/bottom-drawer";
 import {
   useDeleteSummitMutation,
@@ -38,6 +42,7 @@ const Content = () => {
 
   const [isDrawerOpen, setIsDrawerOpen] = useBottomDrawer();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const { previewImage, isPreviewOpen, openPreview, closePreview } = useImagePreview();
 
   const isUserParticipant = data?.users.some((user) => user.userId === me?.id);
 
@@ -87,10 +92,10 @@ const Content = () => {
                     setIsDrawerOpen(true);
                   }}
                 >
-                  <Icon name="gearshape" size={20} />
+                  <Icon name="gearshape" size={20} muted />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={handleDelete}>
-                  <Icon name="trash" size={20} />
+                  <Icon name="trash" size={20} muted />
                 </TouchableOpacity>
               </View>
             ) : undefined
@@ -123,10 +128,10 @@ const Content = () => {
                   setIsDrawerOpen(true);
                 }}
               >
-                <Icon name="gearshape" size={20} />
+                <Icon name="gearshape" size={20} muted />
               </TouchableOpacity>
               <TouchableOpacity onPress={handleDelete}>
-                <Icon name="trash" size={20} />
+                <Icon name="trash" size={20} muted />
               </TouchableOpacity>
             </View>
           ) : undefined
@@ -144,7 +149,7 @@ const Content = () => {
           }}
           asChild
         >
-          <TouchableOpacity className="mb-4 flex-row justify-between bg-background px-6 pb-2">
+          <TouchableOpacity className="mb-4 flex-row justify-between bg-background gap-4 px-6 pb-2">
             <View className="flex-1">
               <ThemedText className="text-3xl font-bold">
                 {data.mountainName}
@@ -190,9 +195,16 @@ const Content = () => {
             ))}
           </View>
         </View>
-        <View className="mb-6 overflow-hidden rounded-lg">
-          <DynamicImage uri={data.summitImageUrl} />
-        </View>
+        <Pressable
+          className="mb-6 overflow-hidden rounded-lg"
+          onPress={() => openPreview({ uri: data.summitImageUrl })}
+        >
+          <Image
+            source={{ uri: data.summitImageUrl }}
+            className="aspect-square w-full"
+            resizeMode="cover"
+          />
+        </Pressable>
         <Button intent="ghost" onPress={router.back}>
           <FormattedMessage defaultMessage="Go back" />
         </Button>
@@ -215,6 +227,11 @@ const Content = () => {
           </Button>
         </View>
       </BottomDrawer>
+      <ImagePreviewModal
+        visible={isPreviewOpen}
+        imageSource={previewImage}
+        onClose={closePreview}
+      />
     </ThemedView>
   );
 };

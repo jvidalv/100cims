@@ -47,6 +47,8 @@ const MAPPING = {
   "arrow.down": "arrow-down",
   "bubble.left.and.text.bubble.right": "chat-processing-outline",
   paperplane: "send",
+  "slider.vertical.3": "tune-vertical",
+  "chevron.up": "chevron-up",
   "questionmark.circle": "account-question",
   backpack: "bag-personal-outline",
   "backpack.fill": "bag-personal",
@@ -54,6 +56,11 @@ const MAPPING = {
   "map.fill": "map-outline",
   "location.fill": "map-marker-distance",
   map: "map",
+  "mountain.2": "image-filter-hdr",
+  scope: "crosshairs",
+  "flag.fill": "flag",
+  "text.bubble.fill": "message-text",
+  "person.2.fill": "account-multiple",
 } as Partial<
   Record<
     import("expo-symbols").SymbolViewProps["name"],

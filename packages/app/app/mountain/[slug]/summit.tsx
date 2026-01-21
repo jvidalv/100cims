@@ -7,7 +7,6 @@ import { FormattedMessage, useIntl } from "react-intl";
 import { Alert, Image, ScrollView, TouchableOpacity, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
-import { useChallenge } from "@/components/providers/challenge-provider";
 import { queryClient } from "@/components/providers/query-client-provider";
 import {
   ActivityIndicator,
@@ -23,7 +22,8 @@ import {
 } from "@/components/ui/molecules/user-select-input";
 import { useMountains, useSummitPost } from "@/domains/mountain/mountain.api";
 import { SUMMITS_KEY } from "@/domains/summit/summit.api";
-import { USER_SUMMITS_KEY, useUserMe, useUsers } from "@/domains/user/user.api";
+import { useUserMe, useUsers } from "@/domains/user/user.api";
+import { userKeys } from "@/lib/query-keys";
 import { getFullName } from "@/domains/user/user.utils";
 import { isAndroid } from "@/lib/device";
 import { getImageOptimized } from "@/lib/images";
@@ -31,7 +31,6 @@ import { getImageOptimized } from "@/lib/images";
 export default function SummitMountainScreen() {
   const intl = useIntl();
   const router = useRouter();
-  const { challengeId } = useChallenge();
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const { mutateAsync, isPending } = useSummitPost(slug);
   const { data: mountains } = useMountains();
@@ -119,17 +118,16 @@ export default function SummitMountainScreen() {
       analytics.action("summit-mountain-summited-successfully");
 
       void queryClient.refetchQueries({
-        queryKey: SUMMITS_KEY({ limit: 4, challengeId }),
+        queryKey: SUMMITS_KEY({ limit: 4 }),
       });
       void queryClient.refetchQueries({
         queryKey: SUMMITS_KEY({
           mountainId: mountain.id,
           limit: 100,
-          challengeId,
         }),
       });
       void queryClient.refetchQueries({
-        queryKey: USER_SUMMITS_KEY(challengeId),
+        queryKey: userKeys.summits(),
       });
       router.dismiss();
     } catch (error) {

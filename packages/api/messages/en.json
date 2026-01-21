@@ -2,7 +2,24 @@
   "home-page": {
     "title": "Join <appName>Cims</appName> today",
     "subtitle": "Track your mountaineering progress across multiple challenges and summit lists.",
-    "download": "Download now"
+    "download": "Download now",
+    "features-title": "Features",
+    "feature-1-title": "Track Your Summits",
+    "feature-1-description": "Log every mountain you conquer with photos and dates. Watch your progress grow.",
+    "feature-2-title": "Multiple Challenges",
+    "feature-2-description": "From 100 Cims to Top Spain - choose your challenge and start climbing.",
+    "feature-3-title": "Discover Mountains",
+    "feature-3-description": "Explore detailed info on hundreds of peaks with maps, elevation, and routes.",
+    "feature-4-title": "Plan Together",
+    "feature-4-description": "Create hiking plans, invite friends, and coordinate your next adventure.",
+    "cta-title": "Ready to start your journey?",
+    "cta-subtitle": "Download the app and begin tracking your mountain adventures today.",
+    "available-on": "Available on iOS and Android"
+  },
+  "footer": {
+    "privacy-policy": "Privacy Policy",
+    "terms-of-service": "Terms of Service",
+    "made-by": "Made by"
   },
   "privacy-policy": {
     "title": "Privacy policy",

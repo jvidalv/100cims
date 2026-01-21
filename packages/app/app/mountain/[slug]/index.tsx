@@ -104,9 +104,9 @@ export default function MountainScreen() {
     const locale = intl.locale;
 
     const messages = {
-      en: `🏔️ Check out the ${mountain.name} summit on 100cims!\n\n${getUrlDeeplink(`mountain/${slug}`)}`,
-      es: `🏔️ Mira la cima ${mountain.name} en 100cims!\n\n${getUrlDeeplink(`mountain/${slug}`)}`,
-      ca: `🏔️ Mira el cim ${mountain.name} a 100cims!\n\n${getUrlDeeplink(`mountain/${slug}`)}`,
+      en: `🏔️ Check out the ${mountain.name} summit on cims!\n\n${getUrlDeeplink(`mountain/${slug}`)}`,
+      es: `🏔️ Mira la cima ${mountain.name} en cims!\n\n${getUrlDeeplink(`mountain/${slug}`)}`,
+      ca: `🏔️ Mira el cim ${mountain.name} a cims!\n\n${getUrlDeeplink(`mountain/${slug}`)}`,
     };
 
     const msg = messages[locale as "ca" | "es" | "en"] || messages.en;

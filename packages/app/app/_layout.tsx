@@ -18,14 +18,6 @@ import { Easing } from "react-native-reanimated";
 
 import { QueryClientProvider } from "@/components/providers";
 import { AuthProvider, useAuth } from "@/components/providers/auth-provider";
-import {
-  ChallengeProvider,
-  getLocalChallenge,
-} from "@/components/providers/challenge-provider";
-import {
-  DEFAULT_CHALLENGE_ID,
-  useChallengesGet,
-} from "@/domains/challenge/challenge.api";
 import { useMountains } from "@/domains/mountain/mountain.api";
 import { usePlanChatUnread } from "@/domains/plan/plan-chat.api";
 import { usePlans } from "@/domains/plan/plan.api";
@@ -102,7 +94,6 @@ function Content() {
   const { isPending: isPendingMountains } = useMountains();
   const { data: user, isPending: isPendingUser } = useUserMe();
   const { isPending: isPendingHomepageSummits } = useSummitsGet({ limit: 8 });
-  const { isPending: isPendingChallenges } = useChallengesGet();
   usePlanChatUnread();
   useUserChallengeSummits();
   usePlans({
@@ -144,7 +135,6 @@ function Content() {
         fontsLoaded &&
           !isPendingMountains &&
           !isPendingHomepageSummits &&
-          !isPendingChallenges &&
           (!isPendingUser || !isAuthenticated),
       );
     }
@@ -154,7 +144,6 @@ function Content() {
     isPendingHomepageSummits,
     isPendingMountains,
     isPendingUser,
-    isPendingChallenges,
     ready,
   ]);
 
@@ -208,29 +197,6 @@ function AuthLayer({ children }: PropsWithChildren) {
   return <AuthProvider jwt={jwt}>{children}</AuthProvider>;
 }
 
-function ChallengeLayer({ children }: PropsWithChildren) {
-  const [isChallengeLoaded, setIsChallengeLoaded] = useState(false);
-  const [challenge, setChallenge] = useState<string>(DEFAULT_CHALLENGE_ID);
-
-  useEffect(() => {
-    (async () => {
-      const localStorageChallenge = await getLocalChallenge();
-      if (localStorageChallenge) {
-        setChallenge(localStorageChallenge);
-      }
-      setIsChallengeLoaded(true);
-    })();
-  }, []);
-
-  if (!isChallengeLoaded) {
-    return null;
-  }
-
-  return (
-    <ChallengeProvider challengeId={challenge}>{children}</ChallengeProvider>
-  );
-}
-
 function RootProviders() {
   const locale = getLocale();
 
@@ -251,12 +217,10 @@ function RootProviders() {
   return (
     <QueryClientProvider>
       <AuthLayer>
-        <ChallengeLayer>
-          <IntlProvider messages={messages} locale={locale} defaultLocale="en">
-            <Content />
-            <StatusBar style="auto" />
-          </IntlProvider>
-        </ChallengeLayer>
+        <IntlProvider messages={messages} locale={locale} defaultLocale="en">
+          <Content />
+          <StatusBar style="auto" />
+        </IntlProvider>
       </AuthLayer>
     </QueryClientProvider>
   );

@@ -117,9 +117,9 @@ export default function PlanIdPage() {
   const onShare = async () => {
     analytics.action(`plan-shared-started`, { id: plan?.id });
     const messages = {
-      en: `📍 Hiking plan on 100cims!\n${plan?.title} 💪\n\n${getUrlDeeplink(`plan/${id}`)}`,
-      ca: `📍 Pla de senderisme a 100cims!\n${plan?.title} 💪\n\n${getUrlDeeplink(`plan/${id}`)}`,
-      es: `📍 Plan de senderismo en 100cims!\n${plan?.title} 💪\n\n${getUrlDeeplink(`plan/${id}`)}`,
+      en: `📍 Hiking plan on cims!\n${plan?.title} 💪\n\n${getUrlDeeplink(`plan/${id}`)}`,
+      ca: `📍 Pla de senderisme a cims!\n${plan?.title} 💪\n\n${getUrlDeeplink(`plan/${id}`)}`,
+      es: `📍 Plan de senderismo en cims!\n${plan?.title} 💪\n\n${getUrlDeeplink(`plan/${id}`)}`,
     };
 
     const locale = intl.locale;

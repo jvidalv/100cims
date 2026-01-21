@@ -1,0 +1,55 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1768922480285,
+      "tag": "0000_initial-schema",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1768922480286,
+      "tag": "0001_seed-data",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1768924468279,
+      "tag": "0002_add-summit-user-id",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1768925000000,
+      "tag": "0003_add-pic-de-la-dona-and-update-baciver",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1768930704341,
+      "tag": "0004_careless_smiling_tiger",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1768931595923,
+      "tag": "0005_regular_daredevil",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1768987254264,
+      "tag": "0006_empty_dark_beast",
+      "breakpoints": true
+    }
+  ]
+}
