@@ -58,9 +58,12 @@ export function ChallengeListItem({
       {onEditPress && (
         <TouchableOpacity
           onPress={onEditPress}
-          className="h-full items-center justify-center rounded-xl border-2 border-border px-3"
+          className=" items-center justify-center rounded-xl border-2 border-border px-3"
+          style={{
+            height: 60,
+          }}
         >
-          <Icon name="pencil" size={18} />
+          <Icon name="pencil" size={18} weight="black" />
         </TouchableOpacity>
       )}
     </View>

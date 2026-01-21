@@ -168,7 +168,7 @@ export default function UserScreen() {
                 <ChallengeGroup
                   items={challenges}
                   onPress={(challenge) =>
-                    router.push(`/community-challenge/${challenge.id}`)
+                    router.push(`/challenge/${challenge.id}`)
                   }
                 />
               </View>

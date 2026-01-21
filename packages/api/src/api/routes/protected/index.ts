@@ -30,14 +30,14 @@ export const protectedRoutes = new Elysia({ prefix: "/protected" })
 
     const verified = await jwt.verify(bearer);
 
-    if (!verified || !verified.id) {
+    if (!verified || !verified.id || typeof verified.id !== "string") {
       return unauthorizedResponse();
     }
 
     const users = await db
       .select()
       .from(userTable)
-      .where(eq(userTable.id, verified.id as string));
+      .where(eq(userTable.id, verified.id));
     const user = users?.[0];
 
     (store as { user: User }).user = user;

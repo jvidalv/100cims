@@ -248,28 +248,16 @@ export const summitRoute = new Elysia({ prefix: "/summit" })
 
       const userId = getStoreUser(store).id;
 
-      // Get reaction counts grouped by emoji
+      // Single query to get both reaction counts and user's reactions
       const reactions = await db
         .select({
           emoji: summitReactionTable.emoji,
           count: count(),
+          userReacted: sql<boolean>`bool_or(${summitReactionTable.userId} = ${userId})`,
         })
         .from(summitReactionTable)
         .where(eq(summitReactionTable.summitId, summitId))
         .groupBy(summitReactionTable.emoji);
-
-      // Get user's own reactions for this summit
-      const userReactions = userId
-        ? await db
-            .select({ emoji: summitReactionTable.emoji })
-            .from(summitReactionTable)
-            .where(
-              and(
-                eq(summitReactionTable.summitId, summitId),
-                eq(summitReactionTable.userId, userId),
-              ),
-            )
-        : [];
 
       return {
         success: true,
@@ -278,7 +266,9 @@ export const summitRoute = new Elysia({ prefix: "/summit" })
             emoji: r.emoji,
             count: Number(r.count),
           })),
-          userReactions: userReactions.map((r) => r.emoji),
+          userReactions: reactions
+            .filter((r) => r.userReacted)
+            .map((r) => r.emoji),
         },
       };
     },

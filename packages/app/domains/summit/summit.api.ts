@@ -141,6 +141,11 @@ export const useSummitReactions = ({ summitId }: { summitId: string }) => {
   });
 };
 
+type ReactionsData = {
+  reactions: { emoji: string; count: number }[];
+  userReactions: string[];
+};
+
 export const useSummitReactionMutation = () => {
   return useMutation({
     mutationKey: ["summit", "reaction"],
@@ -158,7 +163,66 @@ export const useSummitReactionMutation = () => {
       if (error) throw error;
       return data;
     },
-    onSuccess: (_, variables) => {
+    onMutate: async ({ summitId, emoji }) => {
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries({
+        queryKey: summitKeys.reactions(summitId),
+      });
+
+      // Snapshot previous value
+      const previousData = queryClient.getQueryData<ReactionsData>(
+        summitKeys.reactions(summitId),
+      );
+
+      // Optimistically update
+      queryClient.setQueryData<ReactionsData>(
+        summitKeys.reactions(summitId),
+        (old) => {
+          if (!old) return old;
+
+          const userHasReacted = old.userReactions.includes(emoji);
+          const newUserReactions = userHasReacted
+            ? old.userReactions.filter((e) => e !== emoji)
+            : [...old.userReactions, emoji];
+
+          const newReactions = old.reactions.map((r) => {
+            if (r.emoji === emoji) {
+              return {
+                ...r,
+                count: userHasReacted ? r.count - 1 : r.count + 1,
+              };
+            }
+            return r;
+          });
+
+          // If emoji doesn't exist yet, add it
+          if (!userHasReacted && !old.reactions.some((r) => r.emoji === emoji)) {
+            newReactions.push({ emoji, count: 1 });
+          }
+
+          // Filter out reactions with count 0
+          const filteredReactions = newReactions.filter((r) => r.count > 0);
+
+          return {
+            reactions: filteredReactions,
+            userReactions: newUserReactions,
+          };
+        },
+      );
+
+      return { previousData };
+    },
+    onError: (_, variables, context) => {
+      // Rollback on error
+      if (context?.previousData) {
+        queryClient.setQueryData(
+          summitKeys.reactions(variables.summitId),
+          context.previousData,
+        );
+      }
+    },
+    onSettled: (_, __, variables) => {
+      // Refetch after mutation settles
       void queryClient.invalidateQueries({
         queryKey: summitKeys.reactions(variables.summitId),
       });

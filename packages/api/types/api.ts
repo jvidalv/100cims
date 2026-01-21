@@ -1110,6 +1110,15 @@ export interface operations {
                     "application/json": {
                         success: boolean;
                         message: {
+                            userId: string;
+                            firstName: (string | null) | null;
+                            lastName: (string | null) | null;
+                            imageUrl: (string | null) | null;
+                            summitsCount: string;
+                            uniquePeaksCount: string;
+                            essentialPeaksCount: string;
+                            totalScore: number;
+                        }[] | {
                             items: {
                                 userId: string;
                                 firstName: (string | null) | null;
@@ -1132,6 +1141,15 @@ export interface operations {
                     "multipart/form-data": {
                         success: boolean;
                         message: {
+                            userId: string;
+                            firstName: (string | null) | null;
+                            lastName: (string | null) | null;
+                            imageUrl: (string | null) | null;
+                            summitsCount: string;
+                            uniquePeaksCount: string;
+                            essentialPeaksCount: string;
+                            totalScore: number;
+                        }[] | {
                             items: {
                                 userId: string;
                                 firstName: (string | null) | null;
@@ -1154,6 +1172,15 @@ export interface operations {
                     "text/plain": {
                         success: boolean;
                         message: {
+                            userId: string;
+                            firstName: (string | null) | null;
+                            lastName: (string | null) | null;
+                            imageUrl: (string | null) | null;
+                            summitsCount: string;
+                            uniquePeaksCount: string;
+                            essentialPeaksCount: string;
+                            totalScore: number;
+                        }[] | {
                             items: {
                                 userId: string;
                                 firstName: (string | null) | null;
