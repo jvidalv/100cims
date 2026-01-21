@@ -4,7 +4,10 @@ import { Elysia, t } from "elysia";
 import { db } from "@/db";
 import { userTable } from "@/db/schema";
 import { isBase64SizeValid } from "@/api/lib/images";
-import { IMAGE_TO_BIG } from "@/api/routes/@shared/error-codes";
+import {
+  IMAGE_TO_BIG,
+  IMAGE_UPLOAD_FAILED,
+} from "@/api/routes/@shared/error-codes";
 import { JWT } from "@/api/routes/@shared/jwt";
 import { getPublicUrl, putImageOnS3 } from "@/api/routes/@shared/s3";
 import { getStoreUser } from "@/api/routes/@shared/store";
@@ -19,7 +22,7 @@ export const mePostRoute = new Elysia().use(JWT()).post(
     const user = getStoreUser(store);
     const key = `${process.env.APP_NAME}/user/avatar/${user.id}.jpeg`;
 
-    let image;
+    let imageUrl: string | undefined;
     const imageBase64 = body.image || body.imageUrl;
     if (imageBase64) {
       if (!isBase64SizeValid(imageBase64, 2048)) {
@@ -28,9 +31,11 @@ export const mePostRoute = new Elysia().use(JWT()).post(
       }
       const content = Buffer.from(imageBase64, "base64");
       try {
-        image = await putImageOnS3(key, content);
+        await putImageOnS3(key, content);
+        imageUrl = getPublicUrl(key);
       } catch {
-        // S3 upload failed, image will not be updated
+        set.status = 500;
+        return { error: IMAGE_UPLOAD_FAILED };
       }
     }
 
@@ -39,7 +44,7 @@ export const mePostRoute = new Elysia().use(JWT()).post(
       .set({
         firstName: body.firstName,
         lastName: body.lastName,
-        imageUrl: image ? getPublicUrl(key) : undefined,
+        imageUrl,
         visibleOnHiscores: body.visibleOnHiscores,
         visibleOnPeopleSearch: body.visibleOnPeopleSearch,
         town: body.town,
