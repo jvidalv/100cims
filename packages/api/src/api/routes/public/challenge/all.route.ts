@@ -22,7 +22,7 @@ export const allRoute = new Elysia().get(
         slug: challengeTable.slug,
         country: challengeTable.country,
         totalMountains: sql<string>`COUNT(DISTINCT ${challengeHasMountainTable.mountainId})`,
-        totalEssentialMountains: sql<string>`SUM(CASE WHEN ${mountainTable.essential} THEN 1 ELSE 0 END)`,
+        totalEssentialMountains: sql<string>`COUNT(DISTINCT CASE WHEN ${mountainTable.essential} THEN ${mountainTable.id} ELSE NULL END)`,
         // Count users from both summit.userId and summitHasUsers.userId
         totalUsers: sql<string>`COUNT(DISTINCT COALESCE(${summitHasUsersTable.userId}, ${summitTable.userId}))`,
       })
