@@ -9,6 +9,20 @@ export type OptionalAuthUser = {
 } | null;
 
 /**
+ * Extract bearer token from Authorization header.
+ * Returns undefined if no valid Bearer token present.
+ */
+export function getBearerToken(
+  headers: Record<string, string | undefined>,
+): string | undefined {
+  const authHeader = headers["authorization"];
+  if (authHeader?.startsWith("Bearer ")) {
+    return authHeader.slice(7);
+  }
+  return undefined;
+}
+
+/**
  * Get user from JWT token if present.
  * Returns null if no token or invalid token (endpoint still works).
  */

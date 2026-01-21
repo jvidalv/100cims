@@ -1,4 +1,3 @@
-import { bearer } from "@elysiajs/bearer";
 import { and, desc, eq } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 
@@ -12,22 +11,24 @@ import {
 } from "@/db/schema";
 import { resolveChallengeId } from "@/api/routes/@shared/challenge";
 import { JWT } from "@/api/routes/@shared/jwt";
-import { getOptionalUser } from "@/api/routes/@shared/optional-auth";
+import {
+  getBearerToken,
+  getOptionalUser,
+} from "@/api/routes/@shared/optional-auth";
 import { SuccessResponse } from "@/api/schemas/common.schema";
 import { SummitsArraySchema } from "@/api/schemas/mountain.schema";
 
 export const summitsRoute = new Elysia()
   .use(JWT())
-  .use(bearer())
   .get(
     "/summits",
-    async ({ query, jwt, bearer }) => {
+    async ({ query, jwt, headers }) => {
       const mountainId =
         !query.mountainId || query.mountainId === "undefined"
           ? undefined
           : query.mountainId;
       const limit = (query?.limit || 0) * 3 || 500;
-      const optionalUser = await getOptionalUser(jwt, bearer);
+      const optionalUser = await getOptionalUser(jwt, getBearerToken(headers));
       // Priority: query.challengeId > user.activeChallengeId > DEFAULT_CHALLENGE_ID
       const challengeId = resolveChallengeId(query.challengeId, optionalUser);
 
