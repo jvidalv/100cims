@@ -1,10 +1,11 @@
-import { Link, useRouter } from "expo-router";
 import { analytics } from "@jvidalv/react-analytics";
+import { Link, useRouter } from "expo-router";
 import { useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { ScrollView, TouchableOpacity, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
+import { useAuth } from "@/components/providers/auth-provider";
 import {
   ActivityIndicator,
   Button,
@@ -13,7 +14,6 @@ import {
   ThemedView,
 } from "@/components/ui/atoms";
 import { ChallengeListItem } from "@/components/ui/molecules";
-import { useAuth } from "@/components/providers/auth-provider";
 import {
   useActiveChallenge,
   useChallengesGet,

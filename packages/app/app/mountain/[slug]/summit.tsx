@@ -23,10 +23,10 @@ import {
 import { useMountains, useSummitPost } from "@/domains/mountain/mountain.api";
 import { SUMMITS_KEY } from "@/domains/summit/summit.api";
 import { useUserMe, useUsers } from "@/domains/user/user.api";
-import { userKeys } from "@/lib/query-keys";
 import { getFullName } from "@/domains/user/user.utils";
 import { isAndroid } from "@/lib/device";
 import { getImageOptimized } from "@/lib/images";
+import { userKeys } from "@/lib/query-keys";
 
 export default function SummitMountainScreen() {
   const intl = useIntl();

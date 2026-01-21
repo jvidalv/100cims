@@ -10,9 +10,9 @@ import {
   ThemedText,
   ThemedView,
 } from "@/components/ui/atoms";
-import { countryToEmoji } from "@/domains/challenge/challenge.model";
 import { ChallengeListItem, ScreenHeader } from "@/components/ui/molecules";
 import { useActiveChallenge } from "@/domains/challenge/challenge.api";
+import { countryToEmoji } from "@/domains/challenge/challenge.model";
 import { useCommunityChallengesList } from "@/domains/community-challenge/community-challenge.api";
 import { isAndroid } from "@/lib/device";
 

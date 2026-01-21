@@ -3,6 +3,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/components/providers/auth-provider";
 import { queryClient } from "@/components/providers/query-client-provider";
 import apiClient from "@/lib/api-client";
+import { summitKeys } from "@/lib/query-keys";
 
 export const SUMMITS_KEY = ({
   mountainId,
@@ -117,6 +118,49 @@ export const useUpdateSummitMutation = () => {
           mountainId: undefined,
           limit: undefined,
         }),
+      });
+    },
+  });
+};
+
+export const useSummitReactions = ({ summitId }: { summitId: string }) => {
+  const { isAuthenticated } = useAuth();
+
+  return useQuery({
+    queryKey: summitKeys.reactions(summitId),
+    enabled: () => isAuthenticated && !!summitId,
+    queryFn: async () => {
+      if (!isAuthenticated) return null;
+      const { data, error } = await apiClient.GET(
+        "/api/protected/summit/reactions",
+        { params: { query: { summitId } } },
+      );
+      if (error) throw error;
+      return data.message;
+    },
+  });
+};
+
+export const useSummitReactionMutation = () => {
+  return useMutation({
+    mutationKey: ["summit", "reaction"],
+    mutationFn: async ({
+      summitId,
+      emoji,
+    }: {
+      summitId: string;
+      emoji: string;
+    }) => {
+      const { data, error } = await apiClient.POST(
+        "/api/protected/summit/reaction",
+        { body: { summitId, emoji } },
+      );
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (_, variables) => {
+      void queryClient.invalidateQueries({
+        queryKey: summitKeys.reactions(variables.summitId),
       });
     },
   });

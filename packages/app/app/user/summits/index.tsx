@@ -1,6 +1,6 @@
+import { analytics } from "@jvidalv/react-analytics";
 import { format } from "date-fns/format";
 import { Link, Redirect } from "expo-router";
-import { analytics } from "@jvidalv/react-analytics";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
 import { twMerge } from "tailwind-merge";

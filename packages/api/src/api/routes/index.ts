@@ -23,7 +23,10 @@ export const app = new Elysia({ prefix: "/api" })
           { name: "summits", description: "Summit tracking endpoints" },
           { name: "users", description: "User management endpoints" },
           { name: "challenges", description: "Challenge endpoints" },
-          { name: "community-challenges", description: "Community challenge endpoints" },
+          {
+            name: "community-challenges",
+            description: "Community challenge endpoints",
+          },
           { name: "hiscores", description: "Leaderboard endpoints" },
           { name: "plans", description: "Plan management endpoints" },
           { name: "donations", description: "Donation endpoints" },

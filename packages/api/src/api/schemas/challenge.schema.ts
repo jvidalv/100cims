@@ -69,6 +69,7 @@ export const PublicChallengeDetailSchema = t.Object({
   isOfficial: t.Boolean(),
   isPublic: t.Boolean(),
   totalMountains: t.Number(),
+  totalUsers: t.Number(),
   mountains: t.Array(PublicChallengeMountainSchema),
   users: t.Array(PublicChallengeUserSchema),
 });

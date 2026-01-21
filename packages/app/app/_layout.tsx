@@ -33,12 +33,12 @@ import es from "@/translations/es.json";
 
 import "../global.css";
 
-const ANIMATION_DURATION = 1500;
+const ANIMATION_DURATION = 1000;
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 void SplashScreen.preventAutoHideAsync();
 
-const SplashAnimation = () => {
+const LoadingSkeleton = () => {
   const fadeOutOpacity = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(100)).current;
 
@@ -60,7 +60,7 @@ const SplashAnimation = () => {
   }, [fadeOutOpacity, translateY]);
 
   return (
-    <View className="flex-1 items-center justify-center bg-primary">
+    <View className="absolute inset-0 z-50 items-center justify-center bg-primary">
       <Animated.Image
         source={require("@/assets/images/cims-letters.png")}
         style={[
@@ -89,11 +89,13 @@ function Content() {
     bold: require("@/assets/fonts/BricolageGrotesque-Bold.ttf"),
     black: require("@/assets/fonts/BricolageGrotesque-ExtraBold.ttf"),
   });
-  const [ready, setReady] = useState(false);
+  const [showSkeleton, setShowSkeleton] = useState(true);
   const { isAuthenticated } = useAuth();
+  const { data: user } = useUserMe();
   const { isPending: isPendingMountains } = useMountains();
-  const { data: user, isPending: isPendingUser } = useUserMe();
   const { isPending: isPendingHomepageSummits } = useSummitsGet({ limit: 8 });
+
+  // Prefetch data in background
   usePlanChatUnread();
   useUserChallengeSummits();
   usePlans({
@@ -101,6 +103,8 @@ function Content() {
     status: "open",
     sort: "upcoming",
   });
+
+  const isDataReady = !isPendingMountains && !isPendingHomepageSummits;
 
   useEffect(() => {
     setDefaultOptions({ locale: getDateFnsLocale() });
@@ -125,34 +129,29 @@ function Content() {
     user?.imageUrl,
   ]);
 
+  // Hide native splash screen once fonts are loaded
   useEffect(() => {
-    void SplashScreen.hideAsync();
-  }, []);
-
-  useEffect(() => {
-    if (!ready) {
-      setReady(
-        fontsLoaded &&
-          !isPendingMountains &&
-          !isPendingHomepageSummits &&
-          (!isPendingUser || !isAuthenticated),
-      );
+    if (fontsLoaded) {
+      void SplashScreen.hideAsync();
     }
-  }, [
-    fontsLoaded,
-    isAuthenticated,
-    isPendingHomepageSummits,
-    isPendingMountains,
-    isPendingUser,
-    ready,
-  ]);
+  }, [fontsLoaded]);
 
-  if (!ready && !isWeb) {
-    return <SplashAnimation />;
+  // Hide skeleton when data is ready (animation can still be running)
+  useEffect(() => {
+    if (isDataReady) {
+      setShowSkeleton(false);
+    }
+  }, [isDataReady]);
+
+  // Only wait for fonts - data loads in background
+  if (!fontsLoaded && !isWeb) {
+    return null;
   }
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
+    <>
+      {showSkeleton && !isWeb && <LoadingSkeleton />}
+      <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen
         name="mountain/[slug]/summit"
         options={{ presentation: isIpadOS ? "fullScreenModal" : "modal" }}
@@ -171,6 +170,7 @@ function Content() {
         options={{ presentation: isIpadOS ? "fullScreenModal" : "modal" }}
       />
     </Stack>
+    </>
   );
 }
 

@@ -9,7 +9,10 @@ export const suggestionRoute = new Elysia().use(JWT()).post(
   "/suggestion",
   async ({ body, store }) => {
     const user = getStoreUser(store);
-    await addRowToSheets(SUGGESTIONS_SPREADSHEET, [user.email, body.suggestion]);
+    await addRowToSheets(SUGGESTIONS_SPREADSHEET, [
+      user.email,
+      body.suggestion,
+    ]);
     return {
       success: true,
     };

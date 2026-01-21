@@ -1,9 +1,9 @@
+import { analytics } from "@jvidalv/react-analytics";
 import { format } from "date-fns/format";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Linking from "expo-linking";
 import { Link, useLocalSearchParams } from "expo-router";
 import { setStatusBarStyle } from "expo-status-bar";
-import { analytics } from "@jvidalv/react-analytics";
 import { useColorScheme } from "nativewind";
 import { useEffect, useMemo } from "react";
 import { FormattedMessage, useIntl } from "react-intl";

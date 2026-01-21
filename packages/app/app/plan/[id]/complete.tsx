@@ -1,7 +1,7 @@
+import { analytics } from "@jvidalv/react-analytics";
 import { format } from "date-fns/format";
 import * as ImagePicker from "expo-image-picker";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { analytics } from "@jvidalv/react-analytics";
 import { useState } from "react";
 import { useIntl, FormattedMessage } from "react-intl";
 import { Alert, ScrollView, TouchableOpacity, View, Image } from "react-native";

@@ -4,6 +4,7 @@ import { Elysia, t } from "elysia";
 import { db } from "@/db";
 import {
   summitHasUsersTable,
+  summitReactionTable,
   mountainTable,
   summitTable,
   userTable,
@@ -186,6 +187,116 @@ export const summitRoute = new Elysia({ prefix: "/summit" })
       response: t.Object({
         success: t.Boolean(),
         message: t.String(),
+      }),
+    },
+  )
+  .post(
+    "/reaction",
+    async ({ body, store }) => {
+      const { summitId, emoji } = body;
+
+      const userId = getStoreUser(store).id;
+      if (!userId) {
+        return { success: false, message: "Unauthorized" };
+      }
+
+      // Check if reaction already exists
+      const existingReaction = await db
+        .select()
+        .from(summitReactionTable)
+        .where(
+          and(
+            eq(summitReactionTable.summitId, summitId),
+            eq(summitReactionTable.userId, userId),
+            eq(summitReactionTable.emoji, emoji),
+          ),
+        );
+
+      if (existingReaction.length > 0) {
+        // Remove reaction (toggle off)
+        await db
+          .delete(summitReactionTable)
+          .where(eq(summitReactionTable.id, existingReaction[0].id));
+
+        return { success: true, message: "Reaction removed" };
+      }
+
+      // Add reaction
+      await db.insert(summitReactionTable).values({
+        summitId,
+        userId,
+        emoji,
+      });
+
+      return { success: true, message: "Reaction added" };
+    },
+    {
+      body: t.Object({
+        summitId: t.String(),
+        emoji: t.String(),
+      }),
+      response: t.Object({
+        success: t.Boolean(),
+        message: t.String(),
+      }),
+    },
+  )
+  .get(
+    "/reactions",
+    async ({ query, store }) => {
+      const { summitId } = query;
+
+      const userId = getStoreUser(store).id;
+
+      // Get reaction counts grouped by emoji
+      const reactions = await db
+        .select({
+          emoji: summitReactionTable.emoji,
+          count: count(),
+        })
+        .from(summitReactionTable)
+        .where(eq(summitReactionTable.summitId, summitId))
+        .groupBy(summitReactionTable.emoji);
+
+      // Get user's own reactions for this summit
+      const userReactions = userId
+        ? await db
+            .select({ emoji: summitReactionTable.emoji })
+            .from(summitReactionTable)
+            .where(
+              and(
+                eq(summitReactionTable.summitId, summitId),
+                eq(summitReactionTable.userId, userId),
+              ),
+            )
+        : [];
+
+      return {
+        success: true,
+        message: {
+          reactions: reactions.map((r) => ({
+            emoji: r.emoji,
+            count: Number(r.count),
+          })),
+          userReactions: userReactions.map((r) => r.emoji),
+        },
+      };
+    },
+    {
+      query: t.Object({
+        summitId: t.String(),
+      }),
+      response: t.Object({
+        success: t.Boolean(),
+        message: t.Object({
+          reactions: t.Array(
+            t.Object({
+              emoji: t.String(),
+              count: t.Number(),
+            }),
+          ),
+          userReactions: t.Array(t.String()),
+        }),
       }),
     },
   );

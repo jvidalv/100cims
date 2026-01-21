@@ -15,7 +15,7 @@ export type OptionalAuthUser = {
 export async function getOptionalUser(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   jwt: { verify: (token?: string) => Promise<any> },
-  token: string | undefined
+  token: string | undefined,
 ): Promise<OptionalAuthUser> {
   if (!token) {
     return null;

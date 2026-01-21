@@ -8,7 +8,10 @@ import {
   challengeTable,
   mountainTable,
 } from "@/db/schema";
-import { DEFAULT_CHALLENGE_ID, resolveChallengeId } from "@/api/routes/@shared/challenge";
+import {
+  DEFAULT_CHALLENGE_ID,
+  resolveChallengeId,
+} from "@/api/routes/@shared/challenge";
 import { JWT } from "@/api/routes/@shared/jwt";
 import { getOptionalUser } from "@/api/routes/@shared/optional-auth";
 import { SuccessResponse } from "@/api/schemas/common.schema";
@@ -31,19 +34,17 @@ export const activeRoute = new Elysia()
           slug: challengeTable.slug,
           country: challengeTable.country,
           creatorId: challengeTable.creatorId,
-          totalMountains:
-            sql<string>`COUNT(DISTINCT ${challengeHasMountainTable.mountainId})`,
-          totalEssentialMountains:
-            sql<string>`COALESCE(SUM(CASE WHEN ${mountainTable.essential} THEN 1 ELSE 0 END), 0)`,
+          totalMountains: sql<string>`COUNT(DISTINCT ${challengeHasMountainTable.mountainId})`,
+          totalEssentialMountains: sql<string>`COALESCE(SUM(CASE WHEN ${mountainTable.essential} THEN 1 ELSE 0 END), 0)`,
         })
         .from(challengeTable)
         .leftJoin(
           challengeHasMountainTable,
-          eq(challengeTable.id, challengeHasMountainTable.challengeId)
+          eq(challengeTable.id, challengeHasMountainTable.challengeId),
         )
         .leftJoin(
           mountainTable,
-          eq(challengeHasMountainTable.mountainId, mountainTable.id)
+          eq(challengeHasMountainTable.mountainId, mountainTable.id),
         )
         .where(eq(challengeTable.id, challengeId))
         .groupBy(challengeTable.id);
@@ -74,19 +75,17 @@ export const activeRoute = new Elysia()
           name: challengeTable.name,
           slug: challengeTable.slug,
           country: challengeTable.country,
-          totalMountains:
-            sql<string>`COUNT(DISTINCT ${challengeHasMountainTable.mountainId})`,
-          totalEssentialMountains:
-            sql<string>`COALESCE(SUM(CASE WHEN ${mountainTable.essential} THEN 1 ELSE 0 END), 0)`,
+          totalMountains: sql<string>`COUNT(DISTINCT ${challengeHasMountainTable.mountainId})`,
+          totalEssentialMountains: sql<string>`COALESCE(SUM(CASE WHEN ${mountainTable.essential} THEN 1 ELSE 0 END), 0)`,
         })
         .from(challengeTable)
         .leftJoin(
           challengeHasMountainTable,
-          eq(challengeTable.id, challengeHasMountainTable.challengeId)
+          eq(challengeTable.id, challengeHasMountainTable.challengeId),
         )
         .leftJoin(
           mountainTable,
-          eq(challengeHasMountainTable.mountainId, mountainTable.id)
+          eq(challengeHasMountainTable.mountainId, mountainTable.id),
         )
         .where(eq(challengeTable.id, DEFAULT_CHALLENGE_ID))
         .groupBy(challengeTable.id);
@@ -110,5 +109,5 @@ export const activeRoute = new Elysia()
     },
     {
       response: SuccessResponse(ActiveChallengeSchema),
-    }
+    },
   );

@@ -1,4 +1,5 @@
 import { format } from "date-fns/format";
+import * as Haptics from "expo-haptics";
 import { Link, Redirect, useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
@@ -24,11 +25,15 @@ import { useBottomDrawer } from "@/components/ui/molecules/bottom-drawer";
 import {
   useDeleteSummitMutation,
   useSummitGet,
+  useSummitReactions,
+  useSummitReactionMutation,
   useUpdateSummitMutation,
 } from "@/domains/summit/summit.api";
 import { useUserMe } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
 import { getInitials } from "@/lib/strings";
+
+const REACTION_EMOJIS = ["❤️", "👍🏽", "💪🏽", "🐶", "🧨"] as const;
 
 const Content = () => {
   const intl = useIntl();
@@ -39,6 +44,8 @@ const Content = () => {
   const { data: me } = useUserMe();
   const { mutateAsync: deleteSummit } = useDeleteSummitMutation();
   const { mutateAsync: updateSummit } = useUpdateSummitMutation();
+  const { data: reactionsData } = useSummitReactions({ summitId: summit });
+  const { mutate: toggleReaction } = useSummitReactionMutation();
 
   const [isDrawerOpen, setIsDrawerOpen] = useBottomDrawer();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -196,7 +203,7 @@ const Content = () => {
           </View>
         </View>
         <Pressable
-          className="mb-6 overflow-hidden rounded-lg"
+          className="overflow-hidden rounded-lg"
           onPress={() => openPreview({ uri: data.summitImageUrl })}
         >
           <Image
@@ -205,9 +212,48 @@ const Content = () => {
             resizeMode="cover"
           />
         </Pressable>
-        <Button intent="ghost" onPress={router.back}>
-          <FormattedMessage defaultMessage="Go back" />
-        </Button>
+        <View className="flex-row justify-center gap-2 px-6 py-4">
+          {REACTION_EMOJIS.map((emoji) => {
+            const reactionCount =
+              reactionsData?.reactions.find((r) => r.emoji === emoji)?.count ?? 0;
+            const hasUserReacted = reactionsData?.userReactions.includes(emoji);
+
+            return (
+              <TouchableOpacity
+                key={emoji}
+                onPress={() => {
+                  void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  toggleReaction({ summitId: summit, emoji });
+                }}
+                className={`flex-row items-center gap-1 rounded-full border px-3 py-1.5 ${
+                  hasUserReacted
+                    ? "border-primary bg-primary/10"
+                    : "border-border bg-background"
+                } ${reactionCount === 0 ? "opacity-50" : ""}`}
+              >
+                <ThemedText className="text-lg">{emoji}</ThemedText>
+                {reactionCount > 0 && (
+                  <ThemedText
+                    className={`text-lg font-bold ${
+                      hasUserReacted ? "text-primary" : "text-muted-foreground"
+                    }`}
+                  >
+                    {reactionCount}
+                  </ThemedText>
+                )}
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+        <TouchableOpacity
+          onPress={router.back}
+          className="flex-row items-center justify-center gap-2 p-4"
+        >
+          <Icon name="arrow.left" size={18} muted />
+          <ThemedText className="text-lg text-muted-foreground">
+            <FormattedMessage defaultMessage="Back" />
+          </ThemedText>
+        </TouchableOpacity>
       </ScrollView>
       <BottomDrawer
         isOpen={isDrawerOpen}

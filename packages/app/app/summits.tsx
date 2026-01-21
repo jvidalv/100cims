@@ -2,9 +2,9 @@ import { useRouter } from "expo-router";
 import { FormattedMessage } from "react-intl";
 import { View, ScrollView } from "react-native";
 
+import { SummitCard } from "@/components/summit";
 import { Skeleton, ThemedText, ThemedView } from "@/components/ui/atoms";
 import { ScreenHeader } from "@/components/ui/molecules";
-import { SummitCard } from "@/components/summit";
 import { useSummitsGet } from "@/domains/summit/summit.api";
 
 export default function SummitsScreen() {

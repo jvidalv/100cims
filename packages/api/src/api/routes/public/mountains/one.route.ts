@@ -45,5 +45,5 @@ export const oneRoute = new Elysia().get(
         imageUrl: t.Nullable(t.String()),
       }),
     }),
-  }
+  },
 );

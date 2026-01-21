@@ -90,7 +90,7 @@ export const CommunityChallengeDetailSchema = t.Object({
       longitude: t.String(),
       imageUrl: t.Union([t.String(), t.Null()]),
       essential: t.Boolean(),
-    })
+    }),
   ),
 });
 

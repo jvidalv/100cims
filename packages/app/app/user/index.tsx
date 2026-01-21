@@ -1,6 +1,6 @@
+import { analytics } from "@jvidalv/react-analytics";
 import * as Application from "expo-application";
 import { Link, useRouter } from "expo-router";
-import { analytics } from "@jvidalv/react-analytics";
 import { Fragment } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Alert, TouchableOpacity, View } from "react-native";

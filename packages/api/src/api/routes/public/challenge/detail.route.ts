@@ -37,8 +37,11 @@ export const detailRoute = new Elysia().get(
         and(
           eq(challengeTable.id, query.id),
           // Allow official challenges (creatorId IS NULL) OR public community challenges
-          or(isNull(challengeTable.creatorId), eq(challengeTable.isPublic, true))
-        )
+          or(
+            isNull(challengeTable.creatorId),
+            eq(challengeTable.isPublic, true),
+          ),
+        ),
       );
 
     if (!challenge) {
@@ -62,7 +65,7 @@ export const detailRoute = new Elysia().get(
       .from(mountainTable)
       .innerJoin(
         challengeHasMountainTable,
-        eq(mountainTable.id, challengeHasMountainTable.mountainId)
+        eq(mountainTable.id, challengeHasMountainTable.mountainId),
       )
       .where(eq(challengeHasMountainTable.challengeId, query.id))
       .orderBy(desc(sql`CAST(${mountainTable.height} AS FLOAT)`));
@@ -71,47 +74,74 @@ export const detailRoute = new Elysia().get(
     const totalMountains = mountains.length;
 
     // Fetch users who have summited mountains in this challenge, with summit count
-    const usersWithSummits = await db
-      .select({
-        id: userTable.id,
-        firstName: userTable.firstName,
-        lastName: userTable.lastName,
-        imageUrl: userTable.imageUrl,
-        summitCount: sql<number>`COUNT(DISTINCT ${summitTable.id})`.as(
-          "summitCount"
-        ),
-      })
-      .from(userTable)
-      .innerJoin(
-        summitHasUsersTable,
-        eq(userTable.id, summitHasUsersTable.userId)
-      )
-      .innerJoin(
-        summitTable,
-        eq(summitHasUsersTable.summitId, summitTable.id)
-      )
-      .innerJoin(
-        mountainTable,
-        eq(summitTable.mountainId, mountainTable.id)
-      )
-      .innerJoin(
-        challengeHasMountainTable,
-        eq(mountainTable.id, challengeHasMountainTable.mountainId)
-      )
-      .where(
-        and(
-          eq(challengeHasMountainTable.challengeId, query.id),
-          eq(summitTable.validated, true)
+    // Run count and list queries in parallel
+    const [usersWithSummits, totalUsersResult] = await Promise.all([
+      db
+        .select({
+          id: userTable.id,
+          firstName: userTable.firstName,
+          lastName: userTable.lastName,
+          imageUrl: userTable.imageUrl,
+          summitCount: sql<number>`COUNT(DISTINCT ${summitTable.id})`.as(
+            "summitCount",
+          ),
+        })
+        .from(userTable)
+        .innerJoin(
+          summitHasUsersTable,
+          eq(userTable.id, summitHasUsersTable.userId),
         )
-      )
-      .groupBy(
-        userTable.id,
-        userTable.firstName,
-        userTable.lastName,
-        userTable.imageUrl
-      )
-      .orderBy(desc(sql`COUNT(DISTINCT ${summitTable.id})`))
-      .limit(101); // Get 101 to know if there are more than 100
+        .innerJoin(
+          summitTable,
+          eq(summitHasUsersTable.summitId, summitTable.id),
+        )
+        .innerJoin(mountainTable, eq(summitTable.mountainId, mountainTable.id))
+        .innerJoin(
+          challengeHasMountainTable,
+          eq(mountainTable.id, challengeHasMountainTable.mountainId),
+        )
+        .where(
+          and(
+            eq(challengeHasMountainTable.challengeId, query.id),
+            eq(summitTable.validated, true),
+          ),
+        )
+        .groupBy(
+          userTable.id,
+          userTable.firstName,
+          userTable.lastName,
+          userTable.imageUrl,
+        )
+        .orderBy(desc(sql`COUNT(DISTINCT ${summitTable.id})`))
+        .limit(100),
+      // Count total unique users
+      db
+        .select({
+          count: sql<number>`COUNT(DISTINCT ${userTable.id})`.as("count"),
+        })
+        .from(userTable)
+        .innerJoin(
+          summitHasUsersTable,
+          eq(userTable.id, summitHasUsersTable.userId),
+        )
+        .innerJoin(
+          summitTable,
+          eq(summitHasUsersTable.summitId, summitTable.id),
+        )
+        .innerJoin(mountainTable, eq(summitTable.mountainId, mountainTable.id))
+        .innerJoin(
+          challengeHasMountainTable,
+          eq(mountainTable.id, challengeHasMountainTable.mountainId),
+        )
+        .where(
+          and(
+            eq(challengeHasMountainTable.challengeId, query.id),
+            eq(summitTable.validated, true),
+          ),
+        ),
+    ]);
+
+    const totalUsers = Number(totalUsersResult[0]?.count || 0);
 
     return {
       success: true,
@@ -126,6 +156,7 @@ export const detailRoute = new Elysia().get(
         isOfficial,
         isPublic: challenge.isPublic,
         totalMountains,
+        totalUsers,
         mountains: mountains.slice(0, 3).map((m) => ({
           id: m.id,
           name: m.name,
@@ -153,5 +184,5 @@ export const detailRoute = new Elysia().get(
       200: SuccessResponse(PublicChallengeDetailSchema),
       404: ErrorFieldResponse,
     },
-  }
+  },
 );
