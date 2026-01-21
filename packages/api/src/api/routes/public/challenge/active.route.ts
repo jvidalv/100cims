@@ -1,4 +1,3 @@
-import { bearer } from "@elysiajs/bearer";
 import { eq, sql } from "drizzle-orm";
 import { Elysia } from "elysia";
 
@@ -13,17 +12,19 @@ import {
   resolveChallengeId,
 } from "@/api/routes/@shared/challenge";
 import { JWT } from "@/api/routes/@shared/jwt";
-import { getOptionalUser } from "@/api/routes/@shared/optional-auth";
+import {
+  getBearerToken,
+  getOptionalUser,
+} from "@/api/routes/@shared/optional-auth";
 import { SuccessResponse } from "@/api/schemas/common.schema";
 import { ActiveChallengeSchema } from "@/api/schemas/challenge.schema";
 
 export const activeRoute = new Elysia()
   .use(JWT())
-  .use(bearer())
   .get(
     "/active",
-    async ({ jwt, bearer }) => {
-      const optionalUser = await getOptionalUser(jwt, bearer);
+    async ({ jwt, headers }) => {
+      const optionalUser = await getOptionalUser(jwt, getBearerToken(headers));
       const challengeId = resolveChallengeId(undefined, optionalUser);
 
       // Query the challenge (official or community)
