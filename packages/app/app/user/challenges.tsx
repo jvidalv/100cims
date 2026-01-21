@@ -1,3 +1,4 @@
+import { analytics } from "@jvidalv/react-analytics";
 import { Link, Redirect, useRouter } from "expo-router";
 import { useMemo } from "react";
 import { FormattedMessage } from "react-intl";
@@ -5,6 +6,7 @@ import { ScrollView, TouchableOpacity, View } from "react-native";
 
 import { useAuth } from "@/components/providers/auth-provider";
 import {
+  ActivityIndicator,
   Icon,
   Skeleton,
   ThemedText,
@@ -14,6 +16,7 @@ import { ChallengeListItem, ScreenHeader } from "@/components/ui/molecules";
 import { useActiveChallenge } from "@/domains/challenge/challenge.api";
 import { countryToEmoji } from "@/domains/challenge/challenge.model";
 import { useCommunityChallengesList } from "@/domains/community-challenge/community-challenge.api";
+import { useUpdateUserMeMutation } from "@/domains/user/user.api";
 import { isAndroid } from "@/lib/device";
 
 export default function UserChallengesScreen() {
@@ -24,6 +27,16 @@ export default function UserChallengesScreen() {
     filter: "mine",
   });
   const { data: activeChallenge } = useActiveChallenge();
+  const {
+    mutateAsync: updateUser,
+    isPending: isUpdating,
+    variables,
+  } = useUpdateUserMeMutation();
+
+  const onChallengeSelect = async (id: string) => {
+    analytics.action("selected-challenge", { challengeId: id });
+    await updateUser({ activeChallengeId: id });
+  };
 
   const { publicChallenges, privateChallenges } = useMemo(() => {
     const publicList = challenges?.filter((c) => c.isPublic) ?? [];
@@ -96,14 +109,17 @@ export default function UserChallengesScreen() {
                 totalMountains={item.totalMountains}
                 index={index}
                 isSelected={activeChallenge?.id === item.id}
-                onPress={() =>
+                onPress={() => onChallengeSelect(item.id)}
+                onEditPress={() =>
                   router.push({
                     pathname: "/community-challenge/[id]/edit",
                     params: { id: item.id },
                   })
                 }
                 rightElement={
-                  Number(item.totalUsers) > 0 ? (
+                  isUpdating && variables?.activeChallengeId === item.id ? (
+                    <ActivityIndicator className="opacity-30" />
+                  ) : Number(item.totalUsers) > 0 ? (
                     <View className="flex-row items-center gap-1">
                       <ThemedText className="font-medium text-muted-foreground">
                         {item.totalUsers}
@@ -131,14 +147,17 @@ export default function UserChallengesScreen() {
                 totalMountains={item.totalMountains}
                 index={publicChallenges.length + index}
                 isSelected={activeChallenge?.id === item.id}
-                onPress={() =>
+                onPress={() => onChallengeSelect(item.id)}
+                onEditPress={() =>
                   router.push({
                     pathname: "/community-challenge/[id]/edit",
                     params: { id: item.id },
                   })
                 }
                 rightElement={
-                  Number(item.totalUsers) > 0 ? (
+                  isUpdating && variables?.activeChallengeId === item.id ? (
+                    <ActivityIndicator className="opacity-30" />
+                  ) : Number(item.totalUsers) > 0 ? (
                     <View className="flex-row items-center gap-1">
                       <ThemedText className="font-medium text-muted-foreground">
                         {item.totalUsers}

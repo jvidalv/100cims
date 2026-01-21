@@ -20,7 +20,7 @@ import {
 } from "@/domains/challenge/challenge.api";
 import { countryToEmoji } from "@/domains/challenge/challenge.model";
 import { useCommunityChallengesList } from "@/domains/community-challenge/community-challenge.api";
-import { useUpdateUserMeMutation } from "@/domains/user/user.api";
+import { useUpdateUserMeMutation, useUserMe } from "@/domains/user/user.api";
 import { isAndroid } from "@/lib/device";
 
 type Tab = "official" | "community";
@@ -32,6 +32,7 @@ export default function ChallengesScreen() {
   const { data: challenge } = useActiveChallenge();
   const { data: officialChallenges } = useChallengesGet();
   const { data: communityChallenges } = useCommunityChallengesList();
+  const { data: user } = useUserMe();
   const {
     mutateAsync: updateUser,
     isPending,
@@ -124,6 +125,10 @@ export default function ChallengesScreen() {
               ? challenge.emoji
               : countryToEmoji(challenge.country);
 
+          // Check if user owns this community challenge
+          const isOwner =
+            "creatorId" in challenge && challenge.creatorId === user?.id;
+
           return (
             <ChallengeListItem
               key={challenge.id}
@@ -133,6 +138,15 @@ export default function ChallengesScreen() {
               index={index}
               isSelected={activeChallengeId === challenge.id}
               onPress={() => onChallengeSelect(challenge.id)}
+              onEditPress={
+                isOwner
+                  ? () =>
+                      router.push({
+                        pathname: "/community-challenge/[id]/edit",
+                        params: { id: challenge.id },
+                      })
+                  : undefined
+              }
               rightElement={
                 isPending && variables?.activeChallengeId === challenge.id ? (
                   <ActivityIndicator className="opacity-30" />

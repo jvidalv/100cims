@@ -11,6 +11,7 @@ type ChallengeListItemProps = {
   index: number;
   isSelected?: boolean;
   onPress: () => void;
+  onEditPress?: () => void;
   rightElement?: ReactNode;
 };
 
@@ -21,36 +22,47 @@ export function ChallengeListItem({
   index,
   isSelected,
   onPress,
+  onEditPress,
   rightElement,
 }: ChallengeListItemProps) {
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      className="flex-row items-center gap-4 rounded-xl border-2 border-border p-2"
-    >
-      <View
-        className="size-12 items-center justify-center rounded-lg"
-        style={{
-          backgroundColor:
-            pastelColors[index % pastelColors.length]?.bg || "#BAE1FF",
-        }}
+    <View className="flex-row items-center gap-2">
+      <TouchableOpacity
+        onPress={onPress}
+        className="flex-1 flex-row items-center gap-4 rounded-xl border-2 border-border p-2"
       >
-        <ThemedText>{emoji || "🏔️"}</ThemedText>
-      </View>
-      <View className="flex-1">
-        <ThemedText
-          className={`text-xl font-black tracking-tighter ${isSelected ? "text-primary" : ""}`}
+        <View
+          className="size-12 items-center justify-center rounded-lg"
+          style={{
+            backgroundColor:
+              pastelColors[index % pastelColors.length]?.bg || "#BAE1FF",
+          }}
         >
-          {name}
-        </ThemedText>
-        <View className="flex-row items-center gap-1">
-          <Icon name="mountain.2.fill" muted size={18} />
-          <ThemedText className="font-medium text-muted-foreground">
-            {totalMountains}
-          </ThemedText>
+          <ThemedText>{emoji || "🏔️"}</ThemedText>
         </View>
-      </View>
-      {rightElement}
-    </TouchableOpacity>
+        <View className="flex-1">
+          <ThemedText
+            className={`text-xl font-black tracking-tighter ${isSelected ? "text-primary" : ""}`}
+          >
+            {name}
+          </ThemedText>
+          <View className="flex-row items-center gap-1">
+            <Icon name="mountain.2.fill" muted size={18} />
+            <ThemedText className="font-medium text-muted-foreground">
+              {totalMountains}
+            </ThemedText>
+          </View>
+        </View>
+        {rightElement}
+      </TouchableOpacity>
+      {onEditPress && (
+        <TouchableOpacity
+          onPress={onEditPress}
+          className="h-full items-center justify-center rounded-xl border-2 border-border px-3"
+        >
+          <Icon name="pencil" size={18} />
+        </TouchableOpacity>
+      )}
+    </View>
   );
 }
