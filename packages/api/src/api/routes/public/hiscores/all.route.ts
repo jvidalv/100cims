@@ -14,7 +14,7 @@ import { resolveChallengeId } from "@/api/routes/@shared/challenge";
 import { JWT } from "@/api/routes/@shared/jwt";
 import { getOptionalUser } from "@/api/routes/@shared/optional-auth";
 import { SuccessResponse } from "@/api/schemas/common.schema";
-import { PaginatedHiscoresSchema } from "@/api/schemas/hiscores.schema";
+import { HiscoresResponseSchema } from "@/api/schemas/hiscores.schema";
 
 const DEFAULT_PAGE_SIZE = 50;
 
@@ -130,10 +130,19 @@ export const allRoute = new Elysia()
         };
       }
 
-      // No pagination - return all results (backwards compatible)
+      // No pagination - return all results
       const results = await baseQuery;
-      const totalItems = results.length;
 
+      // Old app passes challengeId explicitly - return old format (array directly)
+      if (query.challengeId) {
+        return {
+          success: true,
+          message: results,
+        };
+      }
+
+      // New app without pagination params - return paginated format
+      const totalItems = results.length;
       return {
         success: true,
         message: {
@@ -154,6 +163,6 @@ export const allRoute = new Elysia()
         page: t.Optional(t.Number()),
         limit: t.Optional(t.Number()),
       }),
-      response: SuccessResponse(PaginatedHiscoresSchema),
+      response: SuccessResponse(HiscoresResponseSchema),
     },
   );

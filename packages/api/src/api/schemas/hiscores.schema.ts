@@ -32,3 +32,11 @@ export const PaginatedHiscoresSchema = t.Object({
     hasMore: t.Boolean(),
   }),
 });
+
+/**
+ * Schema for hiscores response (supports both old array format and new paginated format)
+ */
+export const HiscoresResponseSchema = t.Union([
+  HiscoresArraySchema,
+  PaginatedHiscoresSchema,
+]);
