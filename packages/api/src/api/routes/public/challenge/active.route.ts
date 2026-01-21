@@ -36,7 +36,7 @@ export const activeRoute = new Elysia()
           country: challengeTable.country,
           creatorId: challengeTable.creatorId,
           totalMountains: sql<string>`COUNT(DISTINCT ${challengeHasMountainTable.mountainId})`,
-          totalEssentialMountains: sql<string>`COALESCE(SUM(CASE WHEN ${mountainTable.essential} THEN 1 ELSE 0 END), 0)`,
+          totalEssentialMountains: sql<string>`COUNT(DISTINCT CASE WHEN ${mountainTable.essential} THEN ${mountainTable.id} ELSE NULL END)`,
         })
         .from(challengeTable)
         .leftJoin(
@@ -77,7 +77,7 @@ export const activeRoute = new Elysia()
           slug: challengeTable.slug,
           country: challengeTable.country,
           totalMountains: sql<string>`COUNT(DISTINCT ${challengeHasMountainTable.mountainId})`,
-          totalEssentialMountains: sql<string>`COALESCE(SUM(CASE WHEN ${mountainTable.essential} THEN 1 ELSE 0 END), 0)`,
+          totalEssentialMountains: sql<string>`COUNT(DISTINCT CASE WHEN ${mountainTable.essential} THEN ${mountainTable.id} ELSE NULL END)`,
         })
         .from(challengeTable)
         .leftJoin(
