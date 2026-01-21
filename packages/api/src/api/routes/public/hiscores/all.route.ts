@@ -1,5 +1,5 @@
 import { bearer } from "@elysiajs/bearer";
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, count, desc, eq, sql } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 
 import { db } from "@/db";
@@ -14,7 +14,9 @@ import { resolveChallengeId } from "@/api/routes/@shared/challenge";
 import { JWT } from "@/api/routes/@shared/jwt";
 import { getOptionalUser } from "@/api/routes/@shared/optional-auth";
 import { SuccessResponse } from "@/api/schemas/common.schema";
-import { HiscoresArraySchema } from "@/api/schemas/hiscores.schema";
+import { PaginatedHiscoresSchema } from "@/api/schemas/hiscores.schema";
+
+const DEFAULT_PAGE_SIZE = 50;
 
 export const allRoute = new Elysia()
   .use(JWT())
@@ -26,7 +28,19 @@ export const allRoute = new Elysia()
       // Priority: query.challengeId > user.activeChallengeId > DEFAULT_CHALLENGE_ID
       const challengeId = resolveChallengeId(query.challengeId, optionalUser);
 
-      const results = await db
+      // Pagination is only applied when page or limit is explicitly provided
+      const isPaginated = query.page !== undefined || query.limit !== undefined;
+      const page = query.page ?? 1;
+      const pageSize = query.limit ?? DEFAULT_PAGE_SIZE;
+      const offset = (page - 1) * pageSize;
+
+      const whereCondition = and(
+        eq(summitTable.validated, true),
+        eq(userTable.visibleOnHiscores, true),
+        eq(challengeHasMountainTable.challengeId, challengeId),
+      );
+
+      const baseQuery = db
         .select({
           userId: userTable.id,
           firstName: userTable.firstName,
@@ -36,11 +50,11 @@ export const allRoute = new Elysia()
             (${summitHasUsersTable.summitId})`.as("summitsCount"),
           uniquePeaksCount:
             sql<string>`COUNT(DISTINCT ${summitTable.mountainId})`.as(
-              "uniquePeaksCount"
+              "uniquePeaksCount",
             ),
           essentialPeaksCount:
             sql<string>`COUNT(DISTINCT CASE WHEN ${mountainTable.essential} THEN ${summitTable.mountainId} ELSE NULL END)`.as(
-              "essentialPeaksCount"
+              "essentialPeaksCount",
             ),
           totalScore: sql<number>`SUM(
         (CAST(${mountainTable.height} AS FLOAT) / 10) *
@@ -50,43 +64,96 @@ export const allRoute = new Elysia()
         .from(userTable)
         .leftJoin(
           summitHasUsersTable,
-          eq(userTable.id, summitHasUsersTable.userId)
+          eq(userTable.id, summitHasUsersTable.userId),
         )
         .leftJoin(summitTable, eq(summitHasUsersTable.summitId, summitTable.id))
         .leftJoin(mountainTable, eq(summitTable.mountainId, mountainTable.id))
         .leftJoin(
           challengeHasMountainTable,
-          eq(mountainTable.id, challengeHasMountainTable.mountainId)
+          eq(mountainTable.id, challengeHasMountainTable.mountainId),
         )
-        .where(
-          and(
-            eq(summitTable.validated, true),
-            eq(userTable.visibleOnHiscores, true),
-            eq(challengeHasMountainTable.challengeId, challengeId)
-          )
-        )
+        .where(whereCondition)
         .groupBy(
           userTable.id,
           userTable.username,
           userTable.firstName,
           userTable.lastName,
-          userTable.imageUrl
+          userTable.imageUrl,
         )
         .orderBy(
           desc(
-            sql`SUM((CAST(${mountainTable.height} AS FLOAT) / 10) *CASE WHEN ${mountainTable.essential} THEN 2 ELSE 1 END)`
-          )
+            sql`SUM((CAST(${mountainTable.height} AS FLOAT) / 10) *CASE WHEN ${mountainTable.essential} THEN 2 ELSE 1 END)`,
+          ),
         );
+
+      // If paginated, run count query in parallel; otherwise just get all results
+      if (isPaginated) {
+        const [countResult, results] = await Promise.all([
+          db
+            .select({ count: count(sql`DISTINCT ${userTable.id}`) })
+            .from(userTable)
+            .leftJoin(
+              summitHasUsersTable,
+              eq(userTable.id, summitHasUsersTable.userId),
+            )
+            .leftJoin(
+              summitTable,
+              eq(summitHasUsersTable.summitId, summitTable.id),
+            )
+            .leftJoin(
+              mountainTable,
+              eq(summitTable.mountainId, mountainTable.id),
+            )
+            .leftJoin(
+              challengeHasMountainTable,
+              eq(mountainTable.id, challengeHasMountainTable.mountainId),
+            )
+            .where(whereCondition),
+          baseQuery.limit(pageSize).offset(offset),
+        ]);
+
+        const totalItems = Number(countResult[0]?.count ?? 0);
+        const totalPages = Math.ceil(totalItems / pageSize);
+
+        return {
+          success: true,
+          message: {
+            items: results,
+            pagination: {
+              page,
+              pageSize,
+              totalItems,
+              totalPages,
+              hasMore: page < totalPages,
+            },
+          },
+        };
+      }
+
+      // No pagination - return all results (backwards compatible)
+      const results = await baseQuery;
+      const totalItems = results.length;
 
       return {
         success: true,
-        message: results,
+        message: {
+          items: results,
+          pagination: {
+            page: 1,
+            pageSize: totalItems,
+            totalItems,
+            totalPages: 1,
+            hasMore: false,
+          },
+        },
       };
     },
     {
       query: t.Object({
         challengeId: t.Optional(t.String()),
+        page: t.Optional(t.Number()),
+        limit: t.Optional(t.Number()),
       }),
-      response: SuccessResponse(HiscoresArraySchema),
-    }
+      response: SuccessResponse(PaginatedHiscoresSchema),
+    },
   );

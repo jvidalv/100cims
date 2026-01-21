@@ -2,7 +2,7 @@ import { analytics } from "@jvidalv/react-analytics";
 import { Link, useRouter } from "expo-router";
 import { useEffect } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, TouchableOpacity, View } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedScrollHandler,
@@ -22,8 +22,8 @@ import {
 import { BottomDrawer, ScreenHeader } from "@/components/ui/molecules";
 import { useBottomDrawer } from "@/components/ui/molecules/bottom-drawer";
 import { Colors } from "@/constants/colors";
-import { useHiscoresGet } from "@/domains/hiscores/hiscores.api";
 import { useActiveChallenge } from "@/domains/challenge/challenge.api";
+import { useHiscoresGet } from "@/domains/hiscores/hiscores.api";
 import { useUserMe } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
 import { getInitials } from "@/lib/strings";
@@ -32,8 +32,16 @@ export default function HiscoresScreen() {
   const intl = useIntl();
   const router = useRouter();
   const { data: user } = useUserMe();
-  const { data: hiscores, isPending: isPendingHiscores } = useHiscoresGet();
+  const {
+    data: hiscoresData,
+    isPending: isPendingHiscores,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useHiscoresGet();
   const { data: challenge } = useActiveChallenge();
+
+  const hiscores = hiscoresData?.pages?.flatMap((p) => p?.items ?? []) ?? [];
 
   const [isOpen, setIsOpen] = useBottomDrawer();
   const isVisibleOnHiscores = user?.visibleOnHiscores;
@@ -77,10 +85,16 @@ export default function HiscoresScreen() {
     <ThemedView className="flex-1">
       <ScreenHeader />
       <Animated.FlatList
-        data={hiscores ?? []}
+        data={hiscores}
         onScroll={onScroll}
         initialNumToRender={25}
         stickyHeaderIndices={[0]}
+        onEndReached={() => {
+          if (hasNextPage && !isFetchingNextPage) {
+            fetchNextPage();
+          }
+        }}
+        onEndReachedThreshold={0.5}
         ListHeaderComponent={
           <ThemedView className="px-6 pb-2">
             <View className="flex-row items-center gap-2">
@@ -152,7 +166,7 @@ export default function HiscoresScreen() {
                 </View>
               </View>
             )}
-            {!isPendingHiscores && !hiscores?.length && (
+            {!isPendingHiscores && !hiscores.length && (
               <ThemedText className="text-muted-foreground">
                 <FormattedMessage defaultMessage="No one has yet reached the hiscores." />
               </ThemedText>
@@ -160,7 +174,16 @@ export default function HiscoresScreen() {
           </ThemedView>
         }
         scrollEventThrottle={16}
-        ListFooterComponent={<View className="h-32" />}
+        ListFooterComponent={
+          <>
+            {isFetchingNextPage && (
+              <View className="py-4">
+                <ActivityIndicator />
+              </View>
+            )}
+            <View className="h-32" />
+          </>
+        }
         keyExtractor={({ userId }) => `${userId}`}
         renderItem={({
           index,

@@ -18,3 +18,17 @@ export const HiscoreEntrySchema = t.Object({
  * Schema for array of hiscore entries
  */
 export const HiscoresArraySchema = t.Array(HiscoreEntrySchema);
+
+/**
+ * Schema for paginated hiscores response
+ */
+export const PaginatedHiscoresSchema = t.Object({
+  items: HiscoresArraySchema,
+  pagination: t.Object({
+    page: t.Number(),
+    pageSize: t.Number(),
+    totalItems: t.Number(),
+    totalPages: t.Number(),
+    hasMore: t.Boolean(),
+  }),
+});

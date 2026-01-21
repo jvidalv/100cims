@@ -1,5 +1,6 @@
 import { analytics } from "@jvidalv/react-analytics";
-import { format } from "date-fns/format";
+import { formatDistanceToNow } from "date-fns";
+import { ca, es, enUS } from "date-fns/locale";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { FormattedMessage, useIntl } from "react-intl";
 import { View, TouchableOpacity, Image, Share } from "react-native";
@@ -105,23 +106,30 @@ export default function UserScreen() {
         <View className="mx-6 mb-6 gap-3">
           {!!user.town && (
             <View className="flex-row gap-4">
-              <View className="flex-row gap-2">
-                <Icon name="house.circle" muted size={24} />
-                <ThemedText className="text-xl font-medium">
+              <View className="flex-row gap-1.5">
+                <Icon name="house.circle" muted size={18} />
+                <ThemedText className="text-base font-medium">
                   {user?.town}
                 </ThemedText>
               </View>
             </View>
           )}
-          <View className="flex-row gap-2">
-            <Icon name="calendar" muted size={24} />
-            <ThemedText className="text-xl font-medium">
+          <View className="flex-row gap-1.5">
+            <Icon name="calendar" muted size={18} />
+            <ThemedText className="text-base font-medium">
               <FormattedMessage
-                defaultMessage="Joined on {date}"
+                defaultMessage="Member of cims for {duration}"
                 values={{
-                  date: format(
+                  duration: formatDistanceToNow(
                     new Date(user.createdAt as string | number),
-                    "dd MMMM yyyy",
+                    {
+                      locale:
+                        intl.locale === "ca"
+                          ? ca
+                          : intl.locale === "es"
+                            ? es
+                            : enUS,
+                    }
                   ),
                 }}
               />
@@ -129,9 +137,9 @@ export default function UserScreen() {
           </View>
           {userDetails && !!userDetails?.sharedUsers?.length && (
             <View>
-              <View className="mb-1 flex-row gap-2">
-                <Icon name="person.3.fill" muted size={24} />
-                <ThemedText className="text-xl font-medium">
+              <View className="mb-1 flex-row gap-1.5">
+                <Icon name="person.3.fill" muted size={18} />
+                <ThemedText className="text-base font-medium">
                   <FormattedMessage defaultMessage="People" />
                 </ThemedText>
               </View>
@@ -150,9 +158,9 @@ export default function UserScreen() {
           )}
           {challenges && challenges.length > 0 && (
             <View>
-              <View className="mb-1 flex-row gap-2">
-                <Icon name="flag.fill" muted size={24} />
-                <ThemedText className="text-xl font-medium">
+              <View className="mb-2 flex-row gap-1.5">
+                <Icon name="flag.fill" muted size={18} />
+                <ThemedText className="text-base font-medium">
                   <FormattedMessage defaultMessage="Challenges" />
                 </ThemedText>
               </View>
