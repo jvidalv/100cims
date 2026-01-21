@@ -7,6 +7,7 @@ import {
   text,
   timestamp,
   date,
+  unique,
 } from "drizzle-orm/pg-core";
 
 export const challengeTable = pgTable("challenge", {
@@ -196,6 +197,7 @@ export const challengeRelation = relations(challengeTable, ({ one, many }) => ({
 
 export const summitRelations = relations(summitTable, ({ one, many }) => ({
   summitHasUsers: many(summitHasUsersTable),
+  reactions: many(summitReactionTable),
   mountain: one(mountainTable, {
     fields: [summitTable.mountainId],
     references: [mountainTable.id],
@@ -309,3 +311,49 @@ export const planUserMessageReadRelations = relations(
     }),
   }),
 );
+
+export const summitReactionTable = pgTable("summit_reaction", {
+  id: uuid().primaryKey().defaultRandom(),
+  summitId: uuid()
+    .notNull()
+    .references(() => summitTable.id, { onDelete: "cascade" }),
+  userId: uuid()
+    .notNull()
+    .references(() => userTable.id, { onDelete: "cascade" }),
+  emoji: text().notNull(),
+  createdAt: timestamp().notNull().defaultNow(),
+});
+
+export const summitReactionRelations = relations(
+  summitReactionTable,
+  ({ one }) => ({
+    summit: one(summitTable, {
+      fields: [summitReactionTable.summitId],
+      references: [summitTable.id],
+    }),
+    user: one(userTable, {
+      fields: [summitReactionTable.userId],
+      references: [userTable.id],
+    }),
+  }),
+);
+
+export const updateSeenTable = pgTable(
+  "update_seen",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    updateId: text().notNull(),
+    userId: uuid()
+      .references(() => userTable.id, { onDelete: "cascade" })
+      .notNull(),
+    seenAt: timestamp().notNull().defaultNow(),
+  },
+  (table) => [unique().on(table.updateId, table.userId)],
+);
+
+export const updateSeenRelations = relations(updateSeenTable, ({ one }) => ({
+  user: one(userTable, {
+    fields: [updateSeenTable.userId],
+    references: [userTable.id],
+  }),
+}));

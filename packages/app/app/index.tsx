@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/molecules/plan-item-list";
 import { Colors } from "@/constants/colors";
 import { MERCH_PRODUCTS } from "@/constants/merch";
+import { useActiveChallenge } from "@/domains/challenge/challenge.api";
 import {
   useMountains,
   useRecommendedPeaks,
@@ -44,7 +45,7 @@ import {
 import { usePlanChatUnread } from "@/domains/plan/plan-chat.api";
 import { useNewPlansCount, usePlans } from "@/domains/plan/plan.api";
 import { useSummitsGet } from "@/domains/summit/summit.api";
-import { useActiveChallenge } from "@/domains/challenge/challenge.api";
+import { useUnseenUpdates, useMarkUpdateSeen } from "@/domains/update/update.api";
 import {
   useUserMe,
   useUserChallengeSummits,
@@ -362,9 +363,32 @@ const PageHeader = ({
   );
 };
 
+// All available updates - source of truth for update content (oldest first)
+type AppUpdate = {
+  id: string;
+  date: string;
+  actionRoute: "/challenges";
+};
+
+const UPDATES: AppUpdate[] = [
+  {
+    id: "update-002",
+    date: "2025-01-20",
+    actionRoute: "/challenges",
+  },
+  {
+    id: "update-003",
+    date: "2025-01-21",
+    actionRoute: "/challenges",
+  },
+];
+
+const UPDATE_IDS = UPDATES.map((u) => u.id);
+
 export default function IndexScreen() {
   const intl = useIntl();
   const router = useRouter();
+  const { isAuthenticated } = useAuth();
   const recommendedPeaks = useRecommendedPeaks();
   const { refetch: refetchUser } = useUserMe();
   const { refetch: refetchChallengeSummits } = useUserChallengeSummits();
@@ -376,25 +400,48 @@ export default function IndexScreen() {
   const isCurrentRoute = useIsCurrentScreen("/");
   const { showBadge, markAsSeen } = useMapNotificationBadge();
 
-  // Updates dialog state - shows by default for demo
-  const [showUpdatesDialog, setShowUpdatesDialog] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const UPDATES = [
-    {
-      id: "update-002",
-      title: intl.formatMessage({ defaultMessage: "Community challenges" }),
-      body: intl.formatMessage({
-        defaultMessage:
-          "You can now create your own challenges and also your mountains, other people can join these challenges!",
-      }),
-      date: "2025-01-20",
-      actionLabel: intl.formatMessage({ defaultMessage: "Explore" }),
-      actionRoute: "/challenges" as const,
-    },
-  ];
+  // Updates system - fetch unseen updates from API
+  const { data: unseenUpdateIds } = useUnseenUpdates(UPDATE_IDS);
+  const { mutate: markUpdateSeen } = useMarkUpdateSeen();
 
-  const CURRENT_UPDATE = UPDATES[0];
+  // Find the first unseen update to show
+  const currentUnseenUpdate = useMemo(() => {
+    if (!unseenUpdateIds?.length) return null;
+    const unseenId = unseenUpdateIds[0];
+    return UPDATES.find((u) => u.id === unseenId) || null;
+  }, [unseenUpdateIds]);
+
+  // Translated content for the current update
+  const currentUpdateContent = useMemo(() => {
+    if (!currentUnseenUpdate) return null;
+    // Map update IDs to their translated content
+    if (currentUnseenUpdate.id === "update-003") {
+      return {
+        title: intl.formatMessage({ defaultMessage: "Patch notes" }),
+        body: intl.formatMessage({
+          defaultMessage:
+            "Fixed profile image uploads, added Cim de la Dona, new height filters, anonymous photo reactions, and merchandising support!",
+        }),
+        actionLabel: intl.formatMessage({ defaultMessage: "View" }),
+      };
+    }
+    if (currentUnseenUpdate.id === "update-002") {
+      return {
+        title: intl.formatMessage({ defaultMessage: "Community challenges" }),
+        body: intl.formatMessage({
+          defaultMessage:
+            "You can now create your own challenges and also your mountains, other people can join these challenges!",
+        }),
+        actionLabel: intl.formatMessage({ defaultMessage: "Explore" }),
+      };
+    }
+    return null;
+  }, [currentUnseenUpdate, intl]);
+
+  const showUpdatesDialog = isAuthenticated && !!currentUnseenUpdate && !!currentUpdateContent;
+  const hasMoreUnseenUpdates = (unseenUpdateIds?.length ?? 0) > 1;
 
   const onRefresh = useCallback(async () => {
     setIsRefreshing(true);
@@ -406,22 +453,25 @@ export default function IndexScreen() {
     setIsRefreshing(false);
   }, [refetchUser, refetchLatestSummits, refetchChallengeSummits]);
 
-  // Get a random mountain image for the updates dialog
+  // Get a stable image for the updates dialog based on update id
   const updateWithImage = useMemo((): Update | null => {
-    if (!CURRENT_UPDATE) return null;
+    if (!currentUnseenUpdate || !currentUpdateContent) return null;
 
-    const randomImage = mountains?.length
-      ? mountains[Math.floor(Math.random() * mountains.length)].imageUrl
-      : null;
+    // Use update id hash to pick a stable image index
+    const imageIndex = mountains?.length
+      ? currentUnseenUpdate.id.charCodeAt(currentUnseenUpdate.id.length - 1) %
+        mountains.length
+      : 0;
+    const stableImage = mountains?.[imageIndex]?.imageUrl;
 
     return {
-      id: CURRENT_UPDATE.id,
-      title: CURRENT_UPDATE.title,
-      date: CURRENT_UPDATE.date,
-      body: CURRENT_UPDATE.body,
-      imageUrl: randomImage || FALLBACK_UPDATE_IMAGE,
+      id: currentUnseenUpdate.id,
+      title: currentUpdateContent.title,
+      date: currentUnseenUpdate.date,
+      body: currentUpdateContent.body,
+      imageUrl: stableImage || FALLBACK_UPDATE_IMAGE,
     };
-  }, [CURRENT_UPDATE, mountains]);
+  }, [currentUnseenUpdate, currentUpdateContent, mountains]);
 
   useOnAppActive(() => {
     void refetchUser();
@@ -458,13 +508,24 @@ export default function IndexScreen() {
 
   return (
     <ThemedView className="flex-1">
-      {updateWithImage && (
+      {updateWithImage && currentUnseenUpdate && currentUpdateContent && (
         <UpdatesDialog
           update={updateWithImage}
           isOpen={showUpdatesDialog}
-          onClose={() => setShowUpdatesDialog(false)}
-          actionLabel={CURRENT_UPDATE.actionLabel}
-          onAction={() => router.push(CURRENT_UPDATE.actionRoute)}
+          onClose={() => {
+            markUpdateSeen(currentUnseenUpdate.id);
+          }}
+          actionLabel={
+            hasMoreUnseenUpdates
+              ? intl.formatMessage({ defaultMessage: "Next" })
+              : currentUpdateContent.actionLabel
+          }
+          onAction={() => {
+            markUpdateSeen(currentUnseenUpdate.id);
+            if (!hasMoreUnseenUpdates) {
+              router.push(currentUnseenUpdate.actionRoute);
+            }
+          }}
         />
       )}
       <PageHeader
