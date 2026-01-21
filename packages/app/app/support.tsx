@@ -1,9 +1,11 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Redirect } from "expo-router";
 import { useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { View, TouchableOpacity, Image, Pressable } from "react-native";
 import { twMerge } from "tailwind-merge";
 
+import { useAuth } from "@/components/providers/auth-provider";
 import { Button, Icon, ThemedText } from "@/components/ui/atoms";
 import { ImagePreviewModal, useImagePreview } from "@/components/ui/molecules";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
@@ -16,7 +18,12 @@ type Size = "S" | "M" | "L" | "XL";
 
 export default function SupportScreen() {
   const intl = useIntl();
+  const { isAuthenticated } = useAuth();
   const { mutateAsync: submitSuggestion, isPending } = useSubmitSuggestionMutation();
+
+  if (!isAuthenticated) {
+    return <Redirect href="/join" />;
+  }
 
   const productNames: Record<ProductId, string> = {
     "white-shirt": intl.formatMessage({ defaultMessage: "White T-Shirt" }),
