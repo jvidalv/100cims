@@ -49,19 +49,19 @@ export const summitsRoute = new Elysia()
         .innerJoin(mountainTable, eq(summitTable.mountainId, mountainTable.id))
         .innerJoin(
           summitHasUsersTable,
-          eq(summitTable.id, summitHasUsersTable.summitId)
+          eq(summitTable.id, summitHasUsersTable.summitId),
         )
         .leftJoin(userTable, eq(summitHasUsersTable.userId, userTable.id))
         .leftJoin(
           challengeHasMountainTable,
-          eq(mountainTable.id, challengeHasMountainTable.mountainId)
+          eq(mountainTable.id, challengeHasMountainTable.mountainId),
         )
         .where(
           and(
             eq(summitTable.validated, true),
             mountainId ? eq(summitTable.mountainId, mountainId) : undefined,
-            eq(challengeHasMountainTable.challengeId, challengeId)
-          )
+            eq(challengeHasMountainTable.challengeId, challengeId),
+          ),
         )
         .orderBy(desc(summitTable.summitedAt), desc(summitTable.createdAt))
         .limit(limit)
@@ -107,7 +107,7 @@ export const summitsRoute = new Elysia()
             lastName: string | null;
             imageUrl: string | null;
           }[];
-        }[]
+        }[],
       );
 
       return {
@@ -122,5 +122,5 @@ export const summitsRoute = new Elysia()
         limit: t.Optional(t.Nullable(t.Number())),
       }),
       response: SuccessResponse(SummitsArraySchema),
-    }
+    },
   );

@@ -73,5 +73,5 @@ export const mountainLegacyRoute = new Elysia({ prefix: "/mountain" })
         200: SimpleSuccessResponse,
         500: ErrorFieldResponse,
       },
-    }
+    },
   );

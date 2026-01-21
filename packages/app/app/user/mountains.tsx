@@ -4,6 +4,7 @@ import { FlatList, View } from "react-native";
 
 import {
   ActivityIndicator,
+  Icon,
   ThemedKeyboardAvoidingView,
   ThemedText,
 } from "@/components/ui/atoms";
@@ -84,10 +85,23 @@ export default function MyMountainsPage() {
       </View>
 
       {!mountains?.length ? (
-        <View className="flex-1 items-center justify-center px-6">
-          <ThemedText className="text-center text-lg text-muted-foreground">
-            <FormattedMessage defaultMessage="No mountains yet. Create mountains when adding them to challenges." />
-          </ThemedText>
+        <View className="px-6">
+          <View className="relative rounded-xl border-2 border-border p-4">
+            <View className="absolute right-2 top-2">
+              <Icon
+                name="star.fill"
+                color="gold"
+                size={24}
+                animationSpec={{ effect: { type: "bounce" } }}
+              />
+            </View>
+            <ThemedText className="mb-1 font-semibold">
+              <FormattedMessage defaultMessage="Do you know?" />
+            </ThemedText>
+            <ThemedText>
+              <FormattedMessage defaultMessage="No mountains yet. Create mountains when adding them to a challenge." />
+            </ThemedText>
+          </View>
         </View>
       ) : (
         <FlatList

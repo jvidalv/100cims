@@ -65,12 +65,12 @@ export function SummitCard({
           borderTopLeftRadius: 6,
         }}
       />
-      <View className="flex-1 overflow-ellipsis w-full flex-row items-center justify-between gap-4 border border-t-0 border-gray-200 rounded-b-lg dark:border-0 dark:bg-neutral-800 p-2">
-        <View className="flex-1">
+      <View className="w-full flex-row items-center justify-between gap-4 border border-t-0 border-gray-200 rounded-b-lg dark:border-0 dark:bg-neutral-800 p-2">
+        <View className="flex-1 flex-shrink">
           <View className="mb-0.5">
             <ThemedText
               numberOfLines={1}
-              className="text-sm font-medium overflow-ellipsis"
+              className="text-sm font-medium"
             >
               {summit.mountainName}
             </ThemedText>

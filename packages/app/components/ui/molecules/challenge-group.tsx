@@ -63,7 +63,7 @@ export const ChallengeGroup = ({ items, onPress }: ChallengeGroupProps) => {
             onPress={() => onPress?.(item)}
           >
             <View
-              className="flex-row items-center gap-1 rounded-full px-2 py-0.5"
+              className="flex-row items-center gap-1 rounded-md px-2 py-0.5"
               style={{ backgroundColor: bgColor }}
             >
               <Text className="text-sm">{displayEmoji}</Text>

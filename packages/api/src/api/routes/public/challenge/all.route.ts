@@ -29,16 +29,16 @@ export const allRoute = new Elysia().get(
       .from(challengeTable)
       .leftJoin(
         challengeHasMountainTable,
-        eq(challengeTable.id, challengeHasMountainTable.challengeId)
+        eq(challengeTable.id, challengeHasMountainTable.challengeId),
       )
       .leftJoin(
         mountainTable,
-        eq(challengeHasMountainTable.mountainId, mountainTable.id)
+        eq(challengeHasMountainTable.mountainId, mountainTable.id),
       )
       .leftJoin(summitTable, eq(mountainTable.id, summitTable.mountainId))
       .leftJoin(
         summitHasUsersTable,
-        eq(summitTable.id, summitHasUsersTable.summitId)
+        eq(summitTable.id, summitHasUsersTable.summitId),
       )
       // Only return official challenges (creatorId IS NULL) for backwards compatibility
       .where(isNull(challengeTable.creatorId))
@@ -70,5 +70,5 @@ export const allRoute = new Elysia().get(
   },
   {
     response: SuccessResponse(ChallengesArraySchema),
-  }
+  },
 );

@@ -1,4 +1,4 @@
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, isNull, sql } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 
 import { db } from "@/db";
@@ -127,7 +127,10 @@ export const userRoute = new Elysia({ prefix: "/user" })
             summitTable,
             eq(summitHasUsersTable.summitId, summitTable.id),
           )
-          .innerJoin(mountainTable, eq(summitTable.mountainId, mountainTable.id))
+          .innerJoin(
+            mountainTable,
+            eq(summitTable.mountainId, mountainTable.id),
+          )
           .where(eq(summitHasUsersTable.userId, userId))
           .orderBy(summitTable.summitedAt),
 
@@ -141,7 +144,10 @@ export const userRoute = new Elysia({ prefix: "/user" })
             odEssential: mountainTable.essential,
           })
           .from(summitTable)
-          .innerJoin(mountainTable, eq(summitTable.mountainId, mountainTable.id))
+          .innerJoin(
+            mountainTable,
+            eq(summitTable.mountainId, mountainTable.id),
+          )
           .innerJoin(
             summitHasUsersTable,
             eq(summitHasUsersTable.summitId, summitTable.id),
@@ -211,7 +217,7 @@ export const userRoute = new Elysia({ prefix: "/user" })
     async ({ query }) => {
       const userId = query.userId;
 
-      // Get all challenges where the user has summited at least one mountain
+      // Get official challenges where the user has summited at least one mountain
       const results = await db
         .select({
           id: challengeTable.id,
@@ -220,26 +226,30 @@ export const userRoute = new Elysia({ prefix: "/user" })
           country: challengeTable.country,
           emoji: challengeTable.emoji,
           imageUrl: challengeTable.imageUrl,
-          creatorId: challengeTable.creatorId,
           summitCount: sql<number>`COUNT(DISTINCT ${summitTable.id})`.as(
-            "summitCount"
+            "summitCount",
           ),
         })
         .from(summitHasUsersTable)
         .innerJoin(
           summitTable,
-          eq(summitHasUsersTable.summitId, summitTable.id)
+          eq(summitHasUsersTable.summitId, summitTable.id),
         )
         .innerJoin(mountainTable, eq(summitTable.mountainId, mountainTable.id))
         .innerJoin(
           challengeHasMountainTable,
-          eq(mountainTable.id, challengeHasMountainTable.mountainId)
+          eq(mountainTable.id, challengeHasMountainTable.mountainId),
         )
         .innerJoin(
           challengeTable,
-          eq(challengeHasMountainTable.challengeId, challengeTable.id)
+          eq(challengeHasMountainTable.challengeId, challengeTable.id),
         )
-        .where(eq(summitHasUsersTable.userId, userId))
+        .where(
+          and(
+            eq(summitHasUsersTable.userId, userId),
+            isNull(challengeTable.creatorId), // Only official challenges
+          ),
+        )
         .groupBy(
           challengeTable.id,
           challengeTable.name,
@@ -247,7 +257,6 @@ export const userRoute = new Elysia({ prefix: "/user" })
           challengeTable.country,
           challengeTable.emoji,
           challengeTable.imageUrl,
-          challengeTable.creatorId
         )
         .orderBy(desc(sql`COUNT(DISTINCT ${summitTable.id})`));
 
@@ -258,7 +267,7 @@ export const userRoute = new Elysia({ prefix: "/user" })
         country: challenge.country,
         emoji: challenge.emoji,
         imageUrl: challenge.imageUrl,
-        isOfficial: challenge.creatorId === null,
+        isOfficial: true, // Only official challenges are returned
         summitCount: Number(challenge.summitCount),
       }));
 
@@ -272,5 +281,5 @@ export const userRoute = new Elysia({ prefix: "/user" })
         userId: t.String(),
       }),
       response: SuccessResponse(UserChallengesArraySchema),
-    }
+    },
   );

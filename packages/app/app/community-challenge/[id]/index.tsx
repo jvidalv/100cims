@@ -1,10 +1,10 @@
 import { analytics } from "@jvidalv/react-analytics";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { setStatusBarStyle } from "expo-status-bar";
 import { useColorScheme } from "nativewind";
 import { useEffect } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { TouchableOpacity, Image, View, Share } from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
 
 import { useAuth } from "@/components/providers/auth-provider";
 import {
@@ -83,8 +83,9 @@ export default function ChallengeDetailScreen() {
   // Display emoji
   const displayEmoji = challenge?.emoji || (challenge?.country ? countryToEmoji(challenge.country) : "🏔️");
 
-  const usersToShow = challenge?.users?.slice(0, 100) || [];
-  const extraUsersCount = (challenge?.users?.length || 0) > 100 ? (challenge?.users?.length || 0) - 100 : 0;
+  const usersToShow = challenge?.users || [];
+  const totalUsers = challenge?.totalUsers || 0;
+  const extraUsersCount = totalUsers > 100 ? totalUsers - 100 : 0;
 
   const mountainsToShow = challenge?.mountains?.slice(0, 3) || [];
   const extraMountainsCount = (challenge?.totalMountains || 0) > 3 ? (challenge?.totalMountains || 0) - 3 : 0;
@@ -220,7 +221,7 @@ export default function ChallengeDetailScreen() {
           <ThemedText className="text-2xl font-semibold">
             <FormattedMessage defaultMessage="Participants" />
             <ThemedText className="text-lg font-medium text-muted-foreground">
-              {"  "}{challenge.users?.length || 0}
+              {"  "}{totalUsers}
             </ThemedText>
           </ThemedText>
           <View className="flex-row flex-wrap gap-2">

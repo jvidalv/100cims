@@ -35,7 +35,7 @@ export const allRoute = new Elysia()
         .from(mountainTable)
         .innerJoin(
           challengeHasMountainTable,
-          eq(challengeHasMountainTable.mountainId, mountainTable.id)
+          eq(challengeHasMountainTable.mountainId, mountainTable.id),
         )
         .where(eq(challengeHasMountainTable.challengeId, challengeId));
 
@@ -49,5 +49,5 @@ export const allRoute = new Elysia()
         challengeId: t.Optional(t.String()),
       }),
       response: SuccessResponse(MountainsArraySchema),
-    }
+    },
   );

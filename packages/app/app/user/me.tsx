@@ -23,10 +23,10 @@ import {
   useUpdateUserMeMutation,
   useUserMe,
 } from "@/domains/user/user.api";
-import { userKeys } from "@/lib/query-keys";
 import { debounce } from "@/lib/debounce";
 import { IMAGE_TO_BIG } from "@/lib/error-codes";
 import { getImageOptimized } from "@/lib/images";
+import { userKeys } from "@/lib/query-keys";
 
 export default function UserMeScreen() {
   const router = useRouter();

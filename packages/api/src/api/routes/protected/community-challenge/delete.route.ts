@@ -8,57 +8,55 @@ import { JWT } from "@/api/routes/@shared/jwt";
 import { getStoreUser } from "@/api/routes/@shared/store";
 import { ErrorFieldResponse } from "@/api/schemas/common.schema";
 
-export const deleteRoute = new Elysia()
-  .use(JWT())
-  .post(
-    "/delete",
-    async ({ body, store, set }) => {
-      const user = getStoreUser(store);
+export const deleteRoute = new Elysia().use(JWT()).post(
+  "/delete",
+  async ({ body, store, set }) => {
+    const user = getStoreUser(store);
 
-      // Check if challenge exists and user is the creator
-      const existing = await db
-        .select({
-          id: challengeTable.id,
-          creatorId: challengeTable.creatorId,
-        })
-        .from(challengeTable)
-        .where(eq(challengeTable.id, body.id))
-        .limit(1);
+    // Check if challenge exists and user is the creator
+    const existing = await db
+      .select({
+        id: challengeTable.id,
+        creatorId: challengeTable.creatorId,
+      })
+      .from(challengeTable)
+      .where(eq(challengeTable.id, body.id))
+      .limit(1);
 
-      if (!existing.length) {
-        set.status = 404;
-        return { error: "Challenge not found" };
-      }
-
-      if (existing[0].creatorId !== user.id) {
-        set.status = 403;
-        return { error: "Not authorized to delete this challenge" };
-      }
-
-      // Update all users who have this challenge as active to use the default challenge
-      await db
-        .update(userTable)
-        .set({ activeChallengeId: DEFAULT_CHALLENGE_ID })
-        .where(eq(userTable.activeChallengeId, body.id));
-
-      await db.delete(challengeTable).where(eq(challengeTable.id, body.id));
-
-      return {
-        success: true,
-        message: "Challenge deleted successfully",
-      };
-    },
-    {
-      body: t.Object({
-        id: t.String(),
-      }),
-      response: {
-        200: t.Object({
-          success: t.Boolean(),
-          message: t.String(),
-        }),
-        403: ErrorFieldResponse,
-        404: ErrorFieldResponse,
-      },
+    if (!existing.length) {
+      set.status = 404;
+      return { error: "Challenge not found" };
     }
-  );
+
+    if (existing[0].creatorId !== user.id) {
+      set.status = 403;
+      return { error: "Not authorized to delete this challenge" };
+    }
+
+    // Update all users who have this challenge as active to use the default challenge
+    await db
+      .update(userTable)
+      .set({ activeChallengeId: DEFAULT_CHALLENGE_ID })
+      .where(eq(userTable.activeChallengeId, body.id));
+
+    await db.delete(challengeTable).where(eq(challengeTable.id, body.id));
+
+    return {
+      success: true,
+      message: "Challenge deleted successfully",
+    };
+  },
+  {
+    body: t.Object({
+      id: t.String(),
+    }),
+    response: {
+      200: t.Object({
+        success: t.Boolean(),
+        message: t.String(),
+      }),
+      403: ErrorFieldResponse,
+      404: ErrorFieldResponse,
+    },
+  },
+);

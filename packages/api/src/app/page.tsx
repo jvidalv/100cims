@@ -114,20 +114,36 @@ export default function Home() {
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
               <div className="p-6 rounded-xl bg-background border">
-                <h3 className="text-xl font-bold mb-2">{t("feature-1-title")}</h3>
-                <p className="text-muted-foreground">{t("feature-1-description")}</p>
+                <h3 className="text-xl font-bold mb-2">
+                  {t("feature-1-title")}
+                </h3>
+                <p className="text-muted-foreground">
+                  {t("feature-1-description")}
+                </p>
               </div>
               <div className="p-6 rounded-xl bg-background border">
-                <h3 className="text-xl font-bold mb-2">{t("feature-2-title")}</h3>
-                <p className="text-muted-foreground">{t("feature-2-description")}</p>
+                <h3 className="text-xl font-bold mb-2">
+                  {t("feature-2-title")}
+                </h3>
+                <p className="text-muted-foreground">
+                  {t("feature-2-description")}
+                </p>
               </div>
               <div className="p-6 rounded-xl bg-background border">
-                <h3 className="text-xl font-bold mb-2">{t("feature-3-title")}</h3>
-                <p className="text-muted-foreground">{t("feature-3-description")}</p>
+                <h3 className="text-xl font-bold mb-2">
+                  {t("feature-3-title")}
+                </h3>
+                <p className="text-muted-foreground">
+                  {t("feature-3-description")}
+                </p>
               </div>
               <div className="p-6 rounded-xl bg-background border">
-                <h3 className="text-xl font-bold mb-2">{t("feature-4-title")}</h3>
-                <p className="text-muted-foreground">{t("feature-4-description")}</p>
+                <h3 className="text-xl font-bold mb-2">
+                  {t("feature-4-title")}
+                </h3>
+                <p className="text-muted-foreground">
+                  {t("feature-4-description")}
+                </p>
               </div>
             </div>
           </div>

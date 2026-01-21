@@ -167,7 +167,7 @@ export const plansRoute = new Elysia({ prefix: "/plans" })
           userId: t.Optional(t.String()),
           sort: t.Optional(t.String()), // "upcoming" or undefined
           challengeId: t.Optional(t.String()),
-        })
+        }),
       ),
       response: SuccessResponse(PlansArraySchema),
     },

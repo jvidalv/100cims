@@ -13,56 +13,54 @@ import {
   ErrorFieldResponse,
 } from "@/api/schemas/common.schema";
 
-export const summitMountainRoute = new Elysia()
-  .use(JWT())
-  .post(
-    "/summit",
-    async ({ body, set }) => {
-      const id = uuidv7();
-      const key = `${process.env.APP_NAME}/mountain/summit/${id}.jpeg`;
+export const summitMountainRoute = new Elysia().use(JWT()).post(
+  "/summit",
+  async ({ body, set }) => {
+    const id = uuidv7();
+    const key = `${process.env.APP_NAME}/mountain/summit/${id}.jpeg`;
 
-      if (!isBase64SizeValid(body.image, 2048)) {
-        set.status = 500;
-        return { error: IMAGE_TO_BIG };
-      }
-
-      const content = Buffer.from(body.image, "base64");
-      await putImageOnS3(key, content);
-
-      await db.transaction(async (tx) => {
-        const [summit] = await tx
-          .insert(summitTable)
-          .values({
-            id,
-            mountainId: body.mountainId,
-            userId: body.usersId[0],
-            imageUrl: getPublicUrl(key),
-            summitedAt: formatDateForPostgresFromISOString(body.date),
-          })
-          .returning();
-
-        await tx.insert(summitHasUsersTable).values(
-          body.usersId.map((userId) => ({
-            summitId: summit.id,
-            userId,
-          })),
-        );
-      });
-
-      return {
-        success: true,
-      };
-    },
-    {
-      body: t.Object({
-        mountainId: t.String(),
-        usersId: t.Array(t.String()),
-        date: t.String(),
-        image: t.String(),
-      }),
-      response: {
-        200: SimpleSuccessResponse,
-        500: ErrorFieldResponse,
-      },
+    if (!isBase64SizeValid(body.image, 2048)) {
+      set.status = 500;
+      return { error: IMAGE_TO_BIG };
     }
-  );
+
+    const content = Buffer.from(body.image, "base64");
+    await putImageOnS3(key, content);
+
+    await db.transaction(async (tx) => {
+      const [summit] = await tx
+        .insert(summitTable)
+        .values({
+          id,
+          mountainId: body.mountainId,
+          userId: body.usersId[0],
+          imageUrl: getPublicUrl(key),
+          summitedAt: formatDateForPostgresFromISOString(body.date),
+        })
+        .returning();
+
+      await tx.insert(summitHasUsersTable).values(
+        body.usersId.map((userId) => ({
+          summitId: summit.id,
+          userId,
+        })),
+      );
+    });
+
+    return {
+      success: true,
+    };
+  },
+  {
+    body: t.Object({
+      mountainId: t.String(),
+      usersId: t.Array(t.String()),
+      date: t.String(),
+      image: t.String(),
+    }),
+    response: {
+      200: SimpleSuccessResponse,
+      500: ErrorFieldResponse,
+    },
+  },
+);

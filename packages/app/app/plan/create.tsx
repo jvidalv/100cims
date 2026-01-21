@@ -1,7 +1,7 @@
+import { analytics } from "@jvidalv/react-analytics";
 import { format } from "date-fns/format";
 import { nextSunday } from "date-fns/nextSunday";
 import { useRouter, Redirect } from "expo-router";
-import { analytics } from "@jvidalv/react-analytics";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
