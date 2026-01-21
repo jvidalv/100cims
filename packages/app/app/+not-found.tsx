@@ -1,17 +1,26 @@
 import { Link, Stack } from "expo-router";
 import { Fragment } from "react";
+import { FormattedMessage, useIntl } from "react-intl";
 
 import { ThemedText } from "@/components/ui/atoms/themed-text";
 import { ThemedView } from "@/components/ui/atoms/themed-view";
 
 export default function NotFoundScreen() {
+  const intl = useIntl();
+
   return (
     <Fragment>
-      <Stack.Screen options={{ title: "Oops!" }} />
+      <Stack.Screen
+        options={{ title: intl.formatMessage({ defaultMessage: "Oops!" }) }}
+      />
       <ThemedView className="flex-1 items-center justify-center p-5">
-        <ThemedText>This screen does not exist.</ThemedText>
+        <ThemedText>
+          <FormattedMessage defaultMessage="This screen does not exist." />
+        </ThemedText>
         <Link href="/" className="my-4">
-          <ThemedText className="underline">Go to home screen</ThemedText>
+          <ThemedText className="underline">
+            <FormattedMessage defaultMessage="Go to home screen" />
+          </ThemedText>
         </Link>
       </ThemedView>
     </Fragment>
