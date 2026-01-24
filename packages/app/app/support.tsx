@@ -70,7 +70,7 @@ export default function SupportScreen() {
     try {
       setIsSubmitted(false);
 
-      // Submit via suggestion API
+      // Submit via suggestion API (internal format, not user-facing)
       const productName = products.find((p) => p.id === selectedProduct)?.name;
       const sizeInfo = selectedSize ? ` (Size: ${selectedSize})` : "";
       await submitSuggestion({

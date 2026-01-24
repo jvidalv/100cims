@@ -74,7 +74,7 @@ export function UpdatesDialog({
   if (!visible) return null;
 
   return (
-    <Modal animationType="none" visible transparent statusBarTranslucent>
+    <Modal animationType="none" visible transparent statusBarTranslucent onRequestClose={onClose}>
       <View className="flex-1 items-center justify-center">
         <Animated.View
           className="absolute size-full bg-black/60"

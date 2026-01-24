@@ -13,7 +13,7 @@ import {
   ThemedText,
   ThemedView,
 } from "@/components/ui/atoms";
-import { ChallengeListItem } from "@/components/ui/molecules";
+import { ChallengeListItem, ScreenHeader } from "@/components/ui/molecules";
 import {
   useActiveChallenge,
   useChallengesGet,
@@ -65,10 +65,10 @@ export default function ChallengesScreen() {
     activeTab === "official" ? officialChallenges : communityChallenges;
 
   return (
-    <ThemedView
-      className={twMerge("flex-1 gap-6 px-4 pt-6", isAndroid && "pt-24")}
-    >
+    <ThemedView className="flex-1">
+      {isAndroid && <ScreenHeader />}
       <ScrollView
+        className={twMerge("px-4", !isAndroid && "pt-6")}
         contentContainerClassName="gap-2 pb-40"
         showsVerticalScrollIndicator={false}
         stickyHeaderIndices={[0]}

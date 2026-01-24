@@ -158,6 +158,9 @@
   "AouTVa": {
     "defaultMessage": "Failed to update mountain"
   },
+  "BEbOqj": {
+    "defaultMessage": "Oops!"
+  },
   "BWpuKl": {
     "defaultMessage": "Update"
   },
@@ -443,6 +446,9 @@
   "aJxdzZ": {
     "defaultMessage": "Select one"
   },
+  "aKaNIY": {
+    "defaultMessage": "Go to home screen"
+  },
   "aiy3+p": {
     "defaultMessage": "Type to search."
   },
@@ -583,6 +589,9 @@
   },
   "m0DE2D": {
     "defaultMessage": "Fixed profile image uploads, added Cim de la Dona, new height filters, anonymous photo reactions, and merchandising support!"
+  },
+  "nEbAUi": {
+    "defaultMessage": "This screen does not exist."
   },
   "nOxI4K": {
     "defaultMessage": "Product engineer"

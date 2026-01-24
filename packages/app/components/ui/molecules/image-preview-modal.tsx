@@ -14,6 +14,7 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
+  runOnJS,
 } from "react-native-reanimated";
 
 import { Icon } from "@/components/ui/atoms";
@@ -55,11 +56,13 @@ export function ImagePreviewModal({
 
   const pinchGesture = Gesture.Pinch()
     .onUpdate((e) => {
+      "worklet";
       const newScale = savedScale.value * e.scale;
       // Clamp scale between MIN_SCALE and MAX_SCALE
       scale.value = Math.min(Math.max(newScale, MIN_SCALE * 0.5), MAX_SCALE);
     })
     .onEnd(() => {
+      "worklet";
       if (scale.value < MIN_SCALE) {
         scale.value = withTiming(MIN_SCALE);
         savedScale.value = MIN_SCALE;
@@ -73,12 +76,14 @@ export function ImagePreviewModal({
 
   const panGesture = Gesture.Pan()
     .onUpdate((e) => {
+      "worklet";
       if (scale.value > 1) {
         translateX.value = savedTranslateX.value + e.translationX;
         translateY.value = savedTranslateY.value + e.translationY;
       }
     })
     .onEnd(() => {
+      "worklet";
       savedTranslateX.value = translateX.value;
       savedTranslateY.value = translateY.value;
     });
@@ -86,8 +91,9 @@ export function ImagePreviewModal({
   const doubleTapGesture = Gesture.Tap()
     .numberOfTaps(2)
     .onEnd(() => {
+      "worklet";
       if (scale.value > MIN_SCALE) {
-        resetZoom();
+        runOnJS(resetZoom)();
       } else {
         scale.value = withTiming(3);
         savedScale.value = 3;

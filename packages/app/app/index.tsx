@@ -539,9 +539,7 @@ export default function IndexScreen() {
         contentContainerClassName="gap-8"
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <View className="absolute top-32">
-            <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
-          </View>
+          <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
         }
       >
         <View className="h-24" />
