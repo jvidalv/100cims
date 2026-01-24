@@ -12,7 +12,7 @@ import {
   Icon,
   IconSymbolName,
 } from "@/components/ui/atoms";
-import { ScreenHeader } from "@/components/ui/molecules";
+import { MerchUpsellCard, ScreenHeader } from "@/components/ui/molecules";
 import { usePlanChatUnread } from "@/domains/plan/plan-chat.api";
 import { useUserMe } from "@/domains/user/user.api";
 
@@ -137,6 +137,9 @@ export default function UserIndexScreen() {
               )}
             </Fragment>
           ))}
+        </View>
+        <View className="mb-4">
+          <MerchUpsellCard onPress={() => router.push("/support")} />
         </View>
         <View>
           <ThemedText className="text-center text-muted-foreground">

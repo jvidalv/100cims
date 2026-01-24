@@ -106,7 +106,7 @@ export default function UserScreen() {
         <View className="mx-6 mb-6 gap-3">
           {!!user.town && (
             <View className="flex-row gap-4">
-              <View className="flex-row gap-1.5">
+              <View className="flex-row items-center gap-1.5">
                 <Icon name="house.circle" muted size={18} />
                 <ThemedText className="text-base font-medium">
                   {user?.town}
@@ -114,7 +114,7 @@ export default function UserScreen() {
               </View>
             </View>
           )}
-          <View className="flex-row gap-1.5">
+          <View className="flex-row items-center gap-1.5">
             <Icon name="calendar" muted size={18} />
             <ThemedText className="text-base font-medium">
               <FormattedMessage
@@ -137,7 +137,7 @@ export default function UserScreen() {
           </View>
           {userDetails && !!userDetails?.sharedUsers?.length && (
             <View>
-              <View className="mb-1 flex-row gap-1.5">
+              <View className="mb-1 flex-row items-center gap-1.5">
                 <Icon name="person.3.fill" muted size={18} />
                 <ThemedText className="text-base font-medium">
                   <FormattedMessage defaultMessage="People" />
@@ -158,7 +158,7 @@ export default function UserScreen() {
           )}
           {challenges && challenges.length > 0 && (
             <View>
-              <View className="mb-2 flex-row gap-1.5">
+              <View className="mb-2 flex-row items-center gap-1.5">
                 <Icon name="flag.fill" muted size={18} />
                 <ThemedText className="text-base font-medium">
                   <FormattedMessage defaultMessage="Challenges" />

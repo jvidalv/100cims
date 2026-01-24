@@ -2,9 +2,15 @@
   "name": "100cims-monorepo",
   "version": "1.0.0",
   "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ],
+    "nohoist": [
+      "**/tailwindcss",
+      "**/tailwindcss/**"
+    ]
+  },
   "scripts": {
     "app": "yarn workspace @100cims/app",
     "api": "yarn workspace @100cims/api",
