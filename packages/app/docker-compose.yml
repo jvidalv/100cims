@@ -1,19 +1,16 @@
-version: "3.8"
-
 services:
   postgres:
-    image: postgres:15-alpine
-    container_name: postgres_local
+    image: postgres:17-alpine
+    container_name: cims
     restart: always
     ports:
-      - "5433:5432" # Maps PostgreSQL's default port to localhost
+      - "5433:5432"
     environment:
-      POSTGRES_USER: admin # Default username
-      POSTGRES_PASSWORD: admin # Default password
-      POSTGRES_DB: my_local_db # Default database name
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: cims
     volumes:
-      - pgdata:/var/lib/postgresql/data # Persist data across container restarts
-#      - ./api/db/init-script.sql # Optional: Initialize database with scripts
+      - pgdata:/var/lib/postgresql/data
 
 volumes:
   pgdata:
