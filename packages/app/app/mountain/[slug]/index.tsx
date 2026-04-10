@@ -1,4 +1,3 @@
-import { analytics } from "@jvidalv/react-analytics";
 import { format } from "date-fns/format";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Linking from "expo-linking";
@@ -99,8 +98,6 @@ export default function MountainScreen() {
   }
 
   const handleShareMountain = async () => {
-    analytics.action(`mountain-share-started`, { slug });
-
     const locale = intl.locale;
 
     const messages = {
@@ -115,11 +112,6 @@ export default function MountainScreen() {
       message: msg,
     });
 
-    if (response.action === Share.sharedAction) {
-      analytics.action(`mountain-share-done`, { slug });
-    } else if (response.action === Share.dismissedAction) {
-      analytics.action(`mountain-share-canceled`, { slug });
-    }
   };
 
   return (
@@ -213,7 +205,6 @@ export default function MountainScreen() {
         <View className="flex-row gap-4">
           <TouchableOpacity
             onPress={() => {
-              analytics.action("mountain-view-on-maps");
               void Linking.openURL(
                 `https://www.google.es/maps?q=${mountain.latitude},${mountain.longitude}`,
               );
@@ -230,7 +221,6 @@ export default function MountainScreen() {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
-              analytics.action("mountain-view-on-wikiloc");
               const locale = intl.locale as "en" | "es" | "ca";
               const wikilocSubdomain =
                 locale === "ca" || locale === "es" ? locale : "en";

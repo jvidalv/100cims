@@ -1,4 +1,3 @@
-import { analytics } from "@jvidalv/react-analytics";
 import { format } from "date-fns/format";
 import { nextSunday } from "date-fns/nextSunday";
 import { useRouter, Redirect } from "expo-router";
@@ -386,7 +385,6 @@ export default function PlanCreatePage() {
       const planId = response?.id;
       if (planId) {
         router.dismiss();
-        analytics.action(`plan-created`);
         return router.push({
           pathname: "/plan/[id]",
           params: {
@@ -394,7 +392,6 @@ export default function PlanCreatePage() {
           },
         });
       } else {
-        analytics.error(`plan-error`);
         return Alert.alert(
           intl.formatMessage({
             defaultMessage: "Something went wrong, try again later!",
@@ -403,7 +400,6 @@ export default function PlanCreatePage() {
       }
     } else {
       const nextStep = stepOrder[currentStepIndex + 1];
-      analytics.action(`plan-step-${nextStep}`);
       setStep(nextStep);
     }
   };

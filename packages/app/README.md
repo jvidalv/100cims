@@ -42,11 +42,9 @@ Before running the project, leverage the`.env.example` file to fill the required
 
 ```env
 EXPO_PUBLIC_API_URL=http://localhost:3001/
-EXPO_PUBLIC_REACT_ANALYTICS_KEY=
 ```
 
 - `EXPO_PUBLIC_API_URL` → URL of the backend API server (see `packages/api`)
-- `EXPO_PUBLIC_REACT_ANALYTICS_KEY` → integrates [reactanalytics.app](https://reactanalytics.app)
 
 ## 🔐 Auth
 

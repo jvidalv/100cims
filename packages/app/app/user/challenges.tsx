@@ -1,4 +1,3 @@
-import { analytics } from "@jvidalv/react-analytics";
 import { Link, Redirect, useRouter } from "expo-router";
 import { useMemo } from "react";
 import { FormattedMessage } from "react-intl";
@@ -34,7 +33,6 @@ export default function UserChallengesScreen() {
   } = useUpdateUserMeMutation();
 
   const onChallengeSelect = async (id: string) => {
-    analytics.action("selected-challenge", { challengeId: id });
     await updateUser({ activeChallengeId: id });
   };
 

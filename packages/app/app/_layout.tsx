@@ -1,4 +1,3 @@
-import { AnalyticsProvider, analytics } from "@jvidalv/react-analytics";
 import { setDefaultOptions } from "date-fns/setDefaultOptions";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
@@ -17,7 +16,7 @@ import { Animated, View, Image } from "react-native";
 import { Easing } from "react-native-reanimated";
 
 import { QueryClientProvider } from "@/components/providers";
-import { AuthProvider, useAuth } from "@/components/providers/auth-provider";
+import { AuthProvider } from "@/components/providers/auth-provider";
 import { useMountains } from "@/domains/mountain/mountain.api";
 import { usePlanChatUnread } from "@/domains/plan/plan-chat.api";
 import { usePlans } from "@/domains/plan/plan.api";
@@ -90,8 +89,7 @@ function Content() {
     black: require("@/assets/fonts/BricolageGrotesque-ExtraBold.ttf"),
   });
   const [showSkeleton, setShowSkeleton] = useState(true);
-  const { isAuthenticated } = useAuth();
-  const { data: user } = useUserMe();
+  useUserMe();
   const { isPending: isPendingMountains } = useMountains();
   const { isPending: isPendingHomepageSummits } = useSummitsGet({ limit: 8 });
 
@@ -110,24 +108,6 @@ function Content() {
     setDefaultOptions({ locale: getDateFnsLocale() });
   }, []);
 
-  useEffect(() => {
-    if (isAuthenticated && user?.id) {
-      analytics.identify(user.id, {
-        email: user?.email,
-        firstName: user?.firstName,
-        lastName: user?.lastName,
-        avatarUrl: user?.imageUrl,
-        locale: getLocale(),
-      });
-    }
-  }, [
-    isAuthenticated,
-    user?.id,
-    user?.email,
-    user?.firstName,
-    user?.lastName,
-    user?.imageUrl,
-  ]);
 
   // Hide native splash screen once fonts are loaded
   useEffect(() => {
@@ -227,13 +207,5 @@ function RootProviders() {
 }
 
 export default function Root() {
-  return (
-    <AnalyticsProvider
-      config={{
-        apiKey: process.env.EXPO_PUBLIC_REACT_ANALYTICS_KEY as string,
-      }}
-    >
-      <RootProviders />
-    </AnalyticsProvider>
-  );
+  return <RootProviders />;
 }

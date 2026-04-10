@@ -1,4 +1,3 @@
-import { analytics } from "@jvidalv/react-analytics";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { setStatusBarStyle } from "expo-status-bar";
 import { useColorScheme } from "nativewind";
@@ -55,8 +54,6 @@ export default function ChallengeDetailScreen() {
 
   const handleShare = async () => {
     if (!challenge) return;
-    analytics.action(`challenge-share-started`, { id });
-
     const locale = intl.locale;
     const messages = {
       en: `🏔️ Check out the ${challenge.name} challenge on cims!\n\n${getUrlDeeplink(`challenge/${id}`)}`,
@@ -74,7 +71,6 @@ export default function ChallengeDetailScreen() {
       router.push("/join");
       return;
     }
-    analytics.action("challenge-detail-switch", { challengeId: id });
     await updateUser({ activeChallengeId: id });
   };
 

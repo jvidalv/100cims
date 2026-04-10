@@ -1,4 +1,3 @@
-import { analytics } from "@jvidalv/react-analytics";
 import { format } from "date-fns/format";
 import { Link, Redirect } from "expo-router";
 import { FormattedMessage, useIntl } from "react-intl";
@@ -42,7 +41,6 @@ export default function UserSummitsScreen() {
           text: intl.formatMessage({ defaultMessage: "Yes" }),
           style: "default",
           onPress: async () => {
-            analytics.action("delete-summit", { summitId });
             await deleteSummit({ summitId });
             void refetchSummits();
           },

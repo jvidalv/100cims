@@ -1,4 +1,3 @@
-import { analytics } from "@jvidalv/react-analytics";
 import { ReactNode, useState } from "react";
 import { useIntl } from "react-intl";
 import { Modal, Pressable, ScrollView, TouchableOpacity, View } from "react-native";
@@ -101,7 +100,6 @@ export function FilterableListHeader<T extends string = string, S extends string
       // Deselect the filter
       onFiltersChange(filtersSelected.filter((t) => t !== filterType));
     } else {
-      analytics.action(`mountain-filter-${filterType}`);
       // Select the filter and deselect mutually exclusive ones
       const newFilters = onSelectDeselect
         ? filtersSelected.filter((f) => !onSelectDeselect.includes(f))

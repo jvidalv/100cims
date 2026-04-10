@@ -1,4 +1,3 @@
-import { analytics } from "@jvidalv/react-analytics";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -48,8 +47,6 @@ export default function UserMeScreen() {
   }, [refetch]);
 
   const pickImage = async () => {
-    analytics.action("opened-change-avatar");
-
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ["images"],
@@ -93,8 +90,6 @@ export default function UserMeScreen() {
         }
       }
     } catch (error) {
-      analytics.error(JSON.stringify(error));
-
       Alert.alert(
         intl.formatMessage({
           defaultMessage: "Error, try again.",
@@ -122,7 +117,6 @@ export default function UserMeScreen() {
   }, 500);
 
   const onVisibleHiscoresChange = async (checked: boolean) => {
-    analytics.action(`visible-on-highscores`, { value: checked });
     await updateUserMe({
       visibleOnHiscores: checked,
     });
@@ -130,7 +124,6 @@ export default function UserMeScreen() {
   };
 
   const onVisiblePeopleSearchChange = async (checked: boolean) => {
-    analytics.action(`visible-on-people-search`, { value: checked });
     void updateUserMe({
       visibleOnPeopleSearch: checked,
     });
@@ -152,7 +145,6 @@ export default function UserMeScreen() {
           text: intl.formatMessage({ defaultMessage: "Yes, I'm sure" }),
           style: "default",
           onPress: async () => {
-            analytics.action("delete-account");
             await deleteAccount();
             router.dismissAll();
             logout();

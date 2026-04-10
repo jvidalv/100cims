@@ -1,4 +1,3 @@
-import { analytics } from "@jvidalv/react-analytics";
 import { format } from "date-fns/format";
 import * as ImagePicker from "expo-image-picker";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -55,7 +54,6 @@ export default function PlanCompleteScreen() {
         }
       }
     } catch (error) {
-      analytics.error(`Error picking image on plan`, { error });
       Alert.alert(
         intl.formatMessage({
           defaultMessage: "Error, try again or use another image.",
@@ -95,7 +93,6 @@ export default function PlanCompleteScreen() {
             ),
           );
         } catch (err) {
-          analytics.error("plan-complete-submit-error", { error: err });
           Alert.alert(
             intl.formatMessage({ defaultMessage: "Something went wrong" }),
           );
@@ -111,7 +108,6 @@ export default function PlanCompleteScreen() {
       void queryClient.invalidateQueries();
       router.dismiss();
     } catch (err) {
-      analytics.error("plan-complete-unexpected-error", { error: err });
       Alert.alert(
         intl.formatMessage({ defaultMessage: "Something went wrong" }),
       );

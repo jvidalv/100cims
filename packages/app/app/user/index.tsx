@@ -1,4 +1,3 @@
-import { analytics } from "@jvidalv/react-analytics";
 import * as Application from "expo-application";
 import { Link, useRouter } from "expo-router";
 import { Fragment } from "react";
@@ -83,7 +82,6 @@ export default function UserIndexScreen() {
           text: intl.formatMessage({ defaultMessage: "Yes" }),
           style: "default",
           onPress: () => {
-            analytics.action("user-logout");
             logout();
             router.dismissAll();
           },

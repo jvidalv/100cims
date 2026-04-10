@@ -1,4 +1,3 @@
-import { analytics } from "@jvidalv/react-analytics";
 import { formatDistanceToNow } from "date-fns";
 import { ca, es, enUS } from "date-fns/locale";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
@@ -34,8 +33,6 @@ export default function UserScreen() {
   const isMe = me?.id === userId;
 
   const handleShare = async () => {
-    analytics.action(`user-shared-started`, { id: userId });
-
     const messages = {
       en: `🏞️ Check out my profile on cims!\n💪\n\n${getUrlDeeplink(`user/${userId}`)}`,
       es: `🏞️ Mira mi perfil en cims!\n💪\n\n${getUrlDeeplink(`user/${userId}`)}`,

@@ -1,4 +1,3 @@
-import { analytics } from "@jvidalv/react-analytics";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Link, useRouter } from "expo-router";
 import { useColorScheme } from "nativewind";
@@ -316,7 +315,6 @@ const PageHeader = ({
           >
             <TouchableOpacity
               onPress={() => {
-                analytics.action("header-map-clicked");
                 void markAsSeen();
               }}
               className="relative size-10 items-center justify-center rounded-full border-2 border-border"
@@ -329,9 +327,6 @@ const PageHeader = ({
           </Link>
           <Link href="/plans" asChild>
             <TouchableOpacity
-              onPress={() => {
-                analytics.action("header-plans-clicked");
-              }}
               className="relative size-10 items-center justify-center rounded-full border-2 border-border"
             >
               {hasNewPlans && (

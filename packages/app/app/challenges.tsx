@@ -1,4 +1,3 @@
-import { analytics } from "@jvidalv/react-analytics";
 import { Link, useRouter } from "expo-router";
 import { useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
@@ -47,7 +46,6 @@ export default function ChallengesScreen() {
       router.push("/join");
       return;
     }
-    analytics.action("selected-challenge", { challengeId: id });
     await updateUser({ activeChallengeId: id });
     router.dismiss();
   };

@@ -1,4 +1,3 @@
-import { analytics } from "@jvidalv/react-analytics";
 import { isToday } from "date-fns/isToday";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, Link, useRouter } from "expo-router";
@@ -115,7 +114,6 @@ export default function PlanIdPage() {
   const isCanceled = plan?.status === "canceled";
 
   const onShare = async () => {
-    analytics.action(`plan-shared-started`, { id: plan?.id });
     const messages = {
       en: `📍 Hiking plan on cims!\n${plan?.title} 💪\n\n${getUrlDeeplink(`plan/${id}`)}`,
       ca: `📍 Pla de senderisme a cims!\n${plan?.title} 💪\n\n${getUrlDeeplink(`plan/${id}`)}`,
@@ -129,13 +127,6 @@ export default function PlanIdPage() {
       message: msg,
     });
 
-    if (response.action === "sharedAction") {
-      analytics.action(`plan-shared-done`, { id: plan?.id });
-    }
-
-    if (response.action === "dismissedAction") {
-      analytics.action(`plan-shared-canceled`, { id: plan?.id });
-    }
   };
 
   const handleJoin = () => {

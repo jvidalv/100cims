@@ -2886,13 +2886,6 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@jvidalv/react-analytics@1.0.4":
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/@jvidalv/react-analytics/-/react-analytics-1.0.4.tgz#c564ca8da7f523726bb29ba3ba65c82614631225"
-  integrity sha512-+YMY8GW3g5b9mMXrNXR8GumWOQm933goNJOLAOavRaiIDVz4Nb7RhnL7RFQK0iNFbapV5wrqa+XJDjK6zoC5jw==
-  dependencies:
-    uuidv7 "^1"
-
 "@napi-rs/wasm-runtime@^0.2.11":
   version "0.2.12"
   resolved "https://registry.yarnpkg.com/@napi-rs/wasm-runtime/-/wasm-runtime-0.2.12.tgz#3e78a8b96e6c33a6c517e1894efbd5385a7cb6f2"
@@ -11245,11 +11238,6 @@ uuidv7@1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/uuidv7/-/uuidv7-1.1.0.tgz#6ef58df2dd7377083de1f70eec29cb66a0baf30c"
   integrity sha512-2VNnOC0+XQlwogChUDzy6pe8GQEys9QFZBGOh54l6qVfwoCUwwRvk7rDTgaIsRgsF5GFa5oiNg8LqXE3jofBBg==
-
-uuidv7@^1:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/uuidv7/-/uuidv7-1.0.2.tgz#ac63630959c55683b88555e9cc510d2d753b1b24"
-  integrity sha512-8JQkH4ooXnm1JCIhqTMbtmdnYEn6oKukBxHn1Ic9878jMkL7daTI7anTExfY18VRCX7tcdn5quzvCb6EWrR8PA==
 
 uuidv7@^1.2.1:
   version "1.2.1"
