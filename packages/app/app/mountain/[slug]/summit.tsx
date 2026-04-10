@@ -1,4 +1,3 @@
-import { analytics } from "@jvidalv/react-analytics";
 import * as ImagePicker from "expo-image-picker";
 import { ImagePickerAsset } from "expo-image-picker";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -63,7 +62,6 @@ export default function SummitMountainScreen() {
   }
 
   const pickImage = async () => {
-    analytics.action(`summit-mountain-pick-image`);
     setIsLoadingImage(true);
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
@@ -79,7 +77,6 @@ export default function SummitMountainScreen() {
         setImage(modifiedImage);
       }
     } catch (error) {
-      analytics.error(`Error picking image on summit`, { error });
       Alert.alert(
         intl.formatMessage({
           defaultMessage: "Error, try again or use another image.",
@@ -115,8 +112,6 @@ export default function SummitMountainScreen() {
         usersId: selectedUsers.map((user) => user.id),
       });
 
-      analytics.action("summit-mountain-summited-successfully");
-
       void queryClient.refetchQueries({
         queryKey: SUMMITS_KEY({ limit: 4 }),
       });
@@ -131,9 +126,6 @@ export default function SummitMountainScreen() {
       });
       router.dismiss();
     } catch (error) {
-      analytics.error(`mountain-summit-error`, {
-        error,
-      });
       return Alert.alert(
         intl.formatMessage({
           defaultMessage: "Error, try again.",

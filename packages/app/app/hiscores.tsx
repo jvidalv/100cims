@@ -1,4 +1,3 @@
-import { analytics } from "@jvidalv/react-analytics";
 import { Link, useRouter } from "expo-router";
 import { useEffect } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
@@ -134,11 +133,7 @@ export default function HiscoresScreen() {
             {user && !isVisibleOnHiscores && (
               <Link href="/user/me" asChild>
                 <TouchableOpacity
-                  onPress={() => {
-                    analytics.action(
-                      "alert-for-visible-on-hiscores-button-clicked",
-                    );
-                  }}
+                  onPress={() => {}}
                   className="mb-4 flex-row items-center justify-between rounded-xl border-2 border-primary p-4"
                 >
                   <ThemedText className="font-medium text-primary">

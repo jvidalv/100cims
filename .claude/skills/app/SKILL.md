@@ -266,7 +266,6 @@ May need to rebuild: `npx expo prebuild --clean`
 
 Must prefix with `EXPO_PUBLIC_` to access in app:
 - `EXPO_PUBLIC_API_URL`: Backend URL
-- `EXPO_PUBLIC_REACT_ANALYTICS_KEY`: Analytics key
 - OAuth client IDs for Google/Apple
 
 ## Debugging

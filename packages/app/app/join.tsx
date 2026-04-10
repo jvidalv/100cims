@@ -1,4 +1,3 @@
-import { analytics } from "@jvidalv/react-analytics";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import * as AppleAuthentication from "expo-apple-authentication";
 import { Redirect, useRouter } from "expo-router";
@@ -100,8 +99,6 @@ const AppleSignIn = () => {
       }}
       onPress={async () => {
         try {
-          analytics.action(`click-on-apple-sign-in`);
-
           const credentials = await AppleAuthentication.signInAsync({
             requestedScopes: [
               AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
@@ -127,9 +124,6 @@ const AppleSignIn = () => {
           setAuthenticated(jwt);
           router.dismiss();
         } catch (error) {
-          analytics.error(`Error on apple sign-in`, {
-            code: (error as { code: string })?.code,
-          });
         }
       }}
     />
@@ -144,7 +138,6 @@ const GoogleSignIn = () => {
 
   const handleGoogleSignIn = async () => {
     try {
-      analytics.action(`click-on-google-sign-in`);
       setIsAuthenticating(true);
 
       // Check if Google Play Services are available (Android)
@@ -155,7 +148,6 @@ const GoogleSignIn = () => {
 
       // Handle cancellation
       if (response.type === 'cancelled') {
-        analytics.action('google-sign-in-cancelled');
         setIsAuthenticating(false);
         return;
       }
@@ -164,7 +156,6 @@ const GoogleSignIn = () => {
       const idToken = response.data?.idToken;
 
       if (!idToken) {
-        analytics.error(`Error on Google sign-in - no ID token`);
         setIsAuthenticating(false);
         return;
       }
@@ -177,7 +168,6 @@ const GoogleSignIn = () => {
       });
 
       if (!jwt) {
-        analytics.error('Google sign-in - no JWT from backend');
         setIsAuthenticating(false);
         return;
       }
@@ -185,10 +175,6 @@ const GoogleSignIn = () => {
       setAuthenticated(jwt);
       router.dismiss();
     } catch (error) {
-      analytics.error(`Error on Google sign-in`, {
-        error: (error as Error).message,
-        code: (error as any)?.code,
-      });
       setIsAuthenticating(false);
     }
   };
@@ -304,7 +290,6 @@ export default function JoinScreen() {
         <TouchableOpacity
           className="mt-4"
           onPress={() => {
-            analytics.action("join-later");
             router.back();
           }}
         >

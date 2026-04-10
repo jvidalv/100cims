@@ -1,4 +1,3 @@
-import { analytics } from "@jvidalv/react-analytics";
 import { useRouter, Redirect } from "expo-router";
 import { useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
@@ -110,7 +109,6 @@ export default function CommunityChallengeCreatePage() {
           : undefined,
       });
 
-      analytics.action("community-challenge-created");
       router.dismiss();
     } catch {
       Alert.alert(
