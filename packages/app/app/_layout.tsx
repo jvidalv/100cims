@@ -1,5 +1,4 @@
 import { setDefaultOptions } from "date-fns/setDefaultOptions";
-import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
@@ -81,13 +80,6 @@ const LoadingSkeleton = () => {
 };
 
 function Content() {
-  const [fontsLoaded] = useFonts({
-    regular: require("@/assets/fonts/BricolageGrotesque-Regular.ttf"),
-    medium: require("@/assets/fonts/BricolageGrotesque-Medium.ttf"),
-    semibold: require("@/assets/fonts/BricolageGrotesque-SemiBold.ttf"),
-    bold: require("@/assets/fonts/BricolageGrotesque-Bold.ttf"),
-    black: require("@/assets/fonts/BricolageGrotesque-ExtraBold.ttf"),
-  });
   const [showSkeleton, setShowSkeleton] = useState(true);
   useUserMe();
   const { isPending: isPendingMountains } = useMountains();
@@ -109,12 +101,9 @@ function Content() {
   }, []);
 
 
-  // Hide native splash screen once fonts are loaded
   useEffect(() => {
-    if (fontsLoaded) {
-      void SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
+    void SplashScreen.hideAsync();
+  }, []);
 
   // Hide skeleton when data is ready (animation can still be running)
   useEffect(() => {
@@ -122,11 +111,6 @@ function Content() {
       setShowSkeleton(false);
     }
   }, [isDataReady]);
-
-  // Only wait for fonts - data loads in background
-  if (!fontsLoaded && !isWeb) {
-    return null;
-  }
 
   return (
     <>
