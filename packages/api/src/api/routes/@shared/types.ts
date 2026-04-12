@@ -7,6 +7,7 @@ export type User = {
   town: string | null;
   visibleOnHiscores: boolean;
   visibleOnPeopleSearch: boolean;
+  admin: boolean;
   username: string | null;
   locale: string | null;
   activeChallengeId: string | null;

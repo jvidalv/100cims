@@ -1,14 +1,12 @@
 import { Elysia } from "elysia";
 
-import { JWT } from "@/api/routes/@shared/jwt";
-import { myListRoute } from "./my-list.route";
-import { updateMountainRoute } from "./update.route";
-import { summitMountainRoute } from "./summit.route";
+import { mountainMyListGetRoute } from "./mountain.my-list.get";
+import { mountainSummitPostRoute } from "./mountain.summit.post";
+import { mountainUpdatePostRoute } from "./mountain.update.post";
 
 export const mountainsRoute = new Elysia({
   prefix: "/mountains",
 })
-  .use(JWT())
-  .use(myListRoute)
-  .use(updateMountainRoute)
-  .use(summitMountainRoute);
+  .use(mountainMyListGetRoute)
+  .use(mountainUpdatePostRoute)
+  .use(mountainSummitPostRoute);

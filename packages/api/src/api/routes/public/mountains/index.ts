@@ -1,10 +1,10 @@
 import { Elysia } from "elysia";
 
-import { allRoute } from "@/api/routes/public/mountains/all.route";
-import { oneRoute } from "@/api/routes/public/mountains/one.route";
-import { summitsRoute } from "@/api/routes/public/mountains/summits.route";
+import { mountainAllGetRoute } from "@/api/routes/public/mountains/mountain.all.get";
+import { mountainOneGetRoute } from "@/api/routes/public/mountains/mountain.one.get";
+import { mountainSummitsGetRoute } from "@/api/routes/public/mountains/mountain.summits.get";
 
 export const mountainsRoutes = new Elysia({ prefix: "/mountains" })
-  .use(oneRoute)
-  .use(allRoute)
-  .use(summitsRoute);
+  .use(mountainOneGetRoute)
+  .use(mountainAllGetRoute)
+  .use(mountainSummitsGetRoute);
