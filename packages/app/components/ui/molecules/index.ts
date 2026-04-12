@@ -18,6 +18,5 @@ export {
 export { UpdatesDialog, type Update } from "./updates-dialog";
 export { EmojiPicker } from "./emoji-picker";
 export { MountainSelectionDrawer } from "./mountain-selection-drawer";
-export { MountainEditDrawer } from "./mountain-edit-drawer";
 export { ImagePreviewModal, useImagePreview } from "./image-preview-modal";
 export { MerchUpsellCard } from "./merch-upsell-card";

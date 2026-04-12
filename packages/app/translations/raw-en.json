@@ -2,9 +2,6 @@
   "+Z/Wja": {
     "defaultMessage": "I don't know exactly when."
   },
-  "+bocw8": {
-    "defaultMessage": "You can switch between them freely, progress is saved."
-  },
   "+pZqnP": {
     "defaultMessage": "You have total control over it"
   },
@@ -55,6 +52,9 @@
   },
   "3IlAwo": {
     "defaultMessage": "Something went wrong, try again later!"
+  },
+  "3MGPGB": {
+    "defaultMessage": "Dark theme?"
   },
   "3dqsvA": {
     "defaultMessage": "Donors"
@@ -310,9 +310,6 @@
   },
   "NyrFn7": {
     "defaultMessage": "Also unblock..."
-  },
-  "O2iv08": {
-    "defaultMessage": "Create Challenge"
   },
   "OHvDJa": {
     "defaultMessage": "Suggest a new challenge"
@@ -688,9 +685,6 @@
   },
   "v0btUQ": {
     "defaultMessage": "No one has yet reached the hiscores."
-  },
-  "vZQbSE": {
-    "defaultMessage": "Explore other challenges"
   },
   "vZV/fy": {
     "defaultMessage": "*You can modify this and all the other fields later"

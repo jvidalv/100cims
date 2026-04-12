@@ -1,7 +1,6 @@
 const { defineConfig } = require("eslint/config");
 const expoConfig = require("eslint-config-expo/flat");
 const formatjs = require("eslint-plugin-formatjs");
-const tailwindcss = require("eslint-plugin-tailwindcss");
 
 module.exports = defineConfig([
   expoConfig,
@@ -9,7 +8,6 @@ module.exports = defineConfig([
     ignores: ["dist/*", "expo-env.d.ts"],
 
     plugins: {
-      tailwindcss,
       formatjs,
     },
 
