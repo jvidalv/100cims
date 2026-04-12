@@ -63,7 +63,7 @@ export default function AdminUserDetailPage({
   const [initial, setInitial] = useState<Form>(emptyForm);
 
   useEffect(() => {
-    if (!detail.data) return;
+    if (!detail.data || update.isPending) return;
     const next: Form = {
       firstName: detail.data.firstName ?? "",
       lastName: detail.data.lastName ?? "",
@@ -77,7 +77,7 @@ export default function AdminUserDetailPage({
     };
     setForm(next);
     setInitial(next);
-  }, [detail.data]);
+  }, [detail.data, update.isPending]);
 
   const dirty = (Object.keys(form) as (keyof Form)[]).some(
     (k) => form[k] !== initial[k],
@@ -240,6 +240,20 @@ export default function AdminUserDetailPage({
           <dd>{u.platform ?? "—"}</dd>
           <dt className="text-muted-foreground">App version</dt>
           <dd className="font-mono">{u.appVersion ?? "—"}</dd>
+          <dt className="text-muted-foreground">Language</dt>
+          <dd className="font-mono">{u.locale ?? "—"}</dd>
+          <dt className="text-muted-foreground">Last location</dt>
+          <dd className="font-mono">
+            {u.lastLatitude && u.lastLongitude
+              ? `${u.lastLatitude}, ${u.lastLongitude}`
+              : "—"}
+          </dd>
+          <dt className="text-muted-foreground">Last location at</dt>
+          <dd>
+            {u.lastLocationAt
+              ? new Date(u.lastLocationAt).toLocaleString()
+              : "—"}
+          </dd>
         </dl>
       </section>
 

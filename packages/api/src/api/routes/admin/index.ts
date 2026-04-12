@@ -9,6 +9,7 @@ import { adminCronsGetRoute } from "@/api/routes/admin/admin.crons.get";
 import { adminCronsTriggerPostRoute } from "@/api/routes/admin/admin.crons-trigger.post";
 import { adminMeGetRoute } from "@/api/routes/admin/admin.me.get";
 import { adminMountainChallengesGetRoute } from "@/api/routes/admin/admin.mountain-challenges.get";
+import { adminMountainDeleteDeleteRoute } from "@/api/routes/admin/admin.mountain-delete.delete";
 import { adminMountainDetailGetRoute } from "@/api/routes/admin/admin.mountain-detail.get";
 import { adminMountainUpdatePostRoute } from "@/api/routes/admin/admin.mountain-update.post";
 import { adminMountainsGetRoute } from "@/api/routes/admin/admin.mountains.get";
@@ -53,6 +54,7 @@ export const adminRoutes = new Elysia({ prefix: "/admin" })
   .use(adminMountainsGetRoute)
   .use(adminMountainDetailGetRoute)
   .use(adminMountainUpdatePostRoute)
+  .use(adminMountainDeleteDeleteRoute)
   .use(adminMountainChallengesGetRoute)
   .use(adminCronsGetRoute)
   .use(adminCronsTriggerPostRoute);

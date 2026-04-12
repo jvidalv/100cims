@@ -164,6 +164,22 @@ export const useUpdateAdminMountain = (id: string) => {
   });
 };
 
+export const useDeleteAdminMountain = (id: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      const { data, error } = await api.api.admin.mountains({ id }).delete();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      qc.removeQueries({ queryKey: adminKeys.mountainDetail(id) });
+      qc.removeQueries({ queryKey: adminKeys.mountainChallenges(id) });
+      void qc.invalidateQueries({ queryKey: ["admin", "mountains"] });
+    },
+  });
+};
+
 export const useTriggerCron = () => {
   const qc = useQueryClient();
   return useMutation({

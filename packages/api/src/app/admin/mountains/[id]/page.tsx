@@ -1,9 +1,21 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { use, useEffect, useState } from "react";
 import { toast } from "sonner";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import {
   Avatar,
   AvatarFallback,
@@ -16,6 +28,7 @@ import {
   type AdminMountainUpdateBody,
   useAdminMountainChallenges,
   useAdminMountainDetail,
+  useDeleteAdminMountain,
   useUpdateAdminMountain,
 } from "@/domains/admin/api";
 
@@ -46,10 +59,22 @@ export default function AdminMountainDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const router = useRouter();
   const { id } = use(params);
   const detail = useAdminMountainDetail(id);
   const challenges = useAdminMountainChallenges(id);
   const update = useUpdateAdminMountain(id);
+  const deleteMountain = useDeleteAdminMountain(id);
+
+  const onDelete = () =>
+    deleteMountain.mutate(undefined, {
+      onSuccess: () => {
+        toast.success("Mountain deleted");
+        router.push("/admin/mountains");
+      },
+      onError: (e) =>
+        toast.error(e instanceof Error ? e.message : "Delete failed"),
+    });
 
   const [form, setForm] = useState<Form>(emptyForm);
   const [initial, setInitial] = useState<Form>(emptyForm);
@@ -276,6 +301,45 @@ export default function AdminMountainDetailPage({
             ))}
           </ul>
         )}
+      </section>
+
+      <section className="space-y-3 max-w-2xl pt-4 border-t border-destructive/30">
+        <h2 className="text-sm font-medium text-destructive uppercase tracking-wide">
+          Danger zone
+        </h2>
+        <p className="text-sm text-muted-foreground">
+          Deleting this mountain removes all its summits, summit reactions,
+          and challenge links. This cannot be undone.
+        </p>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button
+              variant="destructive"
+              disabled={deleteMountain.isPending}
+            >
+              Delete mountain
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete {m.name}?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This deletes the mountain, all its summits (including every
+                user&apos;s record of summiting it), and removes it from every
+                challenge. Cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                onClick={onDelete}
+              >
+                {deleteMountain.isPending ? "Deleting…" : "Delete"}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </section>
     </div>
   );

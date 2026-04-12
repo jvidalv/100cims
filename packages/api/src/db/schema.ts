@@ -62,6 +62,9 @@ export const userTable = pgTable("user", {
   country: text(),
   platform: text(),
   appVersion: text(),
+  lastLatitude: numeric(),
+  lastLongitude: numeric(),
+  lastLocationAt: timestamp(),
   activeChallengeId: uuid(), // FK constraint in migration to avoid circular reference
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp().notNull().defaultNow(),
