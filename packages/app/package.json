@@ -91,7 +91,6 @@
     "eslint": "9.39.2",
     "eslint-config-expo": "~55.0.0",
     "eslint-plugin-formatjs": "^5",
-    "eslint-plugin-tailwindcss": "^3",
     "openapi-typescript": "^7.10.1",
     "postcss": "^8.5.9",
     "prettier": "3.8.0",

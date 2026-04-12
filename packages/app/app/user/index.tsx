@@ -51,11 +51,6 @@ export default function UserIndexScreen() {
       onPress: () => router.push("/user/challenges"),
     },
     {
-      iconName: "mountain.2.fill",
-      text: intl.formatMessage({ defaultMessage: "My mountains" }),
-      onPress: () => router.push("/user/mountains"),
-    },
-    {
       iconName: "info.circle.fill",
       text: intl.formatMessage({ defaultMessage: "About the app" }),
       onPress: () => router.push("/user/about-the-app"),
