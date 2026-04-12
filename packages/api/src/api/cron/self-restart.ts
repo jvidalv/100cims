@@ -1,6 +1,11 @@
 const MIN_UPTIME_MS = 10 * 60 * 1000;
 
 export async function dailyRestart(): Promise<void> {
+  if (process.env.NODE_ENV !== "production") {
+    console.log("[self-restart] Skipped (non-production environment)");
+    return;
+  }
+
   const uptimeMs = process.uptime() * 1000;
   if (uptimeMs < MIN_UPTIME_MS) {
     console.log(
