@@ -1,6 +1,6 @@
 "use client";
 
-import { Clock, Home, LogOut } from "lucide-react";
+import { Clock, Home, LogOut, Mountain, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -32,6 +32,8 @@ import {
 
 const NAV_ITEMS = [
   { href: "/admin", label: "Overview", icon: Home },
+  { href: "/admin/users", label: "Users", icon: Users },
+  { href: "/admin/mountains", label: "Mountains", icon: Mountain },
   { href: "/admin/crons", label: "Crons", icon: Clock },
 ];
 

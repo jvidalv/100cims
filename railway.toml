@@ -1,0 +1,10 @@
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "packages/api/Dockerfile"
+
+[deploy]
+startCommand = "cd packages/api && npx drizzle-kit migrate && cd /app && node packages/api/server.js"
+healthcheckPath = "/api/health"
+healthcheckTimeout = 30
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
