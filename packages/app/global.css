@@ -4,33 +4,21 @@
 @import "nativewind/theme";
 
 @theme {
-  --color-primary: var(--primary);
-  --color-accent: var(--accent);
-  --color-background: rgb(var(--background) / <alpha-value>);
-  --color-foreground: rgb(var(--foreground) / <alpha-value>);
-  --color-muted-foreground: rgb(var(--muted-foreground) / <alpha-value>);
-  --color-link: rgb(var(--link) / <alpha-value>);
-  --color-border: hsl(var(--border));
+  --color-primary: #f43f5e;
+  --color-accent: #963ff4;
+  --color-background: #ffffff;
+  --color-foreground: #050505;
+  --color-muted-foreground: #505050;
+  --color-link: #2563eb;
+  --color-border: #e5e7eb;
 }
 
 :root {
-  --primary: #f43f5e;
-  --accent: #963ff4;
-  --background: 255 255 255;
-  --foreground: 5 5 5;
-  --muted-foreground: 80 80 80;
-  --link: 37 99 235;
-  --border: 214.3 31.8% 91.4%;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --primary: #f43f5e;
-    --accent: #963ff4;
-    --background: 21 23 24;
-    --foreground: 236 237 338;
-    --muted-foreground: 190 190 190;
-    --link: 59 130 246;
-    --border: 217.2 0% 20%;
-  }
+  --color-primary: #f43f5e;
+  --color-accent: #963ff4;
+  --color-background: #ffffff;
+  --color-foreground: #050505;
+  --color-muted-foreground: #505050;
+  --color-link: #2563eb;
+  --color-border: #e5e7eb;
 }

@@ -1,13 +1,12 @@
 import { Link, useRouter } from "expo-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { ScrollView, TouchableOpacity, View } from "react-native";
+import { Pressable, ScrollView, TouchableOpacity, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
 import { useAuth } from "@/components/providers/auth-provider";
 import {
   ActivityIndicator,
-  Button,
   Icon,
   ThemedText,
   ThemedView,
@@ -47,7 +46,7 @@ export default function ChallengesScreen() {
       return;
     }
     await updateUser({ activeChallengeId: id });
-    router.dismiss();
+    router.back();
   };
 
   const onCreateChallenge = () => {
@@ -55,67 +54,77 @@ export default function ChallengesScreen() {
       router.push("/join");
       return;
     }
-    router.back();
     router.push("/user/challenges");
   };
 
-  const challenges =
-    activeTab === "official" ? officialChallenges : communityChallenges;
+  const isCommunityTab = activeTab === "community";
+  const challenges = isCommunityTab ? communityChallenges : officialChallenges;
+
+  const tabs = useMemo<{ type: Tab; name: string }[]>(
+    () => [
+      {
+        type: "official",
+        name: intl.formatMessage({ defaultMessage: "Official" }),
+      },
+      {
+        type: "community",
+        name: intl.formatMessage({ defaultMessage: "Community" }),
+      },
+    ],
+    [intl],
+  );
 
   return (
     <ThemedView className="flex-1">
-      {isAndroid && <ScreenHeader />}
+      <ScreenHeader />
+      <View className="mx-6 mb-2 flex-row items-center justify-between">
+        <ThemedText className="text-4xl font-bold">
+          <FormattedMessage defaultMessage="Challenges" />
+        </ThemedText>
+        {isCommunityTab && (
+          <TouchableOpacity
+            onPress={onCreateChallenge}
+            className="flex-row items-center gap-1"
+          >
+            <ThemedText>
+              <FormattedMessage defaultMessage="New challenge" />
+            </ThemedText>
+            <Icon
+              name="plus"
+              size={isAndroid ? 22 : 14}
+              animationSpec={{ effect: { type: "bounce" } }}
+            />
+          </TouchableOpacity>
+        )}
+      </View>
+      <View className="mb-4 flex-row gap-1 px-6">
+        {tabs.map(({ type, name }) => {
+          const isSelected = activeTab === type;
+          return (
+            <Pressable
+              key={type}
+              onPress={() => setActiveTab(type)}
+              className={twMerge(
+                "rounded-lg py-2 px-2.5 mr-1 disabled:opacity-50",
+                isSelected ? "bg-primary" : "bg-border",
+              )}
+            >
+              <ThemedText
+                className={twMerge(
+                  "font-medium text-foreground",
+                  isSelected && "text-white",
+                )}
+              >
+                {name}
+              </ThemedText>
+            </Pressable>
+          );
+        })}
+      </View>
       <ScrollView
-        className={twMerge("px-4", !isAndroid && "pt-6")}
-        contentContainerClassName="gap-2 pb-40"
+        contentContainerClassName="gap-2 px-6 pb-40"
         showsVerticalScrollIndicator={false}
-        stickyHeaderIndices={[0]}
       >
-        <ThemedView className="pb-2">
-          <ThemedText className="text-4xl font-black">
-            <FormattedMessage defaultMessage="Challenges" />
-          </ThemedText>
-          <ThemedText className="text-muted-foreground">
-            <FormattedMessage defaultMessage="You can switch between them freely, progress is saved." />
-          </ThemedText>
-        </ThemedView>
-
-        {/* Tab Selector */}
-        <View className="mb-2 flex-row gap-2">
-          <TouchableOpacity
-            onPress={() => setActiveTab("official")}
-            className={twMerge(
-              "flex-1 rounded-lg border-2 border-border p-3",
-              activeTab === "official" && "border-primary bg-primary/10"
-            )}
-          >
-            <ThemedText
-              className={twMerge(
-                "text-center font-semibold",
-                activeTab === "official" && "text-primary"
-              )}
-            >
-              🏆 {intl.formatMessage({ defaultMessage: "Official" })}
-            </ThemedText>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => setActiveTab("community")}
-            className={twMerge(
-              "flex-1 rounded-lg border-2 border-border p-3",
-              activeTab === "community" && "border-primary bg-primary/10"
-            )}
-          >
-            <ThemedText
-              className={twMerge(
-                "text-center font-semibold",
-                activeTab === "community" && "text-primary"
-              )}
-            >
-              👥 {intl.formatMessage({ defaultMessage: "Community" })}
-            </ThemedText>
-          </TouchableOpacity>
-        </View>
-
         {challenges?.map((challenge, index) => {
           // Use custom emoji for community challenges if available, otherwise use country flag
           const displayEmoji =
@@ -162,7 +171,7 @@ export default function ChallengesScreen() {
           );
         })}
 
-        {activeTab === "official" && (
+        {!isCommunityTab && (
           <Link href="/user/suggestions" asChild>
             <ThemedText className="mt-4 text-center font-medium text-muted-foreground underline">
               <FormattedMessage defaultMessage="Suggest a new challenge" />
@@ -170,25 +179,12 @@ export default function ChallengesScreen() {
           </Link>
         )}
 
-        {activeTab === "community" && (
-          <>
-            {(!challenges || challenges.length === 0) && (
-              <View className="mt-8 items-center">
-                <ThemedText className="text-center text-muted-foreground">
-                  <FormattedMessage defaultMessage="No community challenges yet. Be the first to create one!" />
-                </ThemedText>
-              </View>
-            )}
-            <Button
-              intent="outline"
-              iconName="plus"
-              iconSize={16}
-              onPress={onCreateChallenge}
-              className="mt-4"
-            >
-              <FormattedMessage defaultMessage="Create Challenge" />
-            </Button>
-          </>
+        {isCommunityTab && (!challenges || challenges.length === 0) && (
+          <View className="mt-8 items-center">
+            <ThemedText className="text-center text-muted-foreground">
+              <FormattedMessage defaultMessage="No community challenges yet. Be the first to create one!" />
+            </ThemedText>
+          </View>
         )}
       </ScrollView>
     </ThemedView>
