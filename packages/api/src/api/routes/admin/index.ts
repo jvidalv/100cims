@@ -1,18 +1,16 @@
-import { bearer } from "@elysiajs/bearer";
 import { eq } from "drizzle-orm";
 import { Elysia } from "elysia";
+import { getToken } from "next-auth/jwt";
 
 import { db } from "@/db";
 import { userTable } from "@/db/schema";
-import { JWT } from "@/api/routes/@shared/jwt";
-import { setRequestContext } from "@/api/routes/@shared/request-context";
+import { setAdminContext } from "@/api/routes/admin/admin-context";
 import { adminCronsGetRoute } from "@/api/routes/admin/admin.crons.get";
 import { adminCronsTriggerPostRoute } from "@/api/routes/admin/admin.crons-trigger.post";
+import { adminMeGetRoute } from "@/api/routes/admin/admin.me.get";
 
 export const adminRoutes = new Elysia({ prefix: "/admin" })
-  .use(JWT())
-  .use(bearer())
-  .resolve(async ({ jwt, bearer, request, set }) => {
+  .resolve(async ({ request, set }) => {
     const unauthorized = () => {
       set.status = 401;
       return { error: "Unauthorized" };
@@ -22,21 +20,23 @@ export const adminRoutes = new Elysia({ prefix: "/admin" })
       return { error: "Forbidden" };
     };
 
-    if (!bearer) return unauthorized();
+    const token = await getToken({
+      req: request,
+      secret: process.env.AUTH_SECRET,
+    });
+    if (!token || typeof token.userId !== "string") return unauthorized();
 
-    const verified = await jwt.verify(bearer);
-    if (!verified || typeof verified.id !== "string") return unauthorized();
-
-    const [user] = await db
-      .select()
+    const [row] = await db
+      .select({ admin: userTable.admin })
       .from(userTable)
-      .where(eq(userTable.id, verified.id));
+      .where(eq(userTable.id, token.userId));
 
-    if (!user || user.id !== verified.id) return unauthorized();
-    if (!user.admin) return forbidden();
+    if (!row) return unauthorized();
+    if (!row.admin) return forbidden();
 
-    setRequestContext(request, { user });
-    return { user };
+    setAdminContext(request, { userId: token.userId });
+    return { userId: token.userId };
   })
+  .use(adminMeGetRoute)
   .use(adminCronsGetRoute)
   .use(adminCronsTriggerPostRoute);

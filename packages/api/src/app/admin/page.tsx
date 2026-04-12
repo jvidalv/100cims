@@ -1,16 +1,10 @@
-import Link from "next/link";
-
 export default function AdminPage() {
   return (
-    <div className="container mx-auto p-8">
-      <h1 className="text-2xl font-bold mb-6">Admin</h1>
-      <ul className="space-y-2">
-        <li>
-          <Link href="/admin/crons" className="text-primary hover:underline">
-            Crons
-          </Link>
-        </li>
-      </ul>
+    <div className="p-8">
+      <h1 className="text-2xl font-bold mb-2">Overview</h1>
+      <p className="text-sm text-muted-foreground">
+        Pick a section from the sidebar.
+      </p>
     </div>
   );
 }
