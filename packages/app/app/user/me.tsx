@@ -2,7 +2,14 @@ import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  Appearance,
+  ScrollView,
+  TouchableOpacity,
+  View,
+  useColorScheme,
+} from "react-native";
 
 import { useAuth } from "@/components/providers/auth-provider";
 import { queryClient } from "@/components/providers/query-client-provider";
@@ -35,6 +42,7 @@ export default function UserMeScreen() {
   const { mutateAsync: updateUserMe } = useUpdateUserMeMutation();
   const { mutateAsync: deleteAccount } = useDeleteAccountMutation();
   const { data: me, refetch } = useUserMe();
+  const colorScheme = useColorScheme();
   const [image, setImage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -167,12 +175,17 @@ export default function UserMeScreen() {
         </ThemedText>
         <View className="gap-6">
           <View className="relative items-center justify-center">
-            <TouchableOpacity onPress={pickImage}>
+            <TouchableOpacity onPress={pickImage} className="relative">
               <Avatar
                 size="xl"
                 className="size-32"
                 imageUrl={image ? image : me?.imageUrl}
               />
+              {(image || me?.imageUrl) && (
+                <View className="absolute bottom-0 right-0 size-7 items-center justify-center rounded-full border-2 border-background bg-primary">
+                  <Icon name="pencil" size={12} color="white" weight="bold" />
+                </View>
+              )}
             </TouchableOpacity>
             {!image && !me?.imageUrl && (
               <View className="pointer-events-none absolute size-full items-center justify-center">
@@ -219,6 +232,13 @@ export default function UserMeScreen() {
             })}
             defaultChecked={me?.visibleOnPeopleSearch}
             onChecked={onVisiblePeopleSearchChange}
+          />
+          <ThemedToggleInput
+            label={intl.formatMessage({ defaultMessage: "Dark theme?" })}
+            defaultChecked={colorScheme === "dark"}
+            onChecked={(checked) =>
+              Appearance.setColorScheme(checked ? "dark" : "light")
+            }
           />
           <TouchableOpacity
             onPress={onDeleteAccount}

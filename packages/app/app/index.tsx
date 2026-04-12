@@ -1,6 +1,4 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Link, useRouter } from "expo-router";
-import { useColorScheme } from "nativewind";
 import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
@@ -15,8 +13,6 @@ import Animated, {
   useAnimatedRef,
   useAnimatedStyle,
   useScrollOffset,
-  useSharedValue,
-  withSpring,
   withTiming,
 } from "react-native-reanimated";
 import { twMerge } from "tailwind-merge";
@@ -34,7 +30,6 @@ import {
   PlanItemList,
   PlanItemListSkeleton,
 } from "@/components/ui/molecules/plan-item-list";
-import { Colors } from "@/constants/colors";
 import { MERCH_PRODUCTS } from "@/constants/merch";
 import { useActiveChallenge } from "@/domains/challenge/challenge.api";
 import {
@@ -171,65 +166,8 @@ const PlansSection = () => {
   );
 };
 
-const TOOLTIP_KEY = "challenges";
-
 const FALLBACK_UPDATE_IMAGE =
   "https://josepvidal-public-dev-bucket.s3.eu-west-3.amazonaws.com/100cims/mountain/profile/el-tossal-gros.jpg";
-
-const AnimatedTooltip = () => {
-  const router = useRouter();
-  const translateX = useSharedValue(-20); // Start off-screen
-  const opacity = useSharedValue(0);
-
-  const showTooltip = useCallback(() => {
-    translateX.value = withSpring(0);
-    opacity.value = withTiming(1, { duration: 200 });
-  }, [opacity, translateX]);
-
-  const hideTooltip = useCallback(() => {
-    translateX.value = withTiming(-20, { duration: 500 });
-    opacity.value = withTiming(0, { duration: 500 });
-    router.push({ pathname: "/challenges" });
-  }, [opacity, router, translateX]);
-
-  useEffect(() => {
-    (async () => {
-      if (!(await AsyncStorage.getItem(TOOLTIP_KEY))) {
-        showTooltip();
-        void AsyncStorage.setItem(TOOLTIP_KEY, "true");
-      }
-    })();
-  }, [showTooltip]);
-
-  const animatedTooltipStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: translateX.value }],
-    opacity: opacity.value,
-  }));
-
-  return (
-    <Animated.View
-      style={animatedTooltipStyle}
-      className="absolute left-[85%] top-4 z-20 translate-y-1/2"
-    >
-      <Pressable
-        onPress={hideTooltip}
-        className="relative flex-row items-center rounded-xl bg-primary px-4 py-2 shadow"
-      >
-        <View className="absolute -left-3">
-          <Icon
-            name="arrow.backward"
-            size={14}
-            weight="bold"
-            color={Colors.dark.primary}
-          />
-        </View>
-        <ThemedText className="font-medium text-white">
-          <FormattedMessage defaultMessage="Explore other challenges" />
-        </ThemedText>
-      </Pressable>
-    </Animated.View>
-  );
-};
 
 const TopSection = () => {
   const { data: challenge } = useActiveChallenge();
@@ -279,8 +217,6 @@ const PageHeader = ({
     };
   });
 
-  const { setColorScheme, colorScheme } = useColorScheme();
-
   return (
     <BlurView className="absolute z-20 h-28 w-full justify-end px-6 pb-2">
       <View className="flex-row items-center justify-between">
@@ -288,27 +224,13 @@ const PageHeader = ({
           <MountainsDone showAllMountains={false} />
         </Animated.View>
         <View className="flex-1 flex-row items-center justify-end gap-2">
-          <TouchableOpacity
-            className="size-10 items-center justify-center rounded-full border-2 border-border opacity-60"
-            onPress={() =>
-              setColorScheme(colorScheme === "dark" ? "light" : "dark")
-            }
-          >
-            {colorScheme === "dark" && (
-              <Icon
-                name="sun.max.fill"
-                muted
-                animationSpec={{ effect: { type: "bounce" } }}
-              />
-            )}
-            {colorScheme === "light" && (
-              <Icon
-                name="moon.fill"
-                muted
-                animationSpec={{ effect: { type: "bounce" } }}
-              />
-            )}
-          </TouchableOpacity>
+          <Link href="/hiscores" asChild>
+            <TouchableOpacity
+              className="size-10 items-center justify-center rounded-full border-2 border-border"
+            >
+              <Icon name="trophy.fill" muted />
+            </TouchableOpacity>
+          </Link>
           <Link
             href={{ pathname: "/mountains", params: { view: "map" } }}
             asChild
@@ -540,21 +462,15 @@ export default function IndexScreen() {
         <View className="h-24" />
         <Animated.View className="gap-0.5" style={scoreSectionStyle}>
           <View className="flex-row items-end justify-between">
-            <View className="relative flex-row items-center">
-              <AnimatedTooltip />
-              <Link href="/challenges">
-                <ThemedText className="text-2xl font-bold">
-                  <FormattedMessage defaultMessage="Challenge" />
-                </ThemedText>
-              </Link>
-              <Link href="/challenges" className="py-1.5 pl-1.5 pr-3">
-                <Icon name="arrow.left.arrow.right" size={20} muted />
-              </Link>
-            </View>
-            <Link href="/hiscores" className="z-10 -m-2 p-2 pb-4">
+            <Link href="/challenges">
+              <ThemedText className="text-2xl font-bold">
+                <FormattedMessage defaultMessage="Challenge" />
+              </ThemedText>
+            </Link>
+            <Link href="/challenges" className="z-10 -m-2 p-2 pb-4">
               <View className="flex-row items-center gap-1">
                 <ThemedText className="text-muted-foreground">
-                  <FormattedMessage defaultMessage="Hiscores" />
+                  <FormattedMessage defaultMessage="More" />
                 </ThemedText>
                 <Icon name="arrow.forward" size={12} weight="bold" muted />
               </View>

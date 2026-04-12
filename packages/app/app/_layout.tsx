@@ -2,7 +2,6 @@ import { setDefaultOptions } from "date-fns/setDefaultOptions";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-// import { useColorScheme } from "nativewind";
 import React, {
   useRef,
   useEffect,
@@ -16,6 +15,7 @@ import { Easing } from "react-native-reanimated";
 
 import { QueryClientProvider } from "@/components/providers";
 import { AuthProvider } from "@/components/providers/auth-provider";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 import { useMountains } from "@/domains/mountain/mountain.api";
 import { usePlanChatUnread } from "@/domains/plan/plan-chat.api";
 import { usePlans } from "@/domains/plan/plan.api";
@@ -129,10 +129,6 @@ function Content() {
         name="join"
         options={{ presentation: isIpadOS ? "fullScreenModal" : "modal" }}
       />
-      <Stack.Screen
-        name="challenges"
-        options={{ presentation: isIpadOS ? "fullScreenModal" : "modal" }}
-      />
     </Stack>
     </>
   );
@@ -191,5 +187,9 @@ function RootProviders() {
 }
 
 export default function Root() {
-  return <RootProviders />;
+  return (
+    <ThemeProvider>
+      <RootProviders />
+    </ThemeProvider>
+  );
 }
