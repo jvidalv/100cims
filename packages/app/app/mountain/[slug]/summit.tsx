@@ -25,6 +25,7 @@ import { useUserMe, useUsers } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
 import { isAndroid } from "@/lib/device";
 import { getImageOptimized } from "@/lib/images";
+import { logError } from "@/lib/log-error";
 import { userKeys } from "@/lib/query-keys";
 
 export default function SummitMountainScreen() {
@@ -77,6 +78,7 @@ export default function SummitMountainScreen() {
         setImage(modifiedImage);
       }
     } catch (error) {
+      logError(error, "mountain/summit/image-pick");
       Alert.alert(
         intl.formatMessage({
           defaultMessage: "Error, try again or use another image.",
@@ -126,6 +128,7 @@ export default function SummitMountainScreen() {
       });
       router.dismiss();
     } catch (error) {
+      logError(error, "mountain/summit/submit");
       return Alert.alert(
         intl.formatMessage({
           defaultMessage: "Error, try again.",

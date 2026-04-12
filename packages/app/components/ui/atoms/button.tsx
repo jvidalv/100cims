@@ -1,7 +1,7 @@
 import { forwardRef } from "react";
 import {
-  TouchableOpacity,
   Text,
+  TouchableOpacity,
   TouchableOpacityProps,
   View,
 } from "react-native";
@@ -59,6 +59,7 @@ export const Button = forwardRef<View, Props>(
   ) => {
     const variants = buttonVariants({ intent, disabled, loading: isLoading });
     const iconColor = "white";
+    const isOutlineOrGhost = intent === "outline" || intent === "ghost";
 
     return (
       <TouchableOpacity
@@ -79,12 +80,14 @@ export const Button = forwardRef<View, Props>(
           </View>
         )}
         <Text
+          style={{
+            fontSize: 20,
+            fontWeight: "600",
+            color: isOutlineOrGhost ? undefined : "white",
+          }}
           className={twMerge(
-            "text-xl font-semibold text-white",
             isLoading && "opacity-0",
-            intent &&
-              ["outline", "ghost"].includes(intent) &&
-              "text-foreground",
+            isOutlineOrGhost && "text-foreground",
             textClassName,
           )}
         >

@@ -1,7 +1,7 @@
 import "tsx/cjs"; // Add this to import TypeScript files
 import { ExpoConfig } from "@expo/config-types";
 
-const config: ExpoConfig = {
+const config: ExpoConfig & { newArchEnabled?: boolean } = {
   name: "100cims",
   slug: "100cims",
   version: "2.3.0",
@@ -40,6 +40,7 @@ const config: ExpoConfig = {
     "expo-apple-authentication",
     "expo-router",
     "expo-font",
+    "expo-notifications",
     [
       "expo-image-picker",
       {
@@ -50,10 +51,14 @@ const config: ExpoConfig = {
     [
       "expo-splash-screen",
       {
-        image: "./assets/images/mountain.png",
-        imageWidth: 200,
+        image: "./assets/images/logo-dark.png",
+        imageWidth: 280,
         resizeMode: "contain",
-        backgroundColor: "#f43f5e",
+        backgroundColor: "#ffffff",
+        dark: {
+          image: "./assets/images/logo-light.png",
+          backgroundColor: "#151718",
+        },
       },
     ],
     [

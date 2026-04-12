@@ -1,7 +1,6 @@
-import { format } from "date-fns/format";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Linking from "expo-linking";
-import { Link, useLocalSearchParams } from "expo-router";
+import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { setStatusBarStyle } from "expo-status-bar";
 import { useColorScheme } from "nativewind";
 import { useEffect, useMemo } from "react";
@@ -9,13 +8,14 @@ import { FormattedMessage, useIntl } from "react-intl";
 import { TouchableOpacity, Image, View, StyleSheet, Share } from "react-native";
 
 import { useAuth } from "@/components/providers/auth-provider";
-import { ThemedText, Icon, Button, Skeleton } from "@/components/ui/atoms";
-import { AvatarGroup, MountainItemList } from "@/components/ui/molecules";
+import { SummitCard } from "@/components/summit";
+import { ThemedText, Icon, Skeleton } from "@/components/ui/atoms";
+import { MountainItemList } from "@/components/ui/molecules";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
+import { Colors } from "@/constants/colors";
 import { useMountainOne, useMountains } from "@/domains/mountain/mountain.api";
 import { useSummitsGet } from "@/domains/summit/summit.api";
 import { useUserChallengeSummits } from "@/domains/user/user.api";
-import { getFullName } from "@/domains/user/user.utils";
 import { useLocation } from "@/hooks/use-location";
 import { getUrlDeeplink } from "@/lib/deeplink";
 import { isIOS } from "@/lib/device";
@@ -24,6 +24,7 @@ import { askForReview } from "@/lib/reviews";
 
 export default function MountainScreen() {
   const intl = useIntl();
+  const router = useRouter();
   const { colorScheme } = useColorScheme();
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const { isAuthenticated } = useAuth();
@@ -78,7 +79,7 @@ export default function MountainScreen() {
 
   const { data: latestSummits, isPending: isPendingLatestSummits } =
     useSummitsGet({
-      limit: 100,
+      limit: 30,
       mountainId: mountain?.id,
     });
   const { data: userSummits } = useUserChallengeSummits();
@@ -108,10 +109,9 @@ export default function MountainScreen() {
 
     const msg = messages[locale as "ca" | "es" | "en"] || messages.en;
 
-    const response = await Share.share({
+    await Share.share({
       message: msg,
     });
-
   };
 
   return (
@@ -119,30 +119,6 @@ export default function MountainScreen() {
       title={mountain.name}
       headerClassName="flex items-center justify-center bg-primary"
       contentClassName="gap-8 px-6 py-6"
-      parallaxRightElement={
-        <View className="flex-row  items-end gap-4 opacity-80">
-          <TouchableOpacity onPress={handleShareMountain}>
-            <Icon
-              name="square.and.arrow.up"
-              color="white"
-              size={24}
-              animationSpec={{ effect: { type: "bounce" } }}
-            />
-          </TouchableOpacity>
-        </View>
-      }
-      headerRightElement={
-        <TouchableOpacity
-          onPress={handleShareMountain}
-          className="flex-row items-center justify-end pb-3 pr-4"
-        >
-          <Icon
-            name="square.and.arrow.up"
-            color="white"
-            animationSpec={{ effect: { type: "bounce" } }}
-          />
-        </TouchableOpacity>
-      }
       headerImage={
         mountain.imageUrl ? (
           <Image
@@ -198,52 +174,7 @@ export default function MountainScreen() {
           </View>
         )}
       </View>
-      <View className="gap-4">
-        <ThemedText className="text-2xl font-semibold">
-          <FormattedMessage defaultMessage="View" />
-        </ThemedText>
-        <View className="flex-row gap-4">
-          <TouchableOpacity
-            onPress={() => {
-              void Linking.openURL(
-                `https://www.google.es/maps?q=${mountain.latitude},${mountain.longitude}`,
-              );
-            }}
-            className="flex-1 flex-row items-center justify-between rounded-xl border-2 border-border p-4"
-          >
-            <ThemedText className="text-xl font-medium">
-              <FormattedMessage defaultMessage="On" />{" "}
-              <ThemedText className="text-xl font-medium text-blue-500">
-                <FormattedMessage defaultMessage="maps" />
-              </ThemedText>
-            </ThemedText>
-            <Icon name="arrow.right" muted size={20} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              const locale = intl.locale as "en" | "es" | "ca";
-              const wikilocSubdomain =
-                locale === "ca" || locale === "es" ? locale : "en";
-              void Linking.openURL(
-                `https://${wikilocSubdomain}.wikiloc.com/wikiloc/map.do?q=${mountain.name}, ${mountain.location}&fitMapToTrails=1&page=1`,
-              );
-            }}
-            className="flex-1 flex-row items-center justify-between rounded-xl border-2 border-border p-4"
-          >
-            <ThemedText className="text-xl font-medium">
-              <FormattedMessage defaultMessage="On" />{" "}
-              <ThemedText
-                className="text-xl font-medium"
-                style={{ color: "#4b8c2a" }}
-              >
-                wikiloc
-              </ThemedText>
-            </ThemedText>
-            <Icon name="arrow.right" muted size={20} />
-          </TouchableOpacity>
-        </View>
-      </View>
-      <View className="gap-4">
+      <View className="gap-2">
         <ThemedText className="text-2xl font-semibold">
           <FormattedMessage defaultMessage="Actions" />
         </ThemedText>
@@ -255,14 +186,63 @@ export default function MountainScreen() {
           }
           asChild
         >
-          <Button className="flex-1">
-            {isSummited ? (
-              <FormattedMessage defaultMessage="Summit again" />
-            ) : (
-              <FormattedMessage defaultMessage="Summit" />
-            )}
-          </Button>
+          <TouchableOpacity className="flex-row items-center gap-2">
+            <View className="size-8 items-center justify-center rounded-full bg-primary/10">
+              <Icon name="figure.hiking" size={18} color={Colors.light.primary} />
+            </View>
+            <ThemedText className="text-primary">
+              {isSummited ? (
+                <FormattedMessage defaultMessage="Summit again" />
+              ) : (
+                <FormattedMessage defaultMessage="Summit" />
+              )}
+            </ThemedText>
+          </TouchableOpacity>
         </Link>
+        <TouchableOpacity
+          onPress={handleShareMountain}
+          className="flex-row items-center gap-2"
+        >
+          <View className="size-8 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700">
+            <Icon name="square.and.arrow.up" size={16} />
+          </View>
+          <ThemedText className="text-muted-foreground">
+            <FormattedMessage defaultMessage="Share with your friends" />
+          </ThemedText>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            void Linking.openURL(
+              `https://www.google.es/maps?q=${mountain.latitude},${mountain.longitude}`,
+            );
+          }}
+          className="flex-row items-center gap-2"
+        >
+          <View className="size-8 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900">
+            <Icon name="map.fill" size={16} color="#3b82f6" />
+          </View>
+          <ThemedText className="text-blue-500 dark:text-blue-400">
+            <FormattedMessage defaultMessage="View on maps" />
+          </ThemedText>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            const locale = intl.locale as "en" | "es" | "ca";
+            const wikilocSubdomain =
+              locale === "ca" || locale === "es" ? locale : "en";
+            void Linking.openURL(
+              `https://${wikilocSubdomain}.wikiloc.com/wikiloc/map.do?q=${mountain.name}, ${mountain.location}&fitMapToTrails=1&page=1`,
+            );
+          }}
+          className="flex-row items-center gap-2"
+        >
+          <View className="size-8 items-center justify-center rounded-full bg-green-100 dark:bg-green-900">
+            <Icon name="map.fill" size={16} color="#4b8c2a" />
+          </View>
+          <ThemedText style={{ color: "#4b8c2a" }}>
+            <FormattedMessage defaultMessage="View on wikiloc" />
+          </ThemedText>
+        </TouchableOpacity>
       </View>
       <View className="gap-4">
         <ThemedText className="text-2xl font-semibold">
@@ -319,76 +299,41 @@ export default function MountainScreen() {
       </View>
       <View className="mb-32 gap-4">
         <ThemedText className="text-2xl font-semibold">
-          <FormattedMessage defaultMessage="All" />
+          <FormattedMessage
+            defaultMessage="Last {count}"
+            values={{ count: latestSummits?.length ?? 0 }}
+          />
         </ThemedText>
-        <View className="gap-3">
-          {isPendingLatestSummits && (
-            <View className="flex-row justify-between">
-              <View className="gap-1">
-                <Skeleton className="h-4 w-32" />
-                <Skeleton className="h-4 w-20" />
-              </View>
-              <Skeleton className="size-10 rounded-full" />
+        {isPendingLatestSummits && (
+          <View className="flex-row flex-wrap">
+            <View className="w-1/2 pr-1">
+              <Skeleton style={{ height: 243, borderRadius: 6 }} />
             </View>
-          )}
-          {!latestSummits?.length && !isPendingLatestSummits && (
-            <ThemedText className="text-muted-foreground">
-              <FormattedMessage defaultMessage="No one summited yet." />
-            </ThemedText>
-          )}
-          {latestSummits?.map(({ summitId, summitedAt, users }) => {
-            const firstName = users[0]?.firstName;
-            const firstNameSecond = users[1]?.firstName;
-
-            return (
-              <Link
-                href={{
+            <View className="w-1/2 pl-1">
+              <Skeleton style={{ height: 243, borderRadius: 6 }} />
+            </View>
+          </View>
+        )}
+        {!latestSummits?.length && !isPendingLatestSummits && (
+          <ThemedText className="text-muted-foreground">
+            <FormattedMessage defaultMessage="No one summited yet." />
+          </ThemedText>
+        )}
+        <View className="flex-row flex-wrap">
+          {latestSummits?.map((summit, index) => (
+            <SummitCard
+              key={summit.summitId}
+              summit={summit}
+              index={index}
+              onPress={() =>
+                router.push({
                   pathname: "/user/summits/[summit]",
-                  params: { summit: summitId },
-                }}
-                key={summitId}
-              >
-                <View className="w-full flex-row items-end justify-between gap-4">
-                  <View>
-                    <ThemedText className="font-black">
-                      <ThemedText className="font-medium">
-                        {firstName}
-                      </ThemedText>
-                      {users.length >= 2 && (
-                        <ThemedText className="font-medium">
-                          {users.length === 2 ? (
-                            <ThemedText className="text-muted-foreground">
-                              {" "}
-                              &
-                            </ThemedText>
-                          ) : (
-                            ","
-                          )}{" "}
-                          {firstNameSecond}
-                        </ThemedText>
-                      )}
-                      {users.length > 2 && (
-                        <ThemedText className="text-muted-foreground">
-                          {" "}
-                          & {users.length - 2} more
-                        </ThemedText>
-                      )}
-                    </ThemedText>
-                    <ThemedText className="text-sm text-muted-foreground">
-                      {format(summitedAt, "dd MMM yyyy")}
-                    </ThemedText>
-                  </View>
-                  <AvatarGroup
-                    size="sm"
-                    items={users.map((user) => ({
-                      name: getFullName(user),
-                      imageUrl: user.imageUrl,
-                    }))}
-                  />
-                </View>
-              </Link>
-            );
-          })}
+                  params: { summit: summit.summitId },
+                })
+              }
+              onParticipantPress={(userId) => router.push(`/user/${userId}`)}
+            />
+          ))}
         </View>
       </View>
     </ParallaxScrollView>

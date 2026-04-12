@@ -123,10 +123,9 @@ export default function PlanIdPage() {
     const locale = intl.locale;
     const msg = messages[locale as "ca" | "es" | "en"] || messages.en;
 
-    const response = await Share.share({
+    await Share.share({
       message: msg,
     });
-
   };
 
   const handleJoin = () => {

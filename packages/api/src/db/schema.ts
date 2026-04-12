@@ -66,6 +66,8 @@ export const userTable = pgTable("user", {
   lastLongitude: numeric(),
   lastLocationAt: timestamp(),
   activeChallengeId: uuid(), // FK constraint in migration to avoid circular reference
+  expoPushToken: text(),
+  pushNotificationsEnabled: boolean().notNull().default(true),
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp().notNull().defaultNow(),
 });

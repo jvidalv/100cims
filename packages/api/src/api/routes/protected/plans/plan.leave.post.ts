@@ -7,6 +7,9 @@ import {
   planHasUsersTable,
   planUserLogTable,
 } from "@/db/schema";
+import { sendPushLocalized } from "@/api/lib/push";
+import { pushPlanLeft } from "@/api/lib/push-translations";
+import { PUSH_TYPE, getUserDisplayName } from "@/api/lib/push-types";
 import { getUserFromRequest } from "@/api/routes/@shared/auth";
 import {
   SimpleSuccessResponse,
@@ -23,6 +26,7 @@ export const planLeavePostRoute = new Elysia().post(
         id: planTable.id,
         creatorId: planTable.creatorId,
         status: planTable.status,
+        title: planTable.title,
       })
       .from(planTable)
       .where(eq(planTable.id, body.id))
@@ -56,6 +60,17 @@ export const planLeavePostRoute = new Elysia().post(
         action: "left",
       });
     });
+
+    const leaverName = getUserDisplayName(user);
+
+    void sendPushLocalized(
+      [targetPlan.creatorId],
+      (locale) => ({
+        title: targetPlan.title,
+        body: pushPlanLeft(locale, leaverName),
+      }),
+      { type: PUSH_TYPE.PLAN_LEAVE, planId: body.id },
+    );
 
     return { success: true };
   },

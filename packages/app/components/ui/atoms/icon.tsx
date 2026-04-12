@@ -1,7 +1,6 @@
 // This file is a fallback for using MaterialIcons on Android and web.
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { SymbolWeight } from "expo-symbols";
-import { AnimationSpec } from "expo-symbols/build/SymbolModule.types";
+import { AnimationSpec, SFSymbol, SymbolWeight } from "expo-symbols";
 import { useColorScheme } from "nativewind";
 import React from "react";
 import { OpaqueColorValue, StyleProp, TextStyle } from "react-native";
@@ -16,6 +15,7 @@ const MAPPING = {
   "arrow.forward": "arrow-right",
   "arrow.backward": "arrow-left",
   "mountain.2.fill": "summit",
+  "figure.hiking": "hiking",
   "checkmark.seal.fill": "check-decagram",
   "map.circle.fill": "map-search",
   "chevron.right": "chevron-right",
@@ -66,10 +66,7 @@ const MAPPING = {
   "text.bubble.fill": "message-text",
   "person.2.fill": "account-multiple",
 } as Partial<
-  Record<
-    import("expo-symbols").SymbolViewProps["name"],
-    React.ComponentProps<typeof MaterialCommunityIcons>["name"]
-  >
+  Record<SFSymbol, React.ComponentProps<typeof MaterialCommunityIcons>["name"]>
 >;
 
 export type IconSymbolName = keyof typeof MAPPING;

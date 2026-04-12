@@ -103,7 +103,13 @@ export default function ChallengesScreen() {
           return (
             <Pressable
               key={type}
-              onPress={() => setActiveTab(type)}
+              onPress={() => {
+                if (type === "community" && !isAuthenticated) {
+                  router.push("/join");
+                  return;
+                }
+                setActiveTab(type);
+              }}
               className={twMerge(
                 "rounded-lg py-2 px-2.5 mr-1 disabled:opacity-50",
                 isSelected ? "bg-primary" : "bg-border",
@@ -157,14 +163,6 @@ export default function ChallengesScreen() {
               rightElement={
                 isPending && variables?.activeChallengeId === challenge.id ? (
                   <ActivityIndicator className="opacity-30" />
-                ) : "totalUsers" in challenge &&
-                  Number(challenge.totalUsers) > 0 ? (
-                  <View className="flex-row items-center gap-1">
-                    <ThemedText className="font-medium text-muted-foreground">
-                      {challenge.totalUsers}
-                    </ThemedText>
-                    <Icon name="person.2.fill" muted size={18} />
-                  </View>
                 ) : null
               }
             />

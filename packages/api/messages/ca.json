@@ -19,10 +19,28 @@
   "footer": {
     "privacy-policy": "Política de Privacitat",
     "terms-of-service": "Termes del Servei",
+    "contact": "Contacte",
     "made-by": "Fet per"
   },
   "privacy-policy": {
     "title": "Política de privacitat",
     "content": "Aquesta aplicació només utilitza les teves dades per a l'autenticació. No emmagatzemem, compartim ni utilitzem les teves dades per a cap altre propòsit. Per a preguntes, contacta: josepvidalvidal@gmail.com."
+  },
+  "contact-page": {
+    "title": "Posa't en contacte",
+    "subtitle": "Preguntes, errors o suggeriments — escriu-nos i et respondrem aviat.",
+    "name-label": "Nom",
+    "name-placeholder": "El teu nom (opcional)",
+    "email-label": "Correu electrònic",
+    "email-placeholder": "tu@exemple.com",
+    "message-label": "Missatge",
+    "message-placeholder": "Què et passa pel cap?",
+    "submit": "Envia el missatge",
+    "submitting": "Enviant…",
+    "success-title": "Missatge enviat",
+    "success-body": "Gràcies — et respondrem aviat.",
+    "error-generic": "Alguna cosa ha anat malament. Torna-ho a provar.",
+    "error-email-invalid": "Introdueix un correu electrònic vàlid.",
+    "error-message-required": "Escriu un missatge."
   }
 }

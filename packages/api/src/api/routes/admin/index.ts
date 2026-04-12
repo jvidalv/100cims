@@ -13,6 +13,11 @@ import { adminMountainDeleteDeleteRoute } from "@/api/routes/admin/admin.mountai
 import { adminMountainDetailGetRoute } from "@/api/routes/admin/admin.mountain-detail.get";
 import { adminMountainUpdatePostRoute } from "@/api/routes/admin/admin.mountain-update.post";
 import { adminMountainsGetRoute } from "@/api/routes/admin/admin.mountains.get";
+import { adminStatsTimeseriesGetRoute } from "@/api/routes/admin/admin.stats-timeseries.get";
+import { adminSummitDeleteDeleteRoute } from "@/api/routes/admin/admin.summit-delete.delete";
+import { adminSummitDetailGetRoute } from "@/api/routes/admin/admin.summit-detail.get";
+import { adminSummitUpdatePostRoute } from "@/api/routes/admin/admin.summit-update.post";
+import { adminSummitsGetRoute } from "@/api/routes/admin/admin.summits.get";
 import { adminUserDetailGetRoute } from "@/api/routes/admin/admin.user-detail.get";
 import { adminUserSummitsGetRoute } from "@/api/routes/admin/admin.user-summits.get";
 import { adminUserUpdatePostRoute } from "@/api/routes/admin/admin.user-update.post";
@@ -56,5 +61,10 @@ export const adminRoutes = new Elysia({ prefix: "/admin" })
   .use(adminMountainUpdatePostRoute)
   .use(adminMountainDeleteDeleteRoute)
   .use(adminMountainChallengesGetRoute)
+  .use(adminSummitsGetRoute)
+  .use(adminSummitDetailGetRoute)
+  .use(adminSummitUpdatePostRoute)
+  .use(adminSummitDeleteDeleteRoute)
+  .use(adminStatsTimeseriesGetRoute)
   .use(adminCronsGetRoute)
   .use(adminCronsTriggerPostRoute);

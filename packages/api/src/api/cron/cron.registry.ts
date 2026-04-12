@@ -18,7 +18,7 @@ export const CRON_REGISTRY: CronEntry[] = [
   { name: "daily-restart", pattern: "0 0 2 * * *", fn: dailyRestart },
   {
     name: "cleanup-orphan-mountains",
-    pattern: "0 0 0 * * *",
+    pattern: "0 0 0 * * 0",
     fn: cleanupOrphanMountains,
   },
 ];

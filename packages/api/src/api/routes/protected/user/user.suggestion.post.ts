@@ -1,6 +1,7 @@
 import { Elysia, t } from "elysia";
 
 import {
+  DISCORD_COLOR,
   DISCORD_CONTACT_WEBHOOK_URL,
   sendDiscordEmbed,
   truncate,
@@ -19,7 +20,7 @@ export const userSuggestionPostRoute = new Elysia().post(
     ]);
     sendDiscordEmbed(DISCORD_CONTACT_WEBHOOK_URL, {
       title: "New suggestion",
-      color: 0xfee75c,
+      color: DISCORD_COLOR.YELLOW,
       fields: [
         { name: "From", value: user.email, inline: true },
         { name: "Message", value: truncate(body.suggestion) },

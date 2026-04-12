@@ -4,6 +4,7 @@ import { Elysia, ParseError, ValidationError } from "elysia";
 
 import { cronJobs } from "@/api/cron";
 import {
+  DISCORD_COLOR,
   DISCORD_ERRORS_WEBHOOK_URL,
   sendDiscordEmbed,
   truncate,
@@ -60,7 +61,7 @@ export const app = new Elysia({ prefix: "/api" })
     ) => {
       sendDiscordEmbed(DISCORD_ERRORS_WEBHOOK_URL, {
         title: "API error",
-        color: 0xed4245,
+        color: DISCORD_COLOR.RED,
         fields: [
           { name: "Type", value: type, inline: true },
           { name: "Status", value: String(status), inline: true },

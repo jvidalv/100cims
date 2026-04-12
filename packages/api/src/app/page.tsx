@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
@@ -36,7 +35,7 @@ export default function Home() {
       <main className="flex-1">
         {/* Hero Section */}
         <section className="flex flex-col items-center justify-center py-16 sm:py-24 px-4">
-          <Image
+          <img
             src="/assets/icon.png"
             alt="Cims app icon"
             width={100}
@@ -62,46 +61,21 @@ export default function Home() {
         <section className="py-8 px-4">
           <div className="max-w-7xl mx-auto overflow-x-auto scrollbar-none">
             <div className="flex gap-6 justify-center min-w-max">
-              <Image
-                src="/assets/1.png"
-                alt="App homepage showing challenges"
-                className="rounded-2xl border shadow-lg"
-                width={320}
-                height={693}
-                priority
-                quality={100}
-                unoptimized
-              />
-              <Image
-                src="/assets/2.png"
-                alt="User profile with summits"
-                className="rounded-2xl border shadow-lg"
-                width={320}
-                height={693}
-                priority
-                quality={100}
-                unoptimized
-              />
-              <Image
-                src="/assets/3.png"
-                alt="Mountain map view"
-                className="rounded-2xl border shadow-lg"
-                width={320}
-                height={693}
-                priority
-                quality={100}
-                unoptimized
-              />
-              <Image
-                src="/assets/4.png"
-                alt="Mountain detail page"
-                className="rounded-2xl border shadow-lg"
-                width={320}
-                height={693}
-                priority
-                quality={100}
-                unoptimized
-              />
+              {[
+                { src: "/assets/1.png", alt: "App homepage showing challenges" },
+                { src: "/assets/2.png", alt: "User profile with summits" },
+                { src: "/assets/3.png", alt: "Mountain map view" },
+                { src: "/assets/4.png", alt: "Mountain detail page" },
+              ].map((s) => (
+                <img
+                  key={s.src}
+                  src={s.src}
+                  alt={s.alt}
+                  className="rounded-2xl border shadow-lg"
+                  width={320}
+                  height={693}
+                />
+              ))}
             </div>
           </div>
         </section>
@@ -194,6 +168,12 @@ export default function Home() {
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
               {footer("terms-of-service")}
+            </a>
+            <a
+              href="/contact"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {footer("contact")}
             </a>
           </div>
           <p className="text-sm text-muted-foreground">

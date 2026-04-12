@@ -1,6 +1,7 @@
 import { Elysia, t } from "elysia";
 
 import {
+  DISCORD_COLOR,
   DISCORD_ERRORS_WEBHOOK_URL,
   sendDiscordEmbed,
   truncate,
@@ -23,7 +24,7 @@ export const logErrorPostRoute = new Elysia().post(
 
     sendDiscordEmbed(DISCORD_ERRORS_WEBHOOK_URL, {
       title: "App client error",
-      color: 0xed4245,
+      color: DISCORD_COLOR.RED,
       fields: [
         { name: "Message", value: truncate(body.message) },
         ...(body.stack
