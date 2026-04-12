@@ -3,7 +3,6 @@ import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
   Image,
-  Pressable,
   RefreshControl,
   TouchableOpacity,
   View,
@@ -174,14 +173,26 @@ const TopSection = () => {
 
   return (
     <Fragment>
-      <Link href="/challenges" asChild>
+      {challenge?.id ? (
+        <Link
+          href={{ pathname: "/challenge/[id]", params: { id: challenge.id } }}
+          asChild
+        >
+          <ThemedText
+            numberOfLines={1}
+            className="-mt-1 text-4xl font-black tracking-tighter text-primary"
+          >
+            {challenge.name}
+          </ThemedText>
+        </Link>
+      ) : (
         <ThemedText
           numberOfLines={1}
           className="-mt-1 text-4xl font-black tracking-tighter text-primary"
         >
           {challenge?.name}
         </ThemedText>
-      </Link>
+      )}
       <MountainsDone />
     </Fragment>
   );
@@ -462,11 +473,9 @@ export default function IndexScreen() {
         <View className="h-24" />
         <Animated.View className="gap-0.5" style={scoreSectionStyle}>
           <View className="flex-row items-end justify-between">
-            <Link href="/challenges">
-              <ThemedText className="text-2xl font-bold">
-                <FormattedMessage defaultMessage="Challenge" />
-              </ThemedText>
-            </Link>
+            <ThemedText className="text-2xl font-bold">
+              <FormattedMessage defaultMessage="Challenge" />
+            </ThemedText>
             <Link href="/challenges" className="z-10 -m-2 p-2 pb-4">
               <View className="flex-row items-center gap-1">
                 <ThemedText className="text-muted-foreground">

@@ -38,7 +38,6 @@ export const DynamicImage = ({ uri }: { uri: string }) => {
     );
   }, [uri]);
 
-  // Reset zoom when URI changes
   useEffect(() => {
     scale.value = 1;
     savedScale.value = 1;
@@ -46,6 +45,7 @@ export const DynamicImage = ({ uri }: { uri: string }) => {
     translateY.value = 0;
     savedTranslateX.value = 0;
     savedTranslateY.value = 0;
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- reanimated SharedValue refs are stable
   }, [uri]);
 
   const pinchGesture = Gesture.Pinch()

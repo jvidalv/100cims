@@ -3,15 +3,13 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import React, {
-  useRef,
   useEffect,
   PropsWithChildren,
   useState,
   useMemo,
 } from "react";
 import { IntlProvider } from "react-intl";
-import { Animated, View, Image } from "react-native";
-import { Easing } from "react-native-reanimated";
+import { Image, useColorScheme, View } from "react-native";
 
 import { QueryClientProvider } from "@/components/providers";
 import { AuthProvider } from "@/components/providers/auth-provider";
@@ -20,6 +18,7 @@ import { useMountains } from "@/domains/mountain/mountain.api";
 import { usePlanChatUnread } from "@/domains/plan/plan-chat.api";
 import { usePlans } from "@/domains/plan/plan.api";
 import { useSummitsGet } from "@/domains/summit/summit.api";
+import { usePushTokenRegistration } from "@/domains/user/push.api";
 import { useUserMe, useUserChallengeSummits } from "@/domains/user/user.api";
 import { useLocation } from "@/hooks/use-location";
 import { setApiLocation, setAuthToken } from "@/lib/api-client";
@@ -32,56 +31,27 @@ import es from "@/translations/es.json";
 
 import "../global.css";
 
-const ANIMATION_DURATION = 1000;
-
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 void SplashScreen.preventAutoHideAsync();
 
 const LoadingSkeleton = () => {
-  const fadeOutOpacity = useRef(new Animated.Value(0)).current;
-  const translateY = useRef(new Animated.Value(100)).current;
-
-  useEffect(() => {
-    Animated.parallel([
-      Animated.timing(fadeOutOpacity, {
-        toValue: 1,
-        duration: ANIMATION_DURATION,
-        easing: Easing.out(Easing.ease),
-        useNativeDriver: true,
-      }),
-      Animated.timing(translateY, {
-        toValue: 0,
-        duration: ANIMATION_DURATION,
-        useNativeDriver: true,
-        easing: Easing.out(Easing.ease),
-      }),
-    ]).start();
-  }, [fadeOutOpacity, translateY]);
-
+  const isDark = useColorScheme() === "dark";
   return (
-    <View className="absolute inset-0 z-50 items-center justify-center bg-primary">
-      <Animated.Image
-        source={require("@/assets/images/cims-letters.png")}
-        style={[
-          { width: 200, height: 200, position: "absolute" },
-          {
-            opacity: fadeOutOpacity,
-            transform: [{ translateY }],
-          },
-        ]}
+    <View className="absolute inset-0 z-50 items-center justify-center bg-background">
+      <Image
+        source={
+          isDark
+            ? require("@/assets/images/logo-light.png")
+            : require("@/assets/images/logo-dark.png")
+        }
+        style={{ width: 280, height: 280 }}
         resizeMode="contain"
       />
-      <Image
-        source={require("@/assets/images/mountain.png")}
-        style={{ width: 200, height: 200 }}
-      />
-      <View className="mb-[-100px] h-[100px] w-full bg-primary" />
     </View>
   );
 };
 
 function Content() {
-  const [showSkeleton, setShowSkeleton] = useState(true);
   useUserMe();
   const { isPending: isPendingMountains } = useMountains();
   const { isPending: isPendingHomepageSummits } = useSummitsGet({ limit: 8 });
@@ -94,6 +64,7 @@ function Content() {
     status: "open",
     sort: "upcoming",
   });
+  usePushTokenRegistration();
 
   const isDataReady = !isPendingMountains && !isPendingHomepageSummits;
 
@@ -101,21 +72,13 @@ function Content() {
     setDefaultOptions({ locale: getDateFnsLocale() });
   }, []);
 
-
   useEffect(() => {
-    void SplashScreen.hideAsync();
-  }, []);
-
-  // Hide skeleton when data is ready (animation can still be running)
-  useEffect(() => {
-    if (isDataReady) {
-      setShowSkeleton(false);
-    }
+    if (isDataReady) void SplashScreen.hideAsync();
   }, [isDataReady]);
 
   return (
     <>
-      {showSkeleton && !isWeb && <LoadingSkeleton />}
+      {!isDataReady && !isWeb && <LoadingSkeleton />}
       <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen
         name="mountain/[slug]/summit"

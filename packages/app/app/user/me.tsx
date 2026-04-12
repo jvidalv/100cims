@@ -32,6 +32,7 @@ import {
 import { debounce } from "@/lib/debounce";
 import { IMAGE_TO_BIG } from "@/lib/error-codes";
 import { getImageOptimized } from "@/lib/images";
+import { logError } from "@/lib/log-error";
 import { userKeys } from "@/lib/query-keys";
 
 export default function UserMeScreen() {
@@ -98,6 +99,7 @@ export default function UserMeScreen() {
         }
       }
     } catch (error) {
+      logError(error, "user/me/avatar");
       Alert.alert(
         intl.formatMessage({
           defaultMessage: "Error, try again.",

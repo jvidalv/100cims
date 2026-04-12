@@ -19,10 +19,28 @@
   "footer": {
     "privacy-policy": "Política de Privacidad",
     "terms-of-service": "Términos del Servicio",
+    "contact": "Contacto",
     "made-by": "Hecho por"
   },
   "privacy-policy": {
     "title": "Política de privacidad",
     "content": "Esta aplicación solo utiliza tus datos para la autenticación. No almacenamos, compartimos ni utilizamos tus datos para ningún otro propósito. Para preguntas, contacta: josepvidalvidal@gmail.com."
+  },
+  "contact-page": {
+    "title": "Ponte en contacto",
+    "subtitle": "Preguntas, errores o sugerencias — escríbenos y te responderemos pronto.",
+    "name-label": "Nombre",
+    "name-placeholder": "Tu nombre (opcional)",
+    "email-label": "Correo electrónico",
+    "email-placeholder": "tu@ejemplo.com",
+    "message-label": "Mensaje",
+    "message-placeholder": "¿Qué tienes en mente?",
+    "submit": "Enviar mensaje",
+    "submitting": "Enviando…",
+    "success-title": "Mensaje enviado",
+    "success-body": "Gracias — te responderemos pronto.",
+    "error-generic": "Algo ha ido mal. Inténtalo de nuevo.",
+    "error-email-invalid": "Introduce un correo electrónico válido.",
+    "error-message-required": "Escribe un mensaje."
   }
 }

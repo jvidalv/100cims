@@ -20,6 +20,7 @@ import { useSummitPost } from "@/domains/mountain/mountain.api";
 import { getMountainPts } from "@/domains/mountain/mountain.util";
 import { usePlanOne, usePlanUpdate } from "@/domains/plan/plan.api";
 import { getImageOptimized } from "@/lib/images";
+import { logError } from "@/lib/log-error";
 
 export default function PlanCompleteScreen() {
   const intl = useIntl();
@@ -54,6 +55,7 @@ export default function PlanCompleteScreen() {
         }
       }
     } catch (error) {
+      logError(error, "plan/complete/image");
       Alert.alert(
         intl.formatMessage({
           defaultMessage: "Error, try again or use another image.",
@@ -93,6 +95,7 @@ export default function PlanCompleteScreen() {
             ),
           );
         } catch (err) {
+          logError(err, "plan/complete/summit");
           Alert.alert(
             intl.formatMessage({ defaultMessage: "Something went wrong" }),
           );
@@ -108,6 +111,7 @@ export default function PlanCompleteScreen() {
       void queryClient.invalidateQueries();
       router.dismiss();
     } catch (err) {
+      logError(err, "plan/complete/submit");
       Alert.alert(
         intl.formatMessage({ defaultMessage: "Something went wrong" }),
       );

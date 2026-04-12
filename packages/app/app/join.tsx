@@ -2,7 +2,7 @@ import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import * as AppleAuthentication from "expo-apple-authentication";
 import { Redirect, useRouter } from "expo-router";
 import { useColorScheme } from "nativewind";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FormattedMessage } from "react-intl";
 import { TouchableOpacity, View, Text, Image, ScrollView } from "react-native";
 import { twMerge } from "tailwind-merge";
@@ -13,6 +13,7 @@ import { AvatarGroup } from "@/components/ui/molecules";
 import { useJoinMutation } from "@/domains/user/user.api";
 import { isAndroid, isIOS } from "@/lib/device";
 import { getLocale } from "@/lib/locale";
+import { logError } from "@/lib/log-error";
 
 // Configure Google Sign-In
 GoogleSignin.configure({
@@ -124,6 +125,7 @@ const AppleSignIn = () => {
           setAuthenticated(jwt);
           router.dismiss();
         } catch (error) {
+          logError(error, "join/email");
         }
       }}
     />
@@ -175,6 +177,7 @@ const GoogleSignIn = () => {
       setAuthenticated(jwt);
       router.dismiss();
     } catch (error) {
+      logError(error, "join/oauth");
       setIsAuthenticating(false);
     }
   };

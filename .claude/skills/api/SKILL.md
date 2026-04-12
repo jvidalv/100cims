@@ -235,6 +235,25 @@ await addRowToSheets(ERRORS_SPREADSHEET, [
 ]);
 ```
 
+### Send Push Notification
+
+```typescript
+import { sendPushLocalized } from '@/api/lib/push';
+import { pushPlanJoined } from '@/api/lib/push-translations';
+import { PUSH_TYPE, getUserDisplayName } from '@/api/lib/push-types';
+
+void sendPushLocalized(
+  [recipientUserId],
+  (locale) => ({ title: planTitle, body: pushPlanJoined(locale, getUserDisplayName(user)) }),
+  { type: PUSH_TYPE.PLAN_JOIN, planId },
+);
+```
+
+- `sendPushLocalized` is fire-and-forget: it reads `userTable.locale` per recipient, batches up to 100 per Expo call, posts batches in parallel, and nulls out `expoPushToken` on `DeviceNotRegistered` tickets. Callers prefix with `void` — don't block the response.
+- Add new copy in `api/lib/push-translations.ts` (en/ca/es). New event types go in `PUSH_TYPE` at `api/lib/push-types.ts`; the app's tap-routing whitelist must be kept in sync.
+- Users with `pushNotificationsEnabled = false` or null `expoPushToken` are filtered automatically.
+- Set `EXPO_ACCESS_TOKEN` env var to enable Expo's Enhanced Push Security.
+
 ## Environment Variables
 
 - `DATABASE_URL`: PostgreSQL connection string
@@ -242,6 +261,7 @@ await addRowToSheets(ERRORS_SPREADSHEET, [
 - `AWS_*`: S3 credentials (region, bucket, access keys)
 - `SHEETS_*`: Google service account credentials
 - `APP_NAME`: Application name (used in S3 paths)
+- `EXPO_ACCESS_TOKEN`: Optional; forwarded as Bearer to Expo push API when Enhanced Security is on
 
 See `.env.example` for complete list.
 

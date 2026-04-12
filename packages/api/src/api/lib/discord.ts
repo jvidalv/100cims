@@ -18,6 +18,12 @@ export const DISCORD_ERRORS_WEBHOOK_URL =
 export const DISCORD_CONTACT_WEBHOOK_URL =
   process.env.DISCORD_CONTACT_WEBHOOK_URL;
 
+export const DISCORD_COLOR = {
+  BLURPLE: 0x5865f2,
+  RED: 0xed4245,
+  YELLOW: 0xfee75c,
+} as const;
+
 export const sendDiscordEmbed = (
   webhookUrl: string | undefined,
   embed: DiscordEmbed,

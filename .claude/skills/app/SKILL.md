@@ -21,11 +21,12 @@ You are working on the **100cims mobile app** (`packages/app`), an Expo React Na
 
 ## Stack
 
-- **Expo SDK 54** with React Native 0.81 (new architecture enabled)
+- **Expo SDK 55** with React Native 0.81 (new architecture enabled)
 - **expo-router 6** for file-based navigation
 - **NativeWind 4** for styling (Tailwind CSS)
 - **React Query 5** for server state
 - **React Intl** for i18n (en, ca, es)
+- **expo-notifications** for push (sends to Expo push service; see Push Notifications section)
 
 ## Directory Structure
 
@@ -260,7 +261,18 @@ import { FormattedMessage } from 'react-intl';
 npx expo install <package-name>
 ```
 
-May need to rebuild: `npx expo prebuild --clean`
+Requires a new EAS dev build (`eas build --profile development`); Expo Go won't load unlinked native modules.
+
+If TS reports `Cannot find module 'expo-modules-core'` or empty types after adding an Expo module, add `expo-modules-core` as an **explicit** dep in `packages/app/package.json` (`npx expo install expo-modules-core`). Yarn workspaces nest it under `node_modules/expo/node_modules/` where sibling packages can't resolve it.
+
+## Push Notifications
+
+- Token flow: `lib/push.ts` (`registerForPushNotificationsAsync`) → `domains/user/push.api.ts` (`usePushTokenRegistration`) → `POST /api/protected/user/push-token`.
+- Hook is wired once in `app/_layout.tsx` inside `Content()`; re-runs when `isAuthenticated` flips (handles logout→login).
+- Notification **body copy is server-side** (API reads `userTable.locale`) — do not translate push strings in the app.
+- Tap routing uses both `useLastNotificationResponse` (cold-start) and `addNotificationResponseReceivedListener` (warm); dedupe via `notification.request.identifier`.
+- Physical device required — simulators/emulators don't receive tokens.
+- Manual credential setup (APNs key, FCM v1 service account): see `docs/push-notifications-setup.md`.
 
 ## Environment Variables
 

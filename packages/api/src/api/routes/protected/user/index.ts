@@ -5,6 +5,7 @@ import { userDeleteGetRoute } from "@/api/routes/protected/user/user.delete.get"
 import { userMarkUpdateSeenPostRoute } from "@/api/routes/protected/user/user.mark-update-seen.post";
 import { userMeGetRoute } from "@/api/routes/protected/user/user.me.get";
 import { userMePostRoute } from "@/api/routes/protected/user/user.me.post";
+import { userPushTokenPostRoute } from "@/api/routes/protected/user/user.push-token.post";
 import { userSuggestionPostRoute } from "@/api/routes/protected/user/user.suggestion.post";
 import { userSummitsGetRoute } from "@/api/routes/protected/user/user.summits.get";
 import { userUnseenUpdatesGetRoute } from "@/api/routes/protected/user/user.unseen-updates.get";
@@ -12,6 +13,7 @@ import { userUnseenUpdatesGetRoute } from "@/api/routes/protected/user/user.unse
 export const userRoute = new Elysia({ prefix: "/user" })
   .use(userMeGetRoute)
   .use(userMePostRoute)
+  .use(userPushTokenPostRoute)
   .use(userSummitsGetRoute)
   .use(userAllGetRoute)
   .use(userDeleteGetRoute)

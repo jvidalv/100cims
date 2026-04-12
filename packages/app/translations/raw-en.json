@@ -200,6 +200,9 @@
   "E6XymO": {
     "defaultMessage": "Community challenges"
   },
+  "E92c/O": {
+    "defaultMessage": "Last {count}"
+  },
   "EI6p6o": {
     "defaultMessage": "Mountain updated!"
   },
@@ -398,9 +401,6 @@
   "VuzjdC": {
     "defaultMessage": "Ongoing"
   },
-  "W0qW5N": {
-    "defaultMessage": "maps"
-  },
   "WIwKkx": {
     "defaultMessage": "Your profile"
   },
@@ -433,9 +433,6 @@
   },
   "ZPboiN": {
     "defaultMessage": "Chat with others"
-  },
-  "Zh+5A6": {
-    "defaultMessage": "On"
   },
   "a5msuh": {
     "defaultMessage": "Yes"
@@ -713,6 +710,9 @@
   "wYMg2j": {
     "defaultMessage": "Town"
   },
+  "wlMuDH": {
+    "defaultMessage": "Share with your friends"
+  },
   "wyxJrL": {
     "defaultMessage": "Delete account"
   },
@@ -731,6 +731,9 @@
   "xkgeNE": {
     "defaultMessage": "Activity title"
   },
+  "y5oyGg": {
+    "defaultMessage": "View on maps"
+  },
   "yPryo6": {
     "defaultMessage": "You can add or remove mountains later"
   },
@@ -739,6 +742,9 @@
   },
   "ykQinU": {
     "defaultMessage": "Failed to delete challenge"
+  },
+  "yuIGLW": {
+    "defaultMessage": "View on wikiloc"
   },
   "z5Ppf1": {
     "defaultMessage": "Member of cims for {duration}"

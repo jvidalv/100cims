@@ -9,6 +9,7 @@ import {
   resolvePlatformFromRequest,
 } from "@/api/lib/request-headers";
 import {
+  DISCORD_COLOR,
   DISCORD_NEW_USER_WEBHOOK_URL,
   sendDiscordEmbed,
 } from "@/api/lib/discord";
@@ -126,22 +127,6 @@ export const joinPostRoute = new Elysia().use(JWT()).post(
       } catch {
         // noop
       }
-      sendDiscordEmbed(DISCORD_NEW_USER_WEBHOOK_URL, {
-        title: "New user",
-        color: 0x5865f2,
-        fields: [
-          { name: "Email", value: email, inline: true },
-          {
-            name: "Name",
-            value: `${firstName ?? ""} ${lastName ?? ""}`.trim() || "—",
-            inline: true,
-          },
-          { name: "Provider", value: body.provider, inline: true },
-          { name: "Country", value: country ?? "—", inline: true },
-          { name: "Platform", value: platform ?? "—", inline: true },
-          { name: "App version", value: appVersion ?? "—", inline: true },
-        ],
-      });
       const insert = await db
         .insert(userTable)
         .values({
@@ -157,6 +142,22 @@ export const joinPostRoute = new Elysia().use(JWT()).post(
         })
         .returning();
       user = insert[0];
+      sendDiscordEmbed(DISCORD_NEW_USER_WEBHOOK_URL, {
+        title: "New user",
+        color: DISCORD_COLOR.BLURPLE,
+        fields: [
+          { name: "Email", value: email, inline: true },
+          {
+            name: "Name",
+            value: `${firstName ?? ""} ${lastName ?? ""}`.trim() || "—",
+            inline: true,
+          },
+          { name: "Provider", value: body.provider, inline: true },
+          { name: "Country", value: country ?? "—", inline: true },
+          { name: "Platform", value: platform ?? "—", inline: true },
+          { name: "App version", value: appVersion ?? "—", inline: true },
+        ],
+      });
     } else {
       const updates: Partial<typeof userTable.$inferInsert> = {};
       if (!user.country && country) updates.country = country;

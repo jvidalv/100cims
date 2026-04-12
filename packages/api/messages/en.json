@@ -19,10 +19,28 @@
   "footer": {
     "privacy-policy": "Privacy Policy",
     "terms-of-service": "Terms of Service",
+    "contact": "Contact",
     "made-by": "Made by"
   },
   "privacy-policy": {
     "title": "Privacy policy",
     "content": "This app only uses your data for authentication purposes. We do not store, share, or use your data for any other purpose. For questions, contact: josepvidalvidal@gmail.com."
+  },
+  "contact-page": {
+    "title": "Get in touch",
+    "subtitle": "Questions, bug reports or suggestions — write to us and we'll get back to you.",
+    "name-label": "Name",
+    "name-placeholder": "Your name (optional)",
+    "email-label": "Email",
+    "email-placeholder": "you@example.com",
+    "message-label": "Message",
+    "message-placeholder": "What's on your mind?",
+    "submit": "Send message",
+    "submitting": "Sending…",
+    "success-title": "Message sent",
+    "success-body": "Thanks — we'll get back to you soon.",
+    "error-generic": "Something went wrong. Please try again.",
+    "error-email-invalid": "Please enter a valid email.",
+    "error-message-required": "Please write a message."
   }
 }

@@ -83,3 +83,75 @@ export const AdminSummitsResponseSchema = t.Object({
   total: t.Number(),
   totalPages: t.Number(),
 });
+
+const summitMainUserFields = {
+  userId: t.Nullable(t.String()),
+  userUsername: t.Nullable(t.String()),
+  userFirstName: t.Nullable(t.String()),
+  userLastName: t.Nullable(t.String()),
+  userImageUrl: t.Nullable(t.String()),
+};
+
+const summitMountainFields = {
+  mountainId: t.Nullable(t.String()),
+  mountainName: t.Nullable(t.String()),
+  mountainSlug: t.Nullable(t.String()),
+};
+
+const summitCoreFields = {
+  id: t.String(),
+  imageUrl: t.String(),
+  summitedAt: t.String(),
+  validated: t.Boolean(),
+  createdAt: t.Date(),
+};
+
+export const AdminSummitRelatedUserSchema = t.Object({
+  id: t.String(),
+  username: t.String(),
+  firstName: t.Nullable(t.String()),
+  lastName: t.Nullable(t.String()),
+  imageUrl: t.Nullable(t.String()),
+  isMain: t.Boolean(),
+});
+
+export const AdminSummitListEntrySchema = t.Object({
+  ...summitCoreFields,
+  ...summitMountainFields,
+  ...summitMainUserFields,
+  relatedUsersCount: t.Number(),
+});
+
+export const AdminSummitListResponseSchema = t.Object({
+  items: t.Array(AdminSummitListEntrySchema),
+  page: t.Number(),
+  pageSize: t.Number(),
+  total: t.Number(),
+  totalPages: t.Number(),
+});
+
+export const AdminSummitDetailSchema = t.Object({
+  ...summitCoreFields,
+  ...summitMountainFields,
+  mountainHeight: t.Nullable(t.String()),
+  ...summitMainUserFields,
+  relatedUsers: t.Array(AdminSummitRelatedUserSchema),
+});
+
+export const AdminStatsTimeseriesResponseSchema = t.Object({
+  bucket: t.Union([t.Literal("day"), t.Literal("week"), t.Literal("month")]),
+  points: t.Array(
+    t.Object({
+      date: t.String(),
+      count: t.Number(),
+    }),
+  ),
+});
+
+export const AdminSummitUpdateBodySchema = t.Object({
+  summitedAt: t.Optional(t.String()),
+  validated: t.Optional(t.Boolean()),
+  imageUrl: t.Optional(t.String()),
+  mountainId: t.Optional(t.Nullable(t.String())),
+  userId: t.Optional(t.Nullable(t.String())),
+});

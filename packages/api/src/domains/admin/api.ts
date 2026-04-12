@@ -77,7 +77,7 @@ export const useUpdateAdminUser = (id: string) => {
     },
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: adminKeys.userDetail(id) });
-      void qc.invalidateQueries({ queryKey: ["admin", "users"] });
+      void qc.invalidateQueries({ queryKey: adminKeys.usersList() });
     },
   });
 };
@@ -159,7 +159,7 @@ export const useUpdateAdminMountain = (id: string) => {
     },
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: adminKeys.mountainDetail(id) });
-      void qc.invalidateQueries({ queryKey: ["admin", "mountains"] });
+      void qc.invalidateQueries({ queryKey: adminKeys.mountainsList() });
     },
   });
 };
@@ -175,10 +175,102 @@ export const useDeleteAdminMountain = (id: string) => {
     onSuccess: () => {
       qc.removeQueries({ queryKey: adminKeys.mountainDetail(id) });
       qc.removeQueries({ queryKey: adminKeys.mountainChallenges(id) });
-      void qc.invalidateQueries({ queryKey: ["admin", "mountains"] });
+      void qc.invalidateQueries({ queryKey: adminKeys.mountainsList() });
     },
   });
 };
+
+export const useAdminSummits = ({
+  page,
+  q,
+  validated,
+}: {
+  page: number;
+  q: string;
+  validated: string;
+}) =>
+  useQuery({
+    queryKey: adminKeys.summits({ page, q, validated }),
+    queryFn: async () => {
+      const { data, error } = await api.api.admin.summits.get({
+        query: {
+          page,
+          pageSize: 15,
+          q: q || undefined,
+          validated: validated || undefined,
+        },
+      });
+      if (error) throw error;
+      return data.message;
+    },
+    placeholderData: (prev) => prev,
+  });
+
+export const useAdminSummitDetail = (id: string) =>
+  useQuery({
+    queryKey: adminKeys.summitDetail(id),
+    queryFn: async () => {
+      const { data, error } = await api.api.admin.summits({ id }).get();
+      if (error) throw error;
+      return data.message;
+    },
+  });
+
+export type AdminSummitUpdateBody = {
+  summitedAt?: string;
+  validated?: boolean;
+  imageUrl?: string;
+  mountainId?: string | null;
+  userId?: string | null;
+};
+
+export const useUpdateAdminSummit = (id: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (body: AdminSummitUpdateBody) => {
+      const { data, error } = await api.api.admin.summits({ id }).post(body);
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: adminKeys.summitDetail(id) });
+      void qc.invalidateQueries({ queryKey: adminKeys.summitsList() });
+    },
+  });
+};
+
+export const useDeleteAdminSummit = (id: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      const { data, error } = await api.api.admin.summits({ id }).delete();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      qc.removeQueries({ queryKey: adminKeys.summitDetail(id) });
+      void qc.invalidateQueries({ queryKey: adminKeys.summitsList() });
+    },
+  });
+};
+
+export type StatsMetric = "new-users" | "summits";
+export type StatsRange = "week" | "month" | "6months" | "year" | "all";
+
+export const useAdminStatsTimeseries = (
+  metric: StatsMetric,
+  range: StatsRange,
+) =>
+  useQuery({
+    queryKey: adminKeys.statsTimeseries(metric, range),
+    queryFn: async () => {
+      const { data, error } = await api.api.admin.stats.timeseries.get({
+        query: { metric, range },
+      });
+      if (error) throw error;
+      return data.message;
+    },
+  });
 
 export const useTriggerCron = () => {
   const qc = useQueryClient();

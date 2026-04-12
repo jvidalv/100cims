@@ -7,6 +7,9 @@ import {
   planHasUsersTable,
   planUserLogTable,
 } from "@/db/schema";
+import { sendPushLocalized } from "@/api/lib/push";
+import { pushPlanJoined } from "@/api/lib/push-translations";
+import { PUSH_TYPE, getUserDisplayName } from "@/api/lib/push-types";
 import { getUserFromRequest } from "@/api/routes/@shared/auth";
 import {
   SimpleSuccessResponse,
@@ -23,6 +26,7 @@ export const planJoinPostRoute = new Elysia().post(
         id: planTable.id,
         creatorId: planTable.creatorId,
         status: planTable.status,
+        title: planTable.title,
       })
       .from(planTable)
       .where(eq(planTable.id, body.id))
@@ -74,6 +78,17 @@ export const planJoinPostRoute = new Elysia().post(
         willBringDogs: false,
       });
     });
+
+    const joinerName = getUserDisplayName(user);
+
+    void sendPushLocalized(
+      [targetPlan.creatorId],
+      (locale) => ({
+        title: targetPlan.title,
+        body: pushPlanJoined(locale, joinerName),
+      }),
+      { type: PUSH_TYPE.PLAN_JOIN, planId: body.id },
+    );
 
     return { success: true };
   },

@@ -68,6 +68,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/public/contact": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["postApiPublicContact"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/public/log-error": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["postApiPublicLog-error"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/public/hiscores/all": {
         parameters: {
             query?: never;
@@ -254,6 +286,22 @@ export interface paths {
         get: operations["getApiProtectedUserMe"];
         put?: never;
         post: operations["postApiProtectedUserMe"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/protected/user/push-token": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["postApiProtectedUserPush-token"];
         delete?: never;
         options?: never;
         head?: never;
@@ -804,6 +852,198 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiAdminMe"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiAdminUsers"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/users/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiAdminUsersById"];
+        put?: never;
+        post: operations["postApiAdminUsersById"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/users/{id}/summits": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiAdminUsersByIdSummits"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/mountains": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiAdminMountains"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/mountains/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiAdminMountainsById"];
+        put?: never;
+        post: operations["postApiAdminMountainsById"];
+        delete: operations["deleteApiAdminMountainsById"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/mountains/{id}/challenges": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiAdminMountainsByIdChallenges"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/summits": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiAdminSummits"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/summits/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiAdminSummitsById"];
+        put?: never;
+        post: operations["postApiAdminSummitsById"];
+        delete: operations["deleteApiAdminSummitsById"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/stats/timeseries": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiAdminStatsTimeseries"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/crons": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiAdminCrons"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/crons/{name}/trigger": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["postApiAdminCronsByNameTrigger"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1084,6 +1324,105 @@ export interface operations {
                     "text/plain": {
                         success: boolean;
                         message: string;
+                    };
+                };
+            };
+        };
+    };
+    postApiPublicContact: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** Format: email */
+                    email: string;
+                    name?: string;
+                    message: string;
+                };
+                "multipart/form-data": {
+                    /** Format: email */
+                    email: string;
+                    name?: string;
+                    message: string;
+                };
+                "text/plain": {
+                    /** Format: email */
+                    email: string;
+                    name?: string;
+                    message: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+        };
+    };
+    "postApiPublicLog-error": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    message: string;
+                    stack?: string;
+                    appVersion?: string;
+                    platform?: string;
+                    route?: string;
+                };
+                "multipart/form-data": {
+                    message: string;
+                    stack?: string;
+                    appVersion?: string;
+                    platform?: string;
+                    route?: string;
+                };
+                "text/plain": {
+                    message: string;
+                    stack?: string;
+                    appVersion?: string;
+                    platform?: string;
+                    route?: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
                     };
                 };
             };
@@ -2186,6 +2525,48 @@ export interface operations {
                     };
                     "text/plain": {
                         error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    "postApiProtectedUserPush-token": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    expoPushToken: string | null;
+                    pushNotificationsEnabled?: boolean;
+                };
+                "multipart/form-data": {
+                    expoPushToken: string | null;
+                    pushNotificationsEnabled?: boolean;
+                };
+                "text/plain": {
+                    expoPushToken: string | null;
+                    pushNotificationsEnabled?: boolean;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
                     };
                 };
             };
@@ -4542,6 +4923,1339 @@ export interface operations {
                                 hasMore: boolean;
                             };
                         };
+                    };
+                };
+            };
+        };
+    };
+    getApiAdminMe: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            email: string;
+                            firstName: (string | null) | null;
+                            lastName: (string | null) | null;
+                            imageUrl: (string | null) | null;
+                            town: (string | null) | null;
+                            visibleOnHiscores: boolean;
+                            visibleOnPeopleSearch: boolean;
+                            locale: (string | null) | null;
+                            username: (string | null) | null;
+                            activeChallengeId: (string | null) | null;
+                            createdAt: Record<string, never> | string | number;
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            email: string;
+                            firstName: (string | null) | null;
+                            lastName: (string | null) | null;
+                            imageUrl: (string | null) | null;
+                            town: (string | null) | null;
+                            visibleOnHiscores: boolean;
+                            visibleOnPeopleSearch: boolean;
+                            locale: (string | null) | null;
+                            username: (string | null) | null;
+                            activeChallengeId: (string | null) | null;
+                            createdAt: Record<string, never> | string | number;
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            email: string;
+                            firstName: (string | null) | null;
+                            lastName: (string | null) | null;
+                            imageUrl: (string | null) | null;
+                            town: (string | null) | null;
+                            visibleOnHiscores: boolean;
+                            visibleOnPeopleSearch: boolean;
+                            locale: (string | null) | null;
+                            username: (string | null) | null;
+                            activeChallengeId: (string | null) | null;
+                            createdAt: Record<string, never> | string | number;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    getApiAdminUsers: {
+        parameters: {
+            query?: {
+                page?: number;
+                pageSize?: number;
+                q?: string;
+                country?: string;
+                platform?: string;
+                version?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                username: string;
+                                email: string;
+                                imageUrl: (string | null) | null;
+                                country: (string | null) | null;
+                                platform: (string | null) | null;
+                                appVersion: (string | null) | null;
+                                createdAt: Record<string, never> | string | number;
+                                admin: boolean;
+                                activeChallengeId: (string | null) | null;
+                                activeChallengeName: (string | null) | null;
+                            }[];
+                            page: number;
+                            pageSize: number;
+                            total: number;
+                            totalPages: number;
+                            facets: {
+                                countries: string[];
+                                platforms: string[];
+                                versions: string[];
+                            };
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                username: string;
+                                email: string;
+                                imageUrl: (string | null) | null;
+                                country: (string | null) | null;
+                                platform: (string | null) | null;
+                                appVersion: (string | null) | null;
+                                createdAt: Record<string, never> | string | number;
+                                admin: boolean;
+                                activeChallengeId: (string | null) | null;
+                                activeChallengeName: (string | null) | null;
+                            }[];
+                            page: number;
+                            pageSize: number;
+                            total: number;
+                            totalPages: number;
+                            facets: {
+                                countries: string[];
+                                platforms: string[];
+                                versions: string[];
+                            };
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                username: string;
+                                email: string;
+                                imageUrl: (string | null) | null;
+                                country: (string | null) | null;
+                                platform: (string | null) | null;
+                                appVersion: (string | null) | null;
+                                createdAt: Record<string, never> | string | number;
+                                admin: boolean;
+                                activeChallengeId: (string | null) | null;
+                                activeChallengeName: (string | null) | null;
+                            }[];
+                            page: number;
+                            pageSize: number;
+                            total: number;
+                            totalPages: number;
+                            facets: {
+                                countries: string[];
+                                platforms: string[];
+                                versions: string[];
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    getApiAdminUsersById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            email: string;
+                            username: string;
+                            firstName: (string | null) | null;
+                            lastName: (string | null) | null;
+                            imageUrl: (string | null) | null;
+                            town: (string | null) | null;
+                            country: (string | null) | null;
+                            platform: (string | null) | null;
+                            appVersion: (string | null) | null;
+                            lastLatitude: (string | null) | null;
+                            lastLongitude: (string | null) | null;
+                            lastLocationAt: ((Record<string, never> | string | number) | null) | null;
+                            locale: (string | null) | null;
+                            visibleOnHiscores: boolean;
+                            visibleOnPeopleSearch: boolean;
+                            admin: boolean;
+                            activeChallengeId: (string | null) | null;
+                            activeChallengeName: (string | null) | null;
+                            createdAt: Record<string, never> | string | number;
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            email: string;
+                            username: string;
+                            firstName: (string | null) | null;
+                            lastName: (string | null) | null;
+                            imageUrl: (string | null) | null;
+                            town: (string | null) | null;
+                            country: (string | null) | null;
+                            platform: (string | null) | null;
+                            appVersion: (string | null) | null;
+                            lastLatitude: (string | null) | null;
+                            lastLongitude: (string | null) | null;
+                            lastLocationAt: ((Record<string, never> | string | number) | null) | null;
+                            locale: (string | null) | null;
+                            visibleOnHiscores: boolean;
+                            visibleOnPeopleSearch: boolean;
+                            admin: boolean;
+                            activeChallengeId: (string | null) | null;
+                            activeChallengeName: (string | null) | null;
+                            createdAt: Record<string, never> | string | number;
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            email: string;
+                            username: string;
+                            firstName: (string | null) | null;
+                            lastName: (string | null) | null;
+                            imageUrl: (string | null) | null;
+                            town: (string | null) | null;
+                            country: (string | null) | null;
+                            platform: (string | null) | null;
+                            appVersion: (string | null) | null;
+                            lastLatitude: (string | null) | null;
+                            lastLongitude: (string | null) | null;
+                            lastLocationAt: ((Record<string, never> | string | number) | null) | null;
+                            locale: (string | null) | null;
+                            visibleOnHiscores: boolean;
+                            visibleOnPeopleSearch: boolean;
+                            admin: boolean;
+                            activeChallengeId: (string | null) | null;
+                            activeChallengeName: (string | null) | null;
+                            createdAt: Record<string, never> | string | number;
+                        };
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    postApiAdminUsersById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    firstName?: (string | null) | null;
+                    lastName?: (string | null) | null;
+                    username?: string;
+                    town?: (string | null) | null;
+                    country?: (string | null) | null;
+                    locale?: (string | null) | null;
+                    visibleOnHiscores?: boolean;
+                    visibleOnPeopleSearch?: boolean;
+                    admin?: boolean;
+                };
+                "multipart/form-data": {
+                    firstName?: (string | null) | null;
+                    lastName?: (string | null) | null;
+                    username?: string;
+                    town?: (string | null) | null;
+                    country?: (string | null) | null;
+                    locale?: (string | null) | null;
+                    visibleOnHiscores?: boolean;
+                    visibleOnPeopleSearch?: boolean;
+                    admin?: boolean;
+                };
+                "text/plain": {
+                    firstName?: (string | null) | null;
+                    lastName?: (string | null) | null;
+                    username?: string;
+                    town?: (string | null) | null;
+                    country?: (string | null) | null;
+                    locale?: (string | null) | null;
+                    visibleOnHiscores?: boolean;
+                    visibleOnPeopleSearch?: boolean;
+                    admin?: boolean;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    getApiAdminUsersByIdSummits: {
+        parameters: {
+            query?: {
+                page?: number;
+                pageSize?: number;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                summitId: string;
+                                summitedAt: string;
+                                validated: boolean;
+                                imageUrl: string;
+                                mountainId: string;
+                                mountainName: string;
+                                mountainSlug: string;
+                                mountainHeight: string;
+                                mountainEssential: boolean;
+                            }[];
+                            page: number;
+                            pageSize: number;
+                            total: number;
+                            totalPages: number;
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                summitId: string;
+                                summitedAt: string;
+                                validated: boolean;
+                                imageUrl: string;
+                                mountainId: string;
+                                mountainName: string;
+                                mountainSlug: string;
+                                mountainHeight: string;
+                                mountainEssential: boolean;
+                            }[];
+                            page: number;
+                            pageSize: number;
+                            total: number;
+                            totalPages: number;
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                summitId: string;
+                                summitedAt: string;
+                                validated: boolean;
+                                imageUrl: string;
+                                mountainId: string;
+                                mountainName: string;
+                                mountainSlug: string;
+                                mountainHeight: string;
+                                mountainEssential: boolean;
+                            }[];
+                            page: number;
+                            pageSize: number;
+                            total: number;
+                            totalPages: number;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    getApiAdminMountains: {
+        parameters: {
+            query?: {
+                page?: number;
+                pageSize?: number;
+                q?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                name: string;
+                                slug: string;
+                                location: string;
+                                essential: boolean;
+                                height: string;
+                                imageUrl: (string | null) | null;
+                                isOfficial: boolean;
+                                creatorName: (string | null) | null;
+                                createdAt: Record<string, never> | string | number;
+                            }[];
+                            page: number;
+                            pageSize: number;
+                            total: number;
+                            totalPages: number;
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                name: string;
+                                slug: string;
+                                location: string;
+                                essential: boolean;
+                                height: string;
+                                imageUrl: (string | null) | null;
+                                isOfficial: boolean;
+                                creatorName: (string | null) | null;
+                                createdAt: Record<string, never> | string | number;
+                            }[];
+                            page: number;
+                            pageSize: number;
+                            total: number;
+                            totalPages: number;
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                name: string;
+                                slug: string;
+                                location: string;
+                                essential: boolean;
+                                height: string;
+                                imageUrl: (string | null) | null;
+                                isOfficial: boolean;
+                                creatorName: (string | null) | null;
+                                createdAt: Record<string, never> | string | number;
+                            }[];
+                            page: number;
+                            pageSize: number;
+                            total: number;
+                            totalPages: number;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    getApiAdminMountainsById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            name: string;
+                            slug: string;
+                            location: string;
+                            essential: boolean;
+                            height: string;
+                            latitude: string;
+                            longitude: string;
+                            url: (string | null) | null;
+                            imageUrl: (string | null) | null;
+                            isOfficial: boolean;
+                            creatorName: (string | null) | null;
+                            createdAt: Record<string, never> | string | number;
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            name: string;
+                            slug: string;
+                            location: string;
+                            essential: boolean;
+                            height: string;
+                            latitude: string;
+                            longitude: string;
+                            url: (string | null) | null;
+                            imageUrl: (string | null) | null;
+                            isOfficial: boolean;
+                            creatorName: (string | null) | null;
+                            createdAt: Record<string, never> | string | number;
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            name: string;
+                            slug: string;
+                            location: string;
+                            essential: boolean;
+                            height: string;
+                            latitude: string;
+                            longitude: string;
+                            url: (string | null) | null;
+                            imageUrl: (string | null) | null;
+                            isOfficial: boolean;
+                            creatorName: (string | null) | null;
+                            createdAt: Record<string, never> | string | number;
+                        };
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    postApiAdminMountainsById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    name?: string;
+                    location?: string;
+                    essential?: boolean;
+                    height?: string;
+                    latitude?: string;
+                    longitude?: string;
+                    url?: (string | null) | null;
+                    imageUrl?: (string | null) | null;
+                };
+                "multipart/form-data": {
+                    name?: string;
+                    location?: string;
+                    essential?: boolean;
+                    height?: string;
+                    latitude?: string;
+                    longitude?: string;
+                    url?: (string | null) | null;
+                    imageUrl?: (string | null) | null;
+                };
+                "text/plain": {
+                    name?: string;
+                    location?: string;
+                    essential?: boolean;
+                    height?: string;
+                    latitude?: string;
+                    longitude?: string;
+                    url?: (string | null) | null;
+                    imageUrl?: (string | null) | null;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    deleteApiAdminMountainsById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    getApiAdminMountainsByIdChallenges: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            name: string;
+                            slug: string;
+                            imageUrl: (string | null) | null;
+                            emoji: (string | null) | null;
+                            isPublic: boolean;
+                            isOfficial: boolean;
+                            creatorName: (string | null) | null;
+                        }[];
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            name: string;
+                            slug: string;
+                            imageUrl: (string | null) | null;
+                            emoji: (string | null) | null;
+                            isPublic: boolean;
+                            isOfficial: boolean;
+                            creatorName: (string | null) | null;
+                        }[];
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            name: string;
+                            slug: string;
+                            imageUrl: (string | null) | null;
+                            emoji: (string | null) | null;
+                            isPublic: boolean;
+                            isOfficial: boolean;
+                            creatorName: (string | null) | null;
+                        }[];
+                    };
+                };
+            };
+        };
+    };
+    getApiAdminSummits: {
+        parameters: {
+            query?: {
+                page?: number;
+                pageSize?: number;
+                q?: string;
+                validated?: string;
+                mountainId?: string;
+                userId?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                imageUrl: string;
+                                summitedAt: string;
+                                validated: boolean;
+                                createdAt: Record<string, never> | string | number;
+                                mountainId: (string | null) | null;
+                                mountainName: (string | null) | null;
+                                mountainSlug: (string | null) | null;
+                                userId: (string | null) | null;
+                                userUsername: (string | null) | null;
+                                userFirstName: (string | null) | null;
+                                userLastName: (string | null) | null;
+                                userImageUrl: (string | null) | null;
+                                relatedUsersCount: number;
+                            }[];
+                            page: number;
+                            pageSize: number;
+                            total: number;
+                            totalPages: number;
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                imageUrl: string;
+                                summitedAt: string;
+                                validated: boolean;
+                                createdAt: Record<string, never> | string | number;
+                                mountainId: (string | null) | null;
+                                mountainName: (string | null) | null;
+                                mountainSlug: (string | null) | null;
+                                userId: (string | null) | null;
+                                userUsername: (string | null) | null;
+                                userFirstName: (string | null) | null;
+                                userLastName: (string | null) | null;
+                                userImageUrl: (string | null) | null;
+                                relatedUsersCount: number;
+                            }[];
+                            page: number;
+                            pageSize: number;
+                            total: number;
+                            totalPages: number;
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                imageUrl: string;
+                                summitedAt: string;
+                                validated: boolean;
+                                createdAt: Record<string, never> | string | number;
+                                mountainId: (string | null) | null;
+                                mountainName: (string | null) | null;
+                                mountainSlug: (string | null) | null;
+                                userId: (string | null) | null;
+                                userUsername: (string | null) | null;
+                                userFirstName: (string | null) | null;
+                                userLastName: (string | null) | null;
+                                userImageUrl: (string | null) | null;
+                                relatedUsersCount: number;
+                            }[];
+                            page: number;
+                            pageSize: number;
+                            total: number;
+                            totalPages: number;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    getApiAdminSummitsById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            imageUrl: string;
+                            summitedAt: string;
+                            validated: boolean;
+                            createdAt: Record<string, never> | string | number;
+                            mountainId: (string | null) | null;
+                            mountainName: (string | null) | null;
+                            mountainSlug: (string | null) | null;
+                            mountainHeight: (string | null) | null;
+                            userId: (string | null) | null;
+                            userUsername: (string | null) | null;
+                            userFirstName: (string | null) | null;
+                            userLastName: (string | null) | null;
+                            userImageUrl: (string | null) | null;
+                            relatedUsers: {
+                                id: string;
+                                username: string;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                isMain: boolean;
+                            }[];
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            imageUrl: string;
+                            summitedAt: string;
+                            validated: boolean;
+                            createdAt: Record<string, never> | string | number;
+                            mountainId: (string | null) | null;
+                            mountainName: (string | null) | null;
+                            mountainSlug: (string | null) | null;
+                            mountainHeight: (string | null) | null;
+                            userId: (string | null) | null;
+                            userUsername: (string | null) | null;
+                            userFirstName: (string | null) | null;
+                            userLastName: (string | null) | null;
+                            userImageUrl: (string | null) | null;
+                            relatedUsers: {
+                                id: string;
+                                username: string;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                isMain: boolean;
+                            }[];
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            imageUrl: string;
+                            summitedAt: string;
+                            validated: boolean;
+                            createdAt: Record<string, never> | string | number;
+                            mountainId: (string | null) | null;
+                            mountainName: (string | null) | null;
+                            mountainSlug: (string | null) | null;
+                            mountainHeight: (string | null) | null;
+                            userId: (string | null) | null;
+                            userUsername: (string | null) | null;
+                            userFirstName: (string | null) | null;
+                            userLastName: (string | null) | null;
+                            userImageUrl: (string | null) | null;
+                            relatedUsers: {
+                                id: string;
+                                username: string;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                isMain: boolean;
+                            }[];
+                        };
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    postApiAdminSummitsById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    summitedAt?: string;
+                    validated?: boolean;
+                    imageUrl?: string;
+                    mountainId?: (string | null) | null;
+                    userId?: (string | null) | null;
+                };
+                "multipart/form-data": {
+                    summitedAt?: string;
+                    validated?: boolean;
+                    imageUrl?: string;
+                    mountainId?: (string | null) | null;
+                    userId?: (string | null) | null;
+                };
+                "text/plain": {
+                    summitedAt?: string;
+                    validated?: boolean;
+                    imageUrl?: string;
+                    mountainId?: (string | null) | null;
+                    userId?: (string | null) | null;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    deleteApiAdminSummitsById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    getApiAdminStatsTimeseries: {
+        parameters: {
+            query: {
+                metric: "new-users" | "summits";
+                range: "week" | "month" | "6months" | "year" | "all";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            bucket: "day" | "week" | "month";
+                            points: {
+                                date: string;
+                                count: number;
+                            }[];
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            bucket: "day" | "week" | "month";
+                            points: {
+                                date: string;
+                                count: number;
+                            }[];
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            bucket: "day" | "week" | "month";
+                            points: {
+                                date: string;
+                                count: number;
+                            }[];
+                        };
+                    };
+                };
+            };
+        };
+    };
+    getApiAdminCrons: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            name: string;
+                            pattern: string;
+                        }[];
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            name: string;
+                            pattern: string;
+                        }[];
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            name: string;
+                            pattern: string;
+                        }[];
+                    };
+                };
+            };
+        };
+    };
+    postApiAdminCronsByNameTrigger: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                name: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        name: string;
+                        durationMs: number;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        name: string;
+                        durationMs: number;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        name: string;
+                        durationMs: number;
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string;
+                    };
+                    "multipart/form-data": {
+                        error: string;
+                    };
+                    "text/plain": {
+                        error: string;
                     };
                 };
             };

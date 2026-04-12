@@ -42,7 +42,7 @@ export function ChallengeListItem({
         </View>
         <View className="flex-1">
           <ThemedText
-            className={`text-xl font-black tracking-tighter ${isSelected ? "text-primary" : ""}`}
+            className={`text-xl font-extrabold tracking-tighter ${isSelected ? "text-primary" : ""}`}
           >
             {name}
           </ThemedText>
