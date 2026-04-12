@@ -8,6 +8,10 @@ import {
   resolveAppVersionFromRequest,
   resolvePlatformFromRequest,
 } from "@/api/lib/request-headers";
+import {
+  DISCORD_NEW_USER_WEBHOOK_URL,
+  sendDiscordEmbed,
+} from "@/api/lib/discord";
 import { addRowToSheets, EMAILS_SPREADSHEET } from "@/api/lib/sheets";
 import { DEFAULT_CHALLENGE_ID } from "@/api/routes/@shared/challenge";
 import { JWT } from "@/api/routes/@shared/jwt";
@@ -122,6 +126,22 @@ export const joinPostRoute = new Elysia().use(JWT()).post(
       } catch {
         // noop
       }
+      sendDiscordEmbed(DISCORD_NEW_USER_WEBHOOK_URL, {
+        title: "New user",
+        color: 0x5865f2,
+        fields: [
+          { name: "Email", value: email, inline: true },
+          {
+            name: "Name",
+            value: `${firstName ?? ""} ${lastName ?? ""}`.trim() || "—",
+            inline: true,
+          },
+          { name: "Provider", value: body.provider, inline: true },
+          { name: "Country", value: country ?? "—", inline: true },
+          { name: "Platform", value: platform ?? "—", inline: true },
+          { name: "App version", value: appVersion ?? "—", inline: true },
+        ],
+      });
       const insert = await db
         .insert(userTable)
         .values({

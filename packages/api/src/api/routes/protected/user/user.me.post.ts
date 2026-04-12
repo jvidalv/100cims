@@ -1,5 +1,6 @@
 import { eq } from "drizzle-orm";
 import { Elysia, t } from "elysia";
+import { uuidv7 } from "uuidv7";
 
 import { db } from "@/db";
 import { userTable } from "@/db/schema";
@@ -19,7 +20,7 @@ export const userMePostRoute = new Elysia().post(
   "/me",
   async ({ body, request, set }) => {
     const user = getUserFromRequest(request);
-    const key = `${process.env.APP_NAME}/user/avatar/${user.id}.jpeg`;
+    const key = `${process.env.APP_NAME}/user/avatar/${user.id}/${uuidv7()}.jpeg`;
 
     let imageUrl: string | undefined;
     const imageBase64 = body.image || body.imageUrl;

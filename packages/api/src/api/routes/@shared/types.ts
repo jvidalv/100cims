@@ -11,6 +11,9 @@ export type User = {
   country: string | null;
   platform: string | null;
   appVersion: string | null;
+  lastLatitude: string | null;
+  lastLongitude: string | null;
+  lastLocationAt: Date | null;
   username: string | null;
   locale: string | null;
   activeChallengeId: string | null;

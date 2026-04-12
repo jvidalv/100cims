@@ -1,5 +1,10 @@
 import { Elysia, t } from "elysia";
 
+import {
+  DISCORD_CONTACT_WEBHOOK_URL,
+  sendDiscordEmbed,
+  truncate,
+} from "@/api/lib/discord";
 import { addRowToSheets, SUGGESTIONS_SPREADSHEET } from "@/api/lib/sheets";
 import { getUserFromRequest } from "@/api/routes/@shared/auth";
 import { SimpleSuccessResponse } from "@/api/schemas/common.schema";
@@ -12,6 +17,14 @@ export const userSuggestionPostRoute = new Elysia().post(
       user.email,
       body.suggestion,
     ]);
+    sendDiscordEmbed(DISCORD_CONTACT_WEBHOOK_URL, {
+      title: "New suggestion",
+      color: 0xfee75c,
+      fields: [
+        { name: "From", value: user.email, inline: true },
+        { name: "Message", value: truncate(body.suggestion) },
+      ],
+    });
     return {
       success: true,
     };

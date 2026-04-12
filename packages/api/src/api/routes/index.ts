@@ -3,6 +3,11 @@ import { swagger } from "@elysiajs/swagger";
 import { Elysia, ParseError, ValidationError } from "elysia";
 
 import { cronJobs } from "@/api/cron";
+import {
+  DISCORD_ERRORS_WEBHOOK_URL,
+  sendDiscordEmbed,
+  truncate,
+} from "@/api/lib/discord";
 import { addRowToSheets, ERRORS_SPREADSHEET } from "@/api/lib/sheets";
 import { adminRoutes } from "@/api/routes/admin";
 import { protectedRoutes } from "@/api/routes/protected";
@@ -48,6 +53,22 @@ export const app = new Elysia({ prefix: "/api" })
   )
   .onError(({ request, error }) => {
     console.log(error);
+    const sendErrorEmbed = (
+      type: string,
+      status: string | number,
+      message: string,
+    ) => {
+      sendDiscordEmbed(DISCORD_ERRORS_WEBHOOK_URL, {
+        title: "API error",
+        color: 0xed4245,
+        fields: [
+          { name: "Type", value: type, inline: true },
+          { name: "Status", value: String(status), inline: true },
+          { name: "URL", value: truncate(request.url, 200) },
+          { name: "Message", value: truncate(message) },
+        ],
+      });
+    };
     if (error instanceof ValidationError) {
       void addRowToSheets(ERRORS_SPREADSHEET, [
         "validation",
@@ -55,6 +76,7 @@ export const app = new Elysia({ prefix: "/api" })
         request.url,
         error.message,
       ]);
+      sendErrorEmbed("validation", error.status, error.message);
     } else if (error instanceof ParseError) {
       void addRowToSheets(ERRORS_SPREADSHEET, [
         "parse",
@@ -62,15 +84,19 @@ export const app = new Elysia({ prefix: "/api" })
         request.url,
         error.message,
       ]);
+      sendErrorEmbed("parse", error.status, error.message);
     } else {
+      const details =
+        error instanceof Error
+          ? `${error.name}: ${error.message}\n${error.stack || ""}`
+          : String(error);
       void addRowToSheets(ERRORS_SPREADSHEET, [
         "generic",
         `assumed 500`,
         request.url,
-        error instanceof Error
-          ? `${error.name}: ${error.message}\n${error.stack || ""}`
-          : String(error),
+        details,
       ]);
+      sendErrorEmbed("generic", "assumed 500", details);
     }
   })
   .use(cronJobs)

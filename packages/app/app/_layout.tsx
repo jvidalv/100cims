@@ -21,7 +21,8 @@ import { usePlanChatUnread } from "@/domains/plan/plan-chat.api";
 import { usePlans } from "@/domains/plan/plan.api";
 import { useSummitsGet } from "@/domains/summit/summit.api";
 import { useUserMe, useUserChallengeSummits } from "@/domains/user/user.api";
-import { setAuthToken } from "@/lib/api-client";
+import { useLocation } from "@/hooks/use-location";
+import { setApiLocation, setAuthToken } from "@/lib/api-client";
 import { getJwt } from "@/lib/auth";
 import { isIpadOS, isWeb } from "@/lib/device";
 import { getDateFnsLocale, getLocale } from "@/lib/locale";
@@ -134,6 +135,21 @@ function Content() {
   );
 }
 
+function LocationSync() {
+  const { location } = useLocation();
+  useEffect(() => {
+    if (location?.coords) {
+      setApiLocation({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      });
+    } else {
+      setApiLocation(null);
+    }
+  }, [location]);
+  return null;
+}
+
 function AuthLayer({ children }: PropsWithChildren) {
   const [isJwtLoaded, setIsJwtLoaded] = useState(false);
   const [jwt, setJwt] = useState<string | null>(null);
@@ -154,7 +170,12 @@ function AuthLayer({ children }: PropsWithChildren) {
     return null;
   }
 
-  return <AuthProvider jwt={jwt}>{children}</AuthProvider>;
+  return (
+    <AuthProvider jwt={jwt}>
+      <LocationSync />
+      {children}
+    </AuthProvider>
+  );
 }
 
 function RootProviders() {

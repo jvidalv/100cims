@@ -6,6 +6,7 @@ import { userTable } from "@/db/schema";
 import { resolveCountryFromRequest } from "@/api/lib/geoip";
 import {
   resolveAppVersionFromRequest,
+  resolveCoordinatesFromRequest,
   resolvePlatformFromRequest,
 } from "@/api/lib/request-headers";
 import { getUserFromRequest } from "@/api/routes/@shared/auth";
@@ -28,6 +29,13 @@ export const userMeGetRoute = new Elysia().get(
     }
     const appVersion = resolveAppVersionFromRequest(request);
     if (appVersion) updates.appVersion = appVersion;
+
+    const coords = resolveCoordinatesFromRequest(request);
+    if (coords) {
+      updates.lastLatitude = coords.latitude;
+      updates.lastLongitude = coords.longitude;
+      updates.lastLocationAt = new Date();
+    }
 
     if (Object.keys(updates).length) {
       await db

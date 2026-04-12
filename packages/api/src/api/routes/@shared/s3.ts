@@ -21,9 +21,10 @@ export const putImageOnS3 = async (
       Body: content,
       ContentEncoding: "base64",
       ContentType: "image/jpeg",
+      CacheControl: "public, max-age=31536000, immutable",
     }),
   );
 };
 
 export const getPublicUrl = (key: string) =>
-  `https://${process.env.AWS_PUBLIC_BUCKET_NAME}.s3.${process.env.AWS_BUCKET_REGION}.amazonaws.com/${key}?date=${Date.now()}`;
+  `https://${process.env.AWS_PUBLIC_BUCKET_NAME}.s3.${process.env.AWS_BUCKET_REGION}.amazonaws.com/${key}`;

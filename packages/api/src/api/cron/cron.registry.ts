@@ -1,3 +1,4 @@
+import { cleanupOrphanMountains } from "@/api/cron/cleanup-orphan-mountains";
 import { completeStalePlans } from "@/api/cron/complete-stale-plans";
 import { dailyRestart } from "@/api/cron/self-restart";
 
@@ -15,4 +16,9 @@ export const CRON_REGISTRY: CronEntry[] = [
     fn: completeStalePlans,
   },
   { name: "daily-restart", pattern: "0 0 2 * * *", fn: dailyRestart },
+  {
+    name: "cleanup-orphan-mountains",
+    pattern: "0 0 0 * * *",
+    fn: cleanupOrphanMountains,
+  },
 ];

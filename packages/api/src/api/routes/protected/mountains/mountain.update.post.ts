@@ -1,5 +1,6 @@
 import { eq } from "drizzle-orm";
 import { Elysia } from "elysia";
+import { uuidv7 } from "uuidv7";
 
 import { db } from "@/db";
 import { mountainTable } from "@/db/schema";
@@ -50,7 +51,7 @@ export const mountainUpdatePostRoute = new Elysia().post(
     // Handle image upload after authorization check
     let imageUrl: string | undefined;
     if (body.image) {
-      const key = `${process.env.APP_NAME}/mountain/profile/${body.id}.jpeg`;
+      const key = `${process.env.APP_NAME}/mountain/profile/${body.id}/${uuidv7()}.jpeg`;
       const content = Buffer.from(body.image, "base64");
       await putImageOnS3(key, content);
       imageUrl = getPublicUrl(key);
