@@ -183,7 +183,12 @@ export default function UserMeScreen() {
               />
               {(image || me?.imageUrl) && (
                 <View className="absolute bottom-0 right-0 size-7 items-center justify-center rounded-full border-2 border-background bg-primary">
-                  <Icon name="pencil" size={12} color="white" weight="bold" />
+                  <Icon
+                    name="camera.fill"
+                    size={12}
+                    color="white"
+                    weight="bold"
+                  />
                 </View>
               )}
             </TouchableOpacity>

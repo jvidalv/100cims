@@ -1,23 +1,25 @@
-import React, { forwardRef, useMemo } from "react";
+import React, { forwardRef } from "react";
 import { Text, type TextProps } from "react-native";
 import { twMerge } from "tailwind-merge";
 
-import { getFontFamily, getFontSize } from "@/lib/fonts";
+const getFontSize = (className?: string) => {
+  if (className?.includes("text-5xl")) return 40;
+  if (className?.includes("text-4xl")) return 32;
+  if (className?.includes("text-3xl")) return 28;
+  if (className?.includes("text-2xl")) return 24;
+  if (className?.includes("text-xl")) return 20;
+  if (className?.includes("text-lg")) return 18;
+  if (className?.includes("text-sm")) return 14;
+  if (className?.includes("text-xs")) return 12;
+  return 16;
+};
 
 export const ThemedText = forwardRef<Text, TextProps>(
   ({ className, style, ...props }, ref) => {
-    const fontFamily = useMemo(() => {
-      return getFontFamily(className);
-    }, [className]);
-
-    const fontSize = useMemo(() => {
-      return getFontSize(className);
-    }, [className]);
-
     return (
       <Text
         ref={ref}
-        style={[{ fontFamily, fontSize }, style]}
+        style={[{ fontSize: getFontSize(className) }, style]}
         selectable
         className={twMerge(
           "text-foreground",

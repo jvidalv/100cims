@@ -1,0 +1,36 @@
+#!/bin/sh
+
+if [ "$CIMS_AMENDING_VERSION" = "1" ]; then
+  exit 0
+fi
+
+VERSION_FILE="packages/app/lib/app-version.ts"
+APP_PKG="packages/app/package.json"
+
+[ ! -f "$VERSION_FILE" ] && exit 0
+
+if ! git diff-tree --no-commit-id --name-only -r HEAD | grep -q "^packages/app/"; then
+  exit 0
+fi
+
+CURRENT=$(grep 'APP_BUILD_VERSION' "$VERSION_FILE" | sed 's/.*"\(.*\)".*/\1/')
+[ -z "$CURRENT" ] && exit 0
+
+MAJOR=$(echo "$CURRENT" | cut -d. -f1)
+MINOR=$(echo "$CURRENT" | cut -d. -f2)
+PATCH=$(echo "$CURRENT" | cut -d. -f3)
+
+NEXT_PATCH=$(printf "%03d" $((10#$PATCH + 1)))
+NEW_VERSION="${MAJOR}.${MINOR}.${NEXT_PATCH}"
+
+if sed --version >/dev/null 2>&1; then
+  sed -i "s/APP_BUILD_VERSION = \"${CURRENT}\"/APP_BUILD_VERSION = \"${NEW_VERSION}\"/" "$VERSION_FILE"
+  sed -i "s/\"version\": \"${CURRENT%.[0-9]*}.[0-9]*\"/\"version\": \"${NEW_VERSION}\"/" "$APP_PKG"
+else
+  sed -i '' "s/APP_BUILD_VERSION = \"${CURRENT}\"/APP_BUILD_VERSION = \"${NEW_VERSION}\"/" "$VERSION_FILE"
+  sed -i '' "s/\"version\": \"${CURRENT%.[0-9]*}.[0-9]*\"/\"version\": \"${NEW_VERSION}\"/" "$APP_PKG"
+fi
+
+export CIMS_AMENDING_VERSION=1
+git add "$VERSION_FILE" "$APP_PKG"
+git commit --amend --no-edit --no-verify

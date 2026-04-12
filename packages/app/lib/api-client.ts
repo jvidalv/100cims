@@ -1,31 +1,34 @@
 import createClient from "openapi-fetch";
+import { Platform } from "react-native";
 
+import { APP_BUILD_VERSION } from "@/lib/app-version";
 import type { paths } from "@/types/api";
 
-// Create type-safe API client
 const apiClient = createClient<paths>({
   baseUrl: process.env.EXPO_PUBLIC_API_URL || "http://localhost:3000",
 });
 
-// Helper to set auth token
+let authToken: string | null = null;
+
+apiClient.use({
+  onRequest({ request }) {
+    request.headers.set("x-app-platform", Platform.OS);
+    request.headers.set("x-app-version", APP_BUILD_VERSION);
+    if (authToken) {
+      request.headers.set("Authorization", `Bearer ${authToken}`);
+    } else {
+      request.headers.delete("Authorization");
+    }
+    return request;
+  },
+});
+
 export const setAuthToken = (token: string) => {
-  apiClient.use({
-    onRequest({ request }) {
-      request.headers.set("Authorization", `Bearer ${token}`);
-      return request;
-    },
-  });
+  authToken = token;
 };
 
-// Helper to clear auth token
 export const clearAuthToken = () => {
-  // Reset client to remove auth header
-  apiClient.use({
-    onRequest({ request }) {
-      request.headers.delete("Authorization");
-      return request;
-    },
-  });
+  authToken = null;
 };
 
 export default apiClient;

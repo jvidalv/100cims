@@ -8,6 +8,9 @@ export type User = {
   visibleOnHiscores: boolean;
   visibleOnPeopleSearch: boolean;
   admin: boolean;
+  country: string | null;
+  platform: string | null;
+  appVersion: string | null;
   username: string | null;
   locale: string | null;
   activeChallengeId: string | null;

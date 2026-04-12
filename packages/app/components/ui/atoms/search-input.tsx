@@ -1,12 +1,11 @@
 import { useColorScheme } from "nativewind";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useIntl } from "react-intl";
 import { BlurEvent, FocusEvent, TextInput, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
 import { Icon } from "@/components/ui/atoms/icon";
 import { isAndroid } from "@/lib/device";
-import { getFontFamily } from "@/lib/fonts";
 
 const inputClassName =
   "border-2 border-border rounded-xl py-4 pl-12 text-foreground";
@@ -28,9 +27,6 @@ export const SearchInput = ({
   const intl = useIntl();
 
   const [focused, setFocused] = useState(false);
-  const fontFamily = useMemo(() => {
-    return getFontFamily(inputClassName);
-  }, []);
 
   return (
     <View className={twMerge("relative", className)}>
@@ -53,7 +49,6 @@ export const SearchInput = ({
           setFocused(false);
           onBlur?.(e);
         }}
-        style={{ fontFamily, fontSize: 16 }}
         onChangeText={onChangeText}
         placeholder={intl.formatMessage({ defaultMessage: "Search..." })}
         placeholderTextColor={

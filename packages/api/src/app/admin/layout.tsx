@@ -1,4 +1,6 @@
 import { redirect } from "next/navigation";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { Toaster } from "sonner";
 
 import { signOut } from "@/auth";
 import { AdminSidebar } from "@/components/admin-sidebar";
@@ -25,20 +27,23 @@ export default async function AdminLayout({
   };
 
   return (
-    <QueryClientProvider>
-      <SidebarProvider>
-        <AdminSidebar
-          fallbackEmail={session.user.email ?? ""}
-          fallbackImage={session.user.image}
-          signOutAction={signOutAction}
-        />
-        <SidebarInset className="min-w-0">
-          <header className="flex h-12 items-center gap-2 border-b px-4">
-            <SidebarTrigger />
-          </header>
-          <div className="flex-1 overflow-auto">{children}</div>
-        </SidebarInset>
-      </SidebarProvider>
-    </QueryClientProvider>
+    <NuqsAdapter>
+      <QueryClientProvider>
+        <SidebarProvider>
+          <AdminSidebar
+            fallbackEmail={session.user.email ?? ""}
+            fallbackImage={session.user.image}
+            signOutAction={signOutAction}
+          />
+          <SidebarInset className="min-w-0">
+            <header className="flex h-12 items-center gap-2 border-b px-4">
+              <SidebarTrigger />
+            </header>
+            <div className="flex-1 overflow-auto">{children}</div>
+          </SidebarInset>
+        </SidebarProvider>
+        <Toaster richColors position="top-right" />
+      </QueryClientProvider>
+    </NuqsAdapter>
   );
 }

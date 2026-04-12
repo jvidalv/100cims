@@ -63,3 +63,5 @@ next-env.d.ts
 # Mobile apps
 ios/
 android/
+
+*.psd

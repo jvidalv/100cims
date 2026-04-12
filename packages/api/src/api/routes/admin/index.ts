@@ -8,6 +8,14 @@ import { setAdminContext } from "@/api/routes/admin/admin-context";
 import { adminCronsGetRoute } from "@/api/routes/admin/admin.crons.get";
 import { adminCronsTriggerPostRoute } from "@/api/routes/admin/admin.crons-trigger.post";
 import { adminMeGetRoute } from "@/api/routes/admin/admin.me.get";
+import { adminMountainChallengesGetRoute } from "@/api/routes/admin/admin.mountain-challenges.get";
+import { adminMountainDetailGetRoute } from "@/api/routes/admin/admin.mountain-detail.get";
+import { adminMountainUpdatePostRoute } from "@/api/routes/admin/admin.mountain-update.post";
+import { adminMountainsGetRoute } from "@/api/routes/admin/admin.mountains.get";
+import { adminUserDetailGetRoute } from "@/api/routes/admin/admin.user-detail.get";
+import { adminUserSummitsGetRoute } from "@/api/routes/admin/admin.user-summits.get";
+import { adminUserUpdatePostRoute } from "@/api/routes/admin/admin.user-update.post";
+import { adminUsersGetRoute } from "@/api/routes/admin/admin.users.get";
 
 export const adminRoutes = new Elysia({ prefix: "/admin" })
   .resolve(async ({ request, set }) => {
@@ -38,5 +46,13 @@ export const adminRoutes = new Elysia({ prefix: "/admin" })
     return { userId: token.userId };
   })
   .use(adminMeGetRoute)
+  .use(adminUsersGetRoute)
+  .use(adminUserDetailGetRoute)
+  .use(adminUserUpdatePostRoute)
+  .use(adminUserSummitsGetRoute)
+  .use(adminMountainsGetRoute)
+  .use(adminMountainDetailGetRoute)
+  .use(adminMountainUpdatePostRoute)
+  .use(adminMountainChallengesGetRoute)
   .use(adminCronsGetRoute)
   .use(adminCronsTriggerPostRoute);

@@ -41,6 +41,10 @@ COPY --from=builder --chown=nextjs:nodejs /app/packages/api/.next/static ./packa
 COPY --from=builder /app/packages/api/src/db/drizzle ./packages/api/src/db/drizzle
 COPY --from=builder /app/packages/api/drizzle.config.ts ./packages/api/drizzle.config.ts
 
+# geoip-lite ships .dat data files loaded via __dirname; Next's file-tracing
+# doesn't see them, so copy the package into the standalone tree explicitly.
+COPY --from=builder /app/node_modules/geoip-lite ./packages/api/node_modules/geoip-lite
+
 # Install drizzle-kit for runtime migrations
 RUN npm install -g drizzle-kit postgres dotenv
 
