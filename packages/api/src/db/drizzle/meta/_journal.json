@@ -78,6 +78,13 @@
       "when": 1769024450039,
       "tag": "0010_milky_bug",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1775990010798,
+      "tag": "0011_equal_union_jack",
+      "breakpoints": true
     }
   ]
 }

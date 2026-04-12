@@ -58,6 +58,7 @@ export const userTable = pgTable("user", {
   town: text(),
   visibleOnHiscores: boolean().notNull().default(false),
   visibleOnPeopleSearch: boolean().notNull().default(true),
+  admin: boolean().notNull().default(false),
   activeChallengeId: uuid(), // FK constraint in migration to avoid circular reference
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp().notNull().defaultNow(),

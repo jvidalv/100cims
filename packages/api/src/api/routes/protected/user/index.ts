@@ -1,20 +1,20 @@
 import { Elysia } from "elysia";
 
-import { allRoute } from "@/api/routes/protected/user/all.route";
-import { deleteRoute } from "@/api/routes/protected/user/delete.route";
-import { markUpdateSeenRoute } from "@/api/routes/protected/user/mark-update-seen.route";
-import { meGetRoute } from "@/api/routes/protected/user/me-get.route";
-import { mePostRoute } from "@/api/routes/protected/user/me-post.route";
-import { suggestionRoute } from "@/api/routes/protected/user/suggestion.route";
-import { summitsRoute } from "@/api/routes/protected/user/summits.route";
-import { unseenUpdatesRoute } from "@/api/routes/protected/user/unseen-updates.route";
+import { userAllGetRoute } from "@/api/routes/protected/user/user.all.get";
+import { userDeleteGetRoute } from "@/api/routes/protected/user/user.delete.get";
+import { userMarkUpdateSeenPostRoute } from "@/api/routes/protected/user/user.mark-update-seen.post";
+import { userMeGetRoute } from "@/api/routes/protected/user/user.me.get";
+import { userMePostRoute } from "@/api/routes/protected/user/user.me.post";
+import { userSuggestionPostRoute } from "@/api/routes/protected/user/user.suggestion.post";
+import { userSummitsGetRoute } from "@/api/routes/protected/user/user.summits.get";
+import { userUnseenUpdatesGetRoute } from "@/api/routes/protected/user/user.unseen-updates.get";
 
 export const userRoute = new Elysia({ prefix: "/user" })
-  .use(meGetRoute)
-  .use(mePostRoute)
-  .use(summitsRoute)
-  .use(allRoute)
-  .use(deleteRoute)
-  .use(suggestionRoute)
-  .use(unseenUpdatesRoute)
-  .use(markUpdateSeenRoute);
+  .use(userMeGetRoute)
+  .use(userMePostRoute)
+  .use(userSummitsGetRoute)
+  .use(userAllGetRoute)
+  .use(userDeleteGetRoute)
+  .use(userSuggestionPostRoute)
+  .use(userUnseenUpdatesGetRoute)
+  .use(userMarkUpdateSeenPostRoute);

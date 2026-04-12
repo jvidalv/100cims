@@ -1,20 +1,18 @@
 import { Elysia } from "elysia";
 
-import { JWT } from "@/api/routes/@shared/jwt";
-import { createRoute } from "./create.route";
-import { deleteRoute } from "./delete.route";
-import { detailRoute } from "./detail.route";
-import { listRoute } from "./list.route";
-import { searchMountainsRoute } from "./search-mountains.route";
-import { updateRoute } from "./update.route";
+import { challengeCreatePostRoute } from "./challenge.create.post";
+import { challengeDeletePostRoute } from "./challenge.delete.post";
+import { challengeDetailGetRoute } from "./challenge.detail.get";
+import { challengeListGetRoute } from "./challenge.list.get";
+import { challengeSearchMountainsGetRoute } from "./challenge.search-mountains.get";
+import { challengeUpdatePostRoute } from "./challenge.update.post";
 
 export const communityChallengeRoute = new Elysia({
   prefix: "/community-challenge",
 })
-  .use(JWT())
-  .use(createRoute)
-  .use(listRoute)
-  .use(detailRoute)
-  .use(updateRoute)
-  .use(deleteRoute)
-  .use(searchMountainsRoute);
+  .use(challengeCreatePostRoute)
+  .use(challengeListGetRoute)
+  .use(challengeDetailGetRoute)
+  .use(challengeUpdatePostRoute)
+  .use(challengeDeletePostRoute)
+  .use(challengeSearchMountainsGetRoute);

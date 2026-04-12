@@ -1,10 +1,10 @@
 import { Elysia } from "elysia";
 
-import { activeRoute } from "@/api/routes/public/challenge/active.route";
-import { allRoute } from "@/api/routes/public/challenge/all.route";
-import { detailRoute } from "@/api/routes/public/challenge/detail.route";
+import { challengeActiveGetRoute } from "@/api/routes/public/challenge/challenge.active.get";
+import { challengeAllGetRoute } from "@/api/routes/public/challenge/challenge.all.get";
+import { challengeDetailGetRoute } from "@/api/routes/public/challenge/challenge.detail.get";
 
 export const challengeRoutes = new Elysia({ prefix: "/challenge" })
-  .use(activeRoute)
-  .use(allRoute)
-  .use(detailRoute);
+  .use(challengeActiveGetRoute)
+  .use(challengeAllGetRoute)
+  .use(challengeDetailGetRoute);

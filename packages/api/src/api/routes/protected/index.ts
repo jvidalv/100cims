@@ -5,20 +5,20 @@ import { Elysia } from "elysia";
 import { db } from "@/db";
 import { userTable } from "@/db/schema";
 import { JWT } from "@/api/routes/@shared/jwt";
-import { User } from "@/api/routes/@shared/types";
+import { setRequestContext } from "@/api/routes/@shared/request-context";
 import { communityChallengeRoute } from "@/api/routes/protected/community-challenge";
-import { donorRoute } from "@/api/routes/protected/donor.route";
-import { mountainLegacyRoute } from "@/api/routes/protected/mountain-legacy.route";
+import { donorsRoute } from "@/api/routes/protected/donors";
+import { mountainLegacyPostRoute } from "@/api/routes/protected/mountain-legacy.post";
 import { mountainsRoute } from "@/api/routes/protected/mountains";
-import { planChatRoute } from "@/api/routes/protected/plan-chat.route";
-import { planPrivateRoute } from "@/api/routes/protected/plan.route";
-import { summitRoute } from "@/api/routes/protected/summit.route";
+import { planChatRoute } from "@/api/routes/protected/plan-chat";
+import { plansRoute } from "@/api/routes/protected/plans";
+import { summitRoute } from "@/api/routes/protected/summit";
 import { userRoute } from "@/api/routes/protected/user";
 
 export const protectedRoutes = new Elysia({ prefix: "/protected" })
   .use(JWT())
   .use(bearer())
-  .onBeforeHandle(async ({ jwt, bearer, store, set }) => {
+  .resolve(async ({ jwt, bearer, request, set }) => {
     const unauthorizedResponse = () => {
       set.status = 401;
       return { error: "Unauthorized" };
@@ -40,17 +40,18 @@ export const protectedRoutes = new Elysia({ prefix: "/protected" })
       .where(eq(userTable.id, verified.id));
     const user = users?.[0];
 
-    (store as { user: User }).user = user;
-
     if (!user || user.id !== verified.id) {
       return unauthorizedResponse();
     }
+
+    setRequestContext(request, { user });
+    return { user };
   })
   .use(userRoute)
-  .use(mountainLegacyRoute) // LEGACY: /mountain/summit for old app versions
+  .use(mountainLegacyPostRoute) // LEGACY: /mountain/summit for old app versions
   .use(mountainsRoute)
   .use(summitRoute)
-  .use(donorRoute)
-  .use(planPrivateRoute)
+  .use(donorsRoute)
+  .use(plansRoute)
   .use(planChatRoute)
   .use(communityChallengeRoute);

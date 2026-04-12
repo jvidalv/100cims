@@ -1,5 +1,7 @@
 import { Elysia } from "elysia";
 
-import { allRoute } from "@/api/routes/public/hiscores/all.route";
+import { hiscoresAllGetRoute } from "@/api/routes/public/hiscores/hiscores.all.get";
 
-export const hiscoresRoutes = new Elysia({ prefix: "/hiscores" }).use(allRoute);
+export const hiscoresRoutes = new Elysia({ prefix: "/hiscores" }).use(
+  hiscoresAllGetRoute,
+);

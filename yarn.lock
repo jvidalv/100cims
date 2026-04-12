@@ -1398,6 +1398,13 @@
   resolved "https://registry.yarnpkg.com/@elysiajs/cors/-/cors-1.4.1.tgz#08150fd9fd6b42773f352609712f7b32e66ca117"
   integrity sha512-lQfad+F3r4mNwsxRKbXyJB8Jg43oAOXjRwn7sKUL6bcOW3KjUqUimTS+woNpO97efpzjtDE0tEjGk9DTw8lqTQ==
 
+"@elysiajs/cron@^1.4.1":
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/@elysiajs/cron/-/cron-1.4.1.tgz#90991206576c775b7b24e03ee5351c32750ea988"
+  integrity sha512-Y+jqXtMJ+m17QzNWlWc09ugd1Fn1Wh7lqE+y9qSW8eiQZEqsRADXWmbLuXRSRaSC5dkfOyRSiwNCp6n8L/yuqA==
+  dependencies:
+    croner "^6.0.3"
+
 "@elysiajs/jwt@^1.4.1":
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/@elysiajs/jwt/-/jwt-1.4.1.tgz#8bd23fe8791d9865305bd98f884a50cb614961eb"
@@ -5375,6 +5382,11 @@ core-js-compat@^3.43.0:
   integrity sha512-VQXt1jr9cBz03b331DFDCCP90b3fanciLkgiOoy8SBHy06gNf+vQ1A3WFLqG7I8TipYIKeYK9wxd0tUrvHcOZA==
   dependencies:
     browserslist "^4.28.1"
+
+croner@^6.0.3:
+  version "6.0.7"
+  resolved "https://registry.yarnpkg.com/croner/-/croner-6.0.7.tgz#73416ee178626c226a5765e498e1e8454738bdba"
+  integrity sha512-k3Xx3Rcclfr60Yx4TmvsF3Yscuiql8LSvYLaphTsaq5Hk8La4Z/udmUANMOTKpgGGroI2F6/XOr9cU9OFkYluQ==
 
 cross-fetch@^3.1.5:
   version "3.2.0"
