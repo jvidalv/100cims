@@ -13,6 +13,11 @@ import { adminChallengesGetRoute } from "@/api/routes/admin/admin.challenges.get
 import { adminCronsGetRoute } from "@/api/routes/admin/admin.crons.get";
 import { adminCronsTriggerPostRoute } from "@/api/routes/admin/admin.crons-trigger.post";
 import { adminMeGetRoute } from "@/api/routes/admin/admin.me.get";
+import { adminMerchCreatePostRoute } from "@/api/routes/admin/admin.merch-create.post";
+import { adminMerchDeleteDeleteRoute } from "@/api/routes/admin/admin.merch-delete.delete";
+import { adminMerchDetailGetRoute } from "@/api/routes/admin/admin.merch-detail.get";
+import { adminMerchUpdatePostRoute } from "@/api/routes/admin/admin.merch-update.post";
+import { adminMerchGetRoute } from "@/api/routes/admin/admin.merch.get";
 import { adminMountainChallengesGetRoute } from "@/api/routes/admin/admin.mountain-challenges.get";
 import { adminMountainDeleteDeleteRoute } from "@/api/routes/admin/admin.mountain-delete.delete";
 import { adminMountainDetailGetRoute } from "@/api/routes/admin/admin.mountain-detail.get";
@@ -85,6 +90,11 @@ export const adminRoutes = new Elysia({ prefix: "/admin" })
   .use(adminPlanUpdatePostRoute)
   .use(adminPlanDeleteDeleteRoute)
   .use(adminPlanMemberRemoveDeleteRoute)
+  .use(adminMerchGetRoute)
+  .use(adminMerchDetailGetRoute)
+  .use(adminMerchCreatePostRoute)
+  .use(adminMerchUpdatePostRoute)
+  .use(adminMerchDeleteDeleteRoute)
   .use(adminStatsTimeseriesGetRoute)
   .use(adminCronsGetRoute)
   .use(adminCronsTriggerPostRoute);

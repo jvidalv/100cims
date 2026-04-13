@@ -5,15 +5,18 @@ import { getLocales } from "expo-localization";
 
 const VALID_LOCALES = ["en", "ca", "es"];
 
+// Locale doesn't change without an app restart; memoize the native bridge call.
+let cachedLocale: string | undefined;
+
 export const getLocale = () => {
+  if (cachedLocale !== undefined) return cachedLocale;
   const locales = getLocales();
   const firstLanguageCode = locales?.[0]?.languageCode;
-
-  if (firstLanguageCode && VALID_LOCALES.includes(firstLanguageCode)) {
-    return firstLanguageCode;
-  }
-
-  return "en";
+  cachedLocale =
+    firstLanguageCode && VALID_LOCALES.includes(firstLanguageCode)
+      ? firstLanguageCode
+      : "en";
+  return cachedLocale;
 };
 
 export const getDateFnsLocale = () => {

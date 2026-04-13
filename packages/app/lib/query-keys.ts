@@ -53,6 +53,7 @@ export const summitKeys = {
 export const planKeys = {
   all: ["plan"] as const,
   list: (params?: object) => ["plan", "list", params] as const,
+  listInfinite: (params?: object) => ["plan", "list-infinite", params] as const,
   one: (id: string) => ["plan", id] as const,
   countNew: (userId?: string) => ["plan", "count-new", userId] as const,
 };
@@ -68,6 +69,12 @@ export const planChatKeys = {
 export const hiscoresKeys = {
   all: ["hiscores"] as const,
   list: () => ["hiscores", "list"] as const,
+};
+
+// Merch keys
+export const merchKeys = {
+  all: ["merch"] as const,
+  list: () => ["merch", "list"] as const,
 };
 
 // Update keys

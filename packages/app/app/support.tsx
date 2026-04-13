@@ -9,7 +9,7 @@ import { useAuth } from "@/components/providers/auth-provider";
 import { Button, Icon, ThemedText } from "@/components/ui/atoms";
 import { ImagePreviewModal, useImagePreview } from "@/components/ui/molecules";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
-import { MERCH_PRODUCTS, VALID_PRODUCT_IDS, type ProductId } from "@/constants/merch";
+import { useMerch } from "@/domains/merch/merch.api";
 import { useSubmitSuggestionMutation } from "@/domains/user/user.api";
 
 const PURCHASES_KEY = "merch-purchases";
@@ -19,12 +19,17 @@ type Size = "S" | "M" | "L" | "XL";
 export default function SupportScreen() {
   const intl = useIntl();
   const { isAuthenticated } = useAuth();
-  const { mutateAsync: submitSuggestion, isPending } = useSubmitSuggestionMutation();
-  const [selectedProduct, setSelectedProduct] = useState<ProductId | null>(null);
+  const { mutateAsync: submitSuggestion, isPending } =
+    useSubmitSuggestionMutation();
+  const { data: merch } = useMerch();
+  const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<Size | null>(null);
-  const [purchasedProducts, setPurchasedProducts] = useState<Set<ProductId>>(new Set());
+  const [purchasedProducts, setPurchasedProducts] = useState<Set<string>>(
+    new Set(),
+  );
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const { previewImage, isPreviewOpen, openPreview, closePreview } = useImagePreview();
+  const { previewImage, isPreviewOpen, openPreview, closePreview } =
+    useImagePreview();
 
   useEffect(() => {
     const loadPurchases = async () => {
@@ -32,7 +37,9 @@ export default function SupportScreen() {
       if (stored) {
         const parsed: unknown = JSON.parse(stored);
         if (Array.isArray(parsed)) {
-          const validIds = parsed.filter((id): id is ProductId => VALID_PRODUCT_IDS.includes(id));
+          const validIds = parsed.filter(
+            (id): id is string => typeof id === "string",
+          );
           setPurchasedProducts(new Set(validIds));
         }
       }
@@ -44,22 +51,11 @@ export default function SupportScreen() {
     return <Redirect href="/join" />;
   }
 
-  const productNames: Record<ProductId, string> = {
-    "white-shirt": intl.formatMessage({ defaultMessage: "White T-Shirt" }),
-    "black-shirt": intl.formatMessage({ defaultMessage: "Black T-Shirt" }),
-    "black-mug": intl.formatMessage({ defaultMessage: "Black Mug" }),
-    "black-cap": intl.formatMessage({ defaultMessage: "Black Cap" }),
-    "black-buff": intl.formatMessage({ defaultMessage: "Black Buff" }),
-  };
-
-  const products = MERCH_PRODUCTS.map((product) => ({
-    ...product,
-    name: productNames[product.id],
-  }));
+  const products = merch ?? [];
 
   const sizes: Size[] = ["S", "M", "L", "XL"];
 
-  const selectedProductData = products.find((p) => p.id === selectedProduct);
+  const selectedProductData = products.find((p) => p.slug === selectedProduct);
   const needsSize = selectedProductData?.hasSize ?? false;
 
   const isFormValid = selectedProduct && (!needsSize || selectedSize);
@@ -71,7 +67,9 @@ export default function SupportScreen() {
       setIsSubmitted(false);
 
       // Submit via suggestion API (internal format, not user-facing)
-      const productName = products.find((p) => p.id === selectedProduct)?.name;
+      const productName = products.find(
+        (p) => p.slug === selectedProduct,
+      )?.name;
       const sizeInfo = selectedSize ? ` (Size: ${selectedSize})` : "";
       await submitSuggestion({
         suggestion: `[MERCH REQUEST] ${productName}${sizeInfo}`,
@@ -99,11 +97,15 @@ export default function SupportScreen() {
       headerClassName="bg-border"
       contentClassName="px-6 pb-10"
       headerImage={
-        <Image
-          source={require("@/assets/images/merch/white-shirt-1.jpeg")}
-          className="size-full"
-          resizeMode="cover"
-        />
+        products[0]?.imageUrls[0] ? (
+          <Image
+            source={{ uri: products[0].imageUrls[0] }}
+            className="size-full"
+            resizeMode="cover"
+          />
+        ) : (
+          <View className="size-full bg-border" />
+        )
       }
     >
       <ThemedText className="mb-4 mt-6 text-muted-foreground">
@@ -125,37 +127,37 @@ export default function SupportScreen() {
       <View className="mb-6 gap-2">
         {products.map((product) => (
           <TouchableOpacity
-            key={product.id}
+            key={product.slug}
             onPress={() => {
-              setSelectedProduct(product.id);
+              setSelectedProduct(product.slug);
               if (!product.hasSize) setSelectedSize(null);
             }}
             className={twMerge(
               "flex-row items-center gap-3 rounded-xl border-2 border-border p-2",
-              selectedProduct === product.id && "border-primary bg-primary/10",
-              purchasedProducts.has(product.id) && "border-emerald-500",
+              selectedProduct === product.slug && "border-primary bg-primary/10",
+              purchasedProducts.has(product.slug) && "border-emerald-500",
             )}
           >
-            {product.images.length > 0 ? (
+            {product.imageUrls.length > 0 ? (
               <Pressable
                 className="relative"
-                onPress={() => openPreview(product.images[0])}
+                onPress={() => openPreview({ uri: product.imageUrls[0] })}
               >
                 <Image
-                  source={product.images[0]}
+                  source={{ uri: product.imageUrls[0] }}
                   className="size-16 rounded-lg bg-border"
                   resizeMode="cover"
                 />
-                {product.images.length > 1 && (
+                {product.imageUrls.length > 1 && (
                   <Pressable
                     className="absolute -bottom-2 -right-2"
                     onPress={(e) => {
                       e.stopPropagation();
-                      openPreview(product.images[1]);
+                      openPreview({ uri: product.imageUrls[1] });
                     }}
                   >
                     <Image
-                      source={product.images[1]}
+                      source={{ uri: product.imageUrls[1] }}
                       className="size-8 rounded border-2 border-background bg-border"
                       resizeMode="cover"
                     />

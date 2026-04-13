@@ -27,15 +27,11 @@ const config: ExpoConfig & { newArchEnabled?: boolean } = {
     softwareKeyboardLayoutMode: "pan",
     adaptiveIcon: {
       foregroundImage: "./assets/images/mountain.png",
-      backgroundColor: "#f43f5e",
+      backgroundColor: "#000000",
     },
     package: "app.x100cims.x100cims",
     googleServicesFile:
       process.env.GOOGLE_SERVICES_JSON ?? "./google-services.json",
-  },
-  web: {
-    bundler: "metro",
-    output: "server",
   },
   plugins: [
     "expo-localization",
@@ -59,7 +55,7 @@ const config: ExpoConfig & { newArchEnabled?: boolean } = {
         backgroundColor: "#ffffff",
         dark: {
           image: "./assets/images/logo-light.png",
-          backgroundColor: "#151718",
+          backgroundColor: "#000000",
         },
       },
     ],

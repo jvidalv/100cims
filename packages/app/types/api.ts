@@ -4,6 +4,22 @@
  */
 
 export interface paths {
+    "/api/health": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiHealth"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/public/mountains/one": {
         parameters: {
             query?: never;
@@ -244,6 +260,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/public/plans/all-paginated": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiPublicPlansAll-paginated"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/public/plans/one": {
         parameters: {
             query?: never;
@@ -270,6 +302,22 @@ export interface paths {
         get: operations["getApiPublicPlansCount-new"];
         put?: never;
         post: operations["postApiPublicPlansCount-new"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/public/merch/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiPublicMerch"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -964,6 +1012,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/challenges": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiAdminChallenges"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/challenges/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiAdminChallengesById"];
+        put?: never;
+        post: operations["postApiAdminChallengesById"];
+        delete: operations["deleteApiAdminChallengesById"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/challenges/{id}/mountains": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiAdminChallengesByIdMountains"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/summits": {
         parameters: {
             query?: never;
@@ -991,6 +1087,86 @@ export interface paths {
         put?: never;
         post: operations["postApiAdminSummitsById"];
         delete: operations["deleteApiAdminSummitsById"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/plans": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiAdminPlans"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/plans/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiAdminPlansById"];
+        put?: never;
+        post: operations["postApiAdminPlansById"];
+        delete: operations["deleteApiAdminPlansById"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/plans/{id}/members/{userId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["deleteApiAdminPlansByIdMembersByUserId"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/merch": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiAdminMerch"];
+        put?: never;
+        post: operations["postApiAdminMerch"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/merch/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiAdminMerchById"];
+        put?: never;
+        post: operations["postApiAdminMerchById"];
+        delete: operations["deleteApiAdminMerchById"];
         options?: never;
         head?: never;
         patch?: never;
@@ -1056,6 +1232,91 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    getApiHealth: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        status: "healthy" | "warning" | "critical";
+                        checks: {
+                            name: string;
+                            status: "healthy" | "warning" | "critical";
+                            message: string;
+                            value?: number;
+                        }[];
+                        uptimeMs: number;
+                    };
+                    "multipart/form-data": {
+                        status: "healthy" | "warning" | "critical";
+                        checks: {
+                            name: string;
+                            status: "healthy" | "warning" | "critical";
+                            message: string;
+                            value?: number;
+                        }[];
+                        uptimeMs: number;
+                    };
+                    "text/plain": {
+                        status: "healthy" | "warning" | "critical";
+                        checks: {
+                            name: string;
+                            status: "healthy" | "warning" | "critical";
+                            message: string;
+                            value?: number;
+                        }[];
+                        uptimeMs: number;
+                    };
+                };
+            };
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        status: "healthy" | "warning" | "critical";
+                        checks: {
+                            name: string;
+                            status: "healthy" | "warning" | "critical";
+                            message: string;
+                            value?: number;
+                        }[];
+                        uptimeMs: number;
+                    };
+                    "multipart/form-data": {
+                        status: "healthy" | "warning" | "critical";
+                        checks: {
+                            name: string;
+                            status: "healthy" | "warning" | "critical";
+                            message: string;
+                            value?: number;
+                        }[];
+                        uptimeMs: number;
+                    };
+                    "text/plain": {
+                        status: "healthy" | "warning" | "critical";
+                        checks: {
+                            name: string;
+                            status: "healthy" | "warning" | "critical";
+                            message: string;
+                            value?: number;
+                        }[];
+                        uptimeMs: number;
+                    };
+                };
+            };
+        };
+    };
     getApiPublicMountainsOne: {
         parameters: {
             query: {
@@ -2179,6 +2440,155 @@ export interface operations {
             };
         };
     };
+    "getApiPublicPlansAll-paginated": {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                status?: "open" | "canceled" | "completed";
+                creatorId?: string;
+                userId?: string;
+                sort?: "upcoming";
+                challengeId?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                title: string;
+                                description: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                speed: (string | null) | null;
+                                status: "open" | "canceled" | "completed";
+                                routeUrl: (string | null) | null;
+                                startDate: (string | null) | null;
+                                creatorId: string;
+                                createdAt: Record<string, never> | string | number;
+                                updatedAt: Record<string, never> | string | number;
+                                challengeId: (string | null) | null;
+                                users: {
+                                    id: string;
+                                    firstName: (string | null) | null;
+                                    lastName: (string | null) | null;
+                                    imageUrl: (string | null) | null;
+                                    willBringDogs: boolean;
+                                }[];
+                                mountains: {
+                                    id: string;
+                                    name: string;
+                                    slug: string;
+                                    imageUrl: (string | null) | null;
+                                    location: string;
+                                    height: string;
+                                }[];
+                            }[];
+                            pagination: {
+                                page: number;
+                                pageSize: number;
+                                totalItems: number;
+                                totalPages: number;
+                                hasMore: boolean;
+                            };
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                title: string;
+                                description: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                speed: (string | null) | null;
+                                status: "open" | "canceled" | "completed";
+                                routeUrl: (string | null) | null;
+                                startDate: (string | null) | null;
+                                creatorId: string;
+                                createdAt: Record<string, never> | string | number;
+                                updatedAt: Record<string, never> | string | number;
+                                challengeId: (string | null) | null;
+                                users: {
+                                    id: string;
+                                    firstName: (string | null) | null;
+                                    lastName: (string | null) | null;
+                                    imageUrl: (string | null) | null;
+                                    willBringDogs: boolean;
+                                }[];
+                                mountains: {
+                                    id: string;
+                                    name: string;
+                                    slug: string;
+                                    imageUrl: (string | null) | null;
+                                    location: string;
+                                    height: string;
+                                }[];
+                            }[];
+                            pagination: {
+                                page: number;
+                                pageSize: number;
+                                totalItems: number;
+                                totalPages: number;
+                                hasMore: boolean;
+                            };
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                title: string;
+                                description: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                speed: (string | null) | null;
+                                status: "open" | "canceled" | "completed";
+                                routeUrl: (string | null) | null;
+                                startDate: (string | null) | null;
+                                creatorId: string;
+                                createdAt: Record<string, never> | string | number;
+                                updatedAt: Record<string, never> | string | number;
+                                challengeId: (string | null) | null;
+                                users: {
+                                    id: string;
+                                    firstName: (string | null) | null;
+                                    lastName: (string | null) | null;
+                                    imageUrl: (string | null) | null;
+                                    willBringDogs: boolean;
+                                }[];
+                                mountains: {
+                                    id: string;
+                                    name: string;
+                                    slug: string;
+                                    imageUrl: (string | null) | null;
+                                    location: string;
+                                    height: string;
+                                }[];
+                            }[];
+                            pagination: {
+                                page: number;
+                                pageSize: number;
+                                totalItems: number;
+                                totalPages: number;
+                                hasMore: boolean;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
     getApiPublicPlansOne: {
         parameters: {
             query: {
@@ -2380,6 +2790,69 @@ export interface operations {
                     };
                     "text/plain": {
                         success: boolean;
+                    };
+                };
+            };
+        };
+    };
+    getApiPublicMerch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            slug: string;
+                            name: string;
+                            description: (string | null) | null;
+                            shopUrl: (string | null) | null;
+                            imageUrls: string[];
+                            hasSize: boolean;
+                            price: number;
+                            featured: (number | null) | null;
+                            createdAt: Record<string, never> | string | number;
+                        }[];
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            slug: string;
+                            name: string;
+                            description: (string | null) | null;
+                            shopUrl: (string | null) | null;
+                            imageUrls: string[];
+                            hasSize: boolean;
+                            price: number;
+                            featured: (number | null) | null;
+                            createdAt: Record<string, never> | string | number;
+                        }[];
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            slug: string;
+                            name: string;
+                            description: (string | null) | null;
+                            shopUrl: (string | null) | null;
+                            imageUrls: string[];
+                            hasSize: boolean;
+                            price: number;
+                            featured: (number | null) | null;
+                            createdAt: Record<string, never> | string | number;
+                        }[];
                     };
                 };
             };
@@ -5035,6 +5508,7 @@ export interface operations {
                                 admin: boolean;
                                 activeChallengeId: (string | null) | null;
                                 activeChallengeName: (string | null) | null;
+                                hasPushToken: boolean;
                             }[];
                             page: number;
                             pageSize: number;
@@ -5064,6 +5538,7 @@ export interface operations {
                                 admin: boolean;
                                 activeChallengeId: (string | null) | null;
                                 activeChallengeName: (string | null) | null;
+                                hasPushToken: boolean;
                             }[];
                             page: number;
                             pageSize: number;
@@ -5093,6 +5568,7 @@ export interface operations {
                                 admin: boolean;
                                 activeChallengeId: (string | null) | null;
                                 activeChallengeName: (string | null) | null;
+                                hasPushToken: boolean;
                             }[];
                             page: number;
                             pageSize: number;
@@ -5147,6 +5623,8 @@ export interface operations {
                             admin: boolean;
                             activeChallengeId: (string | null) | null;
                             activeChallengeName: (string | null) | null;
+                            pushNotificationsEnabled: boolean;
+                            expoPushToken: (string | null) | null;
                             createdAt: Record<string, never> | string | number;
                         };
                     };
@@ -5172,6 +5650,8 @@ export interface operations {
                             admin: boolean;
                             activeChallengeId: (string | null) | null;
                             activeChallengeName: (string | null) | null;
+                            pushNotificationsEnabled: boolean;
+                            expoPushToken: (string | null) | null;
                             createdAt: Record<string, never> | string | number;
                         };
                     };
@@ -5197,6 +5677,8 @@ export interface operations {
                             admin: boolean;
                             activeChallengeId: (string | null) | null;
                             activeChallengeName: (string | null) | null;
+                            pushNotificationsEnabled: boolean;
+                            expoPushToken: (string | null) | null;
                             createdAt: Record<string, never> | string | number;
                         };
                     };
@@ -5773,6 +6255,396 @@ export interface operations {
             };
         };
     };
+    getApiAdminChallenges: {
+        parameters: {
+            query?: {
+                page?: number;
+                pageSize?: number;
+                q?: string;
+                kind?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                name: string;
+                                slug: string;
+                                country: string;
+                                emoji: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                isPublic: boolean;
+                                isOfficial: boolean;
+                                creatorName: (string | null) | null;
+                                totalMountains: number;
+                                createdAt: Record<string, never> | string | number;
+                            }[];
+                            page: number;
+                            pageSize: number;
+                            total: number;
+                            totalPages: number;
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                name: string;
+                                slug: string;
+                                country: string;
+                                emoji: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                isPublic: boolean;
+                                isOfficial: boolean;
+                                creatorName: (string | null) | null;
+                                totalMountains: number;
+                                createdAt: Record<string, never> | string | number;
+                            }[];
+                            page: number;
+                            pageSize: number;
+                            total: number;
+                            totalPages: number;
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                name: string;
+                                slug: string;
+                                country: string;
+                                emoji: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                isPublic: boolean;
+                                isOfficial: boolean;
+                                creatorName: (string | null) | null;
+                                totalMountains: number;
+                                createdAt: Record<string, never> | string | number;
+                            }[];
+                            page: number;
+                            pageSize: number;
+                            total: number;
+                            totalPages: number;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    getApiAdminChallengesById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            name: string;
+                            slug: string;
+                            country: string;
+                            description: (string | null) | null;
+                            emoji: (string | null) | null;
+                            imageUrl: (string | null) | null;
+                            webUrl: (string | null) | null;
+                            isPublic: boolean;
+                            isOfficial: boolean;
+                            creatorName: (string | null) | null;
+                            createdAt: Record<string, never> | string | number;
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            name: string;
+                            slug: string;
+                            country: string;
+                            description: (string | null) | null;
+                            emoji: (string | null) | null;
+                            imageUrl: (string | null) | null;
+                            webUrl: (string | null) | null;
+                            isPublic: boolean;
+                            isOfficial: boolean;
+                            creatorName: (string | null) | null;
+                            createdAt: Record<string, never> | string | number;
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            name: string;
+                            slug: string;
+                            country: string;
+                            description: (string | null) | null;
+                            emoji: (string | null) | null;
+                            imageUrl: (string | null) | null;
+                            webUrl: (string | null) | null;
+                            isPublic: boolean;
+                            isOfficial: boolean;
+                            creatorName: (string | null) | null;
+                            createdAt: Record<string, never> | string | number;
+                        };
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    postApiAdminChallengesById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    name?: string;
+                    country?: string;
+                    description?: (string | null) | null;
+                    emoji?: (string | null) | null;
+                    imageUrl?: (string | null) | null;
+                    webUrl?: (string | null) | null;
+                    isPublic?: boolean;
+                };
+                "multipart/form-data": {
+                    name?: string;
+                    country?: string;
+                    description?: (string | null) | null;
+                    emoji?: (string | null) | null;
+                    imageUrl?: (string | null) | null;
+                    webUrl?: (string | null) | null;
+                    isPublic?: boolean;
+                };
+                "text/plain": {
+                    name?: string;
+                    country?: string;
+                    description?: (string | null) | null;
+                    emoji?: (string | null) | null;
+                    imageUrl?: (string | null) | null;
+                    webUrl?: (string | null) | null;
+                    isPublic?: boolean;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    deleteApiAdminChallengesById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    getApiAdminChallengesByIdMountains: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            name: string;
+                            slug: string;
+                            location: string;
+                            height: string;
+                            imageUrl: (string | null) | null;
+                            essential: boolean;
+                            isOfficial: boolean;
+                            creatorName: (string | null) | null;
+                        }[];
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            name: string;
+                            slug: string;
+                            location: string;
+                            height: string;
+                            imageUrl: (string | null) | null;
+                            essential: boolean;
+                            isOfficial: boolean;
+                            creatorName: (string | null) | null;
+                        }[];
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            name: string;
+                            slug: string;
+                            location: string;
+                            height: string;
+                            imageUrl: (string | null) | null;
+                            essential: boolean;
+                            isOfficial: boolean;
+                            creatorName: (string | null) | null;
+                        }[];
+                    };
+                };
+            };
+        };
+    };
     getApiAdminSummits: {
         parameters: {
             query?: {
@@ -6120,10 +6992,992 @@ export interface operations {
             };
         };
     };
+    getApiAdminPlans: {
+        parameters: {
+            query?: {
+                page?: number;
+                pageSize?: number;
+                q?: string;
+                status?: string;
+                speed?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                title: string;
+                                description: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                startDate: (string | null) | null;
+                                speed: string;
+                                status: "open" | "completed" | "canceled";
+                                createdAt: Record<string, never> | string | number;
+                                creatorId: string;
+                                creatorUsername: (string | null) | null;
+                                creatorFirstName: (string | null) | null;
+                                creatorLastName: (string | null) | null;
+                                creatorImageUrl: (string | null) | null;
+                                challengeId: (string | null) | null;
+                                challengeName: (string | null) | null;
+                                participantsCount: number;
+                                mountainsCount: number;
+                            }[];
+                            page: number;
+                            pageSize: number;
+                            total: number;
+                            totalPages: number;
+                            facets: {
+                                statuses: string[];
+                                speeds: string[];
+                            };
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                title: string;
+                                description: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                startDate: (string | null) | null;
+                                speed: string;
+                                status: "open" | "completed" | "canceled";
+                                createdAt: Record<string, never> | string | number;
+                                creatorId: string;
+                                creatorUsername: (string | null) | null;
+                                creatorFirstName: (string | null) | null;
+                                creatorLastName: (string | null) | null;
+                                creatorImageUrl: (string | null) | null;
+                                challengeId: (string | null) | null;
+                                challengeName: (string | null) | null;
+                                participantsCount: number;
+                                mountainsCount: number;
+                            }[];
+                            page: number;
+                            pageSize: number;
+                            total: number;
+                            totalPages: number;
+                            facets: {
+                                statuses: string[];
+                                speeds: string[];
+                            };
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                title: string;
+                                description: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                startDate: (string | null) | null;
+                                speed: string;
+                                status: "open" | "completed" | "canceled";
+                                createdAt: Record<string, never> | string | number;
+                                creatorId: string;
+                                creatorUsername: (string | null) | null;
+                                creatorFirstName: (string | null) | null;
+                                creatorLastName: (string | null) | null;
+                                creatorImageUrl: (string | null) | null;
+                                challengeId: (string | null) | null;
+                                challengeName: (string | null) | null;
+                                participantsCount: number;
+                                mountainsCount: number;
+                            }[];
+                            page: number;
+                            pageSize: number;
+                            total: number;
+                            totalPages: number;
+                            facets: {
+                                statuses: string[];
+                                speeds: string[];
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    getApiAdminPlansById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            title: string;
+                            description: (string | null) | null;
+                            imageUrl: (string | null) | null;
+                            routeUrl: (string | null) | null;
+                            startDate: (string | null) | null;
+                            speed: string;
+                            status: "open" | "completed" | "canceled";
+                            creatorId: string;
+                            challengeId: (string | null) | null;
+                            challengeName: (string | null) | null;
+                            createdAt: Record<string, never> | string | number;
+                            updatedAt: Record<string, never> | string | number;
+                            creator: {
+                                id: string;
+                                username: (string | null) | null;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                            };
+                            participants: {
+                                userId: string;
+                                username: string;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                joinedAt: Record<string, never> | string | number;
+                                willBringDogs: boolean;
+                                isCreator: boolean;
+                            }[];
+                            mountains: {
+                                mountainId: string;
+                                name: string;
+                                slug: string;
+                                height: string;
+                                essential: boolean;
+                            }[];
+                            recentMessages: {
+                                id: string;
+                                message: string;
+                                createdAt: Record<string, never> | string | number;
+                                userId: string;
+                                username: (string | null) | null;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                            }[];
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            title: string;
+                            description: (string | null) | null;
+                            imageUrl: (string | null) | null;
+                            routeUrl: (string | null) | null;
+                            startDate: (string | null) | null;
+                            speed: string;
+                            status: "open" | "completed" | "canceled";
+                            creatorId: string;
+                            challengeId: (string | null) | null;
+                            challengeName: (string | null) | null;
+                            createdAt: Record<string, never> | string | number;
+                            updatedAt: Record<string, never> | string | number;
+                            creator: {
+                                id: string;
+                                username: (string | null) | null;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                            };
+                            participants: {
+                                userId: string;
+                                username: string;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                joinedAt: Record<string, never> | string | number;
+                                willBringDogs: boolean;
+                                isCreator: boolean;
+                            }[];
+                            mountains: {
+                                mountainId: string;
+                                name: string;
+                                slug: string;
+                                height: string;
+                                essential: boolean;
+                            }[];
+                            recentMessages: {
+                                id: string;
+                                message: string;
+                                createdAt: Record<string, never> | string | number;
+                                userId: string;
+                                username: (string | null) | null;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                            }[];
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            title: string;
+                            description: (string | null) | null;
+                            imageUrl: (string | null) | null;
+                            routeUrl: (string | null) | null;
+                            startDate: (string | null) | null;
+                            speed: string;
+                            status: "open" | "completed" | "canceled";
+                            creatorId: string;
+                            challengeId: (string | null) | null;
+                            challengeName: (string | null) | null;
+                            createdAt: Record<string, never> | string | number;
+                            updatedAt: Record<string, never> | string | number;
+                            creator: {
+                                id: string;
+                                username: (string | null) | null;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                            };
+                            participants: {
+                                userId: string;
+                                username: string;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                joinedAt: Record<string, never> | string | number;
+                                willBringDogs: boolean;
+                                isCreator: boolean;
+                            }[];
+                            mountains: {
+                                mountainId: string;
+                                name: string;
+                                slug: string;
+                                height: string;
+                                essential: boolean;
+                            }[];
+                            recentMessages: {
+                                id: string;
+                                message: string;
+                                createdAt: Record<string, never> | string | number;
+                                userId: string;
+                                username: (string | null) | null;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                            }[];
+                        };
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    postApiAdminPlansById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    title?: string;
+                    description?: (string | null) | null;
+                    status?: "open" | "completed" | "canceled";
+                    speed?: "chill" | "normal" | "fast";
+                    startDate?: (string | null) | null;
+                    imageUrl?: (string | null) | null;
+                    routeUrl?: (string | null) | null;
+                };
+                "multipart/form-data": {
+                    title?: string;
+                    description?: (string | null) | null;
+                    status?: "open" | "completed" | "canceled";
+                    speed?: "chill" | "normal" | "fast";
+                    startDate?: (string | null) | null;
+                    imageUrl?: (string | null) | null;
+                    routeUrl?: (string | null) | null;
+                };
+                "text/plain": {
+                    title?: string;
+                    description?: (string | null) | null;
+                    status?: "open" | "completed" | "canceled";
+                    speed?: "chill" | "normal" | "fast";
+                    startDate?: (string | null) | null;
+                    imageUrl?: (string | null) | null;
+                    routeUrl?: (string | null) | null;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    deleteApiAdminPlansById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    deleteApiAdminPlansByIdMembersByUserId: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                userId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    getApiAdminMerch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                slug: string;
+                                nameEn: string;
+                                nameCa: (string | null) | null;
+                                nameEs: (string | null) | null;
+                                descriptionEn: (string | null) | null;
+                                descriptionCa: (string | null) | null;
+                                descriptionEs: (string | null) | null;
+                                shopUrl: (string | null) | null;
+                                imageUrls: string[];
+                                hasSize: boolean;
+                                price: number;
+                                featured: (number | null) | null;
+                                active: boolean;
+                                createdAt: Record<string, never> | string | number;
+                                updatedAt: Record<string, never> | string | number;
+                            }[];
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                slug: string;
+                                nameEn: string;
+                                nameCa: (string | null) | null;
+                                nameEs: (string | null) | null;
+                                descriptionEn: (string | null) | null;
+                                descriptionCa: (string | null) | null;
+                                descriptionEs: (string | null) | null;
+                                shopUrl: (string | null) | null;
+                                imageUrls: string[];
+                                hasSize: boolean;
+                                price: number;
+                                featured: (number | null) | null;
+                                active: boolean;
+                                createdAt: Record<string, never> | string | number;
+                                updatedAt: Record<string, never> | string | number;
+                            }[];
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                slug: string;
+                                nameEn: string;
+                                nameCa: (string | null) | null;
+                                nameEs: (string | null) | null;
+                                descriptionEn: (string | null) | null;
+                                descriptionCa: (string | null) | null;
+                                descriptionEs: (string | null) | null;
+                                shopUrl: (string | null) | null;
+                                imageUrls: string[];
+                                hasSize: boolean;
+                                price: number;
+                                featured: (number | null) | null;
+                                active: boolean;
+                                createdAt: Record<string, never> | string | number;
+                                updatedAt: Record<string, never> | string | number;
+                            }[];
+                        };
+                    };
+                };
+            };
+        };
+    };
+    postApiAdminMerch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    slug: string;
+                    nameEn: string;
+                    nameCa?: (string | null) | null;
+                    nameEs?: (string | null) | null;
+                    descriptionEn?: (string | null) | null;
+                    descriptionCa?: (string | null) | null;
+                    descriptionEs?: (string | null) | null;
+                    shopUrl?: (string | null) | null;
+                    price: number;
+                    imageUrls?: string[];
+                    hasSize?: boolean;
+                    featured?: (number | null) | null;
+                    active?: boolean;
+                };
+                "multipart/form-data": {
+                    slug: string;
+                    nameEn: string;
+                    nameCa?: (string | null) | null;
+                    nameEs?: (string | null) | null;
+                    descriptionEn?: (string | null) | null;
+                    descriptionCa?: (string | null) | null;
+                    descriptionEs?: (string | null) | null;
+                    shopUrl?: (string | null) | null;
+                    price: number;
+                    imageUrls?: string[];
+                    hasSize?: boolean;
+                    featured?: (number | null) | null;
+                    active?: boolean;
+                };
+                "text/plain": {
+                    slug: string;
+                    nameEn: string;
+                    nameCa?: (string | null) | null;
+                    nameEs?: (string | null) | null;
+                    descriptionEn?: (string | null) | null;
+                    descriptionCa?: (string | null) | null;
+                    descriptionEs?: (string | null) | null;
+                    shopUrl?: (string | null) | null;
+                    price: number;
+                    imageUrls?: string[];
+                    hasSize?: boolean;
+                    featured?: (number | null) | null;
+                    active?: boolean;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                        };
+                    };
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    getApiAdminMerchById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            slug: string;
+                            nameEn: string;
+                            nameCa: (string | null) | null;
+                            nameEs: (string | null) | null;
+                            descriptionEn: (string | null) | null;
+                            descriptionCa: (string | null) | null;
+                            descriptionEs: (string | null) | null;
+                            shopUrl: (string | null) | null;
+                            imageUrls: string[];
+                            hasSize: boolean;
+                            price: number;
+                            featured: (number | null) | null;
+                            active: boolean;
+                            createdAt: Record<string, never> | string | number;
+                            updatedAt: Record<string, never> | string | number;
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            slug: string;
+                            nameEn: string;
+                            nameCa: (string | null) | null;
+                            nameEs: (string | null) | null;
+                            descriptionEn: (string | null) | null;
+                            descriptionCa: (string | null) | null;
+                            descriptionEs: (string | null) | null;
+                            shopUrl: (string | null) | null;
+                            imageUrls: string[];
+                            hasSize: boolean;
+                            price: number;
+                            featured: (number | null) | null;
+                            active: boolean;
+                            createdAt: Record<string, never> | string | number;
+                            updatedAt: Record<string, never> | string | number;
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            slug: string;
+                            nameEn: string;
+                            nameCa: (string | null) | null;
+                            nameEs: (string | null) | null;
+                            descriptionEn: (string | null) | null;
+                            descriptionCa: (string | null) | null;
+                            descriptionEs: (string | null) | null;
+                            shopUrl: (string | null) | null;
+                            imageUrls: string[];
+                            hasSize: boolean;
+                            price: number;
+                            featured: (number | null) | null;
+                            active: boolean;
+                            createdAt: Record<string, never> | string | number;
+                            updatedAt: Record<string, never> | string | number;
+                        };
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    postApiAdminMerchById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    slug?: string;
+                    nameEn?: string;
+                    nameCa?: (string | null) | null;
+                    nameEs?: (string | null) | null;
+                    descriptionEn?: (string | null) | null;
+                    descriptionCa?: (string | null) | null;
+                    descriptionEs?: (string | null) | null;
+                    shopUrl?: (string | null) | null;
+                    price?: number;
+                    imageUrls?: string[];
+                    hasSize?: boolean;
+                    featured?: (number | null) | null;
+                    active?: boolean;
+                };
+                "multipart/form-data": {
+                    slug?: string;
+                    nameEn?: string;
+                    nameCa?: (string | null) | null;
+                    nameEs?: (string | null) | null;
+                    descriptionEn?: (string | null) | null;
+                    descriptionCa?: (string | null) | null;
+                    descriptionEs?: (string | null) | null;
+                    shopUrl?: (string | null) | null;
+                    price?: number;
+                    imageUrls?: string[];
+                    hasSize?: boolean;
+                    featured?: (number | null) | null;
+                    active?: boolean;
+                };
+                "text/plain": {
+                    slug?: string;
+                    nameEn?: string;
+                    nameCa?: (string | null) | null;
+                    nameEs?: (string | null) | null;
+                    descriptionEn?: (string | null) | null;
+                    descriptionCa?: (string | null) | null;
+                    descriptionEs?: (string | null) | null;
+                    shopUrl?: (string | null) | null;
+                    price?: number;
+                    imageUrls?: string[];
+                    hasSize?: boolean;
+                    featured?: (number | null) | null;
+                    active?: boolean;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    deleteApiAdminMerchById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
     getApiAdminStatsTimeseries: {
         parameters: {
             query: {
-                metric: "new-users" | "summits";
+                metric: "new-users" | "summits" | "plans";
                 range: "week" | "month" | "6months" | "year" | "all";
             };
             header?: never;
@@ -6190,6 +8044,7 @@ export interface operations {
                         message: {
                             name: string;
                             pattern: string;
+                            description: string;
                         }[];
                     };
                     "multipart/form-data": {
@@ -6197,6 +8052,7 @@ export interface operations {
                         message: {
                             name: string;
                             pattern: string;
+                            description: string;
                         }[];
                     };
                     "text/plain": {
@@ -6204,6 +8060,7 @@ export interface operations {
                         message: {
                             name: string;
                             pattern: string;
+                            description: string;
                         }[];
                     };
                 };

@@ -1,5 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { Static } from "elysia";
 
+import type {
+  AdminMerchCreateBodySchema,
+  AdminMerchUpdateBodySchema,
+} from "@/api/schemas/admin.schema";
 import { api } from "@/lib/api";
 import { adminKeys } from "@/lib/query-keys";
 
@@ -445,6 +450,73 @@ export const useDeleteAdminChallenge = (id: string) => {
       qc.removeQueries({ queryKey: adminKeys.challengeDetail(id) });
       qc.removeQueries({ queryKey: adminKeys.challengeMountains(id) });
       void qc.invalidateQueries({ queryKey: adminKeys.challengesList() });
+    },
+  });
+};
+
+export const useAdminMerch = () =>
+  useQuery({
+    queryKey: adminKeys.merchList(),
+    queryFn: async () => {
+      const { data, error } = await api.api.admin.merch.get();
+      if (error) throw error;
+      return data.message;
+    },
+  });
+
+export const useAdminMerchDetail = (id: string) =>
+  useQuery({
+    queryKey: adminKeys.merchDetail(id),
+    queryFn: async () => {
+      const { data, error } = await api.api.admin.merch({ id }).get();
+      if (error) throw error;
+      return data.message;
+    },
+  });
+
+export type AdminMerchCreateBody = Static<typeof AdminMerchCreateBodySchema>;
+export type AdminMerchUpdateBody = Static<typeof AdminMerchUpdateBodySchema>;
+
+export const useCreateAdminMerch = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (body: AdminMerchCreateBody) => {
+      const { data, error } = await api.api.admin.merch.post(body);
+      if (error) throw error;
+      return data.message;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: adminKeys.merchList() });
+    },
+  });
+};
+
+export const useUpdateAdminMerch = (id: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (body: AdminMerchUpdateBody) => {
+      const { data, error } = await api.api.admin.merch({ id }).post(body);
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: adminKeys.merchDetail(id) });
+      void qc.invalidateQueries({ queryKey: adminKeys.merchList() });
+    },
+  });
+};
+
+export const useDeleteAdminMerch = (id: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      const { data, error } = await api.api.admin.merch({ id }).delete();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      qc.removeQueries({ queryKey: adminKeys.merchDetail(id) });
+      void qc.invalidateQueries({ queryKey: adminKeys.merchList() });
     },
   });
 };

@@ -1,16 +1,19 @@
 "use client";
 
 import { parseAsStringLiteral, useQueryState } from "nuqs";
+import { useMemo } from "react";
 import {
   CartesianGrid,
   Line,
   LineChart,
+  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
 
+import { RELEASES } from "@/api/lib/releases";
 import {
   Select,
   SelectContent,
@@ -33,11 +36,51 @@ const RANGES: { value: StatsRange; label: string }[] = [
 ];
 
 const RANGE_VALUES = RANGES.map((r) => r.value);
+const RANGE_VALUE_SET = new Set<string>(RANGE_VALUES);
+
+const isStatsRange = (v: string): v is StatsRange => RANGE_VALUE_SET.has(v);
 
 const METRIC_COLORS: Record<StatsMetric, string> = {
   "new-users": "hsl(var(--chart-1))",
   summits: "hsl(var(--chart-2))",
   plans: "hsl(var(--chart-3))",
+};
+
+interface ChartPoint {
+  date: string;
+  count: number;
+}
+
+interface Marker {
+  x: string;
+  versions: string[];
+}
+
+// API schema declares `date: t.String()` but Eden parses ISO date strings
+// into Date instances at the network boundary. Normalise both shapes to
+// YYYY-MM-DD so XAxis categories and ReferenceLine `x` values match.
+const toIsoDate = (value: string | Date): string =>
+  value instanceof Date ? value.toISOString().slice(0, 10) : value.slice(0, 10);
+
+const markersForPoints = (dates: string[]): Marker[] => {
+  if (dates.length === 0) return [];
+  const first = dates[0];
+  const last = dates[dates.length - 1];
+  const visible = RELEASES.filter(
+    (r) => r.releasedAt >= first && r.releasedAt <= last,
+  );
+  const byBucket = new Map<string, string[]>();
+  for (const r of visible) {
+    let snapped = dates[0];
+    for (const d of dates) {
+      if (d <= r.releasedAt) snapped = d;
+      else break;
+    }
+    const arr = byBucket.get(snapped) ?? [];
+    arr.push(r.version);
+    byBucket.set(snapped, arr);
+  }
+  return [...byBucket.entries()].map(([x, versions]) => ({ x, versions }));
 };
 
 export default function AdminPage() {
@@ -50,7 +93,12 @@ export default function AdminPage() {
     <div className="p-8 space-y-8">
       <div className="flex items-center justify-between flex-wrap gap-4">
         <h1 className="text-2xl font-bold">Overview</h1>
-        <Select value={range} onValueChange={(v) => setRange(v as StatsRange)}>
+        <Select
+          value={range}
+          onValueChange={(v) => {
+            if (isStatsRange(v)) void setRange(v);
+          }}
+        >
           <SelectTrigger className="w-48">
             <SelectValue />
           </SelectTrigger>
@@ -85,7 +133,19 @@ function ChartCard({
   const color = METRIC_COLORS[metric];
   const { data, error, isLoading } = useAdminStatsTimeseries(metric, range);
 
-  const total = data?.points.reduce((sum, p) => sum + p.count, 0) ?? 0;
+  const points: ChartPoint[] = useMemo(
+    () =>
+      data?.points.map((p) => ({
+        date: toIsoDate(p.date),
+        count: p.count,
+      })) ?? [],
+    [data],
+  );
+  const total = points.reduce((sum, p) => sum + p.count, 0);
+  const markers = useMemo(
+    () => markersForPoints(points.map((p) => p.date)),
+    [points],
+  );
 
   return (
     <div className="rounded-lg border bg-card p-6 space-y-4">
@@ -106,18 +166,18 @@ function ChartCard({
       )}
 
       {data && (
-        <div className="h-64">
-          {data.points.length === 0 ? (
+        <div className="h-64 w-full min-w-0">
+          {points.length === 0 ? (
             <div className="h-full flex items-center justify-center">
               <p className="text-muted-foreground text-sm">
                 No data for this range.
               </p>
             </div>
           ) : (
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height={256}>
               <LineChart
-                data={data.points}
-                margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
+                data={points}
+                margin={{ top: 16, right: 8, left: 0, bottom: 0 }}
               >
                 <CartesianGrid
                   strokeDasharray="3 3"
@@ -149,6 +209,22 @@ function ChartCard({
                   }}
                   labelFormatter={(d) => formatTick(String(d), data.bucket)}
                 />
+                {markers.map((m) => (
+                  <ReferenceLine
+                    key={m.x}
+                    x={m.x}
+                    stroke="hsl(var(--muted-foreground))"
+                    strokeDasharray="2 3"
+                    strokeOpacity={0.7}
+                    ifOverflow="extendDomain"
+                    label={{
+                      value: m.versions.map((v) => `v${v}`).join(", "),
+                      position: "top",
+                      fontSize: 10,
+                      fill: "hsl(var(--muted-foreground))",
+                    }}
+                  />
+                ))}
                 <Line
                   type="monotone"
                   dataKey="count"

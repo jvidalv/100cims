@@ -1,9 +1,11 @@
 import { backfillS3CacheHeaders } from "@/api/cron/backfill-s3-cache-headers";
+import { cancelAbandonedPlans } from "@/api/cron/cancel-abandoned-plans";
 import { cleanupOrphanMountains } from "@/api/cron/cleanup-orphan-mountains";
 import { completeStalePlans } from "@/api/cron/complete-stale-plans";
 import { optimizeS3Images } from "@/api/cron/optimize-s3-images";
 import { syncImageUrlsToCdn } from "@/api/cron/sync-image-urls-to-cdn";
 import { monitorHealth } from "@/api/cron/monitor-health";
+import { recommendWeeklyMountain } from "@/api/cron/recommend-weekly-mountain";
 import { dailyRestart } from "@/api/cron/self-restart";
 
 export interface CronEntry {
@@ -63,5 +65,19 @@ export const CRON_REGISTRY: CronEntry[] = [
     description:
       "Re-encode JPEGs > 250 KB at q=80 / max 1600px wide. Marks objects 'optimized: v1' to skip re-runs. Issues one CloudFront invalidation if any object changed. Runs the 1st and 15th of each month at 05:00.",
     fn: optimizeS3Images,
+  },
+  {
+    name: "cancel-abandoned-plans",
+    pattern: "0 0 3 1 * *",
+    description:
+      "Cancel open plans created by non-admin users that have no start date and have been open for more than a month. Runs the 1st of each month at 03:00.",
+    fn: cancelAbandonedPlans,
+  },
+  {
+    name: "recommend-weekly-mountain",
+    pattern: "0 0 17 * * 2",
+    description:
+      "Push the closest non-summited essential mountain to each opted-in user with recent location. Falls back to non-essential if all essentials are summited. Runs Tuesday at 17:00 UTC.",
+    fn: recommendWeeklyMountain,
   },
 ];

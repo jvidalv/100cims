@@ -17,10 +17,18 @@ const getStringField = (data: unknown, key: string): string | null => {
 };
 
 const routeFromNotificationData = (data: unknown) => {
-  const planId = getStringField(data, "planId");
   const type = getStringField(data, "type");
-  if (!planId || !isPlanPushType(type)) return;
-  router.push(`/plan/${planId}`);
+
+  if (type === "mountain-suggestion") {
+    const slug = getStringField(data, "mountainSlug");
+    if (slug) router.push(`/mountain/${slug}`);
+    return;
+  }
+
+  if (isPlanPushType(type)) {
+    const planId = getStringField(data, "planId");
+    if (planId) router.push(`/plan/${planId}`);
+  }
 };
 
 export const usePushTokenRegistration = () => {

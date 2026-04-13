@@ -2,11 +2,15 @@ import { formatDistanceToNow } from "date-fns";
 import { ca, es, enUS } from "date-fns/locale";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { FormattedMessage, useIntl } from "react-intl";
-import { View, TouchableOpacity, Image, Share } from "react-native";
+import { View, Image, Share } from "react-native";
 
 import { SummitCard } from "@/components/summit";
 import { Icon, Skeleton, ThemedText } from "@/components/ui/atoms";
-import { AvatarGroup, ChallengeGroup } from "@/components/ui/molecules";
+import {
+  ActionRow,
+  AvatarGroup,
+  ChallengeGroup,
+} from "@/components/ui/molecules";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
 import {
   useAnyUserSummits,
@@ -52,42 +56,6 @@ export default function UserScreen() {
       title={user ? getFullName(user) : "..."}
       headerClassName="flex items-center justify-center bg-primary"
       contentClassName="py-6"
-      parallaxRightElement={
-        <View className="flex-row  items-end gap-4 opacity-80">
-          {isMe && (
-            <Link href="/user/me" asChild>
-              <TouchableOpacity>
-                <Icon
-                  name="square.and.pencil"
-                  color="white"
-                  size={22}
-                  animationSpec={{ effect: { type: "bounce" } }}
-                />
-              </TouchableOpacity>
-            </Link>
-          )}
-          <TouchableOpacity onPress={handleShare}>
-            <Icon
-              name="square.and.arrow.up"
-              color="white"
-              size={24}
-              animationSpec={{ effect: { type: "bounce" } }}
-            />
-          </TouchableOpacity>
-        </View>
-      }
-      headerRightElement={
-        <TouchableOpacity
-          onPress={handleShare}
-          className="flex-row items-center justify-end pb-3 pr-4"
-        >
-          <Icon
-            name="square.and.arrow.up"
-            color="white"
-            animationSpec={{ effect: { type: "bounce" } }}
-          />
-        </TouchableOpacity>
-      }
       headerImage={
         user?.imageUrl ? (
           <Image
@@ -169,6 +137,29 @@ export default function UserScreen() {
                   }
                 />
               </View>
+            </View>
+          )}
+          {isMe && (
+            <View className="mt-4 gap-2">
+              <ThemedText className="text-2xl font-semibold">
+                <FormattedMessage defaultMessage="Actions" />
+              </ThemedText>
+              <Link href="/user/me" asChild>
+                <ActionRow
+                  iconName="square.and.pencil"
+                  iconSize={18}
+                  intent="primary"
+                >
+                  <FormattedMessage defaultMessage="Edit profile" />
+                </ActionRow>
+              </Link>
+              <ActionRow
+                onPress={handleShare}
+                iconName="square.and.arrow.up"
+                intent="muted"
+              >
+                <FormattedMessage defaultMessage="Share with your friends" />
+              </ActionRow>
             </View>
           )}
         </View>

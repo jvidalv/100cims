@@ -2,12 +2,14 @@ import { relations, sql } from "drizzle-orm";
 import {
   uuid,
   boolean,
+  integer,
   numeric,
   pgTable,
   text,
   timestamp,
   date,
   unique,
+  uniqueIndex,
   index,
 } from "drizzle-orm/pg-core";
 
@@ -383,6 +385,11 @@ export const summitReactionTable = pgTable(
   (table) => [
     index("summit_reaction_summit_id_idx").on(table.summitId),
     index("summit_reaction_summit_user_idx").on(table.summitId, table.userId),
+    uniqueIndex("summit_reaction_unique").on(
+      table.summitId,
+      table.userId,
+      table.emoji,
+    ),
   ],
 );
 
@@ -410,7 +417,10 @@ export const updateSeenTable = pgTable(
       .notNull(),
     seenAt: timestamp().notNull().defaultNow(),
   },
-  (table) => [unique().on(table.updateId, table.userId)],
+  (table) => [
+    unique().on(table.updateId, table.userId),
+    index("update_seen_user_id_idx").on(table.userId),
+  ],
 );
 
 export const updateSeenRelations = relations(updateSeenTable, ({ one }) => ({
@@ -419,3 +429,29 @@ export const updateSeenRelations = relations(updateSeenTable, ({ one }) => ({
     references: [userTable.id],
   }),
 }));
+
+export const merchTable = pgTable(
+  "merch",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    slug: text().unique().notNull(),
+    nameEn: text("name_en").notNull(),
+    nameCa: text("name_ca"),
+    nameEs: text("name_es"),
+    descriptionEn: text("description_en"),
+    descriptionCa: text("description_ca"),
+    descriptionEs: text("description_es"),
+    shopUrl: text("shop_url"),
+    imageUrls: text()
+      .array()
+      .notNull()
+      .default(sql`ARRAY[]::text[]`),
+    hasSize: boolean().notNull().default(false),
+    price: integer().notNull(),
+    featured: integer(),
+    active: boolean().notNull().default(true),
+    createdAt: timestamp().notNull().defaultNow(),
+    updatedAt: timestamp().notNull().defaultNow(),
+  },
+  (table) => [uniqueIndex("merch_featured_unique_idx").on(table.featured)],
+);

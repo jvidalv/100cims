@@ -197,6 +197,10 @@ router.push('/user/123');
 router.push({ pathname: '/mountain/[id]', params: { id: '456' } });
 ```
 
+### Action sections
+
+When building an "Actions" section on a detail screen (mountain, plan, user profile, etc.), use the `ActionRow` molecule from `@/components/ui/molecules` instead of hand-rolling icon+text rows. Intents map to design tokens (`primary`, `muted`, `blue`, `emerald`, `danger`). Wrap in `<Link asChild>` for navigation rows. Supports `badge` (red dot) and `iconOverride` (e.g. spinner). See `app/plan/[id]/index.tsx` and `app/mountain/[slug]/index.tsx` for examples.
+
 ### Translations (CRITICAL)
 
 **All user-facing strings MUST use `intl.formatMessage`** - never hardcode text.

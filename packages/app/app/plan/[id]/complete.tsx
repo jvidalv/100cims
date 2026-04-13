@@ -16,6 +16,7 @@ import {
   ThemedView,
   Icon,
 } from "@/components/ui/atoms";
+import { ScreenHeader } from "@/components/ui/molecules";
 import { useSummitPost } from "@/domains/mountain/mountain.api";
 import { getMountainPts } from "@/domains/mountain/mountain.util";
 import { usePlanOne, usePlanUpdate } from "@/domains/plan/plan.api";
@@ -109,7 +110,7 @@ export default function PlanCompleteScreen() {
       });
 
       void queryClient.invalidateQueries();
-      router.dismiss();
+      router.back();
     } catch (err) {
       logError(err, "plan/complete/submit");
       Alert.alert(
@@ -123,16 +124,17 @@ export default function PlanCompleteScreen() {
   if (!plan) return null;
 
   return (
-    <ThemedView className="flex-1 pt-12">
+    <ThemedView className="flex-1">
+      <ScreenHeader />
       <ScrollView
-        contentContainerClassName="gap-6 px-6 pb-64"
+        contentContainerClassName="gap-6 px-6 pb-64 pt-2"
         showsVerticalScrollIndicator={false}
       >
         <View>
-          <ThemedText className="mb-1 text-muted-foreground">
+          <ThemedText className="text-muted-foreground">
             <FormattedMessage defaultMessage="Complete your plan" />
           </ThemedText>
-          <ThemedText className="text-3xl font-bold">{plan.title}</ThemedText>
+          <ThemedText className="text-4xl font-bold">{plan.title}</ThemedText>
           {!!plan.startDate && (
             <ThemedText className="text-muted-foreground">
               {format(plan.startDate, "d MMMM yyyy")}
@@ -216,7 +218,22 @@ export default function PlanCompleteScreen() {
                       />
                     </>
                   ) : (
-                    <Icon name="camera" size={32} muted />
+                    <View className="relative size-full items-center justify-center">
+                      {m.imageUrl && (
+                        <Image
+                          source={{ uri: m.imageUrl }}
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            opacity: 0.4,
+                          }}
+                          resizeMode="cover"
+                        />
+                      )}
+                      <View className="absolute inset-0 items-center justify-center">
+                        <Icon name="camera" size={32} muted />
+                      </View>
+                    </View>
                   )}
                   {isHandlingImages === m.id && (
                     <BlurView className="absolute size-full items-center justify-center">

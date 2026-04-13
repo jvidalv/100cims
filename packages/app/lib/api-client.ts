@@ -2,6 +2,7 @@ import createClient from "openapi-fetch";
 import { Platform } from "react-native";
 
 import { APP_BUILD_VERSION } from "@/lib/app-version";
+import { getLocale } from "@/lib/locale";
 import type { paths } from "@/types/api";
 
 const HEADER = {
@@ -9,6 +10,7 @@ const HEADER = {
   VERSION: "x-app-version",
   LATITUDE: "x-app-latitude",
   LONGITUDE: "x-app-longitude",
+  LOCALE: "x-app-locale",
 } as const;
 
 const apiClient = createClient<paths>({
@@ -22,6 +24,7 @@ apiClient.use({
   onRequest({ request }) {
     request.headers.set(HEADER.PLATFORM, Platform.OS);
     request.headers.set(HEADER.VERSION, APP_BUILD_VERSION);
+    request.headers.set(HEADER.LOCALE, getLocale());
     if (currentCoords) {
       request.headers.set(HEADER.LATITUDE, currentCoords.latitude.toString());
       request.headers.set(HEADER.LONGITUDE, currentCoords.longitude.toString());

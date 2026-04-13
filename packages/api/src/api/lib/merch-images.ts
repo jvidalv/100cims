@@ -1,0 +1,39 @@
+import { uuidv7 } from "uuidv7";
+
+import { getPublicUrl, putImageOnS3 } from "@/api/routes/@shared/s3";
+import { isBase64SizeValid } from "@/api/lib/images";
+
+const MAX_IMAGE_KB = 2048;
+const MAX_IMAGES = 4;
+
+export class MerchImageError extends Error {
+  status: number;
+  constructor(status: number, message: string) {
+    super(message);
+    this.status = status;
+  }
+}
+
+export const resolveMerchImageUrls = async (
+  inputs: string[],
+  merchId: string,
+): Promise<string[]> => {
+  if (inputs.length > MAX_IMAGES) {
+    throw new MerchImageError(400, `Too many images (max ${MAX_IMAGES})`);
+  }
+  return Promise.all(
+    inputs.map(async (value) => {
+      if (value.startsWith("http")) return value;
+      if (!isBase64SizeValid(value, MAX_IMAGE_KB)) {
+        throw new MerchImageError(400, "Image too large");
+      }
+      const key = `${process.env.APP_NAME}/merch/${merchId}/${uuidv7()}.jpeg`;
+      try {
+        await putImageOnS3(key, Buffer.from(value, "base64"));
+      } catch {
+        throw new MerchImageError(500, "Image upload failed");
+      }
+      return getPublicUrl(key);
+    }),
+  );
+};

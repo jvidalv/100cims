@@ -272,3 +272,71 @@ export const AdminPlanUpdateBodySchema = t.Object({
   imageUrl: t.Optional(t.Nullable(t.String())),
   routeUrl: t.Optional(t.Nullable(t.String())),
 });
+
+export const MerchEntrySchema = t.Object({
+  id: t.String(),
+  slug: t.String(),
+  name: t.String(),
+  description: t.Nullable(t.String()),
+  shopUrl: t.Nullable(t.String()),
+  imageUrls: t.Array(t.String()),
+  hasSize: t.Boolean(),
+  price: t.Number(),
+  featured: t.Nullable(t.Number()),
+  createdAt: t.Date(),
+});
+
+export const AdminMerchEntrySchema = t.Object({
+  id: t.String(),
+  slug: t.String(),
+  nameEn: t.String(),
+  nameCa: t.Nullable(t.String()),
+  nameEs: t.Nullable(t.String()),
+  descriptionEn: t.Nullable(t.String()),
+  descriptionCa: t.Nullable(t.String()),
+  descriptionEs: t.Nullable(t.String()),
+  shopUrl: t.Nullable(t.String()),
+  imageUrls: t.Array(t.String()),
+  hasSize: t.Boolean(),
+  price: t.Number(),
+  featured: t.Nullable(t.Number()),
+  active: t.Boolean(),
+  createdAt: t.Date(),
+  updatedAt: t.Date(),
+});
+
+export const AdminMerchListResponseSchema = t.Object({
+  items: t.Array(AdminMerchEntrySchema),
+});
+
+export const AdminMerchCreateBodySchema = t.Object({
+  slug: t.String({ minLength: 1 }),
+  nameEn: t.String({ minLength: 1 }),
+  nameCa: t.Optional(t.Nullable(t.String())),
+  nameEs: t.Optional(t.Nullable(t.String())),
+  descriptionEn: t.Optional(t.Nullable(t.String())),
+  descriptionCa: t.Optional(t.Nullable(t.String())),
+  descriptionEs: t.Optional(t.Nullable(t.String())),
+  shopUrl: t.Optional(t.Nullable(t.String())),
+  price: t.Number({ minimum: 0 }),
+  imageUrls: t.Optional(t.Array(t.String())),
+  hasSize: t.Optional(t.Boolean()),
+  featured: t.Optional(t.Nullable(t.Number({ minimum: 1, maximum: 5 }))),
+  active: t.Optional(t.Boolean()),
+});
+
+export const AdminMerchUpdateBodySchema = t.Object({
+  slug: t.Optional(t.String({ minLength: 1 })),
+  nameEn: t.Optional(t.String({ minLength: 1 })),
+  nameCa: t.Optional(t.Nullable(t.String())),
+  nameEs: t.Optional(t.Nullable(t.String())),
+  descriptionEn: t.Optional(t.Nullable(t.String())),
+  descriptionCa: t.Optional(t.Nullable(t.String())),
+  descriptionEs: t.Optional(t.Nullable(t.String())),
+  shopUrl: t.Optional(t.Nullable(t.String())),
+  price: t.Optional(t.Number({ minimum: 0 })),
+  imageUrls: t.Optional(t.Array(t.String())),
+  hasSize: t.Optional(t.Boolean()),
+  featured: t.Optional(t.Nullable(t.Number({ minimum: 1, maximum: 5 }))),
+  active: t.Optional(t.Boolean()),
+});

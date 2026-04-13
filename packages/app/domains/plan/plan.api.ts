@@ -1,9 +1,11 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 
 import { queryClient } from "@/components/providers/query-client-provider";
 import { useUserMe } from "@/domains/user/user.api";
 import apiClient from "@/lib/api-client";
 import { planKeys } from "@/lib/query-keys";
+
+const PLANS_PAGE_SIZE = 20;
 
 export const usePlans = (
   params?: {
@@ -25,6 +27,33 @@ export const usePlans = (
       if (error) throw error;
       return data.message;
     },
+  });
+};
+
+export const usePlansInfinite = (params?: {
+  status?: "open" | "completed" | "canceled";
+  creatorId?: string;
+  userId?: string;
+  sort?: "upcoming";
+  challengeId?: string;
+}) => {
+  return useInfiniteQuery({
+    queryKey: planKeys.listInfinite(params),
+    initialPageParam: 1,
+    queryFn: async ({ pageParam }) => {
+      const { data, error } = await apiClient.GET(
+        "/api/public/plans/all-paginated",
+        {
+          params: {
+            query: { ...(params ?? {}), page: pageParam, limit: PLANS_PAGE_SIZE },
+          },
+        },
+      );
+      if (error) throw error;
+      return data.message;
+    },
+    getNextPageParam: (lastPage) =>
+      lastPage.pagination.hasMore ? lastPage.pagination.page + 1 : undefined,
   });
 };
 

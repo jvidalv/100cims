@@ -7,6 +7,7 @@ import {
   Home,
   LogOut,
   Mountain,
+  ShoppingBag,
   Trophy,
   Users,
 } from "lucide-react";
@@ -42,6 +43,7 @@ const NAV_ITEMS = [
   { href: "/admin/challenges", label: "Challenges", icon: Trophy },
   { href: "/admin/summits", label: "Summits", icon: Camera },
   { href: "/admin/plans", label: "Plans", icon: Compass },
+  { href: "/admin/merch", label: "Merch", icon: ShoppingBag },
   { href: "/admin/crons", label: "Crons", icon: Clock },
 ];
 

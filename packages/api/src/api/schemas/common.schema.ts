@@ -30,3 +30,18 @@ export const SimpleSuccessResponse = t.Object({
 export const ErrorFieldResponse = t.Object({
   error: t.Union([t.String(), t.Boolean()]),
 });
+
+/**
+ * Paginated list wrapper: { items: T[], pagination: {...} }
+ */
+export const PaginatedSchema = <T extends TSchema>(itemSchema: T) =>
+  t.Object({
+    items: t.Array(itemSchema),
+    pagination: t.Object({
+      page: t.Number(),
+      pageSize: t.Number(),
+      totalItems: t.Number(),
+      totalPages: t.Number(),
+      hasMore: t.Boolean(),
+    }),
+  });

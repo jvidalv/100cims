@@ -40,7 +40,11 @@ const main = async () => {
   // Easier: just sample N mountain image_urls and HEAD each via S3 to get size.
   // Since DB rows now have CDN URLs, derive the S3 key from the URL path.
   const rows = await db
-    .select({ id: mountainTable.id, name: mountainTable.name, imageUrl: mountainTable.imageUrl })
+    .select({
+      id: mountainTable.id,
+      name: mountainTable.name,
+      imageUrl: mountainTable.imageUrl,
+    })
     .from(mountainTable)
     .where(isNotNull(mountainTable.imageUrl))
     .orderBy(sql`random()`)
