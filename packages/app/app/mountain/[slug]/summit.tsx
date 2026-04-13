@@ -15,6 +15,7 @@ import {
   ThemedView,
 } from "@/components/ui/atoms";
 import { ThemedDateInput } from "@/components/ui/atoms/themed-date-input";
+import { ScreenHeader } from "@/components/ui/molecules";
 import {
   UserForSelectInput,
   UserSelectInput,
@@ -23,7 +24,6 @@ import { useMountains, useSummitPost } from "@/domains/mountain/mountain.api";
 import { SUMMITS_KEY } from "@/domains/summit/summit.api";
 import { useUserMe, useUsers } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
-import { isAndroid } from "@/lib/device";
 import { getImageOptimized } from "@/lib/images";
 import { logError } from "@/lib/log-error";
 import { userKeys } from "@/lib/query-keys";
@@ -126,7 +126,7 @@ export default function SummitMountainScreen() {
       void queryClient.refetchQueries({
         queryKey: userKeys.summits(),
       });
-      router.dismiss();
+      router.back();
     } catch (error) {
       logError(error, "mountain/summit/submit");
       return Alert.alert(
@@ -138,27 +138,13 @@ export default function SummitMountainScreen() {
   };
 
   return (
-    <ThemedView className={twMerge("flex-1", isAndroid && "pt-12")}>
+    <ThemedView className="flex-1">
+      <ScreenHeader />
       <ScrollView className="flex-1" keyboardShouldPersistTaps="handled">
-        <View className="gap-6 px-6 pt-6">
-          <View className="flex-row items-center justify-between gap-6">
-            <View className="flex-1">
-              <ThemedText className="mb-1 text-lg font-bold text-muted-foreground">
-                <FormattedMessage defaultMessage="Summit" />
-              </ThemedText>
-              <ThemedText className="text-left text-3xl font-black">
-                {mountain.name}
-              </ThemedText>
-            </View>
-            {mountain.imageUrl ? (
-              <Image
-                className="size-16 rounded-lg"
-                source={{ uri: mountain.imageUrl }}
-              />
-            ) : (
-              <View className="rounded-lg bg-neutral-500" />
-            )}
-          </View>
+        <View className="gap-6 px-6 pt-2">
+          <ThemedText className="text-4xl font-bold">
+            {mountain.name}
+          </ThemedText>
           <View className="gap-2">
             <ThemedText className="text-lg font-bold">
               <FormattedMessage defaultMessage="Date" />
@@ -167,7 +153,6 @@ export default function SummitMountainScreen() {
           </View>
           <View className="gap-2">
             <ThemedText
-              lo-0
               className={twMerge(
                 "text-lg font-bold",
                 isImageMissing && "text-red-500",
@@ -204,17 +189,34 @@ export default function SummitMountainScreen() {
                     }}
                   />
                 </View>
-              ) : isLoadingImage ? (
-                <ActivityIndicator className="opacity-50" />
               ) : (
-                <Icon
-                  name="camera"
-                  size={32}
-                  muted
-                  animationSpec={{
-                    effect: { type: "bounce" },
-                  }}
-                />
+                <View className="relative size-full items-center justify-center">
+                  {mountain.imageUrl && (
+                    <Image
+                      source={{ uri: mountain.imageUrl }}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        opacity: 0.4,
+                      }}
+                      resizeMode="cover"
+                    />
+                  )}
+                  <View className="absolute inset-0 items-center justify-center">
+                    {isLoadingImage ? (
+                      <ActivityIndicator className="opacity-50" />
+                    ) : (
+                      <Icon
+                        name="camera"
+                        size={32}
+                        muted
+                        animationSpec={{
+                          effect: { type: "bounce" },
+                        }}
+                      />
+                    )}
+                  </View>
+                </View>
               )}
             </TouchableOpacity>
           </View>

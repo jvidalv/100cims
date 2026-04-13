@@ -24,7 +24,7 @@ import { useUserMe, useUserChallengeSummits } from "@/domains/user/user.api";
 import { useLocation } from "@/hooks/use-location";
 import { setApiLocation, setAuthToken } from "@/lib/api-client";
 import { getJwt } from "@/lib/auth";
-import { isIpadOS, isWeb } from "@/lib/device";
+import { isIpadOS } from "@/lib/device";
 import { getDateFnsLocale, getLocale } from "@/lib/locale";
 import ca from "@/translations/ca.json";
 import en from "@/translations/en.json";
@@ -73,16 +73,8 @@ function Content() {
 
   return (
     <>
-      {!isDataReady && !isWeb && <LoadingSkeleton />}
+      {!isDataReady && <LoadingSkeleton />}
       <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen
-        name="mountain/[slug]/summit"
-        options={{ presentation: isIpadOS ? "fullScreenModal" : "modal" }}
-      />
-      <Stack.Screen
-        name="plan/[id]/complete"
-        options={{ presentation: isIpadOS ? "fullScreenModal" : "modal" }}
-      />
       <Stack.Screen name="+not-found" />
       <Stack.Screen
         name="join"

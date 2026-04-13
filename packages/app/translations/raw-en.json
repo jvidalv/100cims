@@ -41,9 +41,6 @@
   "2YBqTq": {
     "defaultMessage": "Mountains"
   },
-  "2ZlJ1t": {
-    "defaultMessage": "White T-Shirt"
-  },
   "2slxzN": {
     "defaultMessage": "Required information missing!"
   },
@@ -236,14 +233,8 @@
   "Hsq7Fe": {
     "defaultMessage": "Delete challenge"
   },
-  "HtdgDJ": {
-    "defaultMessage": "Black T-Shirt"
-  },
   "HucKse": {
     "defaultMessage": "You can now create your own challenges and also your mountains, other people can join these challenges!"
-  },
-  "I+uVtx": {
-    "defaultMessage": "Black Cap"
   },
   "I3b4hn": {
     "defaultMessage": "Version"
@@ -352,9 +343,6 @@
   },
   "Q8Qw5B": {
     "defaultMessage": "Description"
-  },
-  "QTb52e": {
-    "defaultMessage": "Black Mug"
   },
   "QVgzSj": {
     "defaultMessage": "About the app"
@@ -545,9 +533,6 @@
   "itPgxd": {
     "defaultMessage": "Profile"
   },
-  "jEiUIy": {
-    "defaultMessage": "Black Buff"
-  },
   "jKKg2o": {
     "defaultMessage": "Clear all filters"
   },
@@ -592,6 +577,9 @@
   },
   "nYqRsC": {
     "defaultMessage": "Create your first plan"
+  },
+  "nYrKWp": {
+    "defaultMessage": "Edit profile"
   },
   "nfhxxT": {
     "defaultMessage": "Login out"

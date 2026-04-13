@@ -1,0 +1,2 @@
+CREATE UNIQUE INDEX IF NOT EXISTS "summit_reaction_unique" ON "summit_reaction" USING btree ("summit_id","user_id","emoji");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "update_seen_user_id_idx" ON "update_seen" USING btree ("user_id");

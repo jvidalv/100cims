@@ -155,6 +155,15 @@ await db.select({ date: bucketExpr, count: sql<number>`count(*)::int` })
   .from(table).groupBy(bucketExpr).orderBy(bucketExpr);
 ```
 
+**Eden client deserializes ISO date strings into `Date` instances**, even when the backend schema declares `t.String()`. A field returned as `"2025-04-13"` from `to_char(...)` arrives in the browser as a `Date`, not a string. Don't trust the inferred response type when the value looks date-like — normalise at the boundary:
+
+```typescript
+const toIsoDate = (value: string | Date): string =>
+  value instanceof Date ? value.toISOString().slice(0, 10) : value.slice(0, 10);
+```
+
+This bites Recharts users in particular: `<XAxis dataKey="date">` works on Date objects (auto-stringified), but `<ReferenceLine x="2025-04-13">` won't match a Date-typed category. Pre-process the data into string-shaped points before handing it to the chart.
+
 ### Schema Validation
 
 ```typescript
@@ -176,36 +185,36 @@ export const summitSchema = {
 };
 ```
 
-### Pagination Pattern
-
-For paginated endpoints, use this pattern for backwards compatibility:
+**Derive client body types from TypeBox schemas — never hand-roll mirrors.** The admin React Query hooks need TS types for their mutation bodies; instead of duplicating them, use `Static<typeof X>`:
 
 ```typescript
-// Schema
-export const PaginatedItemsSchema = t.Object({
-  items: t.Array(ItemSchema),
-  pagination: t.Object({
-    page: t.Number(),
-    pageSize: t.Number(),
-    totalItems: t.Number(),
-    totalPages: t.Number(),
-    hasMore: t.Boolean(),
-  }),
-});
-
-// Route handler - backwards compatible
-const isPaginated = query.page !== undefined || query.limit !== undefined;
-
-if (isPaginated) {
-  // Return paginated results with count query
-  return { items: results, pagination: { page, pageSize, totalItems, totalPages, hasMore } };
-}
-
-// No pagination params = return ALL results (backwards compatible)
-return { items: results, pagination: { page: 1, pageSize: results.length, totalItems: results.length, totalPages: 1, hasMore: false } };
+import type { Static } from "elysia";
+import type { AdminMerchUpdateBodySchema } from "@/api/schemas/admin.schema";
+export type AdminMerchUpdateBody = Static<typeof AdminMerchUpdateBodySchema>;
 ```
 
-**Key**: Old clients without pagination params get all results. New clients can paginate.
+The schema constant must be `import type { ... }` only — that erases at runtime, so TypeBox is not bundled into the Next.js client. Schema files must have no top-level side effects (the existing ones don't).
+
+### Pagination Pattern
+
+The `{items, pagination: {page, pageSize, totalItems, totalPages, hasMore}}` shape is centralized as a schema factory in `packages/api/src/api/schemas/common.schema.ts`:
+
+```typescript
+import { PaginatedSchema } from "@/api/schemas/common.schema";
+
+export const PaginatedItemsSchema = PaginatedSchema(ItemSchema);
+```
+
+**Two backwards-compatible options when adding pagination to an existing route:**
+
+1. **In-place with `t.Union`** (used by `/api/public/hiscores/all`): the route returns either the raw array (old shape) or the paginated wrapper depending on whether `page`/`limit` is present. Schema is `t.Union([ArraySchema, PaginatedSchema(...)])`. Keep this when you want one URL and don't mind the union response.
+
+2. **New endpoint, legacy stays put** (used by `/api/public/plans/all-paginated`): create a new file `<name>-paginated.get.ts` with a clean paginated-only schema. Add `@deprecated` to the old file's header but DO NOT change its behavior. Cleaner contract per route, no union schemas, easier to grep "still on the old endpoint?". Prefer this for new work.
+
+In both cases:
+- `count()` query and the page select in the same `Promise.all` to halve wall time.
+- For follow-up "hydration" queries (e.g. fetching child rows for the page), short-circuit when `planIds.length === 0` and group results into a `Map<parentId, child[]>` — avoids O(n²) `.filter()` over each parent.
+- Cap `limit` server-side (`Math.min(query.limit ?? DEFAULT, MAX_PAGE_SIZE)`) so a malicious or buggy client can't request 100k rows.
 
 ## Common Tasks
 
@@ -235,6 +244,8 @@ const imageUrl = getPublicUrl(key); // returns CloudFront URL when AWS_PUBLIC_CD
 Always use `getS3Client()` rather than constructing a fresh `new S3Client(...)` — keeps credentials in one place. `IMAGE_CACHE_CONTROL` exported from the same module is the canonical `Cache-Control` header for image objects.
 
 For crons that walk the bucket (e.g. backfill / optimize), use `mapWithConcurrency` from `@/api/cron/lib/concurrent` instead of `Promise.all` over a full ListObjectsV2 page — a 1000-item page with sharp transforms and unbounded parallelism will saturate libuv's thread pool and OOM the Railway container. Cap at ~10.
+
+**For S3 + DB writes that share an id**, generate the id (`uuidv7()`) upfront and use it both as the DB primary key AND in the S3 key. Upload to S3 first, then INSERT once. Avoids the orphan-row failure mode where the row exists but its `imageUrl(s)` are empty because S3 failed mid-flow. See `admin.merch-create.post.ts` for the pattern.
 
 ### Log to Google Sheets
 

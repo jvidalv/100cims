@@ -1,5 +1,7 @@
 import { t } from "elysia";
 
+import { PaginatedSchema } from "@/api/schemas/common.schema";
+
 /**
  * Schema for a user participating in a plan
  */
@@ -83,6 +85,11 @@ export const PlanDetailSchema = t.Object({
  * Schema for array of plans
  */
 export const PlansArraySchema = t.Array(PlanSchema);
+
+/**
+ * Schema for paginated plans response
+ */
+export const PaginatedPlansSchema = PaginatedSchema(PlanSchema);
 
 /**
  * Schema for count response

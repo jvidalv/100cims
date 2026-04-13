@@ -22,7 +22,7 @@ import {
   ThemedText,
   ThemedView,
 } from "@/components/ui/atoms";
-import { MountainItemList } from "@/components/ui/molecules";
+import { ActionRow, MountainItemList } from "@/components/ui/molecules";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
 import { getMountainPts } from "@/domains/mountain/mountain.util";
 import { usePlanChatUnread } from "@/domains/plan/plan-chat.api";
@@ -334,109 +334,91 @@ export default function PlanIdPage() {
             ))}
           </View>
 
-          <View>
-            {isOpen && (
-              <TouchableOpacity
-                onPress={onShare}
-                className="mt-2 flex-row items-center gap-2"
-              >
-                <View className="size-8 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700">
-                  <Icon name="square.and.arrow.up" size={16} />
-                </View>
-                <ThemedText className="text-muted-foreground">
-                  <FormattedMessage defaultMessage="Share it with your friends" />
-                </ThemedText>
-              </TouchableOpacity>
-            )}
-            {hasJoined && (
-              <Link
-                href={{ pathname: "/plan/[id]/chat", params: { id } }}
-                asChild
-              >
-                <TouchableOpacity className="mt-2 flex-row items-center gap-2">
-                  <View className="relative size-8 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900">
-                    <Icon
-                      name="bubble.left.and.text.bubble.right"
-                      size={20}
-                      color="#3b82f6"
-                    />
-                    {hasUnreadMessages && (
-                      <View className="absolute -right-0.5 -top-0.5 size-3 rounded-full bg-primary" />
-                    )}
-                  </View>
-                  <ThemedText className="text-blue-500 dark:text-blue-400">
-                    <FormattedMessage defaultMessage="Chat with others" />
-                  </ThemedText>
-                </TouchableOpacity>
-              </Link>
-            )}
-            {hasJoined && !isCreator && (
-              <TouchableOpacity
-                onPress={() => handleLeave()}
-                className="mt-2 flex-row items-center gap-2 opacity-80"
-              >
-                <View className="size-8 items-center justify-center rounded-full bg-red-100 dark:bg-red-950">
-                  {isLoadingLeavePLan ? (
-                    <ActivityIndicator size="sm" color="#ef4444" />
-                  ) : (
-                    <Icon name="arrow.down" size={16} muted color="#ef4444" />
-                  )}
-                </View>
-                <ThemedText className="text-red-500">
-                  <FormattedMessage defaultMessage="Leave" />
-                </ThemedText>
-              </TouchableOpacity>
-            )}
-          </View>
         </View>
       </View>
-      {isOpen && (isCreator || !hasJoined) && (
-        <View className="gap-4">
-          <View className="flex-row justify-between">
-            <ThemedText className="text-2xl font-semibold">
-              <FormattedMessage defaultMessage="Actions" />
-            </ThemedText>
-            {isCreator && (
-              <Link
-                href={{ pathname: "/plan/[id]/edit", params: { id } }}
-                asChild
-              >
-                <TouchableOpacity className="flex-row items-center gap-2">
-                  <Icon name="gear" size={16} />
-                  <ThemedText className="text-muted-foreground">
-                    <FormattedMessage defaultMessage="Modify plan" />
-                  </ThemedText>
-                </TouchableOpacity>
-              </Link>
-            )}
-          </View>
-          {!hasJoined && (
-            <Button onPress={handleJoin} isLoading={isLoadingJoinPlan}>
-              <FormattedMessage defaultMessage="Join plan" />
-            </Button>
-          )}
-          {isOpen && isCreator && !!plan.startDate && (
-            <Link
-              href={{ pathname: "/plan/[id]/complete", params: { id } }}
-              asChild
+      <View className="gap-2">
+        <ThemedText className="text-2xl font-semibold">
+          <FormattedMessage defaultMessage="Actions" />
+        </ThemedText>
+        {isOpen && !hasJoined && (
+          <Button
+            onPress={handleJoin}
+            isLoading={isLoadingJoinPlan}
+            className="mb-2"
+          >
+            <FormattedMessage defaultMessage="Join plan" />
+          </Button>
+        )}
+        {isOpen && isCreator && !!plan.startDate && (
+          <Link
+            href={{ pathname: "/plan/[id]/complete", params: { id } }}
+            asChild
+          >
+            <ActionRow iconName="checkmark.seal.fill" intent="emerald">
+              <FormattedMessage defaultMessage="Complete plan" />
+            </ActionRow>
+          </Link>
+        )}
+        {isOpen && isCreator && !plan.startDate && (
+          <Link
+            href={{ pathname: "/plan/[id]/edit", params: { id } }}
+            asChild
+          >
+            <ActionRow iconName="calendar" intent="primary">
+              <FormattedMessage defaultMessage="Set plan date" />
+            </ActionRow>
+          </Link>
+        )}
+        {isCreator && (
+          <Link
+            href={{ pathname: "/plan/[id]/edit", params: { id } }}
+            asChild
+          >
+            <ActionRow iconName="gear" intent="muted">
+              <FormattedMessage defaultMessage="Modify plan" />
+            </ActionRow>
+          </Link>
+        )}
+        {isOpen && (
+          <ActionRow
+            onPress={onShare}
+            iconName="square.and.arrow.up"
+            intent="muted"
+          >
+            <FormattedMessage defaultMessage="Share it with your friends" />
+          </ActionRow>
+        )}
+        {hasJoined && (
+          <Link
+            href={{ pathname: "/plan/[id]/chat", params: { id } }}
+            asChild
+          >
+            <ActionRow
+              iconName="bubble.left.and.text.bubble.right"
+              iconSize={20}
+              intent="blue"
+              badge={hasUnreadMessages}
             >
-              <Button intent="success">
-                <FormattedMessage defaultMessage="Complete plan" />
-              </Button>
-            </Link>
-          )}
-          {isOpen && isCreator && !plan.startDate && (
-            <Link
-              href={{ pathname: "/plan/[id]/edit", params: { id } }}
-              asChild
-            >
-              <Button intent="outline">
-                <FormattedMessage defaultMessage="Set plan date" />
-              </Button>
-            </Link>
-          )}
-        </View>
-      )}
+              <FormattedMessage defaultMessage="Chat with others" />
+            </ActionRow>
+          </Link>
+        )}
+        {hasJoined && !isCreator && (
+          <ActionRow
+            onPress={() => handleLeave()}
+            iconName="arrow.down"
+            intent="danger"
+            iconOverride={
+              isLoadingLeavePLan ? (
+                <ActivityIndicator size="sm" color="#ef4444" />
+              ) : undefined
+            }
+            className="opacity-80"
+          >
+            <FormattedMessage defaultMessage="Leave" />
+          </ActionRow>
+        )}
+      </View>
       {!!plan.mountains?.length && <PlanSummits mountains={plan.mountains} />}
     </ParallaxScrollView>
   );

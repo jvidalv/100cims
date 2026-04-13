@@ -1,9 +1,15 @@
+import { type AppLocale, normalizeAppLocale } from "@/api/lib/locale";
+
 export const APP_HEADER = {
   PLATFORM: "x-app-platform",
   VERSION: "x-app-version",
   LATITUDE: "x-app-latitude",
   LONGITUDE: "x-app-longitude",
+  LOCALE: "x-app-locale",
 } as const;
+
+export const resolveLocaleFromRequest = (request: Request): AppLocale =>
+  normalizeAppLocale(request.headers.get(APP_HEADER.LOCALE));
 
 const ALLOWED_PLATFORMS = new Set(["ios", "android", "web"]);
 const VERSION_RE = /^\d+\.\d+\.\d+$/;

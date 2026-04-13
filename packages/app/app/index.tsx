@@ -31,8 +31,8 @@ import {
   PlanItemList,
   PlanItemListSkeleton,
 } from "@/components/ui/molecules/plan-item-list";
-import { MERCH_PRODUCTS } from "@/constants/merch";
 import { useActiveChallenge } from "@/domains/challenge/challenge.api";
+import { useMerch } from "@/domains/merch/merch.api";
 import {
   useMountains,
   useRecommendedPeaks,
@@ -340,6 +340,11 @@ export default function IndexScreen() {
     limit: 8,
   });
   const { data: mountains } = useMountains();
+  const { data: merch } = useMerch();
+  const featuredMerch = (merch ?? [])
+    .filter((m) => m.featured != null)
+    .sort((a, b) => (a.featured ?? 0) - (b.featured ?? 0))
+    .slice(0, 5);
 
   const isCurrentRoute = useIsCurrentScreen("/");
   const { showBadge, markAsSeen } = useMapNotificationBadge();
@@ -600,52 +605,56 @@ export default function IndexScreen() {
           </View>
           <PlansSection />
         </View>
-        <View className="gap-4 pb-16">
-          <View className="flex-row items-end justify-between">
-            <ThemedText className="text-2xl font-bold">
-              <FormattedMessage defaultMessage="Support Cims" />
-            </ThemedText>
-            <Link href="/support" className="-mx-2 -mb-2 p-2">
-              <View className="flex-row items-center gap-1">
-                <ThemedText className="text-muted-foreground">
-                  <FormattedMessage defaultMessage="View all" />
-                </ThemedText>
-                <Icon name="arrow.forward" size={12} weight="bold" muted />
+        {featuredMerch.length > 0 && (
+          <View className="gap-4 pb-16">
+            <View className="flex-row items-end justify-between">
+              <ThemedText className="text-2xl font-bold">
+                <FormattedMessage defaultMessage="Support Cims" />
+              </ThemedText>
+              <Link href="/support" className="-mx-2 -mb-2 p-2">
+                <View className="flex-row items-center gap-1">
+                  <ThemedText className="text-muted-foreground">
+                    <FormattedMessage defaultMessage="View all" />
+                  </ThemedText>
+                  <Icon name="arrow.forward" size={12} weight="bold" muted />
+                </View>
+              </Link>
+            </View>
+            <Link href="/support">
+              <View className="gap-2">
+                <View className="aspect-square w-full overflow-hidden rounded-xl bg-border">
+                  {featuredMerch[0]?.imageUrls[0] && (
+                    <Image
+                      source={{ uri: featuredMerch[0].imageUrls[0] }}
+                      className="size-full"
+                      resizeMode="cover"
+                    />
+                  )}
+                </View>
+                <View className="flex-row gap-2">
+                  {featuredMerch.slice(1, 3).map((product) => (
+                    <Image
+                      key={product.slug}
+                      source={{ uri: product.imageUrls[0] }}
+                      className="aspect-square flex-1 rounded-xl bg-border"
+                      resizeMode="cover"
+                    />
+                  ))}
+                </View>
+                <View className="flex-row gap-2">
+                  {featuredMerch.slice(3).map((product) => (
+                    <Image
+                      key={product.slug}
+                      source={{ uri: product.imageUrls[0] }}
+                      className="aspect-square flex-1 rounded-xl bg-border"
+                      resizeMode="cover"
+                    />
+                  ))}
+                </View>
               </View>
             </Link>
           </View>
-          <Link href="/support">
-            <View className="gap-2">
-              <View className="aspect-square w-full overflow-hidden rounded-xl bg-border">
-                <Image
-                  source={MERCH_PRODUCTS[0].images[0]}
-                  className="size-full"
-                  resizeMode="cover"
-                />
-              </View>
-              <View className="flex-row gap-2">
-                {MERCH_PRODUCTS.slice(1, 3).map((product) => (
-                  <Image
-                    key={product.id}
-                    source={product.images[0]}
-                    className="aspect-square flex-1 rounded-xl bg-border"
-                    resizeMode="cover"
-                  />
-                ))}
-              </View>
-              <View className="flex-row gap-2">
-                {MERCH_PRODUCTS.slice(3).map((product) => (
-                  <Image
-                    key={product.id}
-                    source={product.images[0]}
-                    className="aspect-square flex-1 rounded-xl bg-border"
-                    resizeMode="cover"
-                  />
-                ))}
-              </View>
-            </View>
-          </Link>
-        </View>
+        )}
       </Animated.ScrollView>
     </ThemedView>
   );

@@ -149,7 +149,7 @@ const GoogleSignIn = () => {
       const response = await GoogleSignin.signIn();
 
       // Handle cancellation
-      if (response.type === 'cancelled') {
+      if (response.type === "cancelled") {
         setIsAuthenticating(false);
         return;
       }
@@ -206,7 +206,7 @@ export default function JoinScreen() {
       text: (
         <ThemedText>
           <FormattedMessage defaultMessage="The ability to" />{" "}
-          <ThemedText className="font-black tracking-tighter">
+          <ThemedText className="font-extrabold tracking-tighter">
             <FormattedMessage defaultMessage="register your summits" />
           </ThemedText>{" "}
           <FormattedMessage defaultMessage="and track the ones left." />
@@ -217,7 +217,7 @@ export default function JoinScreen() {
       emoji: "🏆",
       text: (
         <ThemedText>
-          <ThemedText className="font-black tracking-tighter">
+          <ThemedText className="font-extrabold tracking-tighter">
             <FormattedMessage defaultMessage="A community ranking" />
           </ThemedText>{" "}
           <FormattedMessage defaultMessage="where you can compete with other mountain lovers." />
@@ -228,7 +228,7 @@ export default function JoinScreen() {
       emoji: "💪🏼",
       text: (
         <ThemedText>
-          <ThemedText className="font-black tracking-tighter">
+          <ThemedText className="font-extrabold tracking-tighter">
             <FormattedMessage defaultMessage="A profile with your feats" />
           </ThemedText>{" "}
           <FormattedMessage defaultMessage="that you can share with the world." />
@@ -250,8 +250,8 @@ export default function JoinScreen() {
       )}
     >
       <View className="items-center">
-        <View className="items-center justify-center overflow-hidden rounded-full border-4 border-primary">
-          <ThemedLogo style={{ width: 120, height: 120 }} />
+        <View className="items-center justify-center">
+          <ThemedLogo style={{ width: 200, height: 120 }} />
         </View>
       </View>
       <View className="items-center justify-center">

@@ -1,3 +1,8 @@
+/**
+ * @deprecated Returns all matching plans in one shot (capped only by an
+ * optional `limit`). Kept for old mobile clients still in the wild. New
+ * mobile builds use GET /api/public/plans/all-paginated.
+ */
 import { and, asc, desc, eq, inArray } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 

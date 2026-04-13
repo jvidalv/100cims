@@ -10,7 +10,6 @@
     "start:prod": "npx expo start --no-dev --minify",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "web": "expo start --web",
     "lint": "expo lint",
     "translations:extract": "formatjs extract './{components,app}/**/*.ts*' --ignore='**/*.d.ts' --out-file translations/raw-en.json",
     "translations:generate": "formatjs compile './translations/raw-en.json' --out-file translations/en.json",
@@ -20,8 +19,7 @@
     "db:push:prod": "npx drizzle-kit push",
     "db:local:up": "docker-compose up -d",
     "build:development:ios": "npx expo run:ios",
-    "build:development:android": "npx expo run:android",
-    "build:api": "npx expo export -p web"
+    "build:development:android": "npx expo run:android"
   },
   "jest": {
     "preset": "jest-expo"

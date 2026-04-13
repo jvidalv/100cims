@@ -10,9 +10,8 @@ import { TouchableOpacity, Image, View, StyleSheet, Share } from "react-native";
 import { useAuth } from "@/components/providers/auth-provider";
 import { SummitCard } from "@/components/summit";
 import { ThemedText, Icon, Skeleton } from "@/components/ui/atoms";
-import { MountainItemList } from "@/components/ui/molecules";
+import { ActionRow, MountainItemList } from "@/components/ui/molecules";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
-import { Colors } from "@/constants/colors";
 import { useMountainOne, useMountains } from "@/domains/mountain/mountain.api";
 import { useSummitsGet } from "@/domains/summit/summit.api";
 import { useUserChallengeSummits } from "@/domains/user/user.api";
@@ -186,45 +185,32 @@ export default function MountainScreen() {
           }
           asChild
         >
-          <TouchableOpacity className="flex-row items-center gap-2">
-            <View className="size-8 items-center justify-center rounded-full bg-primary/10">
-              <Icon name="figure.hiking" size={18} color={Colors.light.primary} />
-            </View>
-            <ThemedText className="text-primary">
-              {isSummited ? (
-                <FormattedMessage defaultMessage="Summit again" />
-              ) : (
-                <FormattedMessage defaultMessage="Summit" />
-              )}
-            </ThemedText>
-          </TouchableOpacity>
+          <ActionRow iconName="figure.hiking" iconSize={18} intent="primary">
+            {isSummited ? (
+              <FormattedMessage defaultMessage="Summit again" />
+            ) : (
+              <FormattedMessage defaultMessage="Summit" />
+            )}
+          </ActionRow>
         </Link>
-        <TouchableOpacity
+        <ActionRow
           onPress={handleShareMountain}
-          className="flex-row items-center gap-2"
+          iconName="square.and.arrow.up"
+          intent="muted"
         >
-          <View className="size-8 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700">
-            <Icon name="square.and.arrow.up" size={16} />
-          </View>
-          <ThemedText className="text-muted-foreground">
-            <FormattedMessage defaultMessage="Share with your friends" />
-          </ThemedText>
-        </TouchableOpacity>
-        <TouchableOpacity
+          <FormattedMessage defaultMessage="Share with your friends" />
+        </ActionRow>
+        <ActionRow
           onPress={() => {
             void Linking.openURL(
               `https://www.google.es/maps?q=${mountain.latitude},${mountain.longitude}`,
             );
           }}
-          className="flex-row items-center gap-2"
+          iconName="map.fill"
+          intent="blue"
         >
-          <View className="size-8 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900">
-            <Icon name="map.fill" size={16} color="#3b82f6" />
-          </View>
-          <ThemedText className="text-blue-500 dark:text-blue-400">
-            <FormattedMessage defaultMessage="View on maps" />
-          </ThemedText>
-        </TouchableOpacity>
+          <FormattedMessage defaultMessage="View on maps" />
+        </ActionRow>
         <TouchableOpacity
           onPress={() => {
             const locale = intl.locale as "en" | "es" | "ca";

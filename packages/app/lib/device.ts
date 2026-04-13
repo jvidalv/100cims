@@ -1,5 +1,4 @@
 import * as Device from "expo-device";
-import { Platform } from "react-native";
 
 const devicesWithDynamicIsland = [
   "iPhone 14 Pro",
@@ -22,4 +21,3 @@ export const hasDynamicIsland =
 export const isAndroid = Device.osName === "Android";
 export const isIpadOS = Device.osName === "iPadOS";
 export const isIOS = Device.osName === "iOS" || isIpadOS;
-export const isWeb = Platform.OS === "web";

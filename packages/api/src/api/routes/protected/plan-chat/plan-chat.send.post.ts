@@ -3,10 +3,9 @@ import { Elysia, t } from "elysia";
 
 import { db } from "@/db";
 import { planMessageTable, planTable, planHasUsersTable } from "@/db/schema";
-import { truncate } from "@/api/lib/discord";
 import { sendPushLocalized } from "@/api/lib/push";
 import { pushPlanChat } from "@/api/lib/push-translations";
-import { PUSH_TYPE, getUserDisplayName } from "@/api/lib/push-types";
+import { PUSH_TYPE } from "@/api/lib/push-types";
 import { getUserFromRequest } from "@/api/routes/@shared/auth";
 import { SuccessResponse } from "@/api/schemas/common.schema";
 import { BasicMessageSchema } from "@/api/schemas/plan-chat.schema";
@@ -45,14 +44,11 @@ export const planChatSendPostRoute = new Elysia().post(
       const recipientIds = new Set<string>(participants.map((p) => p.userId));
       if (plan.creatorId !== user.id) recipientIds.add(plan.creatorId);
 
-      const senderName = getUserDisplayName(user);
-      const preview = truncate(body.message, 120);
-
       void sendPushLocalized(
         Array.from(recipientIds),
-        () => ({
+        (locale) => ({
           title: plan.title,
-          body: pushPlanChat(senderName, preview),
+          body: pushPlanChat(locale),
         }),
         { type: PUSH_TYPE.PLAN_CHAT, planId: body.planId },
       );
