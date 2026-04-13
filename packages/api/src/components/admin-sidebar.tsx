@@ -1,16 +1,21 @@
 "use client";
 
-import { Camera, Clock, Home, LogOut, Mountain, Users } from "lucide-react";
+import {
+  Camera,
+  Clock,
+  Compass,
+  Home,
+  LogOut,
+  Mountain,
+  Trophy,
+  Users,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { useMe } from "@/domains/user/api";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,7 +39,9 @@ const NAV_ITEMS = [
   { href: "/admin", label: "Overview", icon: Home },
   { href: "/admin/users", label: "Users", icon: Users },
   { href: "/admin/mountains", label: "Mountains", icon: Mountain },
+  { href: "/admin/challenges", label: "Challenges", icon: Trophy },
   { href: "/admin/summits", label: "Summits", icon: Camera },
+  { href: "/admin/plans", label: "Plans", icon: Compass },
   { href: "/admin/crons", label: "Crons", icon: Clock },
 ];
 

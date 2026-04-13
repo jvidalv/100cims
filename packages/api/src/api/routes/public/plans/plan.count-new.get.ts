@@ -30,10 +30,7 @@ export const planCountNewGetRoute = new Elysia().get(
       .select({ count: count() })
       .from(planTable)
       .where(
-        and(
-          eq(planTable.status, "open"),
-          gt(planTable.createdAt, lastVisited),
-        ),
+        and(eq(planTable.status, "open"), gt(planTable.createdAt, lastVisited)),
       );
 
     return { success: true, count: result.count };

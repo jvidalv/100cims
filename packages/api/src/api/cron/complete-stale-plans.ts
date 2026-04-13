@@ -11,9 +11,7 @@ export async function completeStalePlans(): Promise<void> {
   const updated = await db
     .update(planTable)
     .set({ status: "completed", updatedAt: new Date() })
-    .where(
-      and(eq(planTable.status, "open"), lt(planTable.startDate, cutoff)),
-    )
+    .where(and(eq(planTable.status, "open"), lt(planTable.startDate, cutoff)))
     .returning({ id: planTable.id });
 
   console.log(`[complete-stale-plans] completed ${updated.length} plan(s)`);

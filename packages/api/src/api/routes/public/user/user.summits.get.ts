@@ -51,10 +51,7 @@ export const userSummitsGetRoute = new Elysia().get(
         )`.as("participants"),
       })
       .from(summitHasUsersTable)
-      .innerJoin(
-        summitTable,
-        eq(summitHasUsersTable.summitId, summitTable.id),
-      )
+      .innerJoin(summitTable, eq(summitHasUsersTable.summitId, summitTable.id))
       .innerJoin(mountainTable, eq(summitTable.mountainId, mountainTable.id))
       .where(eq(summitHasUsersTable.userId, userId))
       .groupBy(

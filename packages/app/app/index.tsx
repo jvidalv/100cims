@@ -2,9 +2,11 @@ import { Link, useRouter } from "expo-router";
 import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
+  Appearance,
   Image,
   RefreshControl,
   TouchableOpacity,
+  useColorScheme,
   View,
 } from "react-native";
 import Animated, {
@@ -198,6 +200,19 @@ const TopSection = () => {
   );
 };
 
+const ThemeToggleButton = () => {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
+  return (
+    <TouchableOpacity
+      onPress={() => Appearance.setColorScheme(isDark ? "light" : "dark")}
+      className="size-10 items-center justify-center rounded-full border-2 border-border"
+    >
+      <Icon name={isDark ? "sun.max.fill" : "moon.fill"} muted />
+    </TouchableOpacity>
+  );
+};
+
 const PageHeader = ({
   scrollOffset,
   showBadge,
@@ -235,6 +250,7 @@ const PageHeader = ({
           <MountainsDone showAllMountains={false} />
         </Animated.View>
         <View className="flex-1 flex-row items-center justify-end gap-2">
+          <ThemeToggleButton />
           <Link href="/hiscores" asChild>
             <TouchableOpacity
               className="size-10 items-center justify-center rounded-full border-2 border-border"

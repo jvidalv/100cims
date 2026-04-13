@@ -4,3 +4,7 @@
 
 expo-env.d.ts
 # @end expo-cli
+
+# Firebase config — use EAS secret instead
+google-services.json
+GoogleService-Info.plist

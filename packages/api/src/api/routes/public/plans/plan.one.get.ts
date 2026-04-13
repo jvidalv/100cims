@@ -9,10 +9,7 @@ import {
   planHasMountainsTable,
   mountainTable,
 } from "@/db/schema";
-import {
-  SuccessResponse,
-  ErrorResponse,
-} from "@/api/schemas/common.schema";
+import { SuccessResponse, ErrorResponse } from "@/api/schemas/common.schema";
 import { PlanDetailSchema } from "@/api/schemas/plan.schema";
 
 export const planOneGetRoute = new Elysia().get(

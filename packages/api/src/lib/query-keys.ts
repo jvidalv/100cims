@@ -23,12 +23,19 @@ export const adminKeys = {
   mountainChallenges: (id: string) =>
     ["admin", "mountains", id, "challenges"] as const,
   summitsList: () => ["admin", "summits"] as const,
-  summits: (params: {
-    page: number;
-    q: string;
-    validated: string;
-  }) => ["admin", "summits", params] as const,
+  summits: (params: { page: number; q: string; validated: string }) =>
+    ["admin", "summits", params] as const,
   summitDetail: (id: string) => ["admin", "summits", id] as const,
+  plansList: () => ["admin", "plans"] as const,
+  plans: (params: { page: number; q: string; status: string; speed: string }) =>
+    ["admin", "plans", params] as const,
+  planDetail: (id: string) => ["admin", "plans", id] as const,
   statsTimeseries: (metric: string, range: string) =>
     ["admin", "stats", "timeseries", metric, range] as const,
+  challengesList: () => ["admin", "challenges"] as const,
+  challenges: (params: { page: number; q: string; kind: string }) =>
+    ["admin", "challenges", params] as const,
+  challengeDetail: (id: string) => ["admin", "challenges", id] as const,
+  challengeMountains: (id: string) =>
+    ["admin", "challenges", id, "mountains"] as const,
 };

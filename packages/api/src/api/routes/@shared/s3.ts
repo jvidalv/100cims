@@ -1,5 +1,7 @@
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
+export const IMAGE_CACHE_CONTROL = "public, max-age=31536000, immutable";
+
 export const getS3Client = () =>
   new S3Client({
     region: process.env.AWS_BUCKET_REGION!,
@@ -21,10 +23,13 @@ export const putImageOnS3 = async (
       Body: content,
       ContentEncoding: "base64",
       ContentType: "image/jpeg",
-      CacheControl: "public, max-age=31536000, immutable",
+      CacheControl: IMAGE_CACHE_CONTROL,
     }),
   );
 };
 
-export const getPublicUrl = (key: string) =>
-  `https://${process.env.AWS_PUBLIC_BUCKET_NAME}.s3.${process.env.AWS_BUCKET_REGION}.amazonaws.com/${key}`;
+export const getPublicUrl = (key: string) => {
+  const cdn = process.env.AWS_PUBLIC_CDN_URL?.replace(/\/$/, "");
+  if (cdn) return `${cdn}/${key}`;
+  return `https://${process.env.AWS_PUBLIC_BUCKET_NAME}.s3.${process.env.AWS_BUCKET_REGION}.amazonaws.com/${key}`;
+};

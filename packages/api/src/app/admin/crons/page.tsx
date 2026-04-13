@@ -28,8 +28,7 @@ export default function AdminCronsPage() {
     triggerCron.mutate(name, {
       onSuccess: (data) =>
         setLastRun((p) => ({ ...p, [name]: `${data.durationMs}ms` })),
-      onError: (e) =>
-        setLastRun((p) => ({ ...p, [name]: e.message })),
+      onError: (e) => setLastRun((p) => ({ ...p, [name]: e.message })),
     });
 
   return (
@@ -55,8 +54,13 @@ export default function AdminCronsPage() {
                 const running =
                   triggerCron.isPending && triggerCron.variables === c.name;
                 return (
-                  <tr key={c.name} className="border-b">
-                    <td className="py-2 font-mono">{c.name}</td>
+                  <tr key={c.name} className="border-b align-top">
+                    <td className="py-2">
+                      <div className="font-mono">{c.name}</div>
+                      <div className="text-xs text-muted-foreground mt-0.5 max-w-md">
+                        {c.description}
+                      </div>
+                    </td>
                     <td className="py-2 font-mono text-muted-foreground">
                       {c.pattern}
                     </td>

@@ -30,10 +30,7 @@ export const userChallengesGetRoute = new Elysia().get(
         ),
       })
       .from(summitHasUsersTable)
-      .innerJoin(
-        summitTable,
-        eq(summitHasUsersTable.summitId, summitTable.id),
-      )
+      .innerJoin(summitTable, eq(summitHasUsersTable.summitId, summitTable.id))
       .innerJoin(mountainTable, eq(summitTable.mountainId, mountainTable.id))
       .innerJoin(
         challengeHasMountainTable,

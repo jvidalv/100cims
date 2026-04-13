@@ -14,3 +14,4 @@ export { BlurView } from "./blur-view";
 export { ProgressBar } from "./progress-bar";
 export { EnrichedThemedText } from "./enriched-themed-text";
 export { DynamicImage } from "./dynamic-image";
+export { ThemedLogo } from "./themed-logo";

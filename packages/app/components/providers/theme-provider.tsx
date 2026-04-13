@@ -16,11 +16,11 @@ const themes = {
     dark: {
       "--color-primary": "#f43f5e",
       "--color-accent": "#963ff4",
-      "--color-background": "#151718",
+      "--color-background": "#000000",
       "--color-foreground": "#ecedee",
       "--color-muted-foreground": "#bebebe",
       "--color-link": "#3b82f6",
-      "--color-border": "#333333",
+      "--color-border": "#1c1c1e",
     },
   },
 } as const;

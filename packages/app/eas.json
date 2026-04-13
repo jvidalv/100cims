@@ -3,15 +3,21 @@
     "appVersionSource": "remote"
   },
   "build": {
+    "base": {
+      "node": "24.0.0"
+    },
     "development": {
+      "extends": "base",
       "developmentClient": true,
       "distribution": "internal"
     },
     "preview": {
+      "extends": "base",
       "channel": "preview",
       "distribution": "internal"
     },
     "production": {
+      "extends": "base",
       "channel": "production",
       "autoIncrement": true
     }

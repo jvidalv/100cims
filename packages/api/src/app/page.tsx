@@ -62,7 +62,10 @@ export default function Home() {
           <div className="max-w-7xl mx-auto overflow-x-auto scrollbar-none">
             <div className="flex gap-6 justify-center min-w-max">
               {[
-                { src: "/assets/1.png", alt: "App homepage showing challenges" },
+                {
+                  src: "/assets/1.png",
+                  alt: "App homepage showing challenges",
+                },
                 { src: "/assets/2.png", alt: "User profile with summits" },
                 { src: "/assets/3.png", alt: "Mountain map view" },
                 { src: "/assets/4.png", alt: "Mountain detail page" },

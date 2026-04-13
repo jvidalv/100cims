@@ -4,11 +4,11 @@ import { Redirect, useRouter } from "expo-router";
 import { useColorScheme } from "nativewind";
 import { useState } from "react";
 import { FormattedMessage } from "react-intl";
-import { TouchableOpacity, View, Text, Image, ScrollView } from "react-native";
+import { TouchableOpacity, View, Text, ScrollView } from "react-native";
 import { twMerge } from "tailwind-merge";
 
 import { useAuth } from "@/components/providers/auth-provider";
-import { ThemedText, Button } from "@/components/ui/atoms";
+import { ThemedText, ThemedLogo, Button } from "@/components/ui/atoms";
 import { AvatarGroup } from "@/components/ui/molecules";
 import { useJoinMutation } from "@/domains/user/user.api";
 import { isAndroid, isIOS } from "@/lib/device";
@@ -251,10 +251,7 @@ export default function JoinScreen() {
     >
       <View className="items-center">
         <View className="items-center justify-center overflow-hidden rounded-full border-4 border-primary">
-          <Image
-            source={require("@/assets/images/logo-small.png")}
-            style={{ width: 120, height: 120 }}
-          />
+          <ThemedLogo style={{ width: 120, height: 120 }} />
         </View>
       </View>
       <View className="items-center justify-center">

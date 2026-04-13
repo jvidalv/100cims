@@ -4,21 +4,14 @@ import { useRouter } from "next/navigation";
 import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
 import { useEffect, useState } from "react";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAdminMountains } from "@/domains/admin/api";
 
 export default function AdminMountainsPage() {
   const router = useRouter();
-  const [page, setPage] = useQueryState(
-    "page",
-    parseAsInteger.withDefault(1),
-  );
+  const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1));
   const [q, setQ] = useQueryState("q", parseAsString.withDefault(""));
   const [search, setSearch] = useState(q);
 
@@ -47,9 +40,7 @@ export default function AdminMountainsPage() {
       />
 
       {error && <p className="text-red-600 mb-4">{error.message}</p>}
-      {isLoading && !data && (
-        <p className="text-muted-foreground">Loading…</p>
-      )}
+      {isLoading && !data && <p className="text-muted-foreground">Loading…</p>}
 
       {data && (
         <>

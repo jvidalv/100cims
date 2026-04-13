@@ -66,9 +66,8 @@ export const planAllGetRoute = new Elysia().get(
 
     const ordered = filtered.orderBy(...orderBy);
 
-    const plans = await (query?.limit
-      ? ordered.limit(query.limit)
-      : ordered
+    const plans = await (
+      query?.limit ? ordered.limit(query.limit) : ordered
     ).execute();
 
     const planIds = plans.map((p) => p.id);

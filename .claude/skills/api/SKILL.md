@@ -146,6 +146,15 @@ const summits = await db
   .orderBy(desc(summit.createdAt));
 ```
 
+**Postgres `date_trunc` GROUP BY gotcha:** the bucket arg (`'day'`/`'week'`/`'month'`) must be inlined as a SQL literal, not a parameter — otherwise Postgres reports the SELECT column "must appear in GROUP BY" because parameterized expressions don't match. Use `sql.raw` for the bucket only, never for user input:
+
+```typescript
+// bucket is a closed union from your own code, never user input
+const bucketExpr = sql<string>`to_char(date_trunc(${sql.raw(`'${bucket}'`)}, ${dateCol}), 'YYYY-MM-DD')`;
+await db.select({ date: bucketExpr, count: sql<number>`count(*)::int` })
+  .from(table).groupBy(bucketExpr).orderBy(bucketExpr);
+```
+
 ### Schema Validation
 
 ```typescript
@@ -216,11 +225,16 @@ return { items: results, pagination: { page: 1, pageSize: results.length, totalI
 ### Image Upload to S3
 
 ```typescript
-import { putImageOnS3 } from '@/api/routes/@shared/s3';
+import { putImageOnS3, getPublicUrl, getS3Client } from '@/api/routes/@shared/s3';
 
 const key = `${process.env.APP_NAME}/user/avatar/${userId}.jpeg`;
 await putImageOnS3(key, buffer);
+const imageUrl = getPublicUrl(key); // returns CloudFront URL when AWS_PUBLIC_CDN_URL is set, falls back to raw S3
 ```
+
+Always use `getS3Client()` rather than constructing a fresh `new S3Client(...)` — keeps credentials in one place. `IMAGE_CACHE_CONTROL` exported from the same module is the canonical `Cache-Control` header for image objects.
+
+For crons that walk the bucket (e.g. backfill / optimize), use `mapWithConcurrency` from `@/api/cron/lib/concurrent` instead of `Promise.all` over a full ListObjectsV2 page — a 1000-item page with sharp transforms and unbounded parallelism will saturate libuv's thread pool and OOM the Railway container. Cap at ~10.
 
 ### Log to Google Sheets
 

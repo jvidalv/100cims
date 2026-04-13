@@ -16,11 +16,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -273,10 +269,7 @@ export default function AdminMountainDetailPage({
         {challenges.data && challenges.data.length > 0 && (
           <ul className="divide-y border rounded-md">
             {challenges.data.map((c) => (
-              <li
-                key={c.id}
-                className="flex items-center gap-3 px-4 py-3"
-              >
+              <li key={c.id} className="flex items-center gap-3 px-4 py-3">
                 <Avatar className="size-8">
                   {c.imageUrl && <AvatarImage src={c.imageUrl} alt={c.name} />}
                   <AvatarFallback>
@@ -308,15 +301,12 @@ export default function AdminMountainDetailPage({
           Danger zone
         </h2>
         <p className="text-sm text-muted-foreground">
-          Deleting this mountain removes all its summits, summit reactions,
-          and challenge links. This cannot be undone.
+          Deleting this mountain removes all its summits, summit reactions, and
+          challenge links. This cannot be undone.
         </p>
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button
-              variant="destructive"
-              disabled={deleteMountain.isPending}
-            >
+            <Button variant="destructive" disabled={deleteMountain.isPending}>
               Delete mountain
             </Button>
           </AlertDialogTrigger>
@@ -371,10 +361,8 @@ function FieldText({
 const BADGE_STYLES = {
   neutral: "bg-muted text-foreground",
   sky: "bg-sky-100 text-sky-900 dark:bg-sky-900/30 dark:text-sky-300",
-  green:
-    "bg-green-100 text-green-900 dark:bg-green-900/30 dark:text-green-300",
-  amber:
-    "bg-amber-100 text-amber-900 dark:bg-amber-900/30 dark:text-amber-300",
+  green: "bg-green-100 text-green-900 dark:bg-green-900/30 dark:text-green-300",
+  amber: "bg-amber-100 text-amber-900 dark:bg-amber-900/30 dark:text-amber-300",
 } as const;
 
 function Badge({

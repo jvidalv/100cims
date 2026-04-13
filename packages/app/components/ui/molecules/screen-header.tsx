@@ -16,12 +16,16 @@ export const ScreenHeader = ({
   return (
     <ThemedView
       className={twMerge(
-        "h-[5.5rem] w-full justify-end",
-        hasDynamicIsland && "h-28",
+        "h-24 w-full justify-end pt-2",
+        hasDynamicIsland && "h-32",
       )}
     >
       <View className="flex-row items-center justify-between">
-        <TouchableOpacity onPress={router.back} className="w-1/4 py-3 pl-6">
+        <TouchableOpacity
+          onPress={router.back}
+          hitSlop={16}
+          className="w-1/4 py-4 pl-6 pr-4"
+        >
           <Icon
             size={isAndroid ? 24 : 16}
             name="chevron.left"

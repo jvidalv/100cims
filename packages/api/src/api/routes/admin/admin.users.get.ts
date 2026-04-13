@@ -45,10 +45,8 @@ export const adminUsersGetRoute = new Elysia().get(
     }
 
     if (query.country) conditions.push(eq(userTable.country, query.country));
-    if (query.platform)
-      conditions.push(eq(userTable.platform, query.platform));
-    if (query.version)
-      conditions.push(eq(userTable.appVersion, query.version));
+    if (query.platform) conditions.push(eq(userTable.platform, query.platform));
+    if (query.version) conditions.push(eq(userTable.appVersion, query.version));
 
     const where = conditions.length ? and(...conditions) : undefined;
 
@@ -70,6 +68,7 @@ export const adminUsersGetRoute = new Elysia().get(
             admin: userTable.admin,
             activeChallengeId: userTable.activeChallengeId,
             activeChallengeName: challengeTable.name,
+            hasPushToken: sql<boolean>`${userTable.expoPushToken} IS NOT NULL`,
           })
           .from(userTable)
           .leftJoin(

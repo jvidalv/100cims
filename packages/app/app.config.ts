@@ -30,6 +30,8 @@ const config: ExpoConfig & { newArchEnabled?: boolean } = {
       backgroundColor: "#f43f5e",
     },
     package: "app.x100cims.x100cims",
+    googleServicesFile:
+      process.env.GOOGLE_SERVICES_JSON ?? "./google-services.json",
   },
   web: {
     bundler: "metro",

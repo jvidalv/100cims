@@ -2,11 +2,7 @@ import { and, eq, ne } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 
 import { db } from "@/db";
-import {
-  planMessageTable,
-  planTable,
-  planHasUsersTable,
-} from "@/db/schema";
+import { planMessageTable, planTable, planHasUsersTable } from "@/db/schema";
 import { truncate } from "@/api/lib/discord";
 import { sendPushLocalized } from "@/api/lib/push";
 import { pushPlanChat } from "@/api/lib/push-translations";

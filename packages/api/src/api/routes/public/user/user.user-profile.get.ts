@@ -28,10 +28,7 @@ export const userUserProfileGetRoute = new Elysia().get(
           summitTable,
           eq(summitHasUsersTable.summitId, summitTable.id),
         )
-        .innerJoin(
-          mountainTable,
-          eq(summitTable.mountainId, mountainTable.id),
-        )
+        .innerJoin(mountainTable, eq(summitTable.mountainId, mountainTable.id))
         .where(eq(summitHasUsersTable.userId, userId))
         .orderBy(summitTable.summitedAt),
 
@@ -45,10 +42,7 @@ export const userUserProfileGetRoute = new Elysia().get(
           odEssential: mountainTable.essential,
         })
         .from(summitTable)
-        .innerJoin(
-          mountainTable,
-          eq(summitTable.mountainId, mountainTable.id),
-        )
+        .innerJoin(mountainTable, eq(summitTable.mountainId, mountainTable.id))
         .innerJoin(
           summitHasUsersTable,
           eq(summitHasUsersTable.summitId, summitTable.id),
