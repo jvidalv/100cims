@@ -4,11 +4,7 @@ import { useRouter } from "next/navigation";
 import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
 import { useEffect, useState } from "react";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -24,10 +20,7 @@ const ANY = "__any__";
 
 export default function AdminUsersPage() {
   const router = useRouter();
-  const [page, setPage] = useQueryState(
-    "page",
-    parseAsInteger.withDefault(1),
-  );
+  const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1));
   const [q, setQ] = useQueryState("q", parseAsString.withDefault(""));
   const [country, setCountry] = useQueryState(
     "country",
@@ -92,10 +85,7 @@ export default function AdminUsersPage() {
           className="max-w-xs"
         />
 
-        <Select
-          value={country || ANY}
-          onValueChange={pickFilter(setCountry)}
-        >
+        <Select value={country || ANY} onValueChange={pickFilter(setCountry)}>
           <SelectTrigger className="w-[140px]">
             <SelectValue placeholder="Country" />
           </SelectTrigger>
@@ -109,10 +99,7 @@ export default function AdminUsersPage() {
           </SelectContent>
         </Select>
 
-        <Select
-          value={platform || ANY}
-          onValueChange={pickFilter(setPlatform)}
-        >
+        <Select value={platform || ANY} onValueChange={pickFilter(setPlatform)}>
           <SelectTrigger className="w-[140px]">
             <SelectValue placeholder="Platform" />
           </SelectTrigger>
@@ -126,10 +113,7 @@ export default function AdminUsersPage() {
           </SelectContent>
         </Select>
 
-        <Select
-          value={version || ANY}
-          onValueChange={pickFilter(setVersion)}
-        >
+        <Select value={version || ANY} onValueChange={pickFilter(setVersion)}>
           <SelectTrigger className="w-[140px]">
             <SelectValue placeholder="Version" />
           </SelectTrigger>
@@ -151,9 +135,7 @@ export default function AdminUsersPage() {
       </div>
 
       {error && <p className="text-red-600 mb-4">{error.message}</p>}
-      {isLoading && !data && (
-        <p className="text-muted-foreground">Loading…</p>
-      )}
+      {isLoading && !data && <p className="text-muted-foreground">Loading…</p>}
 
       {data && (
         <>
@@ -167,6 +149,7 @@ export default function AdminUsersPage() {
                   <th className="py-2 pr-4 font-medium">Country</th>
                   <th className="py-2 pr-4 font-medium">Platform</th>
                   <th className="py-2 pr-4 font-medium">Version</th>
+                  <th className="py-2 pr-4 font-medium">Push</th>
                   <th className="py-2 pr-4 font-medium">Joined</th>
                 </tr>
               </thead>
@@ -209,6 +192,9 @@ export default function AdminUsersPage() {
                         {u.appVersion ?? "—"}
                       </td>
                       <td className="py-2 pr-4 text-muted-foreground">
+                        {u.hasPushToken ? "Yes" : "No"}
+                      </td>
+                      <td className="py-2 pr-4 text-muted-foreground">
                         {new Date(u.createdAt).toLocaleDateString()}
                       </td>
                     </tr>
@@ -217,7 +203,7 @@ export default function AdminUsersPage() {
                 {data.items.length === 0 && (
                   <tr>
                     <td
-                      colSpan={7}
+                      colSpan={8}
                       className="py-8 text-center text-muted-foreground"
                     >
                       No users match the current filters.

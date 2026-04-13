@@ -9,11 +9,12 @@ import React, {
   useMemo,
 } from "react";
 import { IntlProvider } from "react-intl";
-import { Image, useColorScheme, View } from "react-native";
+import { View } from "react-native";
 
 import { QueryClientProvider } from "@/components/providers";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { ThemedLogo } from "@/components/ui/atoms";
 import { useMountains } from "@/domains/mountain/mountain.api";
 import { usePlanChatUnread } from "@/domains/plan/plan-chat.api";
 import { usePlans } from "@/domains/plan/plan.api";
@@ -35,15 +36,9 @@ import "../global.css";
 void SplashScreen.preventAutoHideAsync();
 
 const LoadingSkeleton = () => {
-  const isDark = useColorScheme() === "dark";
   return (
     <View className="absolute inset-0 z-50 items-center justify-center bg-background">
-      <Image
-        source={
-          isDark
-            ? require("@/assets/images/logo-light.png")
-            : require("@/assets/images/logo-dark.png")
-        }
+      <ThemedLogo
         style={{ width: 280, height: 280 }}
         resizeMode="contain"
       />

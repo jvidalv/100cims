@@ -2,11 +2,7 @@ import { count, desc, eq } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 
 import { db } from "@/db";
-import {
-  mountainTable,
-  summitHasUsersTable,
-  summitTable,
-} from "@/db/schema";
+import { mountainTable, summitHasUsersTable, summitTable } from "@/db/schema";
 import { AdminSummitsResponseSchema } from "@/api/schemas/admin.schema";
 import { SuccessResponse } from "@/api/schemas/common.schema";
 
@@ -41,10 +37,7 @@ export const adminUserSummitsGetRoute = new Elysia().get(
         mountainEssential: mountainTable.essential,
       })
       .from(summitHasUsersTable)
-      .innerJoin(
-        summitTable,
-        eq(summitHasUsersTable.summitId, summitTable.id),
-      )
+      .innerJoin(summitTable, eq(summitHasUsersTable.summitId, summitTable.id))
       .innerJoin(mountainTable, eq(summitTable.mountainId, mountainTable.id))
       .where(eq(summitHasUsersTable.userId, params.id))
       .orderBy(desc(summitTable.summitedAt), desc(summitTable.createdAt))

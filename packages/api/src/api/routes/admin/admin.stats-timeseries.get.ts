@@ -2,15 +2,21 @@ import { gte, sql } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 
 import { db } from "@/db";
-import { summitTable, userTable } from "@/db/schema";
+import { planTable, summitTable, userTable } from "@/db/schema";
 import { AdminStatsTimeseriesResponseSchema } from "@/api/schemas/admin.schema";
 import { SuccessResponse } from "@/api/schemas/common.schema";
 
 const RANGES = ["week", "month", "6months", "year", "all"] as const;
 type Range = (typeof RANGES)[number];
 
-const METRICS = ["new-users", "summits"] as const;
+const METRICS = ["new-users", "summits", "plans"] as const;
 type Metric = (typeof METRICS)[number];
+
+const TABLE_BY_METRIC = {
+  "new-users": userTable,
+  summits: summitTable,
+  plans: planTable,
+} as const;
 
 const BUCKET_BY_RANGE: Record<Range, "day" | "week" | "month"> = {
   week: "day",
@@ -44,9 +50,8 @@ export const adminStatsTimeseriesGetRoute = new Elysia().get(
     const bucket = BUCKET_BY_RANGE[range];
     const since = sinceForRange(range);
 
-    const table = metric === "new-users" ? userTable : summitTable;
-    const dateCol =
-      metric === "new-users" ? userTable.createdAt : summitTable.createdAt;
+    const table = TABLE_BY_METRIC[metric];
+    const dateCol = table.createdAt;
 
     const bucketExpr = sql<string>`to_char(date_trunc(${sql.raw(`'${bucket}'`)}, ${dateCol}), 'YYYY-MM-DD')`;
 

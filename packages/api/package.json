@@ -15,6 +15,7 @@
     "db:migrate": "drizzle-kit migrate"
   },
   "dependencies": {
+    "@aws-sdk/client-cloudfront": "^3.1029.0",
     "@aws-sdk/client-s3": "^3.1018.0",
     "@elysiajs/bearer": "^1.4.3",
     "@elysiajs/cors": "^1.4.1",
@@ -52,6 +53,7 @@
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "recharts": "^3.8.1",
+    "sharp": "^0.34.5",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.5.0",
     "tailwindcss": "^4.2.2",
@@ -59,6 +61,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
+    "@eslint/js": "^9.39.2",
     "@types/geoip-lite": "^1.4.4",
     "@types/node": "^25",
     "@types/react": "^19.2.14",
@@ -72,7 +75,8 @@
     "openapi-typescript": "^7.13.0",
     "postcss": "^8",
     "prettier": "^3.8.1",
-    "typescript": "^5"
+    "typescript": "^5",
+    "typescript-eslint": "^8.58.1"
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

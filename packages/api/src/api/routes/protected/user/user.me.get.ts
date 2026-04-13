@@ -38,10 +38,7 @@ export const userMeGetRoute = new Elysia().get(
     }
 
     if (Object.keys(updates).length) {
-      await db
-        .update(userTable)
-        .set(updates)
-        .where(eq(userTable.id, user.id));
+      await db.update(userTable).set(updates).where(eq(userTable.id, user.id));
     }
 
     return { success: true, message: { ...user, ...updates } };

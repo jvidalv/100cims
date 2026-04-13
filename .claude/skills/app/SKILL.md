@@ -272,7 +272,7 @@ If TS reports `Cannot find module 'expo-modules-core'` or empty types after addi
 - Notification **body copy is server-side** (API reads `userTable.locale`) — do not translate push strings in the app.
 - Tap routing uses both `useLastNotificationResponse` (cold-start) and `addNotificationResponseReceivedListener` (warm); dedupe via `notification.request.identifier`.
 - Physical device required — simulators/emulators don't receive tokens.
-- Manual credential setup (APNs key, FCM v1 service account): see `docs/push-notifications-setup.md`.
+- Credentials live in EAS: APNs `.p8` (iOS push), FCM V1 service account JSON (Android push, project `cims-bcc70`), and `GOOGLE_SERVICES_JSON` file secret (used by `app.config.ts` `android.googleServicesFile`). Manage via `eas credentials` / `eas env:list`.
 
 ## Environment Variables
 

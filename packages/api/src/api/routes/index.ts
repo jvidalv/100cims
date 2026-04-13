@@ -1,6 +1,6 @@
 import { cors } from "@elysiajs/cors";
 import { swagger } from "@elysiajs/swagger";
-import { Elysia, ParseError, ValidationError } from "elysia";
+import { Elysia, NotFoundError, ParseError, ValidationError } from "elysia";
 
 import { cronJobs } from "@/api/cron";
 import {
@@ -11,6 +11,7 @@ import {
 } from "@/api/lib/discord";
 import { addRowToSheets, ERRORS_SPREADSHEET } from "@/api/lib/sheets";
 import { adminRoutes } from "@/api/routes/admin";
+import { healthGetRoute } from "@/api/routes/health.get";
 import { protectedRoutes } from "@/api/routes/protected";
 import { publicRoutes } from "@/api/routes/public";
 
@@ -52,7 +53,11 @@ export const app = new Elysia({ prefix: "/api" })
       path: "/swagger",
     }),
   )
-  .onError(({ request, error }) => {
+  .onError(({ request, error, code, set }) => {
+    if (error instanceof NotFoundError || code === "NOT_FOUND") {
+      set.status = 404;
+      return { error: "Not found" };
+    }
     console.log(error);
     const sendErrorEmbed = (
       type: string,
@@ -101,6 +106,7 @@ export const app = new Elysia({ prefix: "/api" })
     }
   })
   .use(cronJobs)
+  .use(healthGetRoute)
   .use(publicRoutes)
   .use(protectedRoutes)
   .use(adminRoutes);

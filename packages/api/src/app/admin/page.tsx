@@ -37,6 +37,7 @@ const RANGE_VALUES = RANGES.map((r) => r.value);
 const METRIC_COLORS: Record<StatsMetric, string> = {
   "new-users": "hsl(var(--chart-1))",
   summits: "hsl(var(--chart-2))",
+  plans: "hsl(var(--chart-3))",
 };
 
 export default function AdminPage() {
@@ -49,10 +50,7 @@ export default function AdminPage() {
     <div className="p-8 space-y-8">
       <div className="flex items-center justify-between flex-wrap gap-4">
         <h1 className="text-2xl font-bold">Overview</h1>
-        <Select
-          value={range}
-          onValueChange={(v) => setRange(v as StatsRange)}
-        >
+        <Select value={range} onValueChange={(v) => setRange(v as StatsRange)}>
           <SelectTrigger className="w-48">
             <SelectValue />
           </SelectTrigger>
@@ -69,6 +67,7 @@ export default function AdminPage() {
       <div className="space-y-8">
         <ChartCard title="New users" metric="new-users" range={range} />
         <ChartCard title="Summits" metric="summits" range={range} />
+        <ChartCard title="Plans created" metric="plans" range={range} />
       </div>
     </div>
   );

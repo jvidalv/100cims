@@ -14,6 +14,7 @@ export const AdminUserEntrySchema = t.Object({
   admin: t.Boolean(),
   activeChallengeId: t.Nullable(t.String()),
   activeChallengeName: t.Nullable(t.String()),
+  hasPushToken: t.Boolean(),
 });
 
 export const AdminUsersResponseSchema = t.Object({
@@ -49,6 +50,8 @@ export const AdminUserDetailSchema = t.Object({
   admin: t.Boolean(),
   activeChallengeId: t.Nullable(t.String()),
   activeChallengeName: t.Nullable(t.String()),
+  pushNotificationsEnabled: t.Boolean(),
+  expoPushToken: t.Nullable(t.String()),
   createdAt: t.Date(),
 });
 
@@ -154,4 +157,118 @@ export const AdminSummitUpdateBodySchema = t.Object({
   imageUrl: t.Optional(t.String()),
   mountainId: t.Optional(t.Nullable(t.String())),
   userId: t.Optional(t.Nullable(t.String())),
+});
+
+export const PLAN_STATUSES = ["open", "completed", "canceled"] as const;
+export const PLAN_SPEEDS = ["chill", "normal", "fast"] as const;
+export type PlanStatus = (typeof PLAN_STATUSES)[number];
+export type PlanSpeed = (typeof PLAN_SPEEDS)[number];
+
+const PlanStatusSchema = t.Union([
+  t.Literal("open"),
+  t.Literal("completed"),
+  t.Literal("canceled"),
+]);
+const PlanSpeedSchema = t.Union([
+  t.Literal("chill"),
+  t.Literal("normal"),
+  t.Literal("fast"),
+]);
+
+export const AdminPlanEntrySchema = t.Object({
+  id: t.String(),
+  title: t.String(),
+  description: t.Nullable(t.String()),
+  imageUrl: t.Nullable(t.String()),
+  startDate: t.Nullable(t.String()),
+  speed: t.String(),
+  status: PlanStatusSchema,
+  createdAt: t.Date(),
+  creatorId: t.String(),
+  creatorUsername: t.Nullable(t.String()),
+  creatorFirstName: t.Nullable(t.String()),
+  creatorLastName: t.Nullable(t.String()),
+  creatorImageUrl: t.Nullable(t.String()),
+  challengeId: t.Nullable(t.String()),
+  challengeName: t.Nullable(t.String()),
+  participantsCount: t.Number(),
+  mountainsCount: t.Number(),
+});
+
+export const AdminPlansResponseSchema = t.Object({
+  items: t.Array(AdminPlanEntrySchema),
+  page: t.Number(),
+  pageSize: t.Number(),
+  total: t.Number(),
+  totalPages: t.Number(),
+  facets: t.Object({
+    statuses: t.Array(t.String()),
+    speeds: t.Array(t.String()),
+  }),
+});
+
+export const AdminPlanParticipantSchema = t.Object({
+  userId: t.String(),
+  username: t.String(),
+  firstName: t.Nullable(t.String()),
+  lastName: t.Nullable(t.String()),
+  imageUrl: t.Nullable(t.String()),
+  joinedAt: t.Date(),
+  willBringDogs: t.Boolean(),
+  isCreator: t.Boolean(),
+});
+
+export const AdminPlanMountainSchema = t.Object({
+  mountainId: t.String(),
+  name: t.String(),
+  slug: t.String(),
+  height: t.String(),
+  essential: t.Boolean(),
+});
+
+export const AdminPlanMessageSchema = t.Object({
+  id: t.String(),
+  message: t.String(),
+  createdAt: t.Date(),
+  userId: t.String(),
+  username: t.Nullable(t.String()),
+  firstName: t.Nullable(t.String()),
+  lastName: t.Nullable(t.String()),
+  imageUrl: t.Nullable(t.String()),
+});
+
+export const AdminPlanDetailSchema = t.Object({
+  id: t.String(),
+  title: t.String(),
+  description: t.Nullable(t.String()),
+  imageUrl: t.Nullable(t.String()),
+  routeUrl: t.Nullable(t.String()),
+  startDate: t.Nullable(t.String()),
+  speed: t.String(),
+  status: PlanStatusSchema,
+  creatorId: t.String(),
+  challengeId: t.Nullable(t.String()),
+  challengeName: t.Nullable(t.String()),
+  createdAt: t.Date(),
+  updatedAt: t.Date(),
+  creator: t.Object({
+    id: t.String(),
+    username: t.Nullable(t.String()),
+    firstName: t.Nullable(t.String()),
+    lastName: t.Nullable(t.String()),
+    imageUrl: t.Nullable(t.String()),
+  }),
+  participants: t.Array(AdminPlanParticipantSchema),
+  mountains: t.Array(AdminPlanMountainSchema),
+  recentMessages: t.Array(AdminPlanMessageSchema),
+});
+
+export const AdminPlanUpdateBodySchema = t.Object({
+  title: t.Optional(t.String()),
+  description: t.Optional(t.Nullable(t.String())),
+  status: t.Optional(PlanStatusSchema),
+  speed: t.Optional(PlanSpeedSchema),
+  startDate: t.Optional(t.Nullable(t.String())),
+  imageUrl: t.Optional(t.Nullable(t.String())),
+  routeUrl: t.Optional(t.Nullable(t.String())),
 });

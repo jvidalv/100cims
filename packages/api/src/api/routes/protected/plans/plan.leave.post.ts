@@ -2,11 +2,7 @@ import { and, eq } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 
 import { db } from "@/db";
-import {
-  planTable,
-  planHasUsersTable,
-  planUserLogTable,
-} from "@/db/schema";
+import { planTable, planHasUsersTable, planUserLogTable } from "@/db/schema";
 import { sendPushLocalized } from "@/api/lib/push";
 import { pushPlanLeft } from "@/api/lib/push-translations";
 import { PUSH_TYPE, getUserDisplayName } from "@/api/lib/push-types";

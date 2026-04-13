@@ -33,6 +33,8 @@ export const adminUserDetailGetRoute = new Elysia().get(
         admin: userTable.admin,
         activeChallengeId: userTable.activeChallengeId,
         activeChallengeName: challengeTable.name,
+        pushNotificationsEnabled: userTable.pushNotificationsEnabled,
+        expoPushToken: userTable.expoPushToken,
         createdAt: userTable.createdAt,
       })
       .from(userTable)

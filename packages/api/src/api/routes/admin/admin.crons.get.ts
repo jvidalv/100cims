@@ -10,6 +10,7 @@ export const adminCronsGetRoute = new Elysia().get(
       message: CRON_REGISTRY.map((entry) => ({
         name: entry.name,
         pattern: entry.pattern,
+        description: entry.description,
       })),
     };
   },
@@ -17,7 +18,11 @@ export const adminCronsGetRoute = new Elysia().get(
     response: t.Object({
       success: t.Boolean(),
       message: t.Array(
-        t.Object({ name: t.String(), pattern: t.String() }),
+        t.Object({
+          name: t.String(),
+          pattern: t.String(),
+          description: t.String(),
+        }),
       ),
     }),
   },

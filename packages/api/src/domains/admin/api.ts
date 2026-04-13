@@ -95,13 +95,7 @@ export const useAdminUserSummits = (id: string, page: number) =>
     placeholderData: (prev) => prev,
   });
 
-export const useAdminMountains = ({
-  page,
-  q,
-}: {
-  page: number;
-  q: string;
-}) =>
+export const useAdminMountains = ({ page, q }: { page: number; q: string }) =>
   useQuery({
     queryKey: adminKeys.mountains({ page, q }),
     queryFn: async () => {
@@ -151,9 +145,7 @@ export const useUpdateAdminMountain = (id: string) => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (body: AdminMountainUpdateBody) => {
-      const { data, error } = await api.api.admin
-        .mountains({ id })
-        .post(body);
+      const { data, error } = await api.api.admin.mountains({ id }).post(body);
       if (error) throw error;
       return data;
     },
@@ -239,6 +231,102 @@ export const useUpdateAdminSummit = (id: string) => {
   });
 };
 
+export const useAdminPlans = ({
+  page,
+  q,
+  status,
+  speed,
+}: {
+  page: number;
+  q: string;
+  status: string;
+  speed: string;
+}) =>
+  useQuery({
+    queryKey: adminKeys.plans({ page, q, status, speed }),
+    queryFn: async () => {
+      const { data, error } = await api.api.admin.plans.get({
+        query: {
+          page,
+          pageSize: 15,
+          q: q || undefined,
+          status: status || undefined,
+          speed: speed || undefined,
+        },
+      });
+      if (error) throw error;
+      return data.message;
+    },
+    placeholderData: (prev) => prev,
+  });
+
+export const useAdminPlanDetail = (id: string) =>
+  useQuery({
+    queryKey: adminKeys.planDetail(id),
+    queryFn: async () => {
+      const { data, error } = await api.api.admin.plans({ id }).get();
+      if (error) throw error;
+      return data.message;
+    },
+  });
+
+export type AdminPlanUpdateBody = {
+  title?: string;
+  description?: string | null;
+  status?: "open" | "completed" | "canceled";
+  speed?: "chill" | "normal" | "fast";
+  startDate?: string | null;
+  imageUrl?: string | null;
+  routeUrl?: string | null;
+};
+
+export const useUpdateAdminPlan = (id: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (body: AdminPlanUpdateBody) => {
+      const { data, error } = await api.api.admin.plans({ id }).post(body);
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: adminKeys.planDetail(id) });
+      void qc.invalidateQueries({ queryKey: adminKeys.plansList() });
+    },
+  });
+};
+
+export const useDeleteAdminPlan = (id: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      const { data, error } = await api.api.admin.plans({ id }).delete();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      qc.removeQueries({ queryKey: adminKeys.planDetail(id) });
+      void qc.invalidateQueries({ queryKey: adminKeys.plansList() });
+    },
+  });
+};
+
+export const useRemoveAdminPlanMember = (planId: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (userId: string) => {
+      const { data, error } = await api.api.admin
+        .plans({ id: planId })
+        .members({ userId })
+        .delete();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: adminKeys.planDetail(planId) });
+    },
+  });
+};
+
 export const useDeleteAdminSummit = (id: string) => {
   const qc = useQueryClient();
   return useMutation({
@@ -254,7 +342,7 @@ export const useDeleteAdminSummit = (id: string) => {
   });
 };
 
-export type StatsMetric = "new-users" | "summits";
+export type StatsMetric = "new-users" | "summits" | "plans";
 export type StatsRange = "week" | "month" | "6months" | "year" | "all";
 
 export const useAdminStatsTimeseries = (
@@ -271,6 +359,95 @@ export const useAdminStatsTimeseries = (
       return data.message;
     },
   });
+
+export const useAdminChallenges = ({
+  page,
+  q,
+  kind,
+}: {
+  page: number;
+  q: string;
+  kind: string;
+}) =>
+  useQuery({
+    queryKey: adminKeys.challenges({ page, q, kind }),
+    queryFn: async () => {
+      const { data, error } = await api.api.admin.challenges.get({
+        query: {
+          page,
+          pageSize: 15,
+          q: q || undefined,
+          kind: kind || undefined,
+        },
+      });
+      if (error) throw error;
+      return data.message;
+    },
+    placeholderData: (prev) => prev,
+  });
+
+export const useAdminChallengeDetail = (id: string) =>
+  useQuery({
+    queryKey: adminKeys.challengeDetail(id),
+    queryFn: async () => {
+      const { data, error } = await api.api.admin.challenges({ id }).get();
+      if (error) throw error;
+      return data.message;
+    },
+  });
+
+export const useAdminChallengeMountains = (id: string) =>
+  useQuery({
+    queryKey: adminKeys.challengeMountains(id),
+    queryFn: async () => {
+      const { data, error } = await api.api.admin
+        .challenges({ id })
+        .mountains.get();
+      if (error) throw error;
+      return data.message;
+    },
+  });
+
+export type AdminChallengeUpdateBody = {
+  name?: string;
+  country?: string;
+  description?: string | null;
+  emoji?: string | null;
+  imageUrl?: string | null;
+  webUrl?: string | null;
+  isPublic?: boolean;
+};
+
+export const useUpdateAdminChallenge = (id: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (body: AdminChallengeUpdateBody) => {
+      const { data, error } = await api.api.admin.challenges({ id }).post(body);
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: adminKeys.challengeDetail(id) });
+      void qc.invalidateQueries({ queryKey: adminKeys.challengesList() });
+    },
+  });
+};
+
+export const useDeleteAdminChallenge = (id: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      const { data, error } = await api.api.admin.challenges({ id }).delete();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      qc.removeQueries({ queryKey: adminKeys.challengeDetail(id) });
+      qc.removeQueries({ queryKey: adminKeys.challengeMountains(id) });
+      void qc.invalidateQueries({ queryKey: adminKeys.challengesList() });
+    },
+  });
+};
 
 export const useTriggerCron = () => {
   const qc = useQueryClient();

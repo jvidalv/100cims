@@ -5,11 +5,7 @@ import { parseAsInteger, useQueryState } from "nuqs";
 import { use, useEffect, useState } from "react";
 import { toast } from "sonner";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -253,6 +249,30 @@ export default function AdminUserDetailPage({
             {u.lastLocationAt
               ? new Date(u.lastLocationAt).toLocaleString()
               : "—"}
+          </dd>
+          <dt className="text-muted-foreground">Push enabled</dt>
+          <dd>{u.pushNotificationsEnabled ? "Yes" : "No"}</dd>
+          <dt className="text-muted-foreground">Push token</dt>
+          <dd>
+            {u.expoPushToken ? (
+              <div className="flex items-start gap-2">
+                <code className="font-mono text-xs break-all">
+                  {u.expoPushToken}
+                </code>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    void navigator.clipboard.writeText(u.expoPushToken ?? "");
+                    toast.success("Copied");
+                  }}
+                >
+                  Copy
+                </Button>
+              </div>
+            ) : (
+              "—"
+            )}
           </dd>
         </dl>
       </section>

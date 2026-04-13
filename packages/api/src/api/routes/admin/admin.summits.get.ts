@@ -95,11 +95,7 @@ export const adminSummitsGetRoute = new Elysia().get(
           eq(summitHasUsersTable.summitId, summitTable.id),
         )
         .where(where)
-        .groupBy(
-          summitTable.id,
-          mountainTable.id,
-          userTable.id,
-        )
+        .groupBy(summitTable.id, mountainTable.id, userTable.id)
         .orderBy(desc(summitTable.summitedAt), desc(summitTable.createdAt))
         .limit(pageSize)
         .offset(offset),

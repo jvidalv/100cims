@@ -16,11 +16,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -281,14 +277,9 @@ export default function AdminSummitDetailPage({
                 u.username;
               const initials = name.slice(0, 2).toUpperCase();
               return (
-                <li
-                  key={u.id}
-                  className="flex items-center gap-3 px-4 py-3"
-                >
+                <li key={u.id} className="flex items-center gap-3 px-4 py-3">
                   <Avatar className="size-8">
-                    {u.imageUrl && (
-                      <AvatarImage src={u.imageUrl} alt={name} />
-                    )}
+                    {u.imageUrl && <AvatarImage src={u.imageUrl} alt={name} />}
                     <AvatarFallback>{initials}</AvatarFallback>
                   </Avatar>
                   <Link
@@ -319,10 +310,7 @@ export default function AdminSummitDetailPage({
         </p>
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button
-              variant="destructive"
-              disabled={deleteSummit.isPending}
-            >
+            <Button variant="destructive" disabled={deleteSummit.isPending}>
               Delete summit
             </Button>
           </AlertDialogTrigger>

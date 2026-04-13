@@ -128,7 +128,8 @@ export default function ParallaxScrollView({
       >
         <TouchableOpacity
           onPress={router.back}
-          className="-mx-2 size-8 items-center justify-center overflow-hidden rounded-full"
+          hitSlop={16}
+          className="size-11 items-center justify-center overflow-hidden rounded-full"
         >
           <BlurView
             className="items-center justify-center"
@@ -226,7 +227,8 @@ const Header = ({
       <View className="mt-auto flex-row items-center justify-between">
         <TouchableOpacity
           onPress={router.back}
-          className="-mt-3 w-1/5 py-3 pl-6"
+          hitSlop={16}
+          className="-mt-3 w-1/5 py-4 pl-6 pr-4"
         >
           <Icon
             size={isAndroid ? 24 : 16}

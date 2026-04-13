@@ -5,6 +5,11 @@ import { getToken } from "next-auth/jwt";
 import { db } from "@/db";
 import { userTable } from "@/db/schema";
 import { setAdminContext } from "@/api/routes/admin/admin-context";
+import { adminChallengeDeleteDeleteRoute } from "@/api/routes/admin/admin.challenge-delete.delete";
+import { adminChallengeDetailGetRoute } from "@/api/routes/admin/admin.challenge-detail.get";
+import { adminChallengeMountainsGetRoute } from "@/api/routes/admin/admin.challenge-mountains.get";
+import { adminChallengeUpdatePostRoute } from "@/api/routes/admin/admin.challenge-update.post";
+import { adminChallengesGetRoute } from "@/api/routes/admin/admin.challenges.get";
 import { adminCronsGetRoute } from "@/api/routes/admin/admin.crons.get";
 import { adminCronsTriggerPostRoute } from "@/api/routes/admin/admin.crons-trigger.post";
 import { adminMeGetRoute } from "@/api/routes/admin/admin.me.get";
@@ -13,6 +18,11 @@ import { adminMountainDeleteDeleteRoute } from "@/api/routes/admin/admin.mountai
 import { adminMountainDetailGetRoute } from "@/api/routes/admin/admin.mountain-detail.get";
 import { adminMountainUpdatePostRoute } from "@/api/routes/admin/admin.mountain-update.post";
 import { adminMountainsGetRoute } from "@/api/routes/admin/admin.mountains.get";
+import { adminPlanDeleteDeleteRoute } from "@/api/routes/admin/admin.plan-delete.delete";
+import { adminPlanDetailGetRoute } from "@/api/routes/admin/admin.plan-detail.get";
+import { adminPlanMemberRemoveDeleteRoute } from "@/api/routes/admin/admin.plan-member-remove.delete";
+import { adminPlanUpdatePostRoute } from "@/api/routes/admin/admin.plan-update.post";
+import { adminPlansGetRoute } from "@/api/routes/admin/admin.plans.get";
 import { adminStatsTimeseriesGetRoute } from "@/api/routes/admin/admin.stats-timeseries.get";
 import { adminSummitDeleteDeleteRoute } from "@/api/routes/admin/admin.summit-delete.delete";
 import { adminSummitDetailGetRoute } from "@/api/routes/admin/admin.summit-detail.get";
@@ -61,10 +71,20 @@ export const adminRoutes = new Elysia({ prefix: "/admin" })
   .use(adminMountainUpdatePostRoute)
   .use(adminMountainDeleteDeleteRoute)
   .use(adminMountainChallengesGetRoute)
+  .use(adminChallengesGetRoute)
+  .use(adminChallengeDetailGetRoute)
+  .use(adminChallengeUpdatePostRoute)
+  .use(adminChallengeDeleteDeleteRoute)
+  .use(adminChallengeMountainsGetRoute)
   .use(adminSummitsGetRoute)
   .use(adminSummitDetailGetRoute)
   .use(adminSummitUpdatePostRoute)
   .use(adminSummitDeleteDeleteRoute)
+  .use(adminPlansGetRoute)
+  .use(adminPlanDetailGetRoute)
+  .use(adminPlanUpdatePostRoute)
+  .use(adminPlanDeleteDeleteRoute)
+  .use(adminPlanMemberRemoveDeleteRoute)
   .use(adminStatsTimeseriesGetRoute)
   .use(adminCronsGetRoute)
   .use(adminCronsTriggerPostRoute);

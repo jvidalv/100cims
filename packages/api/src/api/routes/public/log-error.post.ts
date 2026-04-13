@@ -27,9 +27,7 @@ export const logErrorPostRoute = new Elysia().post(
       color: DISCORD_COLOR.RED,
       fields: [
         { name: "Message", value: truncate(body.message) },
-        ...(body.stack
-          ? [{ name: "Stack", value: truncate(body.stack) }]
-          : []),
+        ...(body.stack ? [{ name: "Stack", value: truncate(body.stack) }] : []),
         ...(body.route
           ? [{ name: "Route", value: truncate(body.route, 200), inline: true }]
           : []),
