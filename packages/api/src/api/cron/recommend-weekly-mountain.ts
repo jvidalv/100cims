@@ -38,17 +38,16 @@ interface Candidate {
   lng: number;
 }
 
-const closestTo = (origin: Coords, candidates: Candidate[]) => {
-  let best: Candidate | null = null;
-  let bestKm = Infinity;
-  for (const c of candidates) {
-    const km = haversineKm(origin, { lat: c.lat, lng: c.lng });
-    if (km < bestKm) {
-      bestKm = km;
-      best = c;
-    }
-  }
-  return best ? { mountain: best, km: bestKm } : null;
+const RANDOM_POOL_SIZE = 10;
+
+const pickNearby = (origin: Coords, candidates: Candidate[]) => {
+  if (!candidates.length) return null;
+  const ranked = candidates
+    .map((c) => ({ c, km: haversineKm(origin, { lat: c.lat, lng: c.lng }) }))
+    .sort((a, b) => a.km - b.km)
+    .slice(0, RANDOM_POOL_SIZE);
+  const choice = ranked[Math.floor(Math.random() * ranked.length)];
+  return { mountain: choice.c, km: choice.km };
 };
 
 export async function recommendWeeklyMountain(): Promise<void> {
@@ -162,7 +161,7 @@ export async function recommendWeeklyMountain(): Promise<void> {
     }
 
     const origin: Coords = { lat: Number(user.lat), lng: Number(user.lng) };
-    const pick = closestTo(origin, remaining);
+    const pick = pickNearby(origin, remaining);
     if (!pick) continue;
 
     const total = challengeMountains.length;

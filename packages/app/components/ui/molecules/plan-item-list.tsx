@@ -69,8 +69,8 @@ export const PlanItemList = ({
         <View className="relative">
           {mountainsWithImages?.length ? (
             <View
-              className="relative flex flex-row overflow-hidden"
-              style={{ width: 100, height: 100, borderRadius: 6 }}
+              className="relative flex flex-row overflow-hidden rounded"
+              style={{ width: 100, height: 100 }}
             >
               {mountainsWithImages.slice(0, 4).map(({ imageUrl }, i, arr) => {
                 const count = arr.length;
@@ -200,7 +200,7 @@ export const PlanItemList = ({
 
 export const PlanItemListSkeleton = () => (
   <View className="flex flex-row items-center gap-4">
-    <Skeleton className="size-[100px] rounded-lg" />
+    <Skeleton className="size-[100px] rounded" />
     <View className="gap-1">
       <Skeleton className="h-4 w-16" />
       <Skeleton className="h-6 w-60" />

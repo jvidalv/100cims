@@ -2,9 +2,8 @@ import * as Application from "expo-application";
 import { Link, useRouter } from "expo-router";
 import { Fragment } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { Alert, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 
-import { useAuth } from "@/components/providers/auth-provider";
 import {
   ThemedText,
   ThemedView,
@@ -17,7 +16,6 @@ import { useUserMe } from "@/domains/user/user.api";
 
 export default function UserIndexScreen() {
   const intl = useIntl();
-  const { logout } = useAuth();
   const router = useRouter();
   const { data } = useUserMe();
   const { data: plansUnread } = usePlanChatUnread();
@@ -62,29 +60,6 @@ export default function UserIndexScreen() {
     },
   ];
 
-  const onLogout = () => {
-    Alert.alert(
-      intl.formatMessage({ defaultMessage: "Login out" }),
-      intl.formatMessage({
-        defaultMessage: "Are you sure you want to continue?",
-      }),
-      [
-        {
-          text: intl.formatMessage({ defaultMessage: "Cancel" }),
-          style: "cancel",
-        },
-        {
-          text: intl.formatMessage({ defaultMessage: "Yes" }),
-          style: "default",
-          onPress: () => {
-            logout();
-            router.dismissAll();
-          },
-        },
-      ],
-    );
-  };
-
   return (
     <ThemedView className="flex-1">
       <ScreenHeader />
@@ -105,7 +80,7 @@ export default function UserIndexScreen() {
             </View>
           </Link>
         </View>
-        <View className="mb-4 rounded-xl border-2 border-border">
+        <View className="mb-4 rounded border-2 border-border">
           {items.map(({ iconName, showDot, text, onPress }, index) => (
             <Fragment key={text}>
               <TouchableOpacity
@@ -134,21 +109,13 @@ export default function UserIndexScreen() {
         <View className="mb-4">
           <MerchUpsellCard onPress={() => router.push("/support")} />
         </View>
-        <View>
+        <View className="mt-auto pb-12">
           <ThemedText className="text-center text-muted-foreground">
             <FormattedMessage defaultMessage="Version" />
             {" ~"}
             {Application.nativeApplicationVersion}
           </ThemedText>
         </View>
-        <TouchableOpacity
-          onPress={onLogout}
-          className="mt-auto items-center pb-12"
-        >
-          <ThemedText className="text-muted-foreground underline">
-            <FormattedMessage defaultMessage="Logout" />
-          </ThemedText>
-        </TouchableOpacity>
       </ThemedView>
     </ThemedView>
   );

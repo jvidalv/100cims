@@ -6,11 +6,11 @@ import { FormattedMessage, useIntl } from "react-intl";
 import { Alert, Image, ScrollView, TouchableOpacity, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
-import { queryClient } from "@/components/providers/query-client-provider";
 import {
   ActivityIndicator,
   Button,
   Icon,
+  Skeleton,
   ThemedText,
   ThemedView,
 } from "@/components/ui/atoms";
@@ -20,47 +20,56 @@ import {
   UserForSelectInput,
   UserSelectInput,
 } from "@/components/ui/molecules/user-select-input";
-import { useMountains, useSummitPost } from "@/domains/mountain/mountain.api";
-import { SUMMITS_KEY } from "@/domains/summit/summit.api";
+import {
+  useSummitGet,
+  useUpdateSummitMutation,
+} from "@/domains/summit/summit.api";
 import { useUserMe, useUsers } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
 import { getImageOptimized } from "@/lib/images";
 import { logError } from "@/lib/log-error";
-import { userKeys } from "@/lib/query-keys";
 
-export default function SummitMountainScreen() {
+export default function EditSummitScreen() {
   const intl = useIntl();
   const router = useRouter();
-  const { slug } = useLocalSearchParams<{ slug: string }>();
-  const { mutateAsync, isPending } = useSummitPost(slug);
-  const { data: mountains } = useMountains();
-  const { data: user } = useUserMe();
+  const { summit } = useLocalSearchParams<{ summit: string }>();
+  const { data } = useSummitGet({ summitId: summit });
+  const { data: me } = useUserMe();
+  const { mutateAsync, isPending } = useUpdateSummitMutation();
+
   const [userQuery, setUserQuery] = useState<string>("");
   const { data: users, isPending: isPendingUsers } = useUsers({
     query: userQuery,
   });
 
   const [image, setImage] = useState<ImagePickerAsset | null>(null);
-  const [isImageMissing, setIsImageMissing] = useState(false);
   const [isLoadingImage, setIsLoadingImage] = useState(false);
-  const [date, setDate] = useState<Date>(new Date());
-  const [selectedUsers, setSelectedUsers] = useState<UserForSelectInput[]>(
-    user
-      ? [
-          {
-            id: user?.id,
-            fullName: getFullName(user) || "?",
-            imageUrl: user?.imageUrl,
-          },
-        ]
-      : [],
+  const [date, setDate] = useState<Date | null>(null);
+  const [selectedUsers, setSelectedUsers] = useState<UserForSelectInput[] | null>(
+    null,
   );
 
-  const mountain = mountains?.find((mountain) => slug === mountain.slug);
-
-  if (!mountain || !user) {
-    return null;
+  if (!data || !me) {
+    return (
+      <ThemedView className="flex-1">
+        <ScreenHeader />
+        <View className="gap-6 px-6 pt-2">
+          <Skeleton className="h-10 w-64" />
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-64 w-full" />
+        </View>
+      </ThemedView>
+    );
   }
+
+  const initialDate = new Date(data.summitedAt);
+  const initialUsers: UserForSelectInput[] = data.users.map((u) => ({
+    id: u.userId,
+    fullName: getFullName(u) || "?",
+    imageUrl: u.imageUrl,
+  }));
+  const effectiveDate = date ?? initialDate;
+  const effectiveUsers = selectedUsers ?? initialUsers;
 
   const pickImage = async () => {
     setIsLoadingImage(true);
@@ -72,13 +81,12 @@ export default function SummitMountainScreen() {
         quality: 0.7,
       });
       if (!result.canceled) {
-        const image = result.assets[0];
-
-        const modifiedImage = await getImageOptimized(image);
+        const picked = result.assets[0];
+        const modifiedImage = await getImageOptimized(picked);
         setImage(modifiedImage);
       }
     } catch (error) {
-      logError(error, "mountain/summit/image-pick");
+      logError(error, "summit/edit/image-pick");
       Alert.alert(
         intl.formatMessage({
           defaultMessage: "Error, try again or use another image.",
@@ -89,53 +97,40 @@ export default function SummitMountainScreen() {
     }
   };
 
-  const submitDisabled =
-    !date || !image?.base64 || !selectedUsers?.length || !mountain;
-
   const onSubmit = async () => {
-    if (!image?.base64) {
-      setIsImageMissing(true);
-      return;
-    }
+    const payload: {
+      summitId: string;
+      summitedAt?: string;
+      image?: string;
+      usersId?: string[];
+    } = { summitId: summit };
 
-    if (submitDisabled) {
-      return Alert.alert(
-        intl.formatMessage({
-          defaultMessage: "Missing information.",
-        }),
-      );
+    if (date && date.toISOString() !== initialDate.toISOString()) {
+      payload.summitedAt = date.toISOString();
+    }
+    if (image?.base64) {
+      payload.image = image.base64;
+    }
+    if (selectedUsers) {
+      const initialIds = initialUsers.map((u) => u.id).sort().join(",");
+      const currentIds = selectedUsers.map((u) => u.id).sort().join(",");
+      if (initialIds !== currentIds) {
+        payload.usersId = selectedUsers.map((u) => u.id);
+      }
     }
 
     try {
-      await mutateAsync({
-        date: date.toISOString(),
-        image: image.base64,
-        mountainId: mountain?.id,
-        usersId: selectedUsers.map((user) => user.id),
-      });
-
-      void queryClient.refetchQueries({
-        queryKey: SUMMITS_KEY({ limit: 4 }),
-      });
-      void queryClient.refetchQueries({
-        queryKey: SUMMITS_KEY({
-          mountainId: mountain.id,
-          limit: 100,
-        }),
-      });
-      void queryClient.refetchQueries({
-        queryKey: userKeys.summits(),
-      });
+      await mutateAsync(payload);
       router.back();
     } catch (error) {
-      logError(error, "mountain/summit/submit");
-      return Alert.alert(
-        intl.formatMessage({
-          defaultMessage: "Error, try again.",
-        }),
+      logError(error, "summit/edit/submit");
+      Alert.alert(
+        intl.formatMessage({ defaultMessage: "Error, try again." }),
       );
     }
   };
+
+  const displayImageUri = image?.uri ?? data.summitImageUrl;
 
   return (
     <ThemedView className="flex-1">
@@ -143,35 +138,31 @@ export default function SummitMountainScreen() {
       <ScrollView className="flex-1" keyboardShouldPersistTaps="handled">
         <View className="gap-6 px-6 pt-2">
           <ThemedText className="text-4xl font-bold">
-            {mountain.name}
+            {data.mountainName}
           </ThemedText>
           <View className="gap-2">
             <ThemedText className="text-lg font-bold">
               <FormattedMessage defaultMessage="Date" />
             </ThemedText>
-            <ThemedDateInput value={date} onDateValid={setDate} noFutureDates />
+            <ThemedDateInput
+              value={effectiveDate}
+              onDateValid={setDate}
+              noFutureDates
+            />
           </View>
           <View className="gap-2">
-            <ThemedText
-              className={twMerge(
-                "text-lg font-bold",
-                isImageMissing && "text-red-500",
-              )}
-            >
+            <ThemedText className="text-lg font-bold">
               <FormattedMessage defaultMessage="Summit photo" />
             </ThemedText>
             <TouchableOpacity
               onPress={pickImage}
-              className={twMerge(
-                "h-64 w-full items-center justify-center overflow-hidden rounded border-2 border-border bg-background",
-                isImageMissing && "border-red-500",
-              )}
+              className="h-64 w-full items-center justify-center overflow-hidden rounded border-2 border-border bg-background"
             >
-              {image ? (
+              {displayImageUri ? (
                 <View className="relative size-full items-center justify-center">
                   <View className="absolute top-0 z-10 size-full">
                     <Image
-                      source={{ uri: image.uri }}
+                      source={{ uri: displayImageUri }}
                       style={{
                         width: "100%",
                         height: "100%",
@@ -181,41 +172,28 @@ export default function SummitMountainScreen() {
                   </View>
                   <Image
                     blurRadius={12}
-                    source={{ uri: image.uri }}
+                    source={{ uri: displayImageUri }}
                     style={{
                       width: "100%",
                       height: "100%",
                       opacity: 0.5,
                     }}
                   />
-                </View>
-              ) : (
-                <View className="relative size-full items-center justify-center">
-                  {mountain.imageUrl && (
-                    <Image
-                      source={{ uri: mountain.imageUrl }}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        opacity: 0.4,
-                      }}
-                      resizeMode="cover"
-                    />
-                  )}
-                  <View className="absolute inset-0 items-center justify-center">
+                  <View className="absolute bottom-2 right-2 z-20 rounded-full bg-black/50 p-2">
                     {isLoadingImage ? (
-                      <ActivityIndicator className="opacity-50" />
+                      <ActivityIndicator color="white" />
                     ) : (
-                      <Icon
-                        name="camera"
-                        size={32}
-                        muted
-                        animationSpec={{
-                          effect: { type: "bounce" },
-                        }}
-                      />
+                      <Icon name="camera" size={18} color="white" />
                     )}
                   </View>
+                </View>
+              ) : (
+                <View className="absolute inset-0 items-center justify-center">
+                  {isLoadingImage ? (
+                    <ActivityIndicator className="opacity-50" />
+                  ) : (
+                    <Icon name="camera" size={32} muted />
+                  )}
                 </View>
               )}
             </TouchableOpacity>
@@ -227,7 +205,7 @@ export default function SummitMountainScreen() {
             <UserSelectInput
               maxSelected={5}
               firstSelectedRemovable={false}
-              selectedUsers={selectedUsers}
+              selectedUsers={effectiveUsers}
               onQueryChange={setUserQuery}
               query={userQuery}
               isFetchingUsers={isPendingUsers}
@@ -242,14 +220,14 @@ export default function SummitMountainScreen() {
           <Button
             isLoading={isPending}
             intent="success"
-            className="mt-6"
+            className={twMerge("mt-6")}
             onPress={onSubmit}
           >
-            <FormattedMessage defaultMessage="Summit" />
+            <FormattedMessage defaultMessage="Save" />
           </Button>
           <TouchableOpacity className="mb-4 mt-2" onPress={router.back}>
             <ThemedText className="text-center text-muted-foreground underline">
-              <FormattedMessage defaultMessage="I'll summit later" />
+              <FormattedMessage defaultMessage="Cancel" />
             </ThemedText>
           </TouchableOpacity>
         </View>

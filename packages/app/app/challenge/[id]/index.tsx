@@ -36,10 +36,8 @@ export default function ChallengeDetailScreen() {
   const { isAuthenticated } = useAuth();
   const { data: challenge, isPending } = useChallengeDetail({ id });
   const { data: activeChallenge } = useActiveChallenge();
-  const {
-    mutateAsync: updateUser,
-    isPending: isUpdating,
-  } = useUpdateUserMeMutation();
+  const { mutateAsync: updateUser, isPending: isUpdating } =
+    useUpdateUserMeMutation();
 
   const isActiveChallenge = activeChallenge?.id === id;
 
@@ -79,14 +77,19 @@ export default function ChallengeDetailScreen() {
   const headerImageUrl = tallestMountain?.imageUrl || challenge?.imageUrl;
 
   // Display emoji
-  const displayEmoji = challenge?.emoji || (challenge?.country ? countryToEmoji(challenge.country) : "🏔️");
+  const displayEmoji =
+    challenge?.emoji ||
+    (challenge?.country ? countryToEmoji(challenge.country) : "🏔️");
 
   const usersToShow = challenge?.users || [];
   const totalUsers = challenge?.totalUsers || 0;
   const extraUsersCount = totalUsers > 100 ? totalUsers - 100 : 0;
 
   const mountainsToShow = challenge?.mountains?.slice(0, 3) || [];
-  const extraMountainsCount = (challenge?.totalMountains || 0) > 3 ? (challenge?.totalMountains || 0) - 3 : 0;
+  const extraMountainsCount =
+    (challenge?.totalMountains || 0) > 3
+      ? (challenge?.totalMountains || 0) - 3
+      : 0;
 
   if (isPending) {
     return (
@@ -102,7 +105,7 @@ export default function ChallengeDetailScreen() {
             <Skeleton className="h-16 w-full" />
           </View>
           {/* Button skeleton */}
-          <Skeleton className="h-14 w-full rounded-xl" />
+          <Skeleton className="h-14 w-full rounded" />
           {/* Participants skeleton */}
           <View className="gap-3">
             <Skeleton className="h-8 w-32" />
@@ -117,9 +120,9 @@ export default function ChallengeDetailScreen() {
           {/* Mountains skeleton */}
           <View className="gap-3">
             <Skeleton className="h-8 w-32" />
-            <Skeleton className="h-20 w-full rounded-xl" />
-            <Skeleton className="h-20 w-full rounded-xl" />
-            <Skeleton className="h-20 w-full rounded-xl" />
+            <Skeleton className="h-20 w-full rounded" />
+            <Skeleton className="h-20 w-full rounded" />
+            <Skeleton className="h-20 w-full rounded" />
           </View>
         </View>
       </ThemedView>
@@ -217,7 +220,7 @@ export default function ChallengeDetailScreen() {
       {/* Switch Challenge Button */}
       <View>
         {isActiveChallenge ? (
-          <View className="flex-row items-center justify-center gap-2 rounded-xl border-2 border-primary bg-primary/10 p-4">
+          <View className="flex-row items-center justify-center gap-2 rounded border-2 border-primary bg-primary/10 p-4">
             <Icon name="checkmark.circle.fill" color="#f43f5e" size={20} />
             <ThemedText className="font-semibold text-primary">
               <FormattedMessage defaultMessage="Active challenge" />
@@ -249,7 +252,8 @@ export default function ChallengeDetailScreen() {
           <ThemedText className="text-2xl font-semibold">
             <FormattedMessage defaultMessage="Participants" />
             <ThemedText className="text-lg font-medium text-muted-foreground">
-              {"  "}{totalUsers}
+              {"  "}
+              {totalUsers}
             </ThemedText>
           </ThemedText>
           <View className="flex-row flex-wrap gap-2">
@@ -295,7 +299,7 @@ export default function ChallengeDetailScreen() {
             />
           ))}
           {extraMountainsCount > 0 && (
-            <View className="items-center rounded-xl border-2 border-dashed border-border p-4">
+            <View className="items-center rounded border-2 border-dashed border-border p-4">
               <ThemedText className="font-medium text-muted-foreground">
                 +{extraMountainsCount}{" "}
                 <FormattedMessage defaultMessage="more mountains" />

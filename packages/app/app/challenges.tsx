@@ -111,7 +111,7 @@ export default function ChallengesScreen() {
                 setActiveTab(type);
               }}
               className={twMerge(
-                "rounded-lg py-2 px-2.5 mr-1 disabled:opacity-50",
+                "rounded py-2 px-2.5 mr-1 disabled:opacity-50",
                 isSelected ? "bg-primary" : "bg-border",
               )}
             >

@@ -39,7 +39,7 @@ export const ProgressBar = ({
   return (
     <View
       className={twMerge(
-        "h-6 w-full overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-800",
+        "h-6 w-full overflow-hidden rounded bg-gray-200 dark:bg-gray-800",
         className,
       )}
     >

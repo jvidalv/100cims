@@ -51,7 +51,7 @@ export default function UserPlansScreen() {
           </>
         )}
         {!isPendingPlans && !data?.length && (
-          <View className="relative mt-auto rounded-xl border-2 border-border p-4">
+          <View className="relative mt-auto rounded border-2 border-border p-4">
             <View className="absolute right-2 top-2">
               <Icon
                 name="star.fill"

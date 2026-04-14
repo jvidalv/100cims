@@ -1,6 +1,12 @@
 import { ReactNode, useState } from "react";
 import { useIntl } from "react-intl";
-import { Modal, Pressable, ScrollView, TouchableOpacity, View } from "react-native";
+import {
+  Modal,
+  Pressable,
+  ScrollView,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { twMerge } from "tailwind-merge";
 
 import {
@@ -32,7 +38,10 @@ export interface SettingsGroup<T extends string = string> {
   options: SettingsOption<T>[];
 }
 
-interface FilterableListHeaderProps<T extends string = string, S extends string = string> {
+interface FilterableListHeaderProps<
+  T extends string = string,
+  S extends string = string,
+> {
   title: string | ReactNode;
   count?: number;
   showCount?: boolean;
@@ -48,7 +57,10 @@ interface FilterableListHeaderProps<T extends string = string, S extends string 
   className?: string;
 }
 
-export function FilterableListHeader<T extends string = string, S extends string = string>({
+export function FilterableListHeader<
+  T extends string = string,
+  S extends string = string,
+>({
   title,
   count,
   showCount = true,
@@ -159,7 +171,9 @@ export function FilterableListHeader<T extends string = string, S extends string
                     </ThemedText>
                     <View className="flex-row flex-wrap gap-2">
                       {group.options.map((option) => {
-                        const isSelected = settingsSelected.includes(option.type);
+                        const isSelected = settingsSelected.includes(
+                          option.type,
+                        );
                         const isDisabled = option.disabled ?? false;
                         return (
                           <Pressable
@@ -167,7 +181,7 @@ export function FilterableListHeader<T extends string = string, S extends string
                             disabled={isDisabled}
                             onPress={() => handleSettingToggle(option.type)}
                             className={twMerge(
-                              "flex-row items-center gap-1.5 rounded-lg px-3 py-2",
+                              "flex-row items-center gap-1.5 rounded px-3 py-2",
                               isSelected ? "bg-primary" : "bg-border",
                               isDisabled && "opacity-50",
                             )}
@@ -207,12 +221,14 @@ export function FilterableListHeader<T extends string = string, S extends string
                     setShowSettings(false);
                   }}
                   className={twMerge(
-                    "mt-2 items-center rounded-lg bg-border py-3",
+                    "mt-2 items-center rounded bg-border py-3",
                     settingsSelected.length === 0 && "opacity-50",
                   )}
                 >
                   <ThemedText className="font-medium">
-                    {intl.formatMessage({ defaultMessage: "Clear all filters" })}
+                    {intl.formatMessage({
+                      defaultMessage: "Clear all filters",
+                    })}
                   </ThemedText>
                 </Pressable>
               </ThemedView>
@@ -234,7 +250,7 @@ export function FilterableListHeader<T extends string = string, S extends string
             return (
               <Pressable
                 className={twMerge(
-                  "rounded-lg flex-row gap-1 items-center py-2 px-2.5 mr-1 disabled:opacity-50",
+                  "rounded flex-row gap-1 items-center py-2 px-2.5 mr-1 disabled:opacity-50",
                   isSelected ? "bg-primary" : "bg-border",
                 )}
                 onPress={() => handleFilterPress(type, onSelectDeselect)}
@@ -272,7 +288,7 @@ export function FilterableListHeader<T extends string = string, S extends string
             <Pressable
               onPress={() => setShowSettings(true)}
               className={twMerge(
-                "rounded-lg flex-row gap-1 items-center py-2 px-2.5 mr-1",
+                "rounded flex-row gap-1 items-center py-2 px-2.5 mr-1",
                 settingsSelected.length > 0 ? "bg-primary" : "bg-border",
               )}
             >

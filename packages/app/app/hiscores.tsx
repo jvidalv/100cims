@@ -118,7 +118,7 @@ export default function HiscoresScreen() {
                     </ThemedText>
                     .
                   </ThemedText>
-                  <View className="flex-row items-center gap-2 rounded-xl border border-border p-2">
+                  <View className="flex-row items-center gap-2 rounded border border-border p-2">
                     <ThemedText className="text-sm">🔥</ThemedText>
                     <ThemedText>
                       <ThemedText className="font-medium text-primary">
@@ -134,7 +134,7 @@ export default function HiscoresScreen() {
               <Link href="/user/me" asChild>
                 <TouchableOpacity
                   onPress={() => {}}
-                  className="mb-4 flex-row items-center justify-between rounded-xl border-2 border-primary p-4"
+                  className="mb-4 flex-row items-center justify-between rounded border-2 border-primary p-4"
                 >
                   <ThemedText className="font-medium text-primary">
                     <FormattedMessage defaultMessage="I want to be visible on the hiscores" />
@@ -222,7 +222,7 @@ export default function HiscoresScreen() {
                 />
                 <View className="flex-col gap-1">
                   <View className="flex-row items-center gap-2">
-                    <View className="flex-row items-center gap-1 rounded-xl border-2 border-border px-2 py-1">
+                    <View className="flex-row items-center gap-1 rounded border-2 border-border px-2 py-1">
                       <View className="mr-1">
                         <Icon name="mountain.2.fill" muted size={18} />
                       </View>
@@ -232,7 +232,7 @@ export default function HiscoresScreen() {
                       </ThemedText>
                       <ThemedText>{challenge?.totalMountains}</ThemedText>
                     </View>
-                    <View className="rounded-xl border-2 border-border bg-background px-2 py-1">
+                    <View className="rounded border-2 border-border bg-background px-2 py-1">
                       <ThemedText className="font-semibold text-primary">
                         {Intl.NumberFormat(intl.locale, {
                           maximumFractionDigits: 2,

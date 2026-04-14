@@ -79,7 +79,10 @@ export default function SupportScreen() {
       const newPurchases = new Set(purchasedProducts);
       newPurchases.add(selectedProduct);
       setPurchasedProducts(newPurchases);
-      await AsyncStorage.setItem(PURCHASES_KEY, JSON.stringify([...newPurchases]));
+      await AsyncStorage.setItem(
+        PURCHASES_KEY,
+        JSON.stringify([...newPurchases]),
+      );
 
       setIsSubmitted(true);
 
@@ -113,7 +116,7 @@ export default function SupportScreen() {
       </ThemedText>
 
       {/* Monthly costs info */}
-      <View className="mb-6 flex-row items-center gap-3 rounded-xl bg-amber-500/10 p-4">
+      <View className="mb-6 flex-row items-center gap-3 rounded bg-amber-500/10 p-4">
         <Icon name="info.circle.fill" size={24} color="#f59e0b" />
         <ThemedText className="flex-1 text-sm">
           <FormattedMessage defaultMessage="Monthly costs of maintaining Cims: 50€. Your support helps keep the app running!" />
@@ -133,8 +136,9 @@ export default function SupportScreen() {
               if (!product.hasSize) setSelectedSize(null);
             }}
             className={twMerge(
-              "flex-row items-center gap-3 rounded-xl border-2 border-border p-2",
-              selectedProduct === product.slug && "border-primary bg-primary/10",
+              "flex-row items-center gap-3 rounded border-2 border-border p-2",
+              selectedProduct === product.slug &&
+                "border-primary bg-primary/10",
               purchasedProducts.has(product.slug) && "border-emerald-500",
             )}
           >
@@ -145,7 +149,7 @@ export default function SupportScreen() {
               >
                 <Image
                   source={{ uri: product.imageUrls[0] }}
-                  className="size-16 rounded-lg bg-border"
+                  className="size-16 rounded bg-border"
                   resizeMode="cover"
                 />
                 {product.imageUrls.length > 1 && (
@@ -165,12 +169,16 @@ export default function SupportScreen() {
                 )}
               </Pressable>
             ) : (
-              <View className="size-16 items-center justify-center rounded-lg bg-border">
+              <View className="size-16 items-center justify-center rounded bg-border">
                 <Icon name="bag" size={24} muted />
               </View>
             )}
-            <ThemedText className="flex-1 font-medium">{product.name}</ThemedText>
-            <ThemedText className="font-medium text-muted-foreground">{product.price}€</ThemedText>
+            <ThemedText className="flex-1 font-medium">
+              {product.name}
+            </ThemedText>
+            <ThemedText className="font-medium text-muted-foreground">
+              {product.price}€
+            </ThemedText>
           </TouchableOpacity>
         ))}
       </View>
@@ -187,7 +195,7 @@ export default function SupportScreen() {
                 key={size}
                 onPress={() => setSelectedSize(size)}
                 className={twMerge(
-                  "flex-1 items-center rounded-xl border-2 border-border py-3",
+                  "flex-1 items-center rounded border-2 border-border py-3",
                   selectedSize === size && "border-primary bg-primary/10",
                 )}
               >
@@ -214,7 +222,7 @@ export default function SupportScreen() {
 
       {/* Success Message */}
       {isSubmitted && (
-        <View className="mt-4 flex-row items-center gap-3 rounded-xl bg-emerald-500/10 p-4">
+        <View className="mt-4 flex-row items-center gap-3 rounded bg-emerald-500/10 p-4">
           <Icon name="checkmark.seal.fill" size={24} color="#10b981" />
           <ThemedText className="flex-1 text-sm text-emerald-600 dark:text-emerald-400">
             <FormattedMessage defaultMessage="Thanks for supporting Cims! We will contact you soon." />

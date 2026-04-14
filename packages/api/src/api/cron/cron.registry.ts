@@ -1,3 +1,4 @@
+import { backdateBulkSummits } from "@/api/cron/backdate-bulk-summits";
 import { backfillS3CacheHeaders } from "@/api/cron/backfill-s3-cache-headers";
 import { cancelAbandonedPlans } from "@/api/cron/cancel-abandoned-plans";
 import { cleanupOrphanMountains } from "@/api/cron/cleanup-orphan-mountains";
@@ -54,9 +55,9 @@ export const CRON_REGISTRY: CronEntry[] = [
   },
   {
     name: "monitor-health",
-    pattern: "0 * * * * *",
+    pattern: "0 */10 * * * *",
     description:
-      "Ping internal health check every minute and alert via Discord on failure.",
+      "Ping internal health check every 10 minutes and alert via Discord on failure.",
     fn: monitorHealth,
   },
   {
@@ -79,5 +80,12 @@ export const CRON_REGISTRY: CronEntry[] = [
     description:
       "Push the closest non-summited essential mountain to each opted-in user with recent location. Falls back to non-essential if all essentials are summited. Runs Tuesday at 17:00 UTC.",
     fn: recommendWeeklyMountain,
+  },
+  {
+    name: "backdate-bulk-summits",
+    pattern: "0 */30 * * * *",
+    description:
+      "Detect bulk summit uploads (same user+date, 5+ unedited rows, created in the last 7 days) and shift them 5 years back to stop polluting the recent feed. Idempotent: once backdated, rows no longer match the filter. Runs every 30 minutes.",
+    fn: backdateBulkSummits,
   },
 ];

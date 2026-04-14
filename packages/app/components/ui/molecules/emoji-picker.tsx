@@ -222,7 +222,7 @@ export function EmojiPicker({ value, onSelect }: EmojiPickerProps) {
     <>
       <TouchableOpacity
         onPress={() => setIsOpen(true)}
-        className="h-[58px] w-[58px] items-center justify-center rounded-xl border-2 border-border bg-muted/30"
+        className="h-[58px] w-[58px] items-center justify-center rounded border-2 border-border bg-muted/30"
       >
         {value ? (
           <ThemedText className="text-3xl">{value}</ThemedText>
@@ -319,12 +319,12 @@ function EmojiPickerModal({
             </ThemedText>
 
             {/* Category tabs */}
-            <View className="mb-4 flex-row justify-around rounded-xl bg-muted/50 p-1">
+            <View className="mb-4 flex-row justify-around rounded bg-muted/50 p-1">
               {(Object.keys(EMOJI_CATEGORIES) as Category[]).map((cat) => (
                 <TouchableOpacity
                   key={cat}
                   onPress={() => onCategoryChange(cat)}
-                  className={`flex-1 items-center rounded-lg py-2 ${
+                  className={`flex-1 items-center rounded py-2 ${
                     category === cat ? "bg-background" : ""
                   }`}
                 >
@@ -349,9 +349,7 @@ function EmojiPickerModal({
                 <TouchableOpacity
                   onPress={() => onSelect(item)}
                   className={`flex-1 items-center justify-center p-2 ${
-                    selectedEmoji === item
-                      ? "rounded-lg bg-primary/20"
-                      : ""
+                    selectedEmoji === item ? "rounded bg-primary/20" : ""
                   }`}
                 >
                   <ThemedText className="text-2xl">{item}</ThemedText>

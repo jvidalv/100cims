@@ -26,6 +26,9 @@
   "0UNObB": {
     "defaultMessage": "No summits yet."
   },
+  "1F6Xt8": {
+    "defaultMessage": "Edit summit"
+  },
   "1FQlg2": {
     "defaultMessage": "This challenge is private"
   },
@@ -203,6 +206,9 @@
   "EI6p6o": {
     "defaultMessage": "Mountain updated!"
   },
+  "EIJT7Y": {
+    "defaultMessage": "Danger zone"
+  },
   "F4zKkr": {
     "defaultMessage": "Are you sure you want to continue? All the data will be lost."
   },
@@ -275,8 +281,14 @@
   "KS+YEv": {
     "defaultMessage": "A profile with your feats"
   },
+  "KTlYr+": {
+    "defaultMessage": "Deleting your account is permanent. All your summits and plans will be lost."
+  },
   "Lp3DO2": {
     "defaultMessage": "Title is required"
+  },
+  "Lv0zJu": {
+    "defaultMessage": "Details"
   },
   "M7VcNh": {
     "defaultMessage": "where you can compete with other mountain lovers."
@@ -314,9 +326,6 @@
   "OKhRC6": {
     "defaultMessage": "Share"
   },
-  "ObpbWu": {
-    "defaultMessage": "Update summit date"
-  },
   "Oj1HSZ": {
     "defaultMessage": "No extra information added."
   },
@@ -337,6 +346,9 @@
   },
   "PL5jtt": {
     "defaultMessage": "*Suggested date: {date}"
+  },
+  "Pe0ogR": {
+    "defaultMessage": "Theme"
   },
   "PoX2HN": {
     "defaultMessage": "Send request"
@@ -367,6 +379,9 @@
   },
   "Tpy00S": {
     "defaultMessage": "People"
+  },
+  "TwyMau": {
+    "defaultMessage": "Account"
   },
   "U4bg5B": {
     "defaultMessage": "Lets do it"
@@ -434,6 +449,9 @@
   "aiy3+p": {
     "defaultMessage": "Type to search."
   },
+  "aqAp+n": {
+    "defaultMessage": "Delete summit"
+  },
   "aqaOUn": {
     "defaultMessage": "{count} of {max} challenges"
   },
@@ -451,6 +469,9 @@
   },
   "cGPdyw": {
     "defaultMessage": "Official"
+  },
+  "cXBJ7U": {
+    "defaultMessage": "Privacy"
   },
   "ciVgJV": {
     "defaultMessage": "Received, thanks for your suggestion!"

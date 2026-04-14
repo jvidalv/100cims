@@ -124,7 +124,7 @@ export default function PlanChatPage() {
         />
         <View className="relative flex-1">
           {!isPendingMessages && !messages?.length && (
-            <BlurView className="relative mx-6 mt-8 gap-1 overflow-hidden rounded-xl border border-border p-4">
+            <BlurView className="relative mx-6 mt-8 gap-1 overflow-hidden rounded border border-border p-4">
               <View className="absolute right-2 top-2">
                 <ThemedText>💬</ThemedText>
               </View>
@@ -200,7 +200,7 @@ export default function PlanChatPage() {
                 onPress={handleSend}
                 disabled={isSendingMessage}
                 className={twMerge(
-                  "h-10 w-12 items-center justify-center rounded-xl mr-1 border bg-border border-border mb-0.5",
+                  "h-10 w-12 items-center justify-center rounded mr-1 border bg-border border-border mb-0.5",
                   !!message && "bg-emerald-500 border-emerald-500",
                   isSendingMessage && "opacity-70",
                 )}
@@ -344,7 +344,7 @@ function MessageList({
                   isMine && onLongPressMessage(item.id, item.message)
                 }
                 className={twMerge(
-                  "max-w-[75%] rounded-xl px-4 py-2 shadow-xs",
+                  "max-w-[75%] rounded px-4 py-2 shadow-xs",
                   isMine ? "self-end bg-neutral-200 dark:bg-neutral-700" : "",
                   !isMine && !showAvatar && "ml-10",
                 )}

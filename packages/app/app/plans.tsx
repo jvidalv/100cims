@@ -71,7 +71,7 @@ const FloatingAlert = ({ onClose }: { onClose: () => void }) => {
     >
       <Pressable
         onPress={dismiss}
-        className="relative rounded-xl bg-background p-4 shadow-md"
+        className="relative rounded bg-background p-4 shadow-md"
       >
         <View className="absolute right-2 top-2">
           <Icon
@@ -182,7 +182,7 @@ export default function PlansScreen() {
                 return (
                   <Pressable
                     className={twMerge(
-                      "rounded-lg py-2 px-2.5 mr-1 disabled:opacity-50",
+                      "rounded py-2 px-2.5 mr-1 disabled:opacity-50",
                       isSelected ? "bg-primary" : "bg-border",
                     )}
                     onPress={() => setStatus(type)}

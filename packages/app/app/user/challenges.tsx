@@ -156,7 +156,7 @@ export default function UserChallengesScreen() {
               key={type}
               onPress={() => setActiveTab(type)}
               className={twMerge(
-                "rounded-lg py-2 px-2.5 mr-1 disabled:opacity-50",
+                "rounded py-2 px-2.5 mr-1 disabled:opacity-50",
                 isSelected ? "bg-primary" : "bg-border",
               )}
             >
@@ -177,13 +177,13 @@ export default function UserChallengesScreen() {
         <ScrollView contentContainerClassName="gap-3 px-6 pb-28">
           {isPendingChallenges && (
             <>
-              <Skeleton className="h-16 rounded-xl" />
-              <Skeleton className="h-16 rounded-xl" />
-              <Skeleton className="h-16 rounded-xl" />
+              <Skeleton className="h-16 rounded" />
+              <Skeleton className="h-16 rounded" />
+              <Skeleton className="h-16 rounded" />
             </>
           )}
           {!isPendingChallenges && !challenges?.length && (
-            <View className="relative mt-auto rounded-xl border-2 border-border p-4">
+            <View className="relative mt-auto rounded border-2 border-border p-4">
               <View className="absolute right-2 top-2">
                 <Icon
                   name="star.fill"
@@ -290,7 +290,7 @@ export default function UserChallengesScreen() {
         </View>
       ) : !mountains?.length ? (
         <View className="px-6">
-          <View className="relative rounded-xl border-2 border-border p-4">
+          <View className="relative rounded border-2 border-border p-4">
             <View className="absolute right-2 top-2">
               <Icon
                 name="star.fill"
@@ -316,7 +316,6 @@ export default function UserChallengesScreen() {
           showsVerticalScrollIndicator={false}
         />
       )}
-
     </ThemedView>
   );
 }

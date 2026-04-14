@@ -79,7 +79,7 @@ export const UserSelectInput = ({
     <>
       <Pressable
         onPress={() => setIsOpen(true)}
-        className="flex-row items-center rounded-xl border-2 border-border bg-background py-2"
+        className="flex-row items-center rounded border-2 border-border bg-background py-2"
       >
         <ScrollView
           horizontal
@@ -110,7 +110,7 @@ export const UserSelectInput = ({
         </ScrollView>
         <TouchableOpacity
           onPress={() => setIsOpen(true)}
-          className="mx-4 size-10 items-center justify-center rounded-xl bg-muted-foreground/30 shadow"
+          className="mx-4 size-10 items-center justify-center rounded bg-muted-foreground/30 shadow"
         >
           <Icon name="plus" weight="semibold" color="white" size={16} />
         </TouchableOpacity>

@@ -46,7 +46,7 @@ const StartStep = () => {
         <FormattedMessage defaultMessage="For you to know" />
       </ThemedText>
       <View className="gap-2">
-        <View className="relative gap-1 rounded-xl border border-border p-4">
+        <View className="relative gap-1 rounded border border-border p-4">
           <View className="absolute -right-3 -top-3">
             <ThemedText>❤️</ThemedText>
           </View>
@@ -57,7 +57,7 @@ const StartStep = () => {
             <FormattedMessage defaultMessage="Plans can be deleted later without any obligation." />
           </ThemedText>
         </View>
-        <View className="relative gap-1 rounded-xl border border-border p-4">
+        <View className="relative gap-1 rounded border border-border p-4">
           <View className="absolute -right-3 -top-3">
             <ThemedText>👯</ThemedText>
           </View>
@@ -68,7 +68,7 @@ const StartStep = () => {
             <FormattedMessage defaultMessage="You decide who comes, don't worry about removing users that joined if you feel like it." />
           </ThemedText>
         </View>
-        <View className="relative gap-1 rounded-xl border border-border p-4">
+        <View className="relative gap-1 rounded border border-border p-4">
           <View className="absolute -right-3 -top-3">
             <ThemedText>💬</ThemedText>
           </View>

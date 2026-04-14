@@ -58,8 +58,12 @@ function MountainMarker({ marker, onMountainPress }: MountainMarkerProps) {
 
   return (
     <Marker key={marker.id} coordinate={marker.coordinate} pinColor={pinColor}>
-      <Callout style={styles.callout} tooltip onPress={() => onMountainPress(marker.slug)}>
-        <View className="max-w-lg w-full rounded-xl overflow-hidden bg-background">
+      <Callout
+        style={styles.callout}
+        tooltip
+        onPress={() => onMountainPress(marker.slug)}
+      >
+        <View className="max-w-lg w-full rounded overflow-hidden bg-background">
           <View className="flex-1 pb-4">
             {marker.imageUrl && (
               <Image

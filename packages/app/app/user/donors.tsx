@@ -129,7 +129,7 @@ import { getInitials } from "@/lib/strings";
 //             </ThemedText>
 //           </View>
 //           <Link href="/user/suggestions" asChild>
-//             <TouchableOpacity className="flex-row items-center justify-between gap-4 rounded-xl border border-border p-4">
+//             <TouchableOpacity className="flex-row items-center justify-between gap-4 rounded border border-border p-4">
 //               <ThemedText>
 //                 <FormattedMessage defaultMessage="Share requests or suggestions here" />
 //               </ThemedText>

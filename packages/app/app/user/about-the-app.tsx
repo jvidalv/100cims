@@ -22,7 +22,7 @@ export default function AboutTheAppScreen() {
         <ThemedText className="mb-3 text-2xl font-semibold">
           <FormattedMessage defaultMessage="The author" />
         </ThemedText>
-        <View className="mb-4 flex items-center rounded-lg border border-border p-6">
+        <View className="mb-4 flex items-center rounded border border-border p-6">
           <Image
             source={require("@/assets/images/me.jpg")}
             className="mb-4 size-32 rounded-full"
@@ -58,7 +58,7 @@ export default function AboutTheAppScreen() {
             </View>
           </View>
         </View>
-        <View className="relative gap-1 rounded-xl border border-border p-4">
+        <View className="relative gap-1 rounded border border-border p-4">
           <View className="absolute -right-3 -top-3">
             <ThemedText>👨‍💻</ThemedText>
           </View>

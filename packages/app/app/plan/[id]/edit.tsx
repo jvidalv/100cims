@@ -196,7 +196,7 @@ export default function PlanEditPage() {
               </ThemedText>
               <TouchableOpacity
                 onPress={() => setEditingMountains(true)}
-                className="flex-row items-center justify-between gap-4 rounded-xl border-2 border-border px-4 py-2"
+                className="flex-row items-center justify-between gap-4 rounded border-2 border-border px-4 py-2"
               >
                 {!!selectedMountains?.length ? (
                   <AvatarGroup
@@ -209,7 +209,7 @@ export default function PlanEditPage() {
                 ) : (
                   <View className="h-8" />
                 )}
-                <View className="size-10 items-center justify-center rounded-xl bg-muted-foreground/30 shadow">
+                <View className="size-10 items-center justify-center rounded bg-muted-foreground/30 shadow">
                   <Icon name="plus" weight="semibold" color="white" size={16} />
                 </View>
               </TouchableOpacity>
@@ -290,4 +290,3 @@ const UserSelection = ({
     />
   );
 };
-

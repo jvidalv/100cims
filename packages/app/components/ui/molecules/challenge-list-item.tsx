@@ -29,10 +29,10 @@ export function ChallengeListItem({
     <View className="flex-row items-center gap-2">
       <TouchableOpacity
         onPress={onPress}
-        className="flex-1 flex-row items-center gap-4 rounded-xl border-2 border-border p-2"
+        className="flex-1 flex-row items-center gap-4 rounded border-2 border-border p-2"
       >
         <View
-          className="size-12 items-center justify-center rounded-lg"
+          className="size-12 items-center justify-center rounded"
           style={{
             backgroundColor:
               pastelColors[index % pastelColors.length]?.bg || "#BAE1FF",
@@ -58,7 +58,7 @@ export function ChallengeListItem({
       {onEditPress && (
         <TouchableOpacity
           onPress={onEditPress}
-          className=" items-center justify-center rounded-xl border-2 border-border px-3"
+          className=" items-center justify-center rounded border-2 border-border px-3"
           style={{
             height: 60,
           }}

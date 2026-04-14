@@ -8,7 +8,7 @@ import { Icon } from "@/components/ui/atoms/icon";
 import { isAndroid } from "@/lib/device";
 
 const inputClassName =
-  "border-2 border-border rounded-xl py-4 pl-12 text-foreground";
+  "border-2 border-border rounded py-4 pl-12 text-foreground";
 
 export const SearchInput = ({
   onChangeText,
