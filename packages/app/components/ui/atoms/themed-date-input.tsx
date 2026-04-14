@@ -109,7 +109,7 @@ export const ThemedDateInput = ({
       <Pressable
         onPress={() => setShowPicker(true)}
         className={twMerge(
-          "border-2 border-border justify-center rounded-xl py-3 pl-10 relative",
+          "border-2 border-border justify-center rounded py-3 pl-10 relative",
           isComplete && !parsedDate && "border-red-500",
           className,
         )}

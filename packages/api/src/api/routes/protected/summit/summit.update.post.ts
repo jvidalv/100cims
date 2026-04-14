@@ -1,14 +1,17 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, ne } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 
+import { isBase64SizeValid } from "@/api/lib/images";
+import { getUserFromRequest } from "@/api/routes/@shared/auth";
+import { IMAGE_TO_BIG } from "@/api/routes/@shared/error-codes";
+import { getPublicUrl, putImageOnS3 } from "@/api/routes/@shared/s3";
 import { db } from "@/db";
 import { summitHasUsersTable, summitTable } from "@/db/schema";
-import { getUserFromRequest } from "@/api/routes/@shared/auth";
 
 export const summitUpdatePostRoute = new Elysia().post(
   "/update",
-  async ({ body, request }) => {
-    const { summitId, summitedAt } = body;
+  async ({ body, request, set }) => {
+    const { summitId, summitedAt, image, usersId } = body;
 
     const userId = getUserFromRequest(request).id;
 
@@ -29,17 +32,54 @@ export const summitUpdatePostRoute = new Elysia().post(
       };
     }
 
-    await db
-      .update(summitTable)
-      .set({ summitedAt })
-      .where(eq(summitTable.id, summitId));
+    const updates: { summitedAt?: string; imageUrl?: string } = {};
+    if (summitedAt) updates.summitedAt = summitedAt;
 
-    return { success: true, message: "Summit date updated successfully" };
+    if (image) {
+      if (!isBase64SizeValid(image, 2048)) {
+        set.status = 500;
+        return { success: false, message: IMAGE_TO_BIG };
+      }
+      const key = `${process.env.APP_NAME}/mountain/summit/${summitId}-${Date.now()}.jpeg`;
+      await putImageOnS3(key, Buffer.from(image, "base64"));
+      updates.imageUrl = getPublicUrl(key);
+    }
+
+    await db.transaction(async (tx) => {
+      if (Object.keys(updates).length > 0) {
+        await tx
+          .update(summitTable)
+          .set(updates)
+          .where(eq(summitTable.id, summitId));
+      }
+
+      if (usersId) {
+        await tx
+          .delete(summitHasUsersTable)
+          .where(
+            and(
+              eq(summitHasUsersTable.summitId, summitId),
+              ne(summitHasUsersTable.userId, userId),
+            ),
+          );
+        const toInsert = usersId.filter((id) => id !== userId);
+        if (toInsert.length > 0) {
+          await tx
+            .insert(summitHasUsersTable)
+            .values(toInsert.map((id) => ({ summitId, userId: id })))
+            .onConflictDoNothing();
+        }
+      }
+    });
+
+    return { success: true, message: "Summit updated successfully" };
   },
   {
     body: t.Object({
       summitId: t.String(),
-      summitedAt: t.String(),
+      summitedAt: t.Optional(t.String()),
+      image: t.Optional(t.String()),
+      usersId: t.Optional(t.Array(t.String())),
     }),
     response: t.Object({
       success: t.Boolean(),

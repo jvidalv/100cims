@@ -146,7 +146,7 @@ export default function MountainEditScreen() {
             <View className="flex-row items-end gap-4">
               <TouchableOpacity
                 onPress={pickImage}
-                className="h-[58px] w-[58px] items-center justify-center overflow-hidden rounded-xl border-2 border-border bg-muted/30"
+                className="h-[58px] w-[58px] items-center justify-center overflow-hidden rounded border-2 border-border bg-muted/30"
               >
                 {imageUri ? (
                   <Image

@@ -46,13 +46,13 @@ export const MountainItemListCore = ({
       {imageUrl ? (
         <Image
           source={{ uri: imageUrl, cache: "force-cache" }}
-          className="items-center justify-center bg-neutral-300 dark:bg-neutral-800"
-          style={{ width: 100, height: 100, borderRadius: 6 }}
+          className="items-center justify-center bg-neutral-300 dark:bg-neutral-800 rounded"
+          style={{ width: 100, height: 100 }}
         />
       ) : (
         <View
-          className="items-center justify-center bg-neutral-300 dark:bg-neutral-800"
-          style={{ width: 100, height: 100, borderRadius: 6 }}
+          className="items-center justify-center bg-neutral-300 dark:bg-neutral-800 rounded"
+          style={{ width: 100, height: 100 }}
         >
           <Icon name="camera" color="white" muted size={32} />
         </View>

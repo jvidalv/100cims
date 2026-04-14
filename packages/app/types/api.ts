@@ -3800,15 +3800,21 @@ export interface operations {
             content: {
                 "application/json": {
                     summitId: string;
-                    summitedAt: string;
+                    summitedAt?: string;
+                    image?: string;
+                    usersId?: string[];
                 };
                 "multipart/form-data": {
                     summitId: string;
-                    summitedAt: string;
+                    summitedAt?: string;
+                    image?: string;
+                    usersId?: string[];
                 };
                 "text/plain": {
                     summitId: string;
-                    summitedAt: string;
+                    summitedAt?: string;
+                    image?: string;
+                    usersId?: string[];
                 };
             };
         };

@@ -82,7 +82,12 @@ export function MountainSelectionDrawer({
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
   const [essential, setEssential] = useState(false);
-  const { imageUri, imageBase64, pickImage, reset: resetImage } = useImagePicker();
+  const {
+    imageUri,
+    imageBase64,
+    pickImage,
+    reset: resetImage,
+  } = useImagePicker();
 
   const allMountains = useMemo(() => mountainsData ?? [], [mountainsData]);
 
@@ -101,7 +106,7 @@ export function MountainSelectionDrawer({
         essential: m.essential,
         isNew: true, // Mark as new for special handling
       })),
-    [newMountains]
+    [newMountains],
   );
 
   const filteredMountains = useMemo(() => {
@@ -129,7 +134,7 @@ export function MountainSelectionDrawer({
       : allMountains.filter(({ name, location }) =>
           cleanText(`${name} ${location}`)
             .toLowerCase()
-            .includes(cleanText(query).toLowerCase())
+            .includes(cleanText(query).toLowerCase()),
         );
 
     // Add new mountains at the top
@@ -146,9 +151,19 @@ export function MountainSelectionDrawer({
       const bSelected = selectedIds.includes(b.id) ? 0 : 1;
       return aSelected - bSelected;
     });
-  }, [query, allMountains, selectedIds, shouldUseGlobalSearch, searchData, newMountainsForDisplay]);
+  }, [
+    query,
+    allMountains,
+    selectedIds,
+    shouldUseGlobalSearch,
+    searchData,
+    newMountainsForDisplay,
+  ]);
 
-  const handleToggleMountain = (mountainId: string, isNewMountain?: boolean) => {
+  const handleToggleMountain = (
+    mountainId: string,
+    isNewMountain?: boolean,
+  ) => {
     // If it's a new mountain being deselected, remove it from newMountains
     if (isNewMountain && onRemoveNewMountain) {
       onRemoveNewMountain(mountainId);
@@ -159,21 +174,24 @@ export function MountainSelectionDrawer({
     onSelectionChange((prev) =>
       isSelected
         ? prev.filter((id) => id !== mountainId)
-        : [...prev, mountainId]
+        : [...prev, mountainId],
     );
   };
 
   const handleCreateNew = () => {
     if (!onAddNewMountain) return;
 
-    const validation = validateMountainForm({ name, location, height, latitude, longitude }, intl);
+    const validation = validateMountainForm(
+      { name, location, height, latitude, longitude },
+      intl,
+    );
     if (!validation.valid) {
       return Alert.alert(validation.error);
     }
 
     if (!imageBase64) {
       return Alert.alert(
-        intl.formatMessage({ defaultMessage: "Image is required" })
+        intl.formatMessage({ defaultMessage: "Image is required" }),
       );
     }
 
@@ -192,9 +210,7 @@ export function MountainSelectionDrawer({
       imageUri: imageUri ?? undefined,
     });
 
-    Alert.alert(
-      intl.formatMessage({ defaultMessage: "Mountain added!" })
-    );
+    Alert.alert(intl.formatMessage({ defaultMessage: "Mountain added!" }));
 
     // Reset form
     resetForm();
@@ -226,7 +242,7 @@ export function MountainSelectionDrawer({
             <View className="flex-row items-end gap-4">
               <TouchableOpacity
                 onPress={pickImage}
-                className="h-[58px] w-[58px] items-center justify-center overflow-hidden rounded-xl border-2 border-border bg-muted/30"
+                className="h-[58px] w-[58px] items-center justify-center overflow-hidden rounded border-2 border-border bg-muted/30"
               >
                 {imageUri ? (
                   <Image
@@ -240,7 +256,9 @@ export function MountainSelectionDrawer({
               </TouchableOpacity>
               <View className="flex-1">
                 <ThemedTextInput
-                  label={intl.formatMessage({ defaultMessage: "Mountain name" })}
+                  label={intl.formatMessage({
+                    defaultMessage: "Mountain name",
+                  })}
                   value={name}
                   onChangeText={setName}
                 />

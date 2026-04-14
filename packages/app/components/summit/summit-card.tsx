@@ -57,21 +57,16 @@ export function SummitCard({
     >
       <Image
         source={{ uri: imageUrl }}
-        className="bg-neutral-200 dark:bg-neutral-800"
+        className="bg-neutral-200 dark:bg-neutral-800 rounded"
         style={{
           height: 200,
           width: "100%",
-          borderTopRightRadius: 6,
-          borderTopLeftRadius: 6,
         }}
       />
-      <View className="w-full flex-row items-center justify-between gap-4 border border-t-0 border-gray-200 rounded-b-lg dark:border-0 dark:bg-neutral-800 p-2">
+      <View className="w-full flex-row items-center justify-between gap-4 border border-t-0 border-gray-200 rounded-b dark:border-0 dark:bg-neutral-800 p-2">
         <View className="flex-1 flex-shrink">
           <View className="mb-0.5">
-            <ThemedText
-              numberOfLines={1}
-              className="text-sm font-medium"
-            >
+            <ThemedText numberOfLines={1} className="text-sm font-medium">
               {summit.mountainName}
             </ThemedText>
           </View>

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { useCrons, useTriggerCron } from "@/domains/admin/api";
+import { cronIntervalSeconds, humanizeCron } from "@/lib/humanize-cron";
 
 export default function AdminCronsPage() {
   const { data: crons, error, isLoading } = useCrons();
@@ -50,7 +51,13 @@ export default function AdminCronsPage() {
               </tr>
             </thead>
             <tbody>
-              {crons.map((c) => {
+              {[...crons]
+                .sort(
+                  (a, b) =>
+                    cronIntervalSeconds(a.pattern) -
+                    cronIntervalSeconds(b.pattern),
+                )
+                .map((c) => {
                 const running =
                   triggerCron.isPending && triggerCron.variables === c.name;
                 return (
@@ -61,8 +68,11 @@ export default function AdminCronsPage() {
                         {c.description}
                       </div>
                     </td>
-                    <td className="py-2 font-mono text-muted-foreground">
-                      {c.pattern}
+                    <td className="py-2">
+                      <div>{humanizeCron(c.pattern)}</div>
+                      <div className="text-xs font-mono text-muted-foreground mt-0.5">
+                        {c.pattern}
+                      </div>
                     </td>
                     <td className="py-2 text-muted-foreground">
                       {lastRun[c.name] ?? "—"}

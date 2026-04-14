@@ -74,7 +74,13 @@ export function UpdatesDialog({
   if (!visible) return null;
 
   return (
-    <Modal animationType="none" visible transparent statusBarTranslucent onRequestClose={onClose}>
+    <Modal
+      animationType="none"
+      visible
+      transparent
+      statusBarTranslucent
+      onRequestClose={onClose}
+    >
       <View className="flex-1 items-center justify-center">
         <Animated.View
           className="absolute size-full bg-black/60"
@@ -134,10 +140,11 @@ export function UpdatesDialog({
                   onClose();
                   onAction?.();
                 }}
-                className="mt-2 items-center rounded-xl bg-primary py-3.5"
+                className="mt-2 items-center rounded bg-primary py-3.5"
               >
                 <ThemedText className="font-semibold text-white">
-                  {actionLabel || intl.formatMessage({ defaultMessage: "Got it!" })}
+                  {actionLabel ||
+                    intl.formatMessage({ defaultMessage: "Got it!" })}
                 </ThemedText>
               </TouchableOpacity>
             </View>

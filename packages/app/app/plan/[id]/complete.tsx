@@ -143,7 +143,7 @@ export default function PlanCompleteScreen() {
         </View>
         {!hasMountains && (
           <View className="gap-4">
-            <View className="relative gap-1 rounded-xl border border-border p-4">
+            <View className="relative gap-1 rounded border border-border p-4">
               <View className="absolute -right-3 -top-3">
                 <ThemedText>❤️</ThemedText>
               </View>
@@ -188,7 +188,7 @@ export default function PlanCompleteScreen() {
                 <TouchableOpacity
                   disabled={isHandlingImages === m.id}
                   className={twMerge(
-                    "w-full items-center justify-center overflow-hidden rounded-xl border-2 border-border bg-background",
+                    "w-full items-center justify-center overflow-hidden rounded border-2 border-border bg-background",
                     mountains?.length === 1 ? "h-96" : "h-48",
                   )}
                   onPress={() => handlePickImage(m.id)}

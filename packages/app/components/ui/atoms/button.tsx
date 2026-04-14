@@ -12,7 +12,7 @@ import { ActivityIndicator } from "@/components/ui/atoms/activity-indicator";
 import { Icon, IconSymbolName } from "@/components/ui/atoms/icon";
 
 const buttonVariants = tv({
-  base: "flex-row items-center justify-center gap-2 rounded-lg border-2 border-transparent p-4",
+  base: "flex-row items-center justify-center gap-2 rounded border-2 border-transparent p-4",
   variants: {
     intent: {
       primary: "bg-primary",

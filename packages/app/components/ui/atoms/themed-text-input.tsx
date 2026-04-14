@@ -84,7 +84,7 @@ export const ThemedTextInput: FC<InputProps> = ({
         keyboardType={keyboardType}
         returnKeyType={returnKeyType}
         className={twMerge(
-          "w-full border-2 border-border rounded-xl flex py-5 px-4 text-foreground focus:border-blue-500",
+          "w-full border-2 border-border rounded flex py-5 px-4 text-foreground focus:border-blue-500",
           disabled && "bg-gray-50 dark:bg-neutral-900 text-foreground/60",
           inputClassName,
         )}

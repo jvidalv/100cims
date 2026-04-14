@@ -1,36 +1,39 @@
 import { format } from "date-fns/format";
 import * as Haptics from "expo-haptics";
 import { Link, Redirect, useLocalSearchParams, useRouter } from "expo-router";
-import { useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { Alert, ScrollView, TouchableOpacity, Image, View, Pressable } from "react-native";
+import {
+  Alert,
+  Image,
+  Pressable,
+  ScrollView,
+  Share,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 import { useAuth } from "@/components/providers/auth-provider";
 import {
   Avatar,
-  Button,
-  Icon,
   Skeleton,
-  ThemedDateInput,
   ThemedText,
   ThemedView,
 } from "@/components/ui/atoms";
 import {
-  BottomDrawer,
-  ScreenHeader,
+  ActionRow,
   ImagePreviewModal,
+  ScreenHeader,
   useImagePreview,
 } from "@/components/ui/molecules";
-import { useBottomDrawer } from "@/components/ui/molecules/bottom-drawer";
 import {
   useDeleteSummitMutation,
   useSummitGet,
   useSummitReactions,
   useSummitReactionMutation,
-  useUpdateSummitMutation,
 } from "@/domains/summit/summit.api";
 import { useUserMe } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
+import { getUrlDeeplink } from "@/lib/deeplink";
 import { getInitials } from "@/lib/strings";
 
 const REACTION_EMOJIS = ["❤️", "👍🏽", "💪🏽", "🐶", "🧨"] as const;
@@ -43,15 +46,25 @@ const Content = () => {
   const { data, isPending } = useSummitGet({ summitId: summit });
   const { data: me } = useUserMe();
   const { mutateAsync: deleteSummit } = useDeleteSummitMutation();
-  const { mutateAsync: updateSummit } = useUpdateSummitMutation();
   const { data: reactionsData } = useSummitReactions({ summitId: summit });
   const { mutate: toggleReaction } = useSummitReactionMutation();
 
-  const [isDrawerOpen, setIsDrawerOpen] = useBottomDrawer();
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const { previewImage, isPreviewOpen, openPreview, closePreview } = useImagePreview();
+  const { previewImage, isPreviewOpen, openPreview, closePreview } =
+    useImagePreview();
 
   const isUserParticipant = data?.users.some((user) => user.userId === me?.id);
+
+  const handleShare = async () => {
+    if (!data) return;
+    const messages = {
+      en: `🏔️ Check out this summit on cims!\n${data.mountainName} 💪\n\n${getUrlDeeplink(`user/summits/${summit}`)}`,
+      ca: `🏔️ Mira aquest cim a cims!\n${data.mountainName} 💪\n\n${getUrlDeeplink(`user/summits/${summit}`)}`,
+      es: `🏔️ Mira esta cima en cims!\n${data.mountainName} 💪\n\n${getUrlDeeplink(`user/summits/${summit}`)}`,
+    };
+    const locale = intl.locale;
+    const msg = messages[locale as "ca" | "es" | "en"] || messages.en;
+    await Share.share({ message: msg });
+  };
 
   const handleDelete = () => {
     Alert.alert(
@@ -76,45 +89,17 @@ const Content = () => {
     );
   };
 
-  const handleUpdate = async () => {
-    if (!selectedDate) return;
-    await updateSummit({
-      summitId: summit,
-      summitedAt: selectedDate.toISOString(),
-    });
-    setIsDrawerOpen(false);
-    router.back();
-  };
-
   if (isPending || !data) {
     return (
       <ThemedView className="flex-1">
-        <ScreenHeader
-          rightElement={
-            isUserParticipant ? (
-              <View className="flex-row items-center gap-4 pr-4">
-                <TouchableOpacity
-                  onPress={() => {
-                    setSelectedDate(new Date(data?.summitedAt || Date.now()));
-                    setIsDrawerOpen(true);
-                  }}
-                >
-                  <Icon name="gearshape" size={20} muted />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={handleDelete}>
-                  <Icon name="trash" size={20} muted />
-                </TouchableOpacity>
-              </View>
-            ) : undefined
-          }
-        />
+        <ScreenHeader />
         <View className="px-6">
           <View className="flex-row justify-between">
             <View>
               <Skeleton className="mb-1 h-9 w-64" />
               <Skeleton className="mb-8 h-6 w-20" />
             </View>
-            <Skeleton className="size-16 rounded-lg" />
+            <Skeleton className="size-16 rounded" />
           </View>
           <Skeleton className="mb-6 size-10 rounded-full" />
         </View>
@@ -125,25 +110,7 @@ const Content = () => {
 
   return (
     <ThemedView className="flex-1">
-      <ScreenHeader
-        rightElement={
-          isUserParticipant ? (
-            <View className="flex-row items-center gap-4 pr-4">
-              <TouchableOpacity
-                onPress={() => {
-                  setSelectedDate(new Date(data.summitedAt));
-                  setIsDrawerOpen(true);
-                }}
-              >
-                <Icon name="gearshape" size={20} muted />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleDelete}>
-                <Icon name="trash" size={20} muted />
-              </TouchableOpacity>
-            </View>
-          ) : undefined
-        }
-      />
+      <ScreenHeader />
       <ScrollView
         stickyHeaderIndices={[0]}
         showsVerticalScrollIndicator={false}
@@ -169,41 +136,16 @@ const Content = () => {
             </View>
             {data.mountainImageUrl ? (
               <Image
-                className="size-16 rounded-lg"
+                className="size-16 rounded"
                 source={{ uri: data.mountainImageUrl }}
               />
             ) : (
-              <View className="rounded-lg bg-neutral-500" />
+              <View className="rounded bg-neutral-500" />
             )}
           </TouchableOpacity>
         </Link>
-        <View className="px-6">
-          <View className="mb-6 gap-3">
-            {data.users.map((user) => (
-              <Link
-                href={{
-                  pathname: "/user/[user]",
-                  params: { user: user.userId },
-                }}
-                key={user.userId}
-                asChild
-              >
-                <TouchableOpacity className="flex-row items-center gap-3">
-                  <Avatar
-                    size="sm"
-                    imageUrl={user.imageUrl}
-                    initials={getInitials(getFullName(user))}
-                  />
-                  <ThemedText className="text-lg">
-                    {getFullName(user)}
-                  </ThemedText>
-                </TouchableOpacity>
-              </Link>
-            ))}
-          </View>
-        </View>
         <Pressable
-          className="overflow-hidden rounded-lg"
+          className="overflow-hidden rounded"
           onPress={() => openPreview({ uri: data.summitImageUrl })}
         >
           <Image
@@ -215,7 +157,8 @@ const Content = () => {
         <View className="flex-row justify-center gap-2 px-6 py-4">
           {REACTION_EMOJIS.map((emoji) => {
             const reactionCount =
-              reactionsData?.reactions.find((r) => r.emoji === emoji)?.count ?? 0;
+              reactionsData?.reactions.find((r) => r.emoji === emoji)?.count ??
+              0;
             const hasUserReacted = reactionsData?.userReactions.includes(emoji);
 
             return (
@@ -245,34 +188,63 @@ const Content = () => {
             );
           })}
         </View>
-        <TouchableOpacity
-          onPress={router.back}
-          className="flex-row items-center justify-center gap-2 p-4"
-        >
-          <Icon name="arrow.left" size={18} muted />
-          <ThemedText className="text-lg text-muted-foreground">
-            <FormattedMessage defaultMessage="Back" />
+        <View className="mt-6 gap-2 px-6">
+          <ThemedText className="mb-2 text-2xl font-semibold">
+            <FormattedMessage defaultMessage="People" />
           </ThemedText>
-        </TouchableOpacity>
-      </ScrollView>
-      <BottomDrawer
-        isOpen={isDrawerOpen}
-        onRequestClose={() => setIsDrawerOpen(false)}
-      >
-        <View className="p-6">
-          <ThemedText className="mb-4 text-xl font-semibold">
-            <FormattedMessage defaultMessage="Update summit date" />
-          </ThemedText>
-          <ThemedDateInput
-            value={selectedDate}
-            onDateValid={setSelectedDate}
-            noFutureDates
-          />
-          <Button className="mt-4" onPress={handleUpdate}>
-            <FormattedMessage defaultMessage="Save" />
-          </Button>
+          <View className="gap-2">
+            {data.users.map((user) => (
+              <Link
+                key={user.userId}
+                href={{
+                  pathname: "/user/[user]",
+                  params: { user: user.userId },
+                }}
+                asChild
+              >
+                <TouchableOpacity className="flex-row items-center gap-2">
+                  <Avatar
+                    size="xs"
+                    imageUrl={user.imageUrl}
+                    initials={getInitials(getFullName(user))}
+                  />
+                  <ThemedText>{getFullName(user)}</ThemedText>
+                </TouchableOpacity>
+              </Link>
+            ))}
+          </View>
         </View>
-      </BottomDrawer>
+        <View className="mt-6 gap-2 px-6">
+          <ThemedText className="mb-2 text-2xl font-semibold">
+            <FormattedMessage defaultMessage="Actions" />
+          </ThemedText>
+          <ActionRow
+            onPress={handleShare}
+            iconName="square.and.arrow.up"
+            intent="muted"
+          >
+            <FormattedMessage defaultMessage="Share" />
+          </ActionRow>
+          {isUserParticipant && (
+            <Link
+              href={{
+                pathname: "/user/summits/[summit]/edit",
+                params: { summit },
+              }}
+              asChild
+            >
+              <ActionRow iconName="square.and.pencil" intent="blue">
+                <FormattedMessage defaultMessage="Edit summit" />
+              </ActionRow>
+            </Link>
+          )}
+          {isUserParticipant && (
+            <ActionRow onPress={handleDelete} iconName="trash" intent="danger">
+              <FormattedMessage defaultMessage="Delete summit" />
+            </ActionRow>
+          )}
+        </View>
+      </ScrollView>
       <ImagePreviewModal
         visible={isPreviewOpen}
         imageSource={previewImage}

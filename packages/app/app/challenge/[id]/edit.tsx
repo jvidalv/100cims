@@ -54,7 +54,7 @@ export default function CommunityChallengeEditPage() {
 
   const { data: challenge, isLoading } = useCommunityChallengeDetail(
     { id: id! },
-    { enabled: !!id }
+    { enabled: !!id },
   );
   const { data: allMountains } = useMountains();
 
@@ -88,7 +88,7 @@ export default function CommunityChallengeEditPage() {
       });
       initializeFromChallenge(
         challenge.mountains.map((m) => m.id),
-        challenge.mountains
+        challenge.mountains,
       );
     }
   }, [challenge, formData, initializeFromChallenge]);
@@ -100,7 +100,7 @@ export default function CommunityChallengeEditPage() {
       return Alert.alert(
         intl.formatMessage({
           defaultMessage: "Name is required",
-        })
+        }),
       );
     }
 
@@ -108,7 +108,7 @@ export default function CommunityChallengeEditPage() {
       return Alert.alert(
         intl.formatMessage({
           defaultMessage: "Country/Region is required",
-        })
+        }),
       );
     }
 
@@ -116,7 +116,7 @@ export default function CommunityChallengeEditPage() {
       return Alert.alert(
         intl.formatMessage({
           defaultMessage: "At least one mountain is required",
-        })
+        }),
       );
     }
 
@@ -129,17 +129,18 @@ export default function CommunityChallengeEditPage() {
         emoji: formData.emoji || undefined,
         isPublic: formData.isPublic,
         mountainIds: selectedMountainIds,
-        newMountains: newMountains.length > 0
-          ? newMountains.map((m) => ({
-              name: m.name,
-              location: m.location,
-              height: m.height,
-              latitude: m.latitude,
-              longitude: m.longitude,
-              essential: m.essential,
-              image: m.image,
-            }))
-          : undefined,
+        newMountains:
+          newMountains.length > 0
+            ? newMountains.map((m) => ({
+                name: m.name,
+                location: m.location,
+                height: m.height,
+                latitude: m.latitude,
+                longitude: m.longitude,
+                essential: m.essential,
+                image: m.image,
+              }))
+            : undefined,
       });
 
       router.dismiss();
@@ -147,7 +148,7 @@ export default function CommunityChallengeEditPage() {
       Alert.alert(
         intl.formatMessage({
           defaultMessage: "Something went wrong, try again later!",
-        })
+        }),
       );
     }
   };
@@ -175,12 +176,12 @@ export default function CommunityChallengeEditPage() {
               Alert.alert(
                 intl.formatMessage({
                   defaultMessage: "Failed to delete challenge",
-                })
+                }),
               );
             }
           },
         },
-      ]
+      ],
     );
   };
 
@@ -246,7 +247,7 @@ export default function CommunityChallengeEditPage() {
               </ThemedText>
               <TouchableOpacity
                 onPress={() => setEditingMountains(true)}
-                className="flex-row items-center justify-between gap-4 rounded-xl border-2 border-border px-4 py-2"
+                className="flex-row items-center justify-between gap-4 rounded border-2 border-border px-4 py-2"
               >
                 {selectedMountainsForDisplay.length > 0 ? (
                   <AvatarGroup
@@ -261,7 +262,7 @@ export default function CommunityChallengeEditPage() {
                     <FormattedMessage defaultMessage="Add mountain" />
                   </ThemedText>
                 )}
-                <View className="size-10 items-center justify-center rounded-xl bg-muted-foreground/30 shadow">
+                <View className="size-10 items-center justify-center rounded bg-muted-foreground/30 shadow">
                   <Icon name="plus" weight="semibold" color="white" size={16} />
                 </View>
               </TouchableOpacity>
@@ -272,7 +273,7 @@ export default function CommunityChallengeEditPage() {
         <BlurView
           className={twMerge(
             "px-6 pt-1 pb-8",
-            isKeyboardVisible && "opacity-0"
+            isKeyboardVisible && "opacity-0",
           )}
         >
           <Button isLoading={isPending} onPress={handleUpdate}>

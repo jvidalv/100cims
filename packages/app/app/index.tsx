@@ -40,11 +40,11 @@ import {
 import { usePlanChatUnread } from "@/domains/plan/plan-chat.api";
 import { useNewPlansCount, usePlans } from "@/domains/plan/plan.api";
 import { useSummitsGet } from "@/domains/summit/summit.api";
-import { useUnseenUpdates, useMarkUpdateSeen } from "@/domains/update/update.api";
 import {
-  useUserMe,
-  useUserChallengeSummits,
-} from "@/domains/user/user.api";
+  useUnseenUpdates,
+  useMarkUpdateSeen,
+} from "@/domains/update/update.api";
+import { useUserMe, useUserChallengeSummits } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
 import { useIsCurrentScreen } from "@/hooks/use-is-current-screen";
 import { useMapNotificationBadge } from "@/hooks/use-map-notification-badge";
@@ -67,13 +67,13 @@ const MountainsDone = ({
       href={
         user ? { pathname: "/user/[user]", params: { user: user.id } } : "/join"
       }
-      className="flex-row items-center gap-2"
+      className="flex-row items-center gap-2 mt-1"
     >
       {userSummits || !isAuthenticated ? (
         <View className="flex-row items-center gap-2">
           <View
             className={twMerge(
-              "flex-row items-center gap-1 rounded-xl border-2 px-2 py-1",
+              "flex-row items-center gap-1 rounded border-2 px-2 py-1",
               showAllMountains ? "border-border" : "border-transparent",
             )}
           >
@@ -87,7 +87,7 @@ const MountainsDone = ({
             <ThemedText>{challenge?.totalEssentialMountains}</ThemedText>
           </View>
           {showAllMountains && (
-            <View className="flex-row items-center gap-1 rounded-xl border-2 border-border px-2 py-1">
+            <View className="flex-row items-center gap-1 rounded border-2 border-border px-2 py-1">
               <View>
                 <Icon name="mountain.2.fill" muted size={20} />
               </View>
@@ -103,8 +103,8 @@ const MountainsDone = ({
         </View>
       ) : (
         <View className="flex-row gap-2">
-          <Skeleton className="h-8 w-28 rounded-xl" />
-          <Skeleton className="h-8 w-28 rounded-xl" />
+          <Skeleton className="h-8 w-28 rounded" />
+          <Skeleton className="h-8 w-28 rounded" />
         </View>
       )}
     </Link>
@@ -182,7 +182,7 @@ const TopSection = () => {
         >
           <ThemedText
             numberOfLines={1}
-            className="-mt-1 text-4xl font-black tracking-tighter text-primary"
+            className="text-4xl font-black tracking-tighter text-primary"
           >
             {challenge.name}
           </ThemedText>
@@ -190,7 +190,7 @@ const TopSection = () => {
       ) : (
         <ThemedText
           numberOfLines={1}
-          className="-mt-1 text-4xl font-black tracking-tighter text-primary"
+          className="text-4xl font-black tracking-tighter text-primary"
         >
           {challenge?.name}
         </ThemedText>
@@ -252,9 +252,7 @@ const PageHeader = ({
         <View className="flex-1 flex-row items-center justify-end gap-2">
           <ThemeToggleButton />
           <Link href="/hiscores" asChild>
-            <TouchableOpacity
-              className="size-10 items-center justify-center rounded-full border-2 border-border"
-            >
+            <TouchableOpacity className="size-10 items-center justify-center rounded-full border-2 border-border">
               <Icon name="trophy.fill" muted />
             </TouchableOpacity>
           </Link>
@@ -275,9 +273,7 @@ const PageHeader = ({
             </TouchableOpacity>
           </Link>
           <Link href="/plans" asChild>
-            <TouchableOpacity
-              className="relative size-10 items-center justify-center rounded-full border-2 border-border"
-            >
+            <TouchableOpacity className="relative size-10 items-center justify-center rounded-full border-2 border-border">
               {hasNewPlans && (
                 <View className="absolute -right-0.5 -top-0.5 size-3 rounded-full bg-blue-500" />
               )}
@@ -389,7 +385,8 @@ export default function IndexScreen() {
     return null;
   }, [currentUnseenUpdate, intl]);
 
-  const showUpdatesDialog = isAuthenticated && !!currentUnseenUpdate && !!currentUpdateContent;
+  const showUpdatesDialog =
+    isAuthenticated && !!currentUnseenUpdate && !!currentUpdateContent;
   const hasMoreUnseenUpdates = (unseenUpdateIds?.length ?? 0) > 1;
 
   const onRefresh = useCallback(async () => {
@@ -622,7 +619,7 @@ export default function IndexScreen() {
             </View>
             <Link href="/support">
               <View className="gap-2">
-                <View className="aspect-square w-full overflow-hidden rounded-xl bg-border">
+                <View className="aspect-square w-full overflow-hidden rounded bg-border">
                   {featuredMerch[0]?.imageUrls[0] && (
                     <Image
                       source={{ uri: featuredMerch[0].imageUrls[0] }}
@@ -636,7 +633,7 @@ export default function IndexScreen() {
                     <Image
                       key={product.slug}
                       source={{ uri: product.imageUrls[0] }}
-                      className="aspect-square flex-1 rounded-xl bg-border"
+                      className="aspect-square flex-1 rounded bg-border"
                       resizeMode="cover"
                     />
                   ))}
@@ -646,7 +643,7 @@ export default function IndexScreen() {
                     <Image
                       key={product.slug}
                       source={{ uri: product.imageUrls[0] }}
-                      className="aspect-square flex-1 rounded-xl bg-border"
+                      className="aspect-square flex-1 rounded bg-border"
                       resizeMode="cover"
                     />
                   ))}

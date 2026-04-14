@@ -55,8 +55,9 @@ export const ThemedToggleInput = ({
       transform: [
         {
           translateX: withSpring(translateX.value, {
-            damping: 20,
-            stiffness: 90,
+            mass: 0.5,
+            damping: 22,
+            stiffness: 300,
           }),
         },
       ],
@@ -75,7 +76,7 @@ export const ThemedToggleInput = ({
     <Pressable
       onPress={toggle}
       className={twMerge(
-        "border-2 border-border justify-between rounded-xl p-1.5 relative flex-row",
+        "border-2 border-border justify-between rounded p-1.5 relative flex-row",
         className,
       )}
       onLayout={onLayout}
@@ -91,7 +92,7 @@ export const ThemedToggleInput = ({
         </ThemedView>
       )}
       <Animated.View
-        className="absolute m-1.5 h-full w-1/2 rounded-lg border-2 border-border"
+        className="absolute m-1.5 h-full w-1/2 rounded border-2 border-border"
         style={animatedStyle}
       />
       <View className="flex-1 items-center justify-center p-4">

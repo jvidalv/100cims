@@ -68,7 +68,7 @@ export default function CommunityChallengeCreatePage() {
       return Alert.alert(
         intl.formatMessage({
           defaultMessage: "Name is required",
-        })
+        }),
       );
     }
 
@@ -76,7 +76,7 @@ export default function CommunityChallengeCreatePage() {
       return Alert.alert(
         intl.formatMessage({
           defaultMessage: "Country/Region is required",
-        })
+        }),
       );
     }
 
@@ -84,7 +84,7 @@ export default function CommunityChallengeCreatePage() {
       return Alert.alert(
         intl.formatMessage({
           defaultMessage: "At least one mountain is required",
-        })
+        }),
       );
     }
 
@@ -95,18 +95,20 @@ export default function CommunityChallengeCreatePage() {
         country: formData.country.trim(),
         emoji: formData.emoji || undefined,
         isPublic: formData.isPublic,
-        mountainIds: selectedMountainIds.length > 0 ? selectedMountainIds : undefined,
-        newMountains: newMountains.length > 0
-          ? newMountains.map((m) => ({
-              name: m.name,
-              location: m.location,
-              height: m.height,
-              latitude: m.latitude,
-              longitude: m.longitude,
-              essential: m.essential,
-              image: m.image,
-            }))
-          : undefined,
+        mountainIds:
+          selectedMountainIds.length > 0 ? selectedMountainIds : undefined,
+        newMountains:
+          newMountains.length > 0
+            ? newMountains.map((m) => ({
+                name: m.name,
+                location: m.location,
+                height: m.height,
+                latitude: m.latitude,
+                longitude: m.longitude,
+                essential: m.essential,
+                image: m.image,
+              }))
+            : undefined,
       });
 
       router.dismiss();
@@ -114,7 +116,7 @@ export default function CommunityChallengeCreatePage() {
       Alert.alert(
         intl.formatMessage({
           defaultMessage: "Something went wrong, try again later!",
-        })
+        }),
       );
     }
   };
@@ -146,7 +148,7 @@ export default function CommunityChallengeCreatePage() {
               </ThemedText>
               <TouchableOpacity
                 onPress={() => setEditingMountains(true)}
-                className="flex-row items-center justify-between gap-4 rounded-xl border-2 border-border px-4 py-2"
+                className="flex-row items-center justify-between gap-4 rounded border-2 border-border px-4 py-2"
               >
                 {selectedMountainsForDisplay.length > 0 ? (
                   <AvatarGroup
@@ -161,7 +163,7 @@ export default function CommunityChallengeCreatePage() {
                     <FormattedMessage defaultMessage="Add mountain" />
                   </ThemedText>
                 )}
-                <View className="size-10 items-center justify-center rounded-xl bg-muted-foreground/30 shadow">
+                <View className="size-10 items-center justify-center rounded bg-muted-foreground/30 shadow">
                   <Icon name="plus" weight="semibold" color="white" size={16} />
                 </View>
               </TouchableOpacity>
@@ -172,10 +174,10 @@ export default function CommunityChallengeCreatePage() {
         <BlurView
           className={twMerge(
             "px-6 pt-1 pb-8",
-            isKeyboardVisible && "opacity-0"
+            isKeyboardVisible && "opacity-0",
           )}
         >
-          <View className="mb-3 flex-row items-center gap-3 rounded-xl border border-blue-500/30 bg-blue-500/10 p-3">
+          <View className="mb-3 flex-row items-center gap-3 rounded border border-blue-500/30 bg-blue-500/10 p-3">
             <Icon name="info.circle" size={18} color="#3b82f6" />
             <ThemedText className="flex-1 text-sm text-blue-500">
               <FormattedMessage defaultMessage="You can add or remove mountains later" />

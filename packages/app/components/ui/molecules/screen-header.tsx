@@ -16,8 +16,8 @@ export const ScreenHeader = ({
   return (
     <ThemedView
       className={twMerge(
-        "h-24 w-full justify-end pt-2",
-        hasDynamicIsland && "h-32",
+        "h-28 w-full justify-end pt-4",
+        hasDynamicIsland && "h-36",
       )}
     >
       <View className="flex-row items-center justify-between">

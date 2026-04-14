@@ -32,7 +32,7 @@ export const Skeleton = ({
 
   return (
     <Animated.View
-      className={twMerge("w-full h-24 rounded-lg bg-border", className)}
+      className={twMerge("w-full h-24 rounded bg-border", className)}
       style={[animatedStyle, style]}
     />
   );

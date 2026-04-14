@@ -134,6 +134,19 @@ export const useUser = (userId: string) => {
 };
 ```
 
+### Debounced field updates
+
+When wiring `debounce` from `lib/debounce.ts` into an input's `onChangeText`, wrap the debounced function in `useMemo` — otherwise each render creates a fresh debounce with a new internal timer, so the previous pending update is orphaned and nothing actually fires. This bites hardest when the input lives inside a conditionally-rendered block (e.g. a tab) that unmounts before the debounce delay elapses.
+
+```typescript
+const onChangeFirstName = useMemo(
+  () => debounce(async (firstName: string) => {
+    await updateUserMe({ firstName });
+  }, 500),
+  [updateUserMe],
+);
+```
+
 ### Infinite Scroll with Pagination
 
 ```typescript
@@ -200,6 +213,10 @@ router.push({ pathname: '/mountain/[id]', params: { id: '456' } });
 ### Action sections
 
 When building an "Actions" section on a detail screen (mountain, plan, user profile, etc.), use the `ActionRow` molecule from `@/components/ui/molecules` instead of hand-rolling icon+text rows. Intents map to design tokens (`primary`, `muted`, `blue`, `emerald`, `danger`). Wrap in `<Link asChild>` for navigation rows. Supports `badge` (red dot) and `iconOverride` (e.g. spinner). See `app/plan/[id]/index.tsx` and `app/mountain/[slug]/index.tsx` for examples.
+
+### Full-page edit screens
+
+Edits live in dedicated push routes like `/user/summits/[summit]/edit.tsx` rather than bottom drawers. Detail pages trigger them via `<Link asChild>` wrapping an `ActionRow` (e.g. `app/user/summits/[summit].tsx`). The edit form mirrors the create flow's inputs but uses partial-payload mutations: the API body fields are all optional (`t.Optional(...)`) so the client sends only changed values — keeps everything backwards-compatible. See `app/user/summits/[summit]/edit.tsx` + `api/routes/protected/summit/summit.update.post.ts` for the template (photo replace, user add/remove, date edit).
 
 ### Translations (CRITICAL)
 

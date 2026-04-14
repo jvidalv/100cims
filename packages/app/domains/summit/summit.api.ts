@@ -3,7 +3,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/components/providers/auth-provider";
 import { queryClient } from "@/components/providers/query-client-provider";
 import apiClient from "@/lib/api-client";
-import { summitKeys } from "@/lib/query-keys";
+import { summitKeys, userKeys } from "@/lib/query-keys";
 
 export const SUMMITS_KEY = ({
   mountainId,
@@ -54,7 +54,7 @@ export const useSummitGet = ({ summitId }: { summitId: string }) => {
   const { isAuthenticated } = useAuth();
 
   const args = useQuery({
-    queryKey: [summitId],
+    queryKey: summitKeys.one(summitId),
     enabled: () => isAuthenticated,
     queryFn: async () => {
       if (!isAuthenticated) return null;
@@ -99,26 +99,34 @@ export const useUpdateSummitMutation = () => {
     mutationFn: async ({
       summitId,
       summitedAt,
+      image,
+      usersId,
     }: {
       summitId: string;
-      summitedAt: string;
+      summitedAt?: string;
+      image?: string;
+      usersId?: string[];
     }) => {
       const { data, error } = await apiClient.POST(
         "/api/protected/summit/update",
         {
-          body: { summitId, summitedAt },
+          body: { summitId, summitedAt, image, usersId },
         },
       );
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       void queryClient.invalidateQueries({
         queryKey: SUMMITS_KEY({
           mountainId: undefined,
           limit: undefined,
         }),
       });
+      void queryClient.invalidateQueries({
+        queryKey: summitKeys.one(variables.summitId),
+      });
+      void queryClient.invalidateQueries({ queryKey: userKeys.summits() });
     },
   });
 };

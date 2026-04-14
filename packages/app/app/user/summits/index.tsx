@@ -1,7 +1,7 @@
 import { format } from "date-fns/format";
 import { Link, Redirect } from "expo-router";
-import { FormattedMessage, useIntl } from "react-intl";
-import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
+import { FormattedMessage } from "react-intl";
+import { ScrollView, TouchableOpacity, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
 import {
@@ -9,45 +9,15 @@ import {
   ThemedKeyboardAvoidingView,
   Avatar,
   Skeleton,
-  Icon,
 } from "@/components/ui/atoms";
 import { ScreenHeader } from "@/components/ui/molecules";
-import { useDeleteSummitMutation } from "@/domains/summit/summit.api";
 import { useUserMe, useUserChallengeSummits } from "@/domains/user/user.api";
 
 export default function UserSummitsScreen() {
-  const intl = useIntl();
   const { data: me } = useUserMe();
-  const { mutateAsync: deleteSummit } = useDeleteSummitMutation();
 
-  const {
-    data: userSummits,
-    isPending: isPendingUserSummits,
-    refetch: refetchSummits,
-  } = useUserChallengeSummits();
-
-  const onDelete = (summitId: string) => {
-    Alert.alert(
-      intl.formatMessage({ defaultMessage: "Deleting summit" }),
-      intl.formatMessage({
-        defaultMessage: "Are you sure you want to continue?",
-      }),
-      [
-        {
-          text: intl.formatMessage({ defaultMessage: "Cancel" }),
-          style: "cancel",
-        },
-        {
-          text: intl.formatMessage({ defaultMessage: "Yes" }),
-          style: "default",
-          onPress: async () => {
-            await deleteSummit({ summitId });
-            void refetchSummits();
-          },
-        },
-      ],
-    );
-  };
+  const { data: userSummits, isPending: isPendingUserSummits } =
+    useUserChallengeSummits();
 
   if (!me) {
     return <Redirect href="/join" />;
@@ -87,53 +57,47 @@ export default function UserSummitsScreen() {
               mountainEssential,
             }) => {
               return (
-                <View className="flex-row items-center gap-4" key={summitId}>
-                  <Link
-                    href={{
-                      pathname: "/user/summits/[summit]",
-                      params: { summit: summitId },
-                    }}
-                    asChild
-                  >
-                    <TouchableOpacity className="flex-1 flex-row gap-2">
-                      <Avatar size="sm" imageUrl={mountainImageUrl} />
-                      <View className="flex-1">
-                        <ThemedText
-                          className="flex-1 font-medium"
-                          numberOfLines={1}
-                        >
-                          {mountainName}
+                <Link
+                  key={summitId}
+                  href={{
+                    pathname: "/user/summits/[summit]",
+                    params: { summit: summitId },
+                  }}
+                  asChild
+                >
+                  <TouchableOpacity className="flex-row items-center gap-2">
+                    <Avatar size="sm" imageUrl={mountainImageUrl} />
+                    <View className="flex-1">
+                      <ThemedText
+                        className="flex-1 font-medium"
+                        numberOfLines={1}
+                      >
+                        {mountainName}
+                      </ThemedText>
+                      <View className="flex-row items-center gap-2">
+                        <View
+                          className={twMerge(
+                            "size-3 rounded-full",
+                            mountainEssential
+                              ? "bg-primary"
+                              : "bg-muted-foreground/50",
+                          )}
+                        />
+                        <ThemedText className="text-sm text-muted-foreground">
+                          {format(summitedAt, "dd MMM yyyy")}
                         </ThemedText>
-                        <View className="flex-row items-center gap-2">
-                          <View
-                            className={twMerge(
-                              "size-3 rounded-full",
-                              mountainEssential
-                                ? "bg-primary"
-                                : "bg-muted-foreground/50",
-                            )}
-                          />
-                          <ThemedText className="text-sm text-muted-foreground">
-                            {format(summitedAt, "dd MMM yyyy")}
-                          </ThemedText>
-                        </View>
                       </View>
-                    </TouchableOpacity>
-                  </Link>
-                  <View className="ml-auto flex-row items-center gap-3">
+                    </View>
                     <ThemedText
                       className={twMerge(
-                        "font-medium text-muted-foreground",
+                        "ml-auto font-medium text-muted-foreground",
                         summitedValidated && "text-primary",
                       )}
                     >
                       +{score}
                     </ThemedText>
-                    <TouchableOpacity onPress={() => onDelete(summitId)}>
-                      <Icon name="trash" muted size={16} />
-                    </TouchableOpacity>
-                  </View>
-                </View>
+                  </TouchableOpacity>
+                </Link>
               );
             },
           )}
