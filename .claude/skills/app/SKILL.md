@@ -218,6 +218,12 @@ When building an "Actions" section on a detail screen (mountain, plan, user prof
 
 Edits live in dedicated push routes like `/user/summits/[summit]/edit.tsx` rather than bottom drawers. Detail pages trigger them via `<Link asChild>` wrapping an `ActionRow` (e.g. `app/user/summits/[summit].tsx`). The edit form mirrors the create flow's inputs but uses partial-payload mutations: the API body fields are all optional (`t.Optional(...)`) so the client sends only changed values — keeps everything backwards-compatible. See `app/user/summits/[summit]/edit.tsx` + `api/routes/protected/summit/summit.update.post.ts` for the template (photo replace, user add/remove, date edit).
 
+### Share helpers
+
+Text-only share messages go through `shareDeeplink` from `@/lib/share` — passes locale-keyed messages + a path, appends the `getUrlDeeplink(path)` URL, opens the native share sheet. Used by every detail page's Share action (mountain, plan, user, summit, challenge).
+
+For rich story-ready image shares (summit + plan detail), render an off-screen `<View>` at fixed dimensions (e.g. 360×640 for a 9:16 story) and call `captureAndShare` from `@/lib/share` — it handles `Image.prefetch` (Promise.allSettled, skips `data:` URIs), `captureRef` at 1080×1920, `expo-sharing.shareAsync`, and falls back to the text-only share. Two gotchas: (1) view-shot doesn't reliably serialize NativeWind `className` into the captured image, so use inline `style` props inside the share card; (2) the off-screen wrapper needs `collapsable={false}` + `position: absolute; left: -10000` + `pointerEvents="none"`. See `app/user/summits/[summit].tsx` + `components/summit/summit-share-card.tsx` for the canonical setup and `app/plan/[id]/index.tsx` + `components/plan/plan-share-card.tsx` for a multi-image-grid variant.
+
 ### Translations (CRITICAL)
 
 **All user-facing strings MUST use `intl.formatMessage`** - never hardcode text.

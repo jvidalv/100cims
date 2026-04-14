@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useAdminUsers } from "@/domains/admin/api";
+import { formatDate } from "@/lib/format-date";
 
 const ANY = "__any__";
 
@@ -34,6 +35,7 @@ export default function AdminUsersPage() {
     "version",
     parseAsString.withDefault(""),
   );
+  const [sort, setSort] = useQueryState("sort", parseAsString.withDefault(""));
   const [search, setSearch] = useState(q);
 
   useEffect(() => {
@@ -52,6 +54,7 @@ export default function AdminUsersPage() {
     country,
     platform,
     version,
+    sort,
   });
 
   const pickFilter =
@@ -61,13 +64,14 @@ export default function AdminUsersPage() {
       void setPage(1);
     };
 
-  const hasActiveFilters = Boolean(country || platform || version || q);
+  const hasActiveFilters = Boolean(country || platform || version || q || sort);
 
   const clearFilters = () => {
     void setQ(null);
     void setCountry(null);
     void setPlatform(null);
     void setVersion(null);
+    void setSort(null);
     void setPage(1);
     setSearch("");
   };
@@ -127,6 +131,24 @@ export default function AdminUsersPage() {
           </SelectContent>
         </Select>
 
+        <Select
+          value={sort || "createdAt_desc"}
+          onValueChange={(value) => {
+            void setSort(value === "createdAt_desc" ? null : value);
+            void setPage(1);
+          }}
+        >
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Sort" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="createdAt_desc">Newest first</SelectItem>
+            <SelectItem value="createdAt_asc">Oldest first</SelectItem>
+            <SelectItem value="summits_desc">Most summits</SelectItem>
+            <SelectItem value="summits_asc">Fewest summits</SelectItem>
+          </SelectContent>
+        </Select>
+
         {hasActiveFilters && (
           <Button size="sm" variant="ghost" onClick={clearFilters}>
             Clear
@@ -150,6 +172,8 @@ export default function AdminUsersPage() {
                   <th className="py-2 pr-4 font-medium">Platform</th>
                   <th className="py-2 pr-4 font-medium">Version</th>
                   <th className="py-2 pr-4 font-medium">Push</th>
+                  <th className="py-2 pr-4 font-medium text-right">Summits</th>
+                  <th className="py-2 pr-4 font-medium">Last summit</th>
                   <th className="py-2 pr-4 font-medium">Joined</th>
                 </tr>
               </thead>
@@ -194,8 +218,14 @@ export default function AdminUsersPage() {
                       <td className="py-2 pr-4 text-muted-foreground">
                         {u.hasPushToken ? "Yes" : "No"}
                       </td>
+                      <td className="py-2 pr-4 text-muted-foreground text-right tabular-nums">
+                        {u.totalSummits}
+                      </td>
                       <td className="py-2 pr-4 text-muted-foreground">
-                        {new Date(u.createdAt).toLocaleDateString()}
+                        {u.lastSummitAt ? formatDate(u.lastSummitAt) : "—"}
+                      </td>
+                      <td className="py-2 pr-4 text-muted-foreground">
+                        {formatDate(u.createdAt)}
                       </td>
                     </tr>
                   );
@@ -203,7 +233,7 @@ export default function AdminUsersPage() {
                 {data.items.length === 0 && (
                   <tr>
                     <td
-                      colSpan={8}
+                      colSpan={10}
                       className="py-8 text-center text-muted-foreground"
                     >
                       No users match the current filters.

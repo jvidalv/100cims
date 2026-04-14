@@ -1,18 +1,21 @@
 import { format } from "date-fns/format";
-import * as Haptics from "expo-haptics";
 import { Link, Redirect, useLocalSearchParams, useRouter } from "expo-router";
+import { useRef, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
+  ActivityIndicator,
   Alert,
   Image,
   Pressable,
   ScrollView,
-  Share,
   TouchableOpacity,
+  useWindowDimensions,
   View,
 } from "react-native";
+import ConfettiCannon from "react-native-confetti-cannon";
 
 import { useAuth } from "@/components/providers/auth-provider";
+import { SummitShareCard } from "@/components/summit";
 import {
   Avatar,
   Skeleton,
@@ -23,47 +26,69 @@ import {
   ActionRow,
   ImagePreviewModal,
   ScreenHeader,
+  SharePulseBadge,
   useImagePreview,
 } from "@/components/ui/molecules";
 import {
   useDeleteSummitMutation,
   useSummitGet,
-  useSummitReactions,
-  useSummitReactionMutation,
 } from "@/domains/summit/summit.api";
 import { useUserMe } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
-import { getUrlDeeplink } from "@/lib/deeplink";
+import {
+  CONFETTI_EXPLOSION_SPEED,
+  CONFETTI_FALL_SPEED,
+  getConfettiOrigin,
+} from "@/lib/confetti";
+import { captureAndShare, shareDeeplink } from "@/lib/share";
 import { getInitials } from "@/lib/strings";
-
-const REACTION_EMOJIS = ["❤️", "👍🏽", "💪🏽", "🐶", "🧨"] as const;
 
 const Content = () => {
   const intl = useIntl();
   const router = useRouter();
-  const { summit } = useLocalSearchParams<{ summit: string }>();
+  const { width: screenW, height: screenH } = useWindowDimensions();
+  const { summit, from } = useLocalSearchParams<{
+    summit: string;
+    from?: string;
+  }>();
+  const justCreated = from === "create";
 
   const { data, isPending } = useSummitGet({ summitId: summit });
   const { data: me } = useUserMe();
   const { mutateAsync: deleteSummit } = useDeleteSummitMutation();
-  const { data: reactionsData } = useSummitReactions({ summitId: summit });
-  const { mutate: toggleReaction } = useSummitReactionMutation();
 
   const { previewImage, isPreviewOpen, openPreview, closePreview } =
     useImagePreview();
 
+  const shareCardRef = useRef<View>(null);
+  const [isSharing, setIsSharing] = useState(false);
+
   const isUserParticipant = data?.users.some((user) => user.userId === me?.id);
 
-  const handleShare = async () => {
+  const shareTextFallback = async () => {
     if (!data) return;
-    const messages = {
-      en: `🏔️ Check out this summit on cims!\n${data.mountainName} 💪\n\n${getUrlDeeplink(`user/summits/${summit}`)}`,
-      ca: `🏔️ Mira aquest cim a cims!\n${data.mountainName} 💪\n\n${getUrlDeeplink(`user/summits/${summit}`)}`,
-      es: `🏔️ Mira esta cima en cims!\n${data.mountainName} 💪\n\n${getUrlDeeplink(`user/summits/${summit}`)}`,
-    };
-    const locale = intl.locale;
-    const msg = messages[locale as "ca" | "es" | "en"] || messages.en;
-    await Share.share({ message: msg });
+    await shareDeeplink({
+      intl,
+      path: `user/summits/${summit}`,
+      messages: {
+        en: `🏔️ Check out this summit on cims!\n${data.mountainName} 💪`,
+        ca: `🏔️ Mira aquest cim a cims!\n${data.mountainName} 💪`,
+        es: `🏔️ Mira esta cima en cims!\n${data.mountainName} 💪`,
+      },
+    });
+  };
+
+  const handleShare = async () => {
+    if (!data || isSharing) return;
+    setIsSharing(true);
+    await captureAndShare({
+      cardRef: shareCardRef,
+      prefetchUrls: [data.summitImageUrl],
+      dialogTitle: intl.formatMessage({ defaultMessage: "Share summit" }),
+      fallback: shareTextFallback,
+      logTag: "summit/share-card",
+    });
+    setIsSharing(false);
   };
 
   const handleDelete = () => {
@@ -114,7 +139,7 @@ const Content = () => {
       <ScrollView
         stickyHeaderIndices={[0]}
         showsVerticalScrollIndicator={false}
-        contentContainerClassName="pb-12 pt-2"
+        contentContainerClassName="pb-24 pt-2"
       >
         <Link
           href={{
@@ -154,40 +179,6 @@ const Content = () => {
             resizeMode="cover"
           />
         </Pressable>
-        <View className="flex-row justify-center gap-2 px-6 py-4">
-          {REACTION_EMOJIS.map((emoji) => {
-            const reactionCount =
-              reactionsData?.reactions.find((r) => r.emoji === emoji)?.count ??
-              0;
-            const hasUserReacted = reactionsData?.userReactions.includes(emoji);
-
-            return (
-              <TouchableOpacity
-                key={emoji}
-                onPress={() => {
-                  void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                  toggleReaction({ summitId: summit, emoji });
-                }}
-                className={`flex-row items-center gap-1 rounded-full border px-3 py-1.5 ${
-                  hasUserReacted
-                    ? "border-primary bg-primary/10"
-                    : "border-border bg-background"
-                } ${reactionCount === 0 ? "opacity-50" : ""}`}
-              >
-                <ThemedText className="text-lg">{emoji}</ThemedText>
-                {reactionCount > 0 && (
-                  <ThemedText
-                    className={`text-lg font-bold ${
-                      hasUserReacted ? "text-primary" : "text-muted-foreground"
-                    }`}
-                  >
-                    {reactionCount}
-                  </ThemedText>
-                )}
-              </TouchableOpacity>
-            );
-          })}
-        </View>
         <View className="mt-6 gap-2 px-6">
           <ThemedText className="mb-2 text-2xl font-semibold">
             <FormattedMessage defaultMessage="People" />
@@ -222,6 +213,8 @@ const Content = () => {
             onPress={handleShare}
             iconName="square.and.arrow.up"
             intent="muted"
+            iconOverride={isSharing ? <ActivityIndicator size="sm" /> : undefined}
+            trailing={justCreated ? <SharePulseBadge /> : undefined}
           >
             <FormattedMessage defaultMessage="Share" />
           </ActionRow>
@@ -245,11 +238,50 @@ const Content = () => {
           )}
         </View>
       </ScrollView>
+      {/*
+        Off-screen render for view-shot capture:
+        - collapsable={false} prevents Android from optimizing the view away
+        - left: -10000 keeps it out of the user's viewport
+        - pointerEvents="none" so the hidden view never steals touches
+      */}
+      <View
+        collapsable={false}
+        pointerEvents="none"
+        style={{ position: "absolute", left: -10000, top: 0 }}
+      >
+        <SummitShareCard
+          ref={shareCardRef}
+          mountainName={data.mountainName}
+          mountainHeight={data.mountainHeight}
+          mountainEssential={data.mountainEssential}
+          summitImageUrl={data.summitImageUrl}
+          summitedAt={data.summitedAt}
+          users={data.users}
+        />
+      </View>
       <ImagePreviewModal
         visible={isPreviewOpen}
         imageSource={previewImage}
         onClose={closePreview}
       />
+      {justCreated && (
+        <ConfettiCannon
+          count={Math.min(
+            300,
+            Math.max(
+              60,
+              80 +
+                Math.floor((Number(data.mountainHeight) - 1000) / 20) +
+                (data.mountainEssential ? 60 : 0),
+            ),
+          )}
+          origin={getConfettiOrigin(screenW, screenH)}
+          fadeOut
+          autoStart
+          explosionSpeed={CONFETTI_EXPLOSION_SPEED}
+          fallSpeed={CONFETTI_FALL_SPEED}
+        />
+      )}
     </ThemedView>
   );
 };

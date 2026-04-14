@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAdminSummits } from "@/domains/admin/api";
+import { formatDate } from "@/lib/format-date";
 
 export default function AdminSummitsPage() {
   const router = useRouter();
@@ -50,7 +51,7 @@ export default function AdminSummitsPage() {
             void setValidated(e.target.value || null);
             void setPage(1);
           }}
-          className="h-9 rounded-md border border-input bg-background px-3 text-sm"
+          className="h-9 rounded border border-input bg-background px-3 text-sm"
         >
           <option value="">All statuses</option>
           <option value="true">Validated</option>
@@ -91,13 +92,13 @@ export default function AdminSummitsPage() {
                       onClick={() => router.push(`/admin/summits/${s.id}`)}
                     >
                       <td className="py-2 pr-4">
-                        <Avatar className="size-10 rounded-md">
+                        <Avatar className="size-10 rounded">
                           <AvatarImage
                             src={s.imageUrl}
                             alt="summit"
                             className="object-cover"
                           />
-                          <AvatarFallback className="rounded-md">
+                          <AvatarFallback className="rounded">
                             🏔
                           </AvatarFallback>
                         </Avatar>
@@ -144,7 +145,7 @@ export default function AdminSummitsPage() {
                         {s.validated ? "✓" : "—"}
                       </td>
                       <td className="py-2 pr-4 text-muted-foreground">
-                        {new Date(s.summitedAt).toLocaleDateString()}
+                        {formatDate(s.summitedAt)}
                       </td>
                     </tr>
                   );

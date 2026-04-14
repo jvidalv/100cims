@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAdminMountains } from "@/domains/admin/api";
+import { formatDate } from "@/lib/format-date";
 
 export default function AdminMountainsPage() {
   const router = useRouter();
@@ -89,7 +90,7 @@ export default function AdminMountainsPage() {
                         {m.isOfficial ? "Official" : (m.creatorName ?? "—")}
                       </td>
                       <td className="py-2 pr-4 text-muted-foreground">
-                        {new Date(m.createdAt).toLocaleDateString()}
+                        {formatDate(m.createdAt)}
                       </td>
                     </tr>
                   );

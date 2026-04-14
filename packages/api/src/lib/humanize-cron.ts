@@ -23,7 +23,13 @@ export const humanizeCron = (pattern: string): string => {
 
   // Every-N-minutes: "*/N" minute with other time fields wild
   const everyMin = minute?.match(/^\*\/(\d+)$/);
-  if (everyMin && hour === "*" && dayOfMonth === "*" && month === "*" && weekday === "*") {
+  if (
+    everyMin &&
+    hour === "*" &&
+    dayOfMonth === "*" &&
+    month === "*" &&
+    weekday === "*"
+  ) {
     const n = Number(everyMin[1]);
     return n === 1 ? "Every minute" : `Every ${n} minutes`;
   }
@@ -92,7 +98,13 @@ export const cronIntervalSeconds = (pattern: string): number => {
     parts.length === 6 ? parts.slice(1) : parts;
 
   const everyMin = minute?.match(/^\*\/(\d+)$/);
-  if (everyMin && hour === "*" && dayOfMonth === "*" && month === "*" && weekday === "*") {
+  if (
+    everyMin &&
+    hour === "*" &&
+    dayOfMonth === "*" &&
+    month === "*" &&
+    weekday === "*"
+  ) {
     return Number(everyMin[1]) * MIN;
   }
 

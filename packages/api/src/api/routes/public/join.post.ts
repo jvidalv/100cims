@@ -13,6 +13,7 @@ import {
   DISCORD_NEW_USER_WEBHOOK_URL,
   sendDiscordEmbed,
 } from "@/api/lib/discord";
+import { sendWelcomeEmail } from "@/api/lib/email";
 import { addRowToSheets, EMAILS_SPREADSHEET } from "@/api/lib/sheets";
 import { DEFAULT_CHALLENGE_ID } from "@/api/routes/@shared/challenge";
 import { JWT } from "@/api/routes/@shared/jwt";
@@ -157,6 +158,11 @@ export const joinPostRoute = new Elysia().use(JWT()).post(
           { name: "Platform", value: platform ?? "—", inline: true },
           { name: "App version", value: appVersion ?? "—", inline: true },
         ],
+      });
+      void sendWelcomeEmail({
+        email: user.email,
+        firstName: user.firstName,
+        locale: user.locale,
       });
     } else {
       const updates: Partial<typeof userTable.$inferInsert> = {};

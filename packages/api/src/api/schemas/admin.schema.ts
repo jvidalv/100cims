@@ -15,6 +15,8 @@ export const AdminUserEntrySchema = t.Object({
   activeChallengeId: t.Nullable(t.String()),
   activeChallengeName: t.Nullable(t.String()),
   hasPushToken: t.Boolean(),
+  totalSummits: t.Number(),
+  lastSummitAt: t.Nullable(t.Date()),
 });
 
 export const AdminUsersResponseSchema = t.Object({

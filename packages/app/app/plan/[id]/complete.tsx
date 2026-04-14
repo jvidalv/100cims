@@ -19,6 +19,7 @@ import {
 import { ScreenHeader } from "@/components/ui/molecules";
 import { useSummitPost } from "@/domains/mountain/mountain.api";
 import { getMountainPts } from "@/domains/mountain/mountain.util";
+import { stashPlanCompletionImages } from "@/domains/plan/plan-completion-cache";
 import { usePlanOne, usePlanUpdate } from "@/domains/plan/plan.api";
 import { getImageOptimized } from "@/lib/images";
 import { logError } from "@/lib/log-error";
@@ -67,8 +68,6 @@ export default function PlanCompleteScreen() {
     }
   };
 
-  const missing = mountains.find((m) => !images[m.id]);
-
   const handleSubmit = async () => {
     if (!plan) return;
 
@@ -76,14 +75,6 @@ export default function PlanCompleteScreen() {
       setIsSubmitting(true);
 
       if (hasMountains) {
-        if (missing) {
-          return Alert.alert(
-            intl.formatMessage({
-              defaultMessage: "Please add photo for all mountains",
-            }),
-          );
-        }
-
         try {
           await Promise.all(
             mountains.map((m) =>
@@ -109,8 +100,12 @@ export default function PlanCompleteScreen() {
         status: "completed",
       });
 
+      stashPlanCompletionImages(id, images);
       void queryClient.invalidateQueries();
-      router.back();
+      router.replace({
+        pathname: "/plan/[id]",
+        params: { id, from: "complete" },
+      });
     } catch (err) {
       logError(err, "plan/complete/submit");
       Alert.alert(
@@ -252,7 +247,6 @@ export default function PlanCompleteScreen() {
             isLoading={isSubmitting}
             intent="success"
             onPress={handleSubmit}
-            disabled={!!missing}
           >
             <FormattedMessage defaultMessage="Complete plan" />
           </Button>

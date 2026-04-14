@@ -1,0 +1,28 @@
+{
+  "locale": "ca",
+  "title": "Repte del Gironès · Cims de la comarca",
+  "shortName": "Repte del Gironès",
+  "description": "Segueix els teus ascensos als cims del Gironès. App gratuïta per a iOS i Android.",
+  "heroTagline": "Els cims de la comarca de Girona, per descobrir-los a casa.",
+  "heroImageUrl": "https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/puigsou-rocacorba.jpeg?date=1761896472107",
+  "whatIsTitle": "Què és el Repte del Gironès?",
+  "whatIsParagraphs": [
+    "El Gironès té una muntanya mitjana: turons, serrats i rocams de pocs centenars de metres que dominen la plana i el Ter. No hi ha tresmils, però sí una col·lecció de punts amb història i vistes clares.",
+    "És un repte ideal per fer al llarg d'una temporada, sortida rere sortida, sense necessitat de grans desplaçaments ni equipament d'alta muntanya.",
+    "Amb l'app marques cada cim, hi afegeixes una foto i veus el teu progrés comarcal."
+  ],
+  "faqs": [
+    {
+      "q": "Són sortides fàcils?",
+      "a": "La majoria, sí. Molts cims són excursions de mig matí accessibles per a famílies."
+    },
+    {
+      "q": "Quin és el cim més conegut?",
+      "a": "Els Àngels i Montagut són dels més icònics del Gironès, amb vistes a la Costa Brava."
+    },
+    {
+      "q": "Es pot fer tot l'any?",
+      "a": "Sí. És un repte de cota baixa; només alguns dies de tramuntana forta poden incomodar."
+    }
+  ]
+}

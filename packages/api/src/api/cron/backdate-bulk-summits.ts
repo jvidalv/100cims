@@ -26,7 +26,5 @@ export async function backdateBulkSummits(): Promise<void> {
     RETURNING s.id;
   `);
 
-  console.log(
-    `[backdate-bulk-summits] backdated ${updated.length} summit(s)`,
-  );
+  console.log(`[backdate-bulk-summits] backdated ${updated.length} summit(s)`);
 }

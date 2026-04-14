@@ -1,0 +1,28 @@
+{
+  "locale": "es",
+  "title": "Cumbres Astures · Cumbres de Asturias",
+  "shortName": "Cumbres Astures",
+  "description": "Sigue tus ascensos a las cumbres principales de Asturias, de los Picos de Europa al macizo central. App gratuita.",
+  "heroTagline": "Las cumbres astures, de los Picos a la montaña central.",
+  "heroImageUrl": "https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/torrecerredo.jpeg?date=1761896472107",
+  "whatIsTitle": "¿Qué son las Cumbres Astures?",
+  "whatIsParagraphs": [
+    "Asturias tiene una densidad de montaña extraordinaria: los Picos de Europa con Torrecerredo y el Naranjo de Bulnes, pero también el macizo central y la montaña leonesa-asturiana.",
+    "Este reto recoge las cumbres más emblemáticas en una lista navegable. Cubre desde excursiones accesibles hasta vías de alta montaña en el corazón de los Picos.",
+    "Con la app sigues la lista en el móvil, con ficha de cada cumbre, y registras tus ascensos con foto y fecha."
+  ],
+  "faqs": [
+    {
+      "q": "¿Cuál es la cumbre más alta?",
+      "a": "Torrecerredo, a 2.650 metros, máximo de los Picos de Europa."
+    },
+    {
+      "q": "¿Hace falta equipamiento de alta montaña?",
+      "a": "Para los Picos en condiciones de invierno o vía ferrata, sí. Muchas de las cumbres del reto son caminables."
+    },
+    {
+      "q": "¿Mejor época?",
+      "a": "Junio a septiembre para las rutas alpinas; todo el año para cumbres de cota media."
+    }
+  ]
+}

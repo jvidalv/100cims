@@ -1,0 +1,28 @@
+{
+  "locale": "es",
+  "title": "Cumbres de las Islas Canarias · Volcanes y cimas insulares",
+  "shortName": "Islas Canarias",
+  "description": "Sigue tus ascensos a las cumbres principales de las Islas Canarias. App gratuita para iOS y Android.",
+  "heroTagline": "Los volcanes y cumbres más emblemáticos de las Canarias.",
+  "heroImageUrl": "https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/teide.jpeg?date=1761896472107",
+  "whatIsTitle": "¿Qué es el reto de las cumbres de Canarias?",
+  "whatIsParagraphs": [
+    "Canarias tiene una montaña única en el estado: volcanes jóvenes, paisajes africanos, y cumbres que superan los 3.700 metros en el Teide. Cada isla tiene sus propios techos, con un carácter muy diferente.",
+    "Este reto recoge las cumbres principales de cada isla: Teide, Pico Viejo, Roque Nublo, Garajonay, Pico de la Nieve… Una colección que combina geología, naturaleza e historia insular.",
+    "La app lleva la lista al móvil y registras cada ascenso con foto y fecha."
+  ],
+  "faqs": [
+    {
+      "q": "¿Hace falta permiso para subir al Teide?",
+      "a": "Sí. Para acceder a la cima del Teide por encima de los 3.500 m hay que reservar permiso gratuito con antelación en la web del Parque Nacional."
+    },
+    {
+      "q": "¿Es alpinismo?",
+      "a": "En general no. Son caminatas largas; el Teide tiene altitud y requiere aclimatación."
+    },
+    {
+      "q": "¿Cuándo es mejor ir?",
+      "a": "Todo el año es practicable en cota baja. En el Teide, evita los días de viento fuerte y nieve (diciembre-marzo)."
+    }
+  ]
+}

@@ -15,6 +15,7 @@ import {
   useAdminUserSummits,
   useUpdateAdminUser,
 } from "@/domains/admin/api";
+import { formatDate, formatDateTime } from "@/lib/format-date";
 
 type Form = {
   firstName: string;
@@ -245,11 +246,7 @@ export default function AdminUserDetailPage({
               : "—"}
           </dd>
           <dt className="text-muted-foreground">Last location at</dt>
-          <dd>
-            {u.lastLocationAt
-              ? new Date(u.lastLocationAt).toLocaleString()
-              : "—"}
-          </dd>
+          <dd>{u.lastLocationAt ? formatDateTime(u.lastLocationAt) : "—"}</dd>
           <dt className="text-muted-foreground">Push enabled</dt>
           <dd>{u.pushNotificationsEnabled ? "Yes" : "No"}</dd>
           <dt className="text-muted-foreground">Push token</dt>
@@ -316,7 +313,7 @@ export default function AdminUserDetailPage({
                         {s.validated ? "Yes" : "No"}
                       </td>
                       <td className="py-2 pr-4 text-muted-foreground">
-                        {new Date(s.summitedAt).toLocaleDateString()}
+                        {formatDate(s.summitedAt)}
                       </td>
                     </tr>
                   ))}

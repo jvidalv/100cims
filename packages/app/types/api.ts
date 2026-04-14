@@ -3604,19 +3604,19 @@ export interface operations {
                     mountainId: string;
                     usersId: string[];
                     date: string;
-                    image: string;
+                    image?: string;
                 };
                 "multipart/form-data": {
                     mountainId: string;
                     usersId: string[];
                     date: string;
-                    image: string;
+                    image?: string;
                 };
                 "text/plain": {
                     mountainId: string;
                     usersId: string[];
                     date: string;
-                    image: string;
+                    image?: string;
                 };
             };
         };
@@ -3628,12 +3628,15 @@ export interface operations {
                 content: {
                     "application/json": {
                         success: boolean;
+                        summitId: string;
                     };
                     "multipart/form-data": {
                         success: boolean;
+                        summitId: string;
                     };
                     "text/plain": {
                         success: boolean;
+                        summitId: string;
                     };
                 };
             };
@@ -5485,6 +5488,7 @@ export interface operations {
                 country?: string;
                 platform?: string;
                 version?: string;
+                sort?: string;
             };
             header?: never;
             path?: never;
@@ -5515,6 +5519,8 @@ export interface operations {
                                 activeChallengeId: (string | null) | null;
                                 activeChallengeName: (string | null) | null;
                                 hasPushToken: boolean;
+                                totalSummits: number;
+                                lastSummitAt: ((Record<string, never> | string | number) | null) | null;
                             }[];
                             page: number;
                             pageSize: number;
@@ -5545,6 +5551,8 @@ export interface operations {
                                 activeChallengeId: (string | null) | null;
                                 activeChallengeName: (string | null) | null;
                                 hasPushToken: boolean;
+                                totalSummits: number;
+                                lastSummitAt: ((Record<string, never> | string | number) | null) | null;
                             }[];
                             page: number;
                             pageSize: number;
@@ -5575,6 +5583,8 @@ export interface operations {
                                 activeChallengeId: (string | null) | null;
                                 activeChallengeName: (string | null) | null;
                                 hasPushToken: boolean;
+                                totalSummits: number;
+                                lastSummitAt: ((Record<string, never> | string | number) | null) | null;
                             }[];
                             page: number;
                             pageSize: number;

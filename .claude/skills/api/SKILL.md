@@ -49,7 +49,7 @@ Elysia provides excellent TypeScript inference, OpenAPI generation, and performa
 | `src/api/lib/slug.ts` | `generateSlug()` - URL-friendly slug generation |
 | `src/api/lib/images.ts` | `isBase64SizeValid()` - Image size validation |
 | `src/api/lib/sheets.ts` | Google Sheets logging utilities |
-| `src/api/lib/dates.ts` | Date formatting utilities |
+| `src/lib/format-date.ts` | `formatDate(value)` → `dd/mm/yyyy`, `formatDateTime(value)` → `dd/mm/yyyy HH:mm`. Use these for all admin-page date displays — never raw `toLocaleDateString()` (locale-dependent and inconsistent across the panel). |
 
 ## Key Patterns
 
@@ -278,6 +278,33 @@ void sendPushLocalized(
 - Add new copy in `api/lib/push-translations.ts` (en/ca/es). New event types go in `PUSH_TYPE` at `api/lib/push-types.ts`; the app's tap-routing whitelist must be kept in sync.
 - Users with `pushNotificationsEnabled = false` or null `expoPushToken` are filtered automatically.
 - Set `EXPO_ACCESS_TOKEN` env var to enable Expo's Enhanced Push Security.
+
+## Admin UI conventions
+
+- **Border radius**: the admin panel uses plain `rounded` (4px, `--radius = 0.25rem`) as the upper bound. Don't use `rounded-md` / `rounded-lg` / `rounded-xl` — a sweep was done to standardise. `rounded-full` is fine for circular elements (avatars, pills), and `rounded-sm` for smaller spots. The marketing/SEO pages (`app/100cims/`, `app/challenges/`, `app/page.tsx`, etc.) intentionally opt out of this rule.
+- **Dark background**: `--background`, `--card`, `--popover` in `.dark` are pure black (`0 0% 0%`) — don't soften to `0 0% 3.9%`.
+- **Date display**: always use `formatDate(value)` / `formatDateTime(value)` from `@/lib/format-date` (dd/mm/yyyy). Never raw `toLocaleDateString()`.
+
+## Marketing / SEO Pages (Next.js)
+
+Public-facing pages live under `src/app/`. Root layout is English. Canonical site URL: `SITE_URL` constant in `src/lib/app-links.ts`.
+
+- **Per-locale page**: root request config (`src/i18n/request.ts`) hardcodes `locale = "en"`. To render a single page in a different locale, use `createTranslator({ locale, messages: caMessages, namespace })` directly — do NOT try `getTranslations({ locale })` with a non-loaded locale (messages won't be available). See `src/app/100cims/_components/t.ts` for the pattern.
+- **Shared footer**: `src/components/site-footer.tsx` — accepts pre-resolved `SiteFooterStrings` (not a translator, because next-intl's translator type narrows to the consumer's namespace and rejects a generic prop type).
+- **SEO primitives in place**: `src/app/sitemap.ts` (MetadataRoute.Sitemap) and `src/app/robots.ts` (MetadataRoute.Robots). Add new pages to `sitemap.ts` manually.
+- **Server-side caching**: we default to **fully static** pages for marketing content (no `export const revalidate`). Stats and featured-peaks selection snapshot at build time; redeploy to refresh. Only opt into ISR if a page must change between deploys.
+- **JSON-LD**: inject via `<script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(obj) }} />`. Safe with `JSON.stringify` + trusted data.
+- **Public stats helper**: `src/api/lib/public-stats.ts` returns `{ totalUsers, totalSummits, totalMountains, essentialMountainCount }` via 4 parallel COUNT(*) queries.
+
+### Templated per-challenge pages (`/challenges/[challengeSlug]`)
+
+Pattern for SEO landing pages that scale across N items with per-item hand-written copy:
+- **Content registry** at `src/app/challenges/content/` — one JSON per item + `index.ts` registry with runtime `narrow()` validation against the `ChallengeContent` type. `isOfficialSlug()` guard narrows `string` to the registry keys.
+- **Fully static**: `generateStaticParams()` returns one entry per registry key, `dynamicParams = false` so unknown slugs 404 at build time. Adding a new item requires a redeploy.
+- **Template components** live at `src/app/challenges/_components/` — pure props, no hardcoded locale. Accept a `ChallengeLocale` prop and fetch their own translator via `getChallengeTemplateTranslator(locale)` from `src/lib/locale-dictionaries.ts`.
+- **DB helpers** in `src/lib/challenge-helpers.ts`: `getOfficialChallengeBySlug` (Promise.all of 3 queries), `getFeaturedPeaksForChallenge` (by id) and `…ForChallengeSlug` (by slug, for convenience).
+- **Shared footer strings**: `src/app/challenges/_components/build-footer-strings.ts` exports `buildFooterStrings(locale)` returning a `SiteFooterStrings`. The home page and `/100cims` use it too — single source of truth for the 14-key footer mapping.
+- **Hero image LCP**: above-the-fold `<img>` takes `fetchPriority="high"`.
 
 ## Environment Variables
 

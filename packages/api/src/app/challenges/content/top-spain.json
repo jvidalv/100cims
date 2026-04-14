@@ -1,0 +1,32 @@
+{
+  "locale": "es",
+  "title": "Top Spain · Las cumbres más altas del estado",
+  "shortName": "Top Spain",
+  "description": "Registra tus ascensos a las cumbres más altas de España con Cims, sempre amunt. App gratuita para iOS y Android.",
+  "heroTagline": "Las cumbres más altas de España, en un solo reto.",
+  "heroImageUrl": "https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/teide.jpeg?date=1761896472107",
+  "whatIsTitle": "¿Qué es el reto Top Spain?",
+  "whatIsParagraphs": [
+    "Top Spain reúne las cumbres más altas del estado español: una selección reducida que cubre los máximos de cada cordillera principal.",
+    "A diferencia de los 100 Cims, es un reto más vertical que extenso. Implica técnicas de alta montaña en algunos casos, sobre todo en los Pirineos, Picos de Europa y el Teide.",
+    "La app lleva la lista al móvil. Marcas las cumbres que has hecho y sigues tu progreso sin hojas de cálculo."
+  ],
+  "faqs": [
+    {
+      "q": "¿Cuál es la cumbre más alta del reto?",
+      "a": "El Teide en Tenerife, a 3.718 metros. Le siguen el Mulhacén y el Aneto."
+    },
+    {
+      "q": "¿Hay que ser alpinista para hacerlas todas?",
+      "a": "Depende de la cumbre. Algunas son caminata; otras, como el Aneto, requieren conocimientos de nieve y cuerda en ciertas épocas."
+    },
+    {
+      "q": "¿En qué época es mejor?",
+      "a": "Finales de junio a principios de septiembre para los pirenaicos. El Teide y el Mulhacén tienen ventana más amplia."
+    },
+    {
+      "q": "¿Cómo lo registro en la app?",
+      "a": "Eliges la cumbre, añades foto y fecha. La app guarda el historial y tu progreso."
+    }
+  ]
+}

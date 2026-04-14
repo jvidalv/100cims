@@ -1,0 +1,28 @@
+{
+  "locale": "en",
+  "title": "French Alps · The great peaks of the Alps",
+  "shortName": "French Alps",
+  "description": "Track your ascents of the main summits in the French Alps. Free app for iOS and Android.",
+  "heroTagline": "The great Alps, from Mont Blanc to the Vanoise.",
+  "heroImageUrl": "https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/mont-blanc.jpeg?date=1761896472107",
+  "whatIsTitle": "What is the French Alps challenge?",
+  "whatIsParagraphs": [
+    "The French Alps hold some of Europe's most iconic summits: Mont Blanc, Barre des Écrins, Grande Casse, Mont Pelvoux, La Meije. Serious alpinism, but also attainable objectives for anyone who trains for them.",
+    "This challenge covers the emblematic peaks in a manageable list. It isn't exhaustive — it aims to honour the giants of each massif: Mont Blanc, Vanoise, Écrins, Oisans.",
+    "With the app you carry the list on your phone and log each summit with a photo and date."
+  ],
+  "faqs": [
+    {
+      "q": "What's the highest peak?",
+      "a": "Mont Blanc, at 4,808 metres — the roof of Western Europe."
+    },
+    {
+      "q": "Is it technical alpinism?",
+      "a": "Most of them, yes. Several peaks require rope, crampons and ice axe. A few are walkable in summer."
+    },
+    {
+      "q": "When's the best time to go?",
+      "a": "June to September for most; Mont Blanc has a narrower window."
+    }
+  ]
+}

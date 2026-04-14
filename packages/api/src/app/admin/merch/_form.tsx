@@ -256,7 +256,7 @@ export function MerchForm({
         )}
         {!isImageFull && (
           <label
-            className={`flex flex-col items-center justify-center gap-1 border-2 border-dashed border-input rounded-md px-4 py-6 text-sm transition-colors ${
+            className={`flex flex-col items-center justify-center gap-1 border-2 border-dashed border-input rounded px-4 py-6 text-sm transition-colors ${
               uploading
                 ? "opacity-50 cursor-not-allowed"
                 : "cursor-pointer hover:border-primary hover:bg-muted/40"
@@ -350,7 +350,7 @@ function LocaleField({
                 rows={3}
                 onChange={(e) => onChange(loc, e.target.value)}
                 placeholder={req ? "Required" : ""}
-                className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                className="flex w-full rounded border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               />
             ) : (
               <Input

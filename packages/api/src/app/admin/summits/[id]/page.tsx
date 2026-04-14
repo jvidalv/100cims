@@ -26,6 +26,7 @@ import {
   useDeleteAdminSummit,
   useUpdateAdminSummit,
 } from "@/domains/admin/api";
+import { formatDate, formatDateTime } from "@/lib/format-date";
 
 type Form = {
   summitedAt: string;
@@ -141,20 +142,20 @@ export default function AdminSummitDetailPage({
           ← Summits
         </Link>
         <div className="flex items-center gap-4 mt-2">
-          <Avatar className="size-16 rounded-md">
+          <Avatar className="size-16 rounded">
             <AvatarImage
               src={s.imageUrl}
               alt="summit"
               className="object-cover"
             />
-            <AvatarFallback className="rounded-md text-lg">🏔</AvatarFallback>
+            <AvatarFallback className="rounded text-lg">🏔</AvatarFallback>
           </Avatar>
           <div>
             <h1 className="text-2xl font-bold leading-tight">
               {s.mountainName ?? "Unknown mountain"}
             </h1>
             <p className="text-sm text-muted-foreground">
-              {new Date(s.summitedAt).toLocaleDateString()} · {mainUserName}
+              {formatDate(s.summitedAt)} · {mainUserName}
             </p>
           </div>
         </div>
@@ -257,7 +258,7 @@ export default function AdminSummitDetailPage({
             )}
           </dd>
           <dt className="text-muted-foreground">Created</dt>
-          <dd>{new Date(s.createdAt).toLocaleString()}</dd>
+          <dd>{formatDateTime(s.createdAt)}</dd>
         </dl>
       </section>
 
@@ -270,7 +271,7 @@ export default function AdminSummitDetailPage({
             No users linked to this summit.
           </p>
         ) : (
-          <ul className="divide-y border rounded-md">
+          <ul className="divide-y border rounded">
             {s.relatedUsers.map((u) => {
               const name =
                 [u.firstName, u.lastName].filter(Boolean).join(" ") ||
@@ -289,7 +290,7 @@ export default function AdminSummitDetailPage({
                     {name}
                   </Link>
                   {u.isMain && (
-                    <span className="inline-flex items-center rounded-md bg-sky-100 text-sky-900 dark:bg-sky-900/30 dark:text-sky-300 px-2 py-0.5 text-xs font-medium">
+                    <span className="inline-flex items-center rounded bg-sky-100 text-sky-900 dark:bg-sky-900/30 dark:text-sky-300 px-2 py-0.5 text-xs font-medium">
                       Main
                     </span>
                   )}

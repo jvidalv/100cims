@@ -48,6 +48,7 @@ type Props = {
   iconSize?: number;
   badge?: boolean;
   iconOverride?: ReactNode;
+  trailing?: ReactNode;
   children: ReactNode;
 } & TouchableOpacityProps;
 
@@ -59,6 +60,7 @@ export const ActionRow = forwardRef<View, Props>(
       iconSize = 16,
       badge,
       iconOverride,
+      trailing,
       children,
       className,
       ...props
@@ -87,6 +89,7 @@ export const ActionRow = forwardRef<View, Props>(
           )}
         </View>
         <ThemedText className={styles.text}>{children}</ThemedText>
+        {trailing}
       </TouchableOpacity>
     );
   },

@@ -83,7 +83,7 @@ export const useSummitPost = (mountainSlug: string) => {
       mountainId: string;
       usersId: string[];
       date: string;
-      image: string;
+      image?: string;
     }) => {
       const { data, error } = await apiClient.POST(
         "/api/protected/mountains/summit",

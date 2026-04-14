@@ -34,6 +34,7 @@ import {
   useRemoveAdminPlanMember,
   useUpdateAdminPlan,
 } from "@/domains/admin/api";
+import { formatDate, formatDateTime } from "@/lib/format-date";
 
 const STATUSES = ["open", "completed", "canceled"] as const;
 const SPEEDS = ["chill", "normal", "fast"] as const;
@@ -184,10 +185,10 @@ export default function AdminPlanDetailPage({
             <img
               src={p.imageUrl}
               alt=""
-              className="size-16 rounded-md object-cover"
+              className="size-16 rounded object-cover"
             />
           ) : (
-            <div className="size-16 rounded-md bg-muted flex items-center justify-center text-2xl">
+            <div className="size-16 rounded bg-muted flex items-center justify-center text-2xl">
               🗺
             </div>
           )}
@@ -230,7 +231,7 @@ export default function AdminPlanDetailPage({
               setForm((f) => ({ ...f, description: e.target.value }))
             }
             rows={4}
-            className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            className="flex w-full rounded border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
           />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -331,9 +332,9 @@ export default function AdminPlanDetailPage({
           <dt className="text-muted-foreground">Challenge</dt>
           <dd>{p.challengeName ?? "—"}</dd>
           <dt className="text-muted-foreground">Created</dt>
-          <dd>{new Date(p.createdAt).toLocaleString()}</dd>
+          <dd>{formatDateTime(p.createdAt)}</dd>
           <dt className="text-muted-foreground">Updated</dt>
-          <dd>{new Date(p.updatedAt).toLocaleString()}</dd>
+          <dd>{formatDateTime(p.updatedAt)}</dd>
         </dl>
       </section>
 
@@ -346,7 +347,7 @@ export default function AdminPlanDetailPage({
             No mountains linked to this plan.
           </p>
         ) : (
-          <ul className="divide-y border rounded-md">
+          <ul className="divide-y border rounded">
             {p.mountains.map((m) => (
               <li
                 key={m.mountainId}
@@ -374,7 +375,7 @@ export default function AdminPlanDetailPage({
         {p.participants.length === 0 ? (
           <p className="text-muted-foreground text-sm">No members yet.</p>
         ) : (
-          <ul className="divide-y border rounded-md">
+          <ul className="divide-y border rounded">
             {p.participants.map((m) => {
               const name =
                 [m.firstName, m.lastName].filter(Boolean).join(" ") ||
@@ -398,7 +399,7 @@ export default function AdminPlanDetailPage({
                     <span className="font-medium truncate">{name}</span>
                   </Link>
                   {m.isCreator && (
-                    <span className="inline-flex items-center rounded-md bg-sky-100 text-sky-900 dark:bg-sky-900/30 dark:text-sky-300 px-2 py-0.5 text-xs font-medium">
+                    <span className="inline-flex items-center rounded bg-sky-100 text-sky-900 dark:bg-sky-900/30 dark:text-sky-300 px-2 py-0.5 text-xs font-medium">
                       Creator
                     </span>
                   )}
@@ -406,7 +407,7 @@ export default function AdminPlanDetailPage({
                     <span className="text-xs text-muted-foreground">🐕</span>
                   )}
                   <span className="text-xs text-muted-foreground">
-                    {new Date(m.joinedAt).toLocaleDateString()}
+                    {formatDate(m.joinedAt)}
                   </span>
                   {!m.isCreator && (
                     <Button
@@ -436,7 +437,7 @@ export default function AdminPlanDetailPage({
         {p.recentMessages.length === 0 ? (
           <p className="text-muted-foreground text-sm">No messages yet.</p>
         ) : (
-          <ul className="divide-y border rounded-md max-h-96 overflow-y-auto">
+          <ul className="divide-y border rounded max-h-96 overflow-y-auto">
             {p.recentMessages.map((msg) => {
               const name =
                 [msg.firstName, msg.lastName].filter(Boolean).join(" ") ||
@@ -460,7 +461,7 @@ export default function AdminPlanDetailPage({
                         {name}
                       </Link>
                       <span className="text-xs text-muted-foreground">
-                        {new Date(msg.createdAt).toLocaleString()}
+                        {formatDateTime(msg.createdAt)}
                       </span>
                     </div>
                     <p className="text-sm whitespace-pre-wrap break-words">

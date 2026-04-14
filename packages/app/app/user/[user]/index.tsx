@@ -2,7 +2,7 @@ import { formatDistanceToNow } from "date-fns";
 import { ca, es, enUS } from "date-fns/locale";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { FormattedMessage, useIntl } from "react-intl";
-import { View, Image, Share } from "react-native";
+import { View, Image } from "react-native";
 
 import { SummitCard } from "@/components/summit";
 import { Icon, Skeleton, ThemedText } from "@/components/ui/atoms";
@@ -20,7 +20,7 @@ import {
   useUserProfile,
 } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
-import { getUrlDeeplink } from "@/lib/deeplink";
+import { shareDeeplink } from "@/lib/share";
 
 export default function UserScreen() {
   const intl = useIntl();
@@ -37,17 +37,14 @@ export default function UserScreen() {
   const isMe = me?.id === userId;
 
   const handleShare = async () => {
-    const messages = {
-      en: `🏞️ Check out my profile on cims!\n💪\n\n${getUrlDeeplink(`user/${userId}`)}`,
-      es: `🏞️ Mira mi perfil en cims!\n💪\n\n${getUrlDeeplink(`user/${userId}`)}`,
-      ca: `🏞️ Mira el meu perfil a cims!\n💪\n\n${getUrlDeeplink(`user/${userId}`)}`,
-    };
-
-    const locale = intl.locale;
-    const msg = messages[locale as "ca" | "es" | "en"] || messages.en;
-
-    await Share.share({
-      message: msg,
+    await shareDeeplink({
+      intl,
+      path: `user/${userId}`,
+      messages: {
+        en: `🏞️ Check out my profile on cims!\n💪`,
+        es: `🏞️ Mira mi perfil en cims!\n💪`,
+        ca: `🏞️ Mira el meu perfil a cims!\n💪`,
+      },
     });
   };
 

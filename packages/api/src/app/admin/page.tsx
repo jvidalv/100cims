@@ -148,7 +148,7 @@ function ChartCard({
   );
 
   return (
-    <div className="rounded-lg border bg-card p-6 space-y-4">
+    <div className="rounded border bg-card p-6 space-y-4">
       <div className="flex items-baseline justify-between">
         <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
           {title}

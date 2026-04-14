@@ -1,0 +1,28 @@
+{
+  "locale": "es",
+  "title": "Cumbres de Aragón · Retos de montaña aragonesa",
+  "shortName": "Cumbres de Aragón",
+  "description": "Sigue tus ascensos a las cumbres principales de Aragón. App gratuita para iOS y Android.",
+  "heroTagline": "Las cumbres más representativas de Aragón, del Pirineo al Sistema Ibérico.",
+  "heroImageUrl": "https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/aneto.jpeg?date=1761896472107",
+  "whatIsTitle": "¿Qué es el reto de las cumbres de Aragón?",
+  "whatIsParagraphs": [
+    "Aragón concentra algunas de las cumbres más importantes del estado: Aneto, Monte Perdido, Posets, y una corona de tresmiles en el Pirineo aragonés, pero también el Moncayo en el Sistema Ibérico.",
+    "Este reto recoge las más destacadas en una lista manejable. No pretende ser exhaustivo — es una invitación a conocer la diversidad de la montaña aragonesa.",
+    "Con la app llevas la lista al móvil, marcas cada cumbre que haces, y ves tu progreso a lo largo de los años."
+  ],
+  "faqs": [
+    {
+      "q": "¿Hay tresmiles en el reto?",
+      "a": "Sí. Aneto (3.404 m), Monte Perdido (3.355 m) y Posets (3.369 m) están incluidos, entre otros."
+    },
+    {
+      "q": "¿Hacen falta permisos especiales?",
+      "a": "Algunos puntos del Parque Nacional de Ordesa tienen regulación de acceso en verano. Consulta antes de ir."
+    },
+    {
+      "q": "¿En qué época es mejor?",
+      "a": "Verano para los tresmiles pirenaicos; todo el año para las cumbres de cota media."
+    }
+  ]
+}

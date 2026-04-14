@@ -92,6 +92,9 @@
   "5YsvtF": {
     "defaultMessage": "Altitude"
   },
+  "5ZZ6NO": {
+    "defaultMessage": "Share summit"
+  },
   "5lwgvM": {
     "defaultMessage": "Visible on people search?"
   },
@@ -209,6 +212,9 @@
   "EIJT7Y": {
     "defaultMessage": "Danger zone"
   },
+  "EPpeif": {
+    "defaultMessage": "Share plan"
+  },
   "F4zKkr": {
     "defaultMessage": "Are you sure you want to continue? All the data will be lost."
   },
@@ -242,14 +248,14 @@
   "HucKse": {
     "defaultMessage": "You can now create your own challenges and also your mountains, other people can join these challenges!"
   },
+  "Hz67Tx": {
+    "defaultMessage": "Sign out of this device. Your data stays in your account."
+  },
   "I3b4hn": {
     "defaultMessage": "Version"
   },
   "I5NMJ8": {
     "defaultMessage": "More"
-  },
-  "I8U72j": {
-    "defaultMessage": "Share it with your friends"
   },
   "IkgeEo": {
     "defaultMessage": "No mountains yet. Create mountains when adding them to a challenge."
@@ -265,6 +271,9 @@
   },
   "JXdbo8": {
     "defaultMessage": "Done"
+  },
+  "Jd9hQe": {
+    "defaultMessage": "← on Instagram/TikTok!"
   },
   "JfG49w": {
     "defaultMessage": "Open"
@@ -284,6 +293,9 @@
   "KTlYr+": {
     "defaultMessage": "Deleting your account is permanent. All your summits and plans will be lost."
   },
+  "Lgsh8b": {
+    "defaultMessage": "Set as active challenge"
+  },
   "Lp3DO2": {
     "defaultMessage": "Title is required"
   },
@@ -292,9 +304,6 @@
   },
   "M7VcNh": {
     "defaultMessage": "where you can compete with other mountain lovers."
-  },
-  "MPicaL": {
-    "defaultMessage": "Please add photo for all mountains"
   },
   "MUP7n7": {
     "defaultMessage": "Still deciding a date"
@@ -395,6 +404,9 @@
   "UYO8TM": {
     "defaultMessage": "Summit"
   },
+  "Uf3+S6": {
+    "defaultMessage": "Help & Support"
+  },
   "V8ZJQX": {
     "defaultMessage": "Do you want a good looking app?"
   },
@@ -484,6 +496,9 @@
   },
   "d+z7v1": {
     "defaultMessage": "Date not decided"
+  },
+  "d3wbXx": {
+    "defaultMessage": "Session"
   },
   "dEo+/0": {
     "defaultMessage": "and be part of a thriving community"
@@ -730,9 +745,6 @@
   },
   "xSRKf4": {
     "defaultMessage": "Visible on hiscores?"
-  },
-  "xZzf7s": {
-    "defaultMessage": "Switch to this challenge"
   },
   "xiBL3d": {
     "defaultMessage": "Hiscores"
