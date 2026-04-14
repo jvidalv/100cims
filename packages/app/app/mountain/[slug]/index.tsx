@@ -5,7 +5,7 @@ import { setStatusBarStyle } from "expo-status-bar";
 import { useColorScheme } from "nativewind";
 import { useEffect, useMemo } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { TouchableOpacity, Image, View, StyleSheet, Share } from "react-native";
+import { TouchableOpacity, Image, View, StyleSheet } from "react-native";
 
 import { useAuth } from "@/components/providers/auth-provider";
 import { SummitCard } from "@/components/summit";
@@ -16,10 +16,10 @@ import { useMountainOne, useMountains } from "@/domains/mountain/mountain.api";
 import { useSummitsGet } from "@/domains/summit/summit.api";
 import { useUserChallengeSummits } from "@/domains/user/user.api";
 import { useLocation } from "@/hooks/use-location";
-import { getUrlDeeplink } from "@/lib/deeplink";
 import { isIOS } from "@/lib/device";
 import { getDistanceInKm } from "@/lib/location";
 import { askForReview } from "@/lib/reviews";
+import { shareDeeplink } from "@/lib/share";
 
 export default function MountainScreen() {
   const intl = useIntl();
@@ -98,18 +98,14 @@ export default function MountainScreen() {
   }
 
   const handleShareMountain = async () => {
-    const locale = intl.locale;
-
-    const messages = {
-      en: `🏔️ Check out the ${mountain.name} summit on cims!\n\n${getUrlDeeplink(`mountain/${slug}`)}`,
-      es: `🏔️ Mira la cima ${mountain.name} en cims!\n\n${getUrlDeeplink(`mountain/${slug}`)}`,
-      ca: `🏔️ Mira el cim ${mountain.name} a cims!\n\n${getUrlDeeplink(`mountain/${slug}`)}`,
-    };
-
-    const msg = messages[locale as "ca" | "es" | "en"] || messages.en;
-
-    await Share.share({
-      message: msg,
+    await shareDeeplink({
+      intl,
+      path: `mountain/${slug}`,
+      messages: {
+        en: `🏔️ Check out the ${mountain.name} summit on cims!`,
+        es: `🏔️ Mira la cima ${mountain.name} en cims!`,
+        ca: `🏔️ Mira el cim ${mountain.name} a cims!`,
+      },
     });
   };
 

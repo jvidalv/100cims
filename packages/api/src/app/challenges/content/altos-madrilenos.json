@@ -1,0 +1,28 @@
+{
+  "locale": "es",
+  "title": "Altos Madrileños · Cumbres de la sierra de Madrid",
+  "shortName": "Altos Madrileños",
+  "description": "Sigue tus ascensos a las cumbres principales de la sierra de Guadarrama y Gredos. App gratuita para iOS y Android.",
+  "heroTagline": "La sierra de Guadarrama y alrededores, en el móvil.",
+  "heroImageUrl": "https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/penalara.jpeg?date=1761896472107",
+  "whatIsTitle": "¿Qué son los Altos Madrileños?",
+  "whatIsParagraphs": [
+    "La sierra de Guadarrama y las inmediaciones de Madrid tienen una tradición excursionista fuerte: Peñalara, Maliciosa, Siete Picos, La Bola del Mundo. Son cumbres accesibles desde la ciudad en poco más de una hora.",
+    "Este reto agrupa las más representativas en una lista que puedes hacer a tu ritmo. Ideal para excursionistas urbanos que quieren salir los fines de semana sin grandes desplazamientos.",
+    "La app lleva cada cumbre al móvil y registra tus ascensos con foto y fecha."
+  ],
+  "faqs": [
+    {
+      "q": "¿Cuál es la cumbre más alta?",
+      "a": "Peñalara, a 2.428 metros, techo de la Comunidad de Madrid."
+    },
+    {
+      "q": "¿Se puede hacer en invierno?",
+      "a": "Sí, pero con material adecuado. La sierra tiene nieve a menudo de diciembre a marzo y hay riesgo de fuertes ventadas."
+    },
+    {
+      "q": "¿Es buen terreno para empezar?",
+      "a": "Sí. Muchas de las cumbres son excursiones de mañana, accesibles en transporte público desde Madrid."
+    }
+  ]
+}

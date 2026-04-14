@@ -24,15 +24,17 @@ export const useAdminUsers = ({
   country,
   platform,
   version,
+  sort,
 }: {
   page: number;
   q: string;
   country: string;
   platform: string;
   version: string;
+  sort: string;
 }) =>
   useQuery({
-    queryKey: adminKeys.users({ page, q, country, platform, version }),
+    queryKey: adminKeys.users({ page, q, country, platform, version, sort }),
     queryFn: async () => {
       const { data, error } = await api.api.admin.users.get({
         query: {
@@ -42,6 +44,7 @@ export const useAdminUsers = ({
           country: country || undefined,
           platform: platform || undefined,
           version: version || undefined,
+          sort: sort || undefined,
         },
       });
       if (error) throw error;

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { useAdminMerch } from "@/domains/admin/api";
+import { formatDate } from "@/lib/format-date";
 
 export default function AdminMerchPage() {
   const router = useRouter();
@@ -65,7 +66,7 @@ export default function AdminMerchPage() {
                   </td>
                   <td className="py-2 pr-4">
                     {m.featured != null ? (
-                      <span className="inline-flex items-center rounded-md bg-sky-100 text-sky-900 dark:bg-sky-900/30 dark:text-sky-300 px-2 py-0.5 text-xs font-medium">
+                      <span className="inline-flex items-center rounded bg-sky-100 text-sky-900 dark:bg-sky-900/30 dark:text-sky-300 px-2 py-0.5 text-xs font-medium">
                         #{m.featured}
                       </span>
                     ) : (
@@ -80,7 +81,7 @@ export default function AdminMerchPage() {
                     )}
                   </td>
                   <td className="py-2 pr-4 text-muted-foreground">
-                    {new Date(m.updatedAt).toLocaleDateString()}
+                    {formatDate(m.updatedAt)}
                   </td>
                 </tr>
               ))}

@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAdminChallenges } from "@/domains/admin/api";
+import { formatDate } from "@/lib/format-date";
 
 const PASTEL_BGS = [
   "#BAE1FF",
@@ -72,7 +73,7 @@ export default function AdminChallengesPage() {
             void setKind(e.target.value || null);
             void setPage(1);
           }}
-          className="h-9 rounded-md border border-input bg-background px-3 text-sm"
+          className="h-9 rounded border border-input bg-background px-3 text-sm"
         >
           <option value="">All kinds</option>
           <option value="official">Official</option>
@@ -108,7 +109,7 @@ export default function AdminChallengesPage() {
                   >
                     <td className="py-2 pr-4">
                       <div
-                        className="size-10 rounded-md flex items-center justify-center text-lg"
+                        className="size-10 rounded flex items-center justify-center text-lg"
                         style={{
                           backgroundColor: PASTEL_BGS[i % PASTEL_BGS.length],
                           color: "black",
@@ -145,7 +146,7 @@ export default function AdminChallengesPage() {
                       {c.totalMountains}
                     </td>
                     <td className="py-2 pr-4 text-muted-foreground">
-                      {new Date(c.createdAt).toLocaleDateString()}
+                      {formatDate(c.createdAt)}
                     </td>
                   </tr>
                 ))}
@@ -206,7 +207,7 @@ function Badge({
 }) {
   return (
     <span
-      className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${BADGE_STYLES[variant]}`}
+      className={`inline-flex items-center rounded px-2 py-0.5 text-xs font-medium ${BADGE_STYLES[variant]}`}
     >
       {label}
     </span>

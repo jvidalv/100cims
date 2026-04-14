@@ -13,3 +13,8 @@ export const normalizeAppLocale = (
   const short = raw.trim().toLowerCase().split(/[-_]/)[0];
   return APP_LOCALE_MAP[short] ?? "en";
 };
+
+export const asAppLocale = (value: string | null | undefined): AppLocale => {
+  if (!value) return "en";
+  return APP_LOCALE_MAP[value] ?? "en";
+};

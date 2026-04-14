@@ -1,0 +1,28 @@
+{
+  "locale": "es",
+  "title": "Cumbres del Levante · Cumbres del Levante peninsular",
+  "shortName": "Cumbres del Levante",
+  "description": "Sigue tus ascensos a las cumbres del Levante ibérico, de Valencia a Murcia. App gratuita.",
+  "heroTagline": "Las montañas del Levante, entre el mar y el interior.",
+  "heroImageUrl": "https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/pico-calderon.jpeg?date=1761896472107",
+  "whatIsTitle": "¿Qué es Cumbres del Levante?",
+  "whatIsParagraphs": [
+    "El Levante ibérico tiene una montaña a menudo olvidada: el Penyagolosa, el Calderón, las sierras de Valencia, Alicante y Murcia. Son cumbres de cota media con un gran valor paisajístico y una climatología benigna buena parte del año.",
+    "Este reto recoge las más representativas en una selección abarcable. Perfecto para quien quiere combinar playa y montaña, o descubrir una cara menos conocida de la península.",
+    "Con la app llevas la lista al móvil y sigues tu progreso salida tras salida."
+  ],
+  "faqs": [
+    {
+      "q": "¿Cuál es la cumbre más conocida?",
+      "a": "El Penyagolosa (1.813 m), en la Comunidad Valenciana, es el icono del reto."
+    },
+    {
+      "q": "¿Hace falta equipamiento técnico?",
+      "a": "Casi nunca. Son cumbres caminables; solo algunas crestas requieren atención en días de viento."
+    },
+    {
+      "q": "¿Mejor época?",
+      "a": "Otoño, invierno y primavera. El verano puede ser muy caluroso en cotas bajas."
+    }
+  ]
+}

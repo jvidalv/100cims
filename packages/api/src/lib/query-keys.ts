@@ -12,6 +12,7 @@ export const adminKeys = {
     country: string;
     platform: string;
     version: string;
+    sort: string;
   }) => ["admin", "users", params] as const,
   userDetail: (id: string) => ["admin", "users", id] as const,
   userSummits: (id: string, page: number) =>

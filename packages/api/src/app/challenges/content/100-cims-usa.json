@@ -1,0 +1,32 @@
+{
+  "locale": "en",
+  "title": "100 Cims USA · America's classic peaks on your phone",
+  "shortName": "100 Cims USA",
+  "description": "Track your ascents across 150+ iconic American summits. Free app, iOS and Android.",
+  "heroTagline": "America's classic peaks, logged from your phone.",
+  "heroImageUrl": "https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/mount-whitney.jpeg?date=1761896472107",
+  "whatIsTitle": "What is 100 Cims USA?",
+  "whatIsParagraphs": [
+    "100 Cims USA is a curated collection of over 150 iconic American summits, spanning the Sierra Nevada, Rockies, Cascades, Appalachians and more. It's inspired by the Catalan 100 Cims tradition but rescoped for American mountaineers.",
+    "The list mixes accessible peaks you can day-hike with serious alpine objectives. Pick the ones that match your experience and work your way through at your own pace.",
+    "With Cims, sempre amunt you carry the full list on your phone, log each summit with a photo and date, and watch your progress stack up over the years."
+  ],
+  "faqs": [
+    {
+      "q": "How many peaks are in the challenge?",
+      "a": "Over 150. The exact number evolves as we curate and add regional classics."
+    },
+    {
+      "q": "Do I need to summit all of them?",
+      "a": "No. It's self-paced — the app tracks your progress whether you do five or fifty."
+    },
+    {
+      "q": "Can I log past summits?",
+      "a": "Yes. Add the real date you climbed and a photo if you have one. Your progress recalculates automatically."
+    },
+    {
+      "q": "Is the app free?",
+      "a": "Yes, completely. No ads, no subscriptions."
+    }
+  ]
+}

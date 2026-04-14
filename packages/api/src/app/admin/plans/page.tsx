@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useAdminPlans } from "@/domains/admin/api";
+import { formatDate } from "@/lib/format-date";
 
 const ANY = "__any__";
 
@@ -195,7 +196,7 @@ export default function AdminPlansPage() {
                       </td>
                       <td className="py-2 pr-4">
                         <span
-                          className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${badgeClass}`}
+                          className={`inline-flex items-center rounded px-2 py-0.5 text-xs font-medium ${badgeClass}`}
                         >
                           {p.status}
                         </span>
@@ -204,9 +205,7 @@ export default function AdminPlansPage() {
                         {p.speed}
                       </td>
                       <td className="py-2 pr-4 text-muted-foreground">
-                        {p.startDate
-                          ? new Date(p.startDate).toLocaleDateString()
-                          : "—"}
+                        {p.startDate ? formatDate(p.startDate) : "—"}
                       </td>
                       <td className="py-2 pr-4 text-muted-foreground">
                         {p.participantsCount}
@@ -215,7 +214,7 @@ export default function AdminPlansPage() {
                         {p.mountainsCount}
                       </td>
                       <td className="py-2 pr-4 text-muted-foreground">
-                        {new Date(p.createdAt).toLocaleDateString()}
+                        {formatDate(p.createdAt)}
                       </td>
                     </tr>
                   );

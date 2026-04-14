@@ -58,38 +58,38 @@ export default function AdminCronsPage() {
                     cronIntervalSeconds(b.pattern),
                 )
                 .map((c) => {
-                const running =
-                  triggerCron.isPending && triggerCron.variables === c.name;
-                return (
-                  <tr key={c.name} className="border-b align-top">
-                    <td className="py-2">
-                      <div className="font-mono">{c.name}</div>
-                      <div className="text-xs text-muted-foreground mt-0.5 max-w-md">
-                        {c.description}
-                      </div>
-                    </td>
-                    <td className="py-2">
-                      <div>{humanizeCron(c.pattern)}</div>
-                      <div className="text-xs font-mono text-muted-foreground mt-0.5">
-                        {c.pattern}
-                      </div>
-                    </td>
-                    <td className="py-2 text-muted-foreground">
-                      {lastRun[c.name] ?? "—"}
-                    </td>
-                    <td className="py-2 text-right">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        disabled={running}
-                        onClick={() => onTrigger(c.name)}
-                      >
-                        {running ? "Running…" : "Trigger"}
-                      </Button>
-                    </td>
-                  </tr>
-                );
-              })}
+                  const running =
+                    triggerCron.isPending && triggerCron.variables === c.name;
+                  return (
+                    <tr key={c.name} className="border-b align-top">
+                      <td className="py-2">
+                        <div className="font-mono">{c.name}</div>
+                        <div className="text-xs text-muted-foreground mt-0.5 max-w-md">
+                          {c.description}
+                        </div>
+                      </td>
+                      <td className="py-2">
+                        <div>{humanizeCron(c.pattern)}</div>
+                        <div className="text-xs font-mono text-muted-foreground mt-0.5">
+                          {c.pattern}
+                        </div>
+                      </td>
+                      <td className="py-2 text-muted-foreground">
+                        {lastRun[c.name] ?? "—"}
+                      </td>
+                      <td className="py-2 text-right">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          disabled={running}
+                          onClick={() => onTrigger(c.name)}
+                        >
+                          {running ? "Running…" : "Trigger"}
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                })}
             </tbody>
           </table>
         </div>

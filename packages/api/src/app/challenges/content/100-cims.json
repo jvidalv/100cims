@@ -1,0 +1,36 @@
+{
+  "locale": "ca",
+  "title": "Repte 100 Cims · Registra els teus ascensos al mòbil",
+  "shortName": "100 Cims",
+  "description": "L'app gratuïta per seguir el teu progrés al repte dels 100 Cims. Cents de cims amb fitxa completa, iOS i Android.",
+  "heroTagline": "La col·lecció clàssica de cims representatius de Catalunya, al teu mòbil.",
+  "heroImageUrl": "https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/pica-destats.jpg?date=1761896472107",
+  "whatIsTitle": "Què és el repte dels 100 Cims?",
+  "whatIsParagraphs": [
+    "Pujar els 100 Cims és una tradició excursionista catalana: una selecció de cims representatius de tot el país, escollits per ser accessibles i diversos. Hi trobaràs des de turons de comarca fins a cims pirinencs de més de 3.000 metres.",
+    "És un repte per fer al teu ritme, sense presses ni calendaris. Cada ascens compta; l'objectiu és conèixer el país caminant.",
+    "Amb Cims, sempre amunt marques els cims que has fet, afegeixes una foto i la data, i veus el teu progrés avançar sense paperassa."
+  ],
+  "faqs": [
+    {
+      "q": "Quants cims té el repte?",
+      "a": "La llista dels 100 Cims inclou més de 500 cims entre principals i alternatius, tot i el nom. Pots fer els que vulguis al teu ritme."
+    },
+    {
+      "q": "He de fer-los tots?",
+      "a": "No. L'app et porta el comptador, però tu decideixes el ritme i quins cims prioritzes. Molta gent en fa 20–30 i ja està contenta."
+    },
+    {
+      "q": "Com registro un cim?",
+      "a": "Obres l'app, tries el cim, afegeixes una foto i la data del dia que el vas pujar. Això és tot."
+    },
+    {
+      "q": "Puc afegir ascensos antics?",
+      "a": "Sí. Posa la data real en què vas fer el cim i la foto si en tens. L'app recalcula el teu progrés."
+    },
+    {
+      "q": "És gratis?",
+      "a": "Sí, totalment. Sense anuncis ni funcions de pagament."
+    }
+  ]
+}

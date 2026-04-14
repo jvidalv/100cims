@@ -1,0 +1,28 @@
+{
+  "locale": "en",
+  "title": "Corsica GR-20 · Peaks along Europe's toughest trail",
+  "shortName": "Corsica GR-20",
+  "description": "Track your ascents of the peaks along Corsica's legendary GR-20. Free app for iOS and Android.",
+  "heroTagline": "Europe's hardest long-distance trail and its summits, in one challenge.",
+  "heroImageUrl": "https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/monte-cinto.jpeg?date=1761896472107",
+  "whatIsTitle": "What is the GR-20 challenge?",
+  "whatIsParagraphs": [
+    "The GR-20 traverses Corsica from north to south along the island's mountainous spine. It's roughly 180 km with 10,000–12,000 metres of cumulative ascent — widely considered Europe's toughest long-distance trail.",
+    "This challenge collects the main summits you brush past or attack from the GR-20 itself: Monte Cinto, Paglia Orba, Monte Rotondo and company. You don't need to walk the full trail to tick off the peaks.",
+    "With the app you carry the list on your phone, log each ascent with a photo and date, and watch your progress grow without spreadsheets."
+  ],
+  "faqs": [
+    {
+      "q": "What's the highest peak in Corsica?",
+      "a": "Monte Cinto, at 2,706 metres."
+    },
+    {
+      "q": "Do I need to hike the whole GR-20?",
+      "a": "No. You can attack the peaks one at a time from side approaches; the challenge is about the summits, not the trail."
+    },
+    {
+      "q": "When's the best season?",
+      "a": "June to September. In winter the Corsican ridge carries snow and ice."
+    }
+  ]
+}

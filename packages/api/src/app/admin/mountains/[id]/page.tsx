@@ -27,6 +27,7 @@ import {
   useDeleteAdminMountain,
   useUpdateAdminMountain,
 } from "@/domains/admin/api";
+import { formatDate } from "@/lib/format-date";
 
 type Form = {
   name: string;
@@ -244,7 +245,7 @@ export default function AdminMountainDetailPage({
           <dt className="text-muted-foreground">Creator</dt>
           <dd>{m.isOfficial ? "Official" : (m.creatorName ?? "—")}</dd>
           <dt className="text-muted-foreground">Created</dt>
-          <dd>{new Date(m.createdAt).toLocaleDateString()}</dd>
+          <dd>{formatDate(m.createdAt)}</dd>
         </dl>
       </section>
 
@@ -267,7 +268,7 @@ export default function AdminMountainDetailPage({
         )}
 
         {challenges.data && challenges.data.length > 0 && (
-          <ul className="divide-y border rounded-md">
+          <ul className="divide-y border rounded">
             {challenges.data.map((c) => (
               <li key={c.id} className="flex items-center gap-3 px-4 py-3">
                 <Avatar className="size-8">
@@ -374,7 +375,7 @@ function Badge({
 }) {
   return (
     <span
-      className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${BADGE_STYLES[variant]}`}
+      className={`inline-flex items-center rounded px-2 py-0.5 text-xs font-medium ${BADGE_STYLES[variant]}`}
     >
       {label}
     </span>

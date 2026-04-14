@@ -1,5 +1,6 @@
 import {
   and,
+  asc,
   count,
   desc,
   eq,
@@ -12,7 +13,12 @@ import {
 import { Elysia, t } from "elysia";
 
 import { db } from "@/db";
-import { challengeTable, userTable } from "@/db/schema";
+import {
+  challengeTable,
+  summitHasUsersTable,
+  summitTable,
+  userTable,
+} from "@/db/schema";
 import { AdminUsersResponseSchema } from "@/api/schemas/admin.schema";
 import { SuccessResponse } from "@/api/schemas/common.schema";
 
@@ -50,6 +56,31 @@ export const adminUsersGetRoute = new Elysia().get(
 
     const where = conditions.length ? and(...conditions) : undefined;
 
+    const totalSummitsSql = sql<number>`(
+      SELECT COUNT(*)::int FROM ${summitHasUsersTable}
+      WHERE ${summitHasUsersTable.userId} = ${userTable.id}
+    )`;
+
+    const lastSummitAtSql = sql<Date | null>`(
+      SELECT MAX(${summitTable.summitedAt}) FROM ${summitTable}
+      INNER JOIN ${summitHasUsersTable}
+        ON ${summitHasUsersTable.summitId} = ${summitTable.id}
+      WHERE ${summitHasUsersTable.userId} = ${userTable.id}
+    )`;
+
+    const orderBy = (() => {
+      switch (query.sort) {
+        case "createdAt_asc":
+          return [asc(userTable.createdAt)];
+        case "summits_desc":
+          return [desc(totalSummitsSql), desc(userTable.createdAt)];
+        case "summits_asc":
+          return [asc(totalSummitsSql), desc(userTable.createdAt)];
+        default:
+          return [desc(userTable.createdAt)];
+      }
+    })();
+
     const [countResult, items, countryRows, platformRows, versionRows] =
       await Promise.all([
         db.select({ total: count() }).from(userTable).where(where),
@@ -69,6 +100,8 @@ export const adminUsersGetRoute = new Elysia().get(
             activeChallengeId: userTable.activeChallengeId,
             activeChallengeName: challengeTable.name,
             hasPushToken: sql<boolean>`${userTable.expoPushToken} IS NOT NULL`,
+            totalSummits: totalSummitsSql,
+            lastSummitAt: lastSummitAtSql,
           })
           .from(userTable)
           .leftJoin(
@@ -76,7 +109,7 @@ export const adminUsersGetRoute = new Elysia().get(
             eq(userTable.activeChallengeId, challengeTable.id),
           )
           .where(where)
-          .orderBy(desc(userTable.createdAt))
+          .orderBy(...orderBy)
           .limit(pageSize)
           .offset(offset),
         db
@@ -128,6 +161,7 @@ export const adminUsersGetRoute = new Elysia().get(
       country: t.Optional(t.String()),
       platform: t.Optional(t.String()),
       version: t.Optional(t.String()),
+      sort: t.Optional(t.String()),
     }),
     response: SuccessResponse(AdminUsersResponseSchema),
   },

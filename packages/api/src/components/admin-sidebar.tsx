@@ -6,6 +6,7 @@ import {
   Compass,
   Home,
   LogOut,
+  Mail,
   Mountain,
   ShoppingBag,
   Trophy,
@@ -44,6 +45,7 @@ const NAV_ITEMS = [
   { href: "/admin/summits", label: "Summits", icon: Camera },
   { href: "/admin/plans", label: "Plans", icon: Compass },
   { href: "/admin/merch", label: "Merch", icon: ShoppingBag },
+  { href: "/admin/emails", label: "Emails", icon: Mail },
   { href: "/admin/crons", label: "Crons", icon: Clock },
 ];
 
@@ -74,7 +76,7 @@ export function AdminSidebar({
             alt="100cims"
             width={28}
             height={28}
-            className="rounded-md shrink-0"
+            className="rounded shrink-0"
           />
         </Link>
       </SidebarHeader>

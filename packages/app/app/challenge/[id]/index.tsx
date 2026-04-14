@@ -3,19 +3,18 @@ import { setStatusBarStyle } from "expo-status-bar";
 import { useColorScheme } from "nativewind";
 import { useEffect } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { TouchableOpacity, Image, View, Share } from "react-native";
+import { TouchableOpacity, Image, View } from "react-native";
 
 import { useAuth } from "@/components/providers/auth-provider";
 import {
   ActivityIndicator,
   ThemedText,
   Icon,
-  Button,
   Avatar,
   Skeleton,
   ThemedView,
 } from "@/components/ui/atoms";
-import { MountainItemList } from "@/components/ui/molecules";
+import { ActionRow, MountainItemList } from "@/components/ui/molecules";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
 import {
   useActiveChallenge,
@@ -24,8 +23,8 @@ import {
 import { countryToEmoji } from "@/domains/challenge/challenge.model";
 import { useUpdateUserMeMutation } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
-import { getUrlDeeplink } from "@/lib/deeplink";
 import { isIOS } from "@/lib/device";
+import { shareDeeplink } from "@/lib/share";
 import { getInitials } from "@/lib/strings";
 
 export default function ChallengeDetailScreen() {
@@ -52,16 +51,15 @@ export default function ChallengeDetailScreen() {
 
   const handleShare = async () => {
     if (!challenge) return;
-    const locale = intl.locale;
-    const messages = {
-      en: `🏔️ Check out the ${challenge.name} challenge on cims!\n\n${getUrlDeeplink(`challenge/${id}`)}`,
-      es: `🏔️ Mira el reto ${challenge.name} en cims!\n\n${getUrlDeeplink(`challenge/${id}`)}`,
-      ca: `🏔️ Mira el repte ${challenge.name} a cims!\n\n${getUrlDeeplink(`challenge/${id}`)}`,
-    };
-
-    const msg = messages[locale as "ca" | "es" | "en"] || messages.en;
-
-    await Share.share({ message: msg });
+    await shareDeeplink({
+      intl,
+      path: `challenge/${id}`,
+      messages: {
+        en: `🏔️ Check out the ${challenge.name} challenge on cims!`,
+        es: `🏔️ Mira el reto ${challenge.name} en cims!`,
+        ca: `🏔️ Mira el repte ${challenge.name} a cims!`,
+      },
+    });
   };
 
   const handleSwitchChallenge = async () => {
@@ -144,30 +142,6 @@ export default function ChallengeDetailScreen() {
       title={challenge.name}
       headerClassName="flex items-center justify-center bg-primary"
       contentClassName="gap-6 px-6 py-6"
-      parallaxRightElement={
-        <View className="flex-row items-end gap-4 opacity-80">
-          <TouchableOpacity onPress={handleShare}>
-            <Icon
-              name="square.and.arrow.up"
-              color="white"
-              size={24}
-              animationSpec={{ effect: { type: "bounce" } }}
-            />
-          </TouchableOpacity>
-        </View>
-      }
-      headerRightElement={
-        <TouchableOpacity
-          onPress={handleShare}
-          className="flex-row items-center justify-end pb-3 pr-4"
-        >
-          <Icon
-            name="square.and.arrow.up"
-            color="white"
-            animationSpec={{ effect: { type: "bounce" } }}
-          />
-        </TouchableOpacity>
-      }
       headerImage={
         headerImageUrl ? (
           <Image
@@ -217,30 +191,36 @@ export default function ChallengeDetailScreen() {
         )}
       </View>
 
-      {/* Switch Challenge Button */}
-      <View>
-        {isActiveChallenge ? (
-          <View className="flex-row items-center justify-center gap-2 rounded border-2 border-primary bg-primary/10 p-4">
-            <Icon name="checkmark.circle.fill" color="#f43f5e" size={20} />
-            <ThemedText className="font-semibold text-primary">
-              <FormattedMessage defaultMessage="Active challenge" />
-            </ThemedText>
-          </View>
-        ) : (
-          <Button
-            onPress={handleSwitchChallenge}
-            disabled={!challenge.isPublic || isUpdating}
-            className={!challenge.isPublic ? "opacity-50" : ""}
-          >
-            {isUpdating ? (
-              <ActivityIndicator color="white" />
-            ) : (
-              <FormattedMessage defaultMessage="Switch to this challenge" />
-            )}
-          </Button>
-        )}
+      {/* Actions Section */}
+      <View className="gap-2">
+        <ThemedText className="text-2xl font-semibold">
+          <FormattedMessage defaultMessage="Actions" />
+        </ThemedText>
+
+        <ActionRow
+          onPress={isActiveChallenge ? undefined : handleSwitchChallenge}
+          disabled={isActiveChallenge || !challenge.isPublic || isUpdating}
+          iconName={isActiveChallenge ? "checkmark.circle.fill" : "target"}
+          intent={isActiveChallenge ? "emerald" : "primary"}
+          iconOverride={isUpdating ? <ActivityIndicator /> : undefined}
+        >
+          {isActiveChallenge ? (
+            <FormattedMessage defaultMessage="Active challenge" />
+          ) : (
+            <FormattedMessage defaultMessage="Set as active challenge" />
+          )}
+        </ActionRow>
+
+        <ActionRow
+          onPress={handleShare}
+          iconName="square.and.arrow.up"
+          intent="muted"
+        >
+          <FormattedMessage defaultMessage="Share with your friends" />
+        </ActionRow>
+
         {!challenge.isPublic && !isActiveChallenge && (
-          <ThemedText className="mt-2 text-center text-sm text-muted-foreground">
+          <ThemedText className="text-center text-sm text-muted-foreground">
             <FormattedMessage defaultMessage="This challenge is private" />
           </ThemedText>
         )}
@@ -272,7 +252,11 @@ export default function ChallengeDetailScreen() {
             ))}
             {extraUsersCount > 0 && (
               <View className="size-10 items-center justify-center rounded-full bg-muted">
-                <ThemedText className="text-xs font-bold">
+                <ThemedText
+                  className="text-xs font-bold"
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                >
                   +{extraUsersCount}
                 </ThemedText>
               </View>

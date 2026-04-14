@@ -27,6 +27,7 @@ import {
   useDeleteAdminChallenge,
   useUpdateAdminChallenge,
 } from "@/domains/admin/api";
+import { formatDate } from "@/lib/format-date";
 
 type Form = {
   name: string;
@@ -148,7 +149,7 @@ export default function AdminChallengeDetailPage({
         </Link>
         <div className="flex items-center gap-3 mt-2">
           <div
-            className="size-12 rounded-md flex items-center justify-center text-2xl"
+            className="size-12 rounded flex items-center justify-center text-2xl"
             style={{ backgroundColor: "#BAE1FF", color: "black" }}
           >
             {c.emoji || "🏔️"}
@@ -204,7 +205,7 @@ export default function AdminChallengeDetailPage({
                 setForm((p) => ({ ...p, description: e.target.value }))
               }
               rows={4}
-              className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex w-full rounded border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
             />
           </div>
         </div>
@@ -254,7 +255,7 @@ export default function AdminChallengeDetailPage({
           <dt className="text-muted-foreground">Creator</dt>
           <dd>{c.isOfficial ? "Official" : (c.creatorName ?? "—")}</dd>
           <dt className="text-muted-foreground">Created</dt>
-          <dd>{new Date(c.createdAt).toLocaleDateString()}</dd>
+          <dd>{formatDate(c.createdAt)}</dd>
         </dl>
       </section>
 
@@ -277,7 +278,7 @@ export default function AdminChallengeDetailPage({
         )}
 
         {mountains.data && mountains.data.length > 0 && (
-          <ul className="divide-y border rounded-md">
+          <ul className="divide-y border rounded">
             {mountains.data.map((m) => {
               const initials = m.name.slice(0, 2).toUpperCase();
               return (
@@ -396,7 +397,7 @@ function Badge({
 }) {
   return (
     <span
-      className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${BADGE_STYLES[variant]}`}
+      className={`inline-flex items-center rounded px-2 py-0.5 text-xs font-medium ${BADGE_STYLES[variant]}`}
     >
       {label}
     </span>

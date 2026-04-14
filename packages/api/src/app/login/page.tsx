@@ -26,7 +26,7 @@ export default function LoginPage() {
           <div className="space-y-2">
             <h1 className="text-3xl font-bold tracking-tight">Admin</h1>
             <p className="text-muted-foreground">
-              Sign in to access the 100cims admin area.
+              Sign in to access the cims admin area.
             </p>
           </div>
 
@@ -78,13 +78,13 @@ export default function LoginPage() {
         <div className="flex flex-1 flex-col items-center justify-center gap-6">
           <Image
             src="/assets/icon.png"
-            alt="100cims"
+            alt="cims"
             width={128}
             height={128}
             className="rounded-2xl shadow-lg"
           />
           <p className="text-sm text-white/60 tracking-wide">
-            100cims admin console
+            cims admin console
           </p>
         </div>
       </div>

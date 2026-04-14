@@ -1,0 +1,32 @@
+{
+  "locale": "ca",
+  "title": "Highland Terra Alta · Cims i serrats del sud",
+  "shortName": "Highland Terra Alta",
+  "description": "L'app gratuïta per seguir el teu progrés al repte Highland de la Terra Alta. Cims, serrats i miradors del sud del país. iOS i Android.",
+  "heroTagline": "Els cims de la Terra Alta, al teu mòbil.",
+  "heroImageUrl": "https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/tosseta-rasa.jpg?date=1761896472108",
+  "whatIsTitle": "Què és el Highland Terra Alta?",
+  "whatIsParagraphs": [
+    "Highland Terra Alta és una col·lecció de cims i miradors de la comarca de la Terra Alta, al sud de Catalunya. Són muntanyes de cota mitjana, accessibles en poques hores, amb vistes obertes al Priorat, al Matarranya i al delta de l'Ebre.",
+    "No hi ha tresmils ni vies alpines — és un repte pensat per descobrir una de les comarques més singulars del país caminant, un cim rere l'altre.",
+    "Amb Cims, sempre amunt portes la llista al mòbil, marques cada ascens amb una foto i la data, i veus com avances sense haver de portar llibretes ni fitxes."
+  ],
+  "faqs": [
+    {
+      "q": "Quin és el cim més alt del repte?",
+      "a": "La Tosseta Rasa, a 1.217 metres, és el sostre del repte."
+    },
+    {
+      "q": "És un repte per a tota la família?",
+      "a": "En bona part, sí. La majoria de cims són excursions de mig matí per pistes i corriols senyalitzats. Alguns demanen una mica més d'orientació."
+    },
+    {
+      "q": "Millor època per fer-lo?",
+      "a": "Tardor, hivern i primavera. L'estiu a la Terra Alta pot ser molt calorós."
+    },
+    {
+      "q": "Es pot combinar amb enoturisme?",
+      "a": "Sí — la Terra Alta és comarca vinícola amb denominació d'origen pròpia. Molta gent combina cim i celler en la mateixa sortida."
+    }
+  ]
+}

@@ -4,7 +4,6 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Alert, Image, ScrollView, TouchableOpacity, View } from "react-native";
-import { twMerge } from "tailwind-merge";
 
 import { queryClient } from "@/components/providers/query-client-provider";
 import {
@@ -41,7 +40,6 @@ export default function SummitMountainScreen() {
   });
 
   const [image, setImage] = useState<ImagePickerAsset | null>(null);
-  const [isImageMissing, setIsImageMissing] = useState(false);
   const [isLoadingImage, setIsLoadingImage] = useState(false);
   const [date, setDate] = useState<Date>(new Date());
   const [selectedUsers, setSelectedUsers] = useState<UserForSelectInput[]>(
@@ -89,15 +87,9 @@ export default function SummitMountainScreen() {
     }
   };
 
-  const submitDisabled =
-    !date || !image?.base64 || !selectedUsers?.length || !mountain;
+  const submitDisabled = !date || !selectedUsers?.length || !mountain;
 
   const onSubmit = async () => {
-    if (!image?.base64) {
-      setIsImageMissing(true);
-      return;
-    }
-
     if (submitDisabled) {
       return Alert.alert(
         intl.formatMessage({
@@ -107,9 +99,9 @@ export default function SummitMountainScreen() {
     }
 
     try {
-      await mutateAsync({
+      const result = await mutateAsync({
         date: date.toISOString(),
-        image: image.base64,
+        image: image?.base64 ?? undefined,
         mountainId: mountain?.id,
         usersId: selectedUsers.map((user) => user.id),
       });
@@ -126,7 +118,14 @@ export default function SummitMountainScreen() {
       void queryClient.refetchQueries({
         queryKey: userKeys.summits(),
       });
-      router.back();
+      if (result?.summitId) {
+        router.replace({
+          pathname: "/user/summits/[summit]",
+          params: { summit: result.summitId, from: "create" },
+        });
+      } else {
+        router.back();
+      }
     } catch (error) {
       logError(error, "mountain/summit/submit");
       return Alert.alert(
@@ -152,20 +151,12 @@ export default function SummitMountainScreen() {
             <ThemedDateInput value={date} onDateValid={setDate} noFutureDates />
           </View>
           <View className="gap-2">
-            <ThemedText
-              className={twMerge(
-                "text-lg font-bold",
-                isImageMissing && "text-red-500",
-              )}
-            >
+            <ThemedText className="text-lg font-bold">
               <FormattedMessage defaultMessage="Summit photo" />
             </ThemedText>
             <TouchableOpacity
               onPress={pickImage}
-              className={twMerge(
-                "h-64 w-full items-center justify-center overflow-hidden rounded border-2 border-border bg-background",
-                isImageMissing && "border-red-500",
-              )}
+              className="h-64 w-full items-center justify-center overflow-hidden rounded border-2 border-border bg-background"
             >
               {image ? (
                 <View className="relative size-full items-center justify-center">

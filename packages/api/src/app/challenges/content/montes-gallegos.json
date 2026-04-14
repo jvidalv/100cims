@@ -1,0 +1,28 @@
+{
+  "locale": "es",
+  "title": "Camiño das Cimas · Cumbres de Galicia",
+  "shortName": "Camiño das Cimas",
+  "description": "Sigue tus ascensos a las cumbres principales de Galicia. App gratuita para iOS y Android.",
+  "heroTagline": "Las montañas gallegas, del Xistral al Manzaneda.",
+  "heroImageUrl": "https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/pena-trevinca.jpeg?date=1761896472107",
+  "whatIsTitle": "¿Qué es el Camiño das Cimas?",
+  "whatIsParagraphs": [
+    "Galicia no es tierra de tresmiles, pero tiene una montaña media muy rica: el Xistral, el Manzaneda o la cordillera Oriental comparten bosques atlánticos, hayedos y crestas abiertas a los vientos del norte.",
+    "Este reto recoge las cumbres más representativas de cada cordillera gallega. Son salidas que combinan naturaleza, cultura local y rutas jacobeas alternativas.",
+    "La app lleva la lista, la ficha de cada cumbre, y el seguimiento de tu progreso mientras recorres Galicia."
+  ],
+  "faqs": [
+    {
+      "q": "¿Cuál es la cumbre más alta?",
+      "a": "Cabeza de Manzaneda (1.781 m), en Ourense. No es alpina pero domina una comarca."
+    },
+    {
+      "q": "¿Qué época es mejor?",
+      "a": "Primavera y verano. El invierno puede ser muy húmedo y ventoso en las crestas altas."
+    },
+    {
+      "q": "¿Son excursiones largas?",
+      "a": "Varía. Las hay de pocas horas y alguna jornada completa. La app indica la dificultad de cada una."
+    }
+  ]
+}

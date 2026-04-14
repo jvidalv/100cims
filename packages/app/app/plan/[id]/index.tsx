@@ -1,16 +1,19 @@
 import { isToday } from "date-fns/isToday";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, Link, useRouter } from "expo-router";
+import { useEffect, useRef, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
   Alert,
   Image,
-  Share,
   StyleSheet,
   TouchableOpacity,
+  useWindowDimensions,
   View,
 } from "react-native";
+import ConfettiCannon from "react-native-confetti-cannon";
 
+import { PlanShareCard } from "@/components/plan";
 import { useAuth } from "@/components/providers/auth-provider";
 import {
   ActivityIndicator,
@@ -22,15 +25,25 @@ import {
   ThemedText,
   ThemedView,
 } from "@/components/ui/atoms";
-import { ActionRow, MountainItemList } from "@/components/ui/molecules";
+import {
+  ActionRow,
+  MountainItemList,
+  SharePulseBadge,
+} from "@/components/ui/molecules";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
 import { getMountainPts } from "@/domains/mountain/mountain.util";
 import { usePlanChatUnread } from "@/domains/plan/plan-chat.api";
+import { consumePlanCompletionImages } from "@/domains/plan/plan-completion-cache";
 import { usePlanJoin, usePlanLeave, usePlanOne } from "@/domains/plan/plan.api";
 import { useUserMe } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
+import {
+  CONFETTI_EXPLOSION_SPEED,
+  CONFETTI_FALL_SPEED,
+  getConfettiOrigin,
+} from "@/lib/confetti";
 import { formatDayDistance } from "@/lib/dates";
-import { getUrlDeeplink } from "@/lib/deeplink";
+import { captureAndShare, shareDeeplink } from "@/lib/share";
 import { getInitials } from "@/lib/strings";
 
 const PlanSummits = ({
@@ -85,8 +98,9 @@ const PlanSummits = ({
 
 export default function PlanIdPage() {
   const router = useRouter();
+  const { width: screenW, height: screenH } = useWindowDimensions();
 
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, from } = useLocalSearchParams<{ id: string; from?: string }>();
   const { data } = usePlanOne({ id });
   const { isAuthenticated } = useAuth();
   const { data: chatsUnread } = usePlanChatUnread();
@@ -99,6 +113,17 @@ export default function PlanIdPage() {
   const intl = useIntl();
 
   const plan = data;
+  const justCompleted = from === "complete";
+  const [completionImages, setCompletionImages] = useState<
+    Record<string, string>
+  >({});
+  useEffect(() => {
+    if (justCompleted) {
+      setCompletionImages(consumePlanCompletionImages(id));
+    }
+  }, [id, justCompleted]);
+  const shareCardRef = useRef<View>(null);
+  const [isSharing, setIsSharing] = useState(false);
   const isCreator = user?.id === plan?.creatorId;
   const hasJoined = plan?.users.some((u) => u.id === user?.id);
 
@@ -113,19 +138,30 @@ export default function PlanIdPage() {
   const isCompleted = plan?.status === "completed";
   const isCanceled = plan?.status === "canceled";
 
-  const onShare = async () => {
-    const messages = {
-      en: `📍 Hiking plan on cims!\n${plan?.title} 💪\n\n${getUrlDeeplink(`plan/${id}`)}`,
-      ca: `📍 Pla de senderisme a cims!\n${plan?.title} 💪\n\n${getUrlDeeplink(`plan/${id}`)}`,
-      es: `📍 Plan de senderismo en cims!\n${plan?.title} 💪\n\n${getUrlDeeplink(`plan/${id}`)}`,
-    };
-
-    const locale = intl.locale;
-    const msg = messages[locale as "ca" | "es" | "en"] || messages.en;
-
-    await Share.share({
-      message: msg,
+  const shareTextFallback = async () => {
+    if (!plan) return;
+    await shareDeeplink({
+      intl,
+      path: `plan/${id}`,
+      messages: {
+        en: `📍 Hiking plan on cims!\n${plan.title} 💪`,
+        ca: `📍 Pla de senderisme a cims!\n${plan.title} 💪`,
+        es: `📍 Plan de senderismo en cims!\n${plan.title} 💪`,
+      },
     });
+  };
+
+  const onShare = async () => {
+    if (!plan || isSharing) return;
+    setIsSharing(true);
+    await captureAndShare({
+      cardRef: shareCardRef,
+      prefetchUrls: plan.mountains.slice(0, 4).map((m) => m.imageUrl),
+      dialogTitle: intl.formatMessage({ defaultMessage: "Share plan" }),
+      fallback: shareTextFallback,
+      logTag: "plan/share-card",
+    });
+    setIsSharing(false);
   };
 
   const handleJoin = () => {
@@ -179,7 +215,39 @@ export default function PlanIdPage() {
       </ThemedView>
     );
 
+  const sharePayload = {
+    title: plan.title,
+    totalHeight: plan.mountains.reduce(
+      (acc, m) => acc + (parseInt(m.height) || 0),
+      0,
+    ),
+    summitCount: plan.mountains.length,
+    date: plan.startDate ?? plan.updatedAt ?? new Date().toISOString(),
+    images: plan.mountains.slice(0, 4).map((m) =>
+      completionImages[m.id]
+        ? `data:image/jpeg;base64,${completionImages[m.id]}`
+        : (m.imageUrl ?? null),
+    ),
+    users: plan.users.map((u) => ({
+      userId: u.id,
+      firstName: u.firstName,
+      lastName: u.lastName,
+      imageUrl: u.imageUrl,
+    })),
+  };
+
+  const confettiCount = Math.min(
+    320,
+    Math.max(
+      80,
+      100 +
+        plan.mountains.length * 20 +
+        (plan.mountains.some((m) => m.essential) ? 60 : 0),
+    ),
+  );
+
   return (
+    <>
     <ParallaxScrollView
       title={plan.title}
       height={mountainsWithImages?.length ? undefined : 160}
@@ -379,15 +447,17 @@ export default function PlanIdPage() {
             </ActionRow>
           </Link>
         )}
-        {isOpen && (
-          <ActionRow
-            onPress={onShare}
-            iconName="square.and.arrow.up"
-            intent="muted"
-          >
-            <FormattedMessage defaultMessage="Share it with your friends" />
-          </ActionRow>
-        )}
+        <ActionRow
+          onPress={onShare}
+          iconName="square.and.arrow.up"
+          intent="muted"
+          iconOverride={
+            isSharing ? <ActivityIndicator size="sm" /> : undefined
+          }
+          trailing={justCompleted ? <SharePulseBadge /> : undefined}
+        >
+          <FormattedMessage defaultMessage="Share" />
+        </ActionRow>
         {hasJoined && (
           <Link
             href={{ pathname: "/plan/[id]/chat", params: { id } }}
@@ -421,5 +491,23 @@ export default function PlanIdPage() {
       </View>
       {!!plan.mountains?.length && <PlanSummits mountains={plan.mountains} />}
     </ParallaxScrollView>
+      <View
+        collapsable={false}
+        pointerEvents="none"
+        style={{ position: "absolute", left: -10000, top: 0 }}
+      >
+        <PlanShareCard ref={shareCardRef} {...sharePayload} />
+      </View>
+      {justCompleted && (
+        <ConfettiCannon
+          count={confettiCount}
+          origin={getConfettiOrigin(screenW, screenH)}
+          fadeOut
+          autoStart
+          explosionSpeed={CONFETTI_EXPLOSION_SPEED}
+          fallSpeed={CONFETTI_FALL_SPEED}
+        />
+      )}
+    </>
   );
 }

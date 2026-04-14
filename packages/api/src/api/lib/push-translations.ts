@@ -31,7 +31,10 @@ const mountainSuggestionBody = {
     `${name} — ${done} de ${total} fets. T'animes?`,
   es: (name: string, done: number, total: number) =>
     `${name} — ${done} de ${total} hechos. ¿Te animas?`,
-} satisfies Record<AppLocale, (name: string, done: number, total: number) => string>;
+} satisfies Record<
+  AppLocale,
+  (name: string, done: number, total: number) => string
+>;
 
 export const pushPlanJoined = (locale: string | null, name: string) =>
   planJoined[normalizeAppLocale(locale)](name);
@@ -42,8 +45,10 @@ export const pushPlanLeft = (locale: string | null, name: string) =>
 export const pushPlanChat = (locale: string | null) =>
   planChat[normalizeAppLocale(locale)];
 
-export const pushMountainSuggestionTitle = (locale: string | null, km: number) =>
-  mountainSuggestionTitle[normalizeAppLocale(locale)](km);
+export const pushMountainSuggestionTitle = (
+  locale: string | null,
+  km: number,
+) => mountainSuggestionTitle[normalizeAppLocale(locale)](km);
 
 export const pushMountainSuggestionBody = (
   locale: string | null,
