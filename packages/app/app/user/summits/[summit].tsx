@@ -171,6 +171,7 @@ const Content = () => {
         </Link>
         <Pressable
           className="overflow-hidden rounded"
+          disabled={isSharing}
           onPress={() => openPreview({ uri: data.summitImageUrl })}
         >
           <Image

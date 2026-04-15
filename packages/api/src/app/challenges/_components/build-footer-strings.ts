@@ -22,5 +22,11 @@ export const buildFooterStrings = (
     madeBy: t("made-by"),
     colChallenges: t("col-challenges"),
     colAppShop: t("col-app-shop"),
+    language: {
+      label: t("language-label"),
+      en: t("language-en"),
+      ca: t("language-ca"),
+      es: t("language-es"),
+    },
   };
 };

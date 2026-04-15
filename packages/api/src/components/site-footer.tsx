@@ -1,3 +1,5 @@
+import type { AppLocale } from "@/api/lib/locale";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { ANDROID_APP_URL, IOS_APP_URL } from "@/lib/app-links";
 
 export interface SiteFooterStrings {
@@ -16,6 +18,7 @@ export interface SiteFooterStrings {
   colContactHelp: string;
   madeBy: string;
   colChallenges: string;
+  language: { label: string; en: string; ca: string; es: string };
 }
 
 const FEATURED_CHALLENGES: { slug: string; label: string }[] = [
@@ -25,15 +28,26 @@ const FEATURED_CHALLENGES: { slug: string; label: string }[] = [
   { slug: "100-cims-usa", label: "100 Cims USA" },
 ];
 
-export const SiteFooter = ({ strings: s }: { strings: SiteFooterStrings }) => {
+interface Props {
+  strings: SiteFooterStrings;
+  /** When set, locale-prefixes the home and shop links (otherwise middleware redirects from /). */
+  locale?: AppLocale;
+}
+
+export const SiteFooter = ({ strings: s, locale }: Props) => {
   const year = new Date().getFullYear();
+  const homeHref = locale ? `/${locale}` : "/";
+  const shopHref = locale ? `/${locale}/shop` : "/shop";
 
   return (
     <footer className="border-t border-border/50 py-12 mt-8">
       <div className="mx-auto max-w-7xl px-4">
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-5">
           <div className="col-span-2 sm:col-span-1 flex flex-col gap-3">
-            <a href="/" className="flex items-center gap-2 text-xl font-bold">
+            <a
+              href={homeHref}
+              className="flex items-center gap-2 text-xl font-bold"
+            >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/assets/logo.png"
@@ -44,6 +58,11 @@ export const SiteFooter = ({ strings: s }: { strings: SiteFooterStrings }) => {
               />
             </a>
             <p className="text-sm text-muted-foreground">{s.tagline}</p>
+            {locale ? (
+              <div className="my-2">
+                <LanguageSwitcher current={locale} strings={s.language} />
+              </div>
+            ) : null}
             <p className="text-xs text-muted-foreground">
               © {year} · {s.rights}
             </p>
@@ -53,7 +72,7 @@ export const SiteFooter = ({ strings: s }: { strings: SiteFooterStrings }) => {
             <h4 className="mb-3 font-semibold">{s.colApp}</h4>
             <div className="grid gap-2 text-sm">
               <a
-                href="/"
+                href={homeHref}
                 className="text-muted-foreground hover:text-foreground"
               >
                 {s.colAppHome}
@@ -65,7 +84,7 @@ export const SiteFooter = ({ strings: s }: { strings: SiteFooterStrings }) => {
                 {s.colAppChallenge}
               </a>
               <a
-                href="/shop"
+                href={shopHref}
                 className="text-muted-foreground hover:text-foreground"
               >
                 {s.colAppShop}

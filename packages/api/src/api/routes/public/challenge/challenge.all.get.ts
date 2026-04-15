@@ -25,6 +25,18 @@ export const challengeAllGetRoute = new Elysia().get(
         totalEssentialMountains: sql<string>`COUNT(DISTINCT CASE WHEN ${mountainTable.essential} THEN ${mountainTable.id} ELSE NULL END)`,
         // Count users from both summit.userId and summitHasUsers.userId
         totalUsers: sql<string>`COUNT(DISTINCT COALESCE(${summitHasUsersTable.userId}, ${summitTable.userId}))`,
+        // Image of the tallest essential mountain in the challenge, if any.
+        peakImageUrl: sql<string | null>`(
+          SELECT ${mountainTable.imageUrl}
+          FROM ${mountainTable}
+          INNER JOIN ${challengeHasMountainTable}
+            ON ${challengeHasMountainTable.mountainId} = ${mountainTable.id}
+          WHERE ${challengeHasMountainTable.challengeId} = ${challengeTable.id}
+            AND ${mountainTable.essential} = TRUE
+            AND ${mountainTable.imageUrl} IS NOT NULL
+          ORDER BY CAST(${mountainTable.height} AS FLOAT) DESC
+          LIMIT 1
+        )`,
       })
       .from(challengeTable)
       .leftJoin(

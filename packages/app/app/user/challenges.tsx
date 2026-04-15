@@ -211,7 +211,7 @@ export default function UserChallengesScreen() {
                   key={item.id}
                   name={item.name}
                   emoji={item.emoji || countryToEmoji(item.country)}
-                  totalMountains={item.totalMountains}
+                  peakImageUrl={item.peakImageUrl}
                   index={index}
                   isSelected={activeChallenge?.id === item.id}
                   onPress={() => onChallengeSelect(item.id)}
@@ -248,7 +248,7 @@ export default function UserChallengesScreen() {
                   key={item.id}
                   name={item.name}
                   emoji={item.emoji || countryToEmoji(item.country)}
-                  totalMountains={item.totalMountains}
+                  peakImageUrl={item.peakImageUrl}
                   index={publicChallenges.length + index}
                   isSelected={activeChallenge?.id === item.id}
                   onPress={() => onChallengeSelect(item.id)}

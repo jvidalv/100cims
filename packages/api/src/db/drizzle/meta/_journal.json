@@ -134,6 +134,20 @@
       "when": 1776079539518,
       "tag": "0018_complete_liz_osborn",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1776244907319,
+      "tag": "0019_young_expediter",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1776244920101,
+      "tag": "0020_highland-official",
+      "breakpoints": true
     }
   ]
 }

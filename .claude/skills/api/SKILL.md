@@ -279,6 +279,23 @@ void sendPushLocalized(
 - Users with `pushNotificationsEnabled = false` or null `expoPushToken` are filtered automatically.
 - Set `EXPO_ACCESS_TOKEN` env var to enable Expo's Enhanced Push Security.
 
+### Send Email (Resend + react-email)
+
+```typescript
+import { sendWelcomeEmail } from '@/api/lib/email';
+
+// Fire-and-forget — gated to NODE_ENV === "production".
+// Mints a per-recipient unsubscribe JWT, attaches the RFC List-Unsubscribe
+// headers automatically, and renders the template via @react-email.
+void sendWelcomeEmail({ id: user.id, email: user.email, firstName, locale });
+```
+
+- **Dev safety gate**: every `send*Email` short-circuits unless `NODE_ENV === "production"`. Only the admin "Send test" button bypasses (via `sendRenderedEmail({...}, { force: true })`). Setting `RESEND_API_KEY` in dev does **not** unblock sends — the gate is positive-assertion on purpose.
+- **Templates** live in `packages/api/emails/*.tsx`, all use `<Tailwind>` from `@react-email/components` (no separate config). Logo header references `https://cims-sempre-amunt.app/emails/logo-on-black.png` (committed under `public/emails/`; pre-flattened by `scripts/build-email-assets.ts`).
+- **Footer** is the shared `<EmailFooter>` component (`emails/_components/footer.tsx`) — provides home link, Apple/Google store badges, and the unsubscribe link. New templates must use it.
+- **Unsubscribe** is a stateless JWT signed with `AUTH_SECRET` via `jose` (`api/lib/email-tokens.ts`). The senders mint a token per recipient, embed it in the email, and ship `List-Unsubscribe` + `List-Unsubscribe-Post: List-Unsubscribe=One-Click` headers so Gmail / Apple Mail show a native unsubscribe button. Public routes `/api/public/{unsubscribe,resubscribe}` and the public Next.js `/unsubscribe?token=...` page handle the click.
+- **Translations**: copy lives inline in each template (en/ca/es records). Don't plumb through `next-intl` — that's for the admin/marketing UI; emails render in Node.
+
 ## Admin UI conventions
 
 - **Border radius**: the admin panel uses plain `rounded` (4px, `--radius = 0.25rem`) as the upper bound. Don't use `rounded-md` / `rounded-lg` / `rounded-xl` — a sweep was done to standardise. `rounded-full` is fine for circular elements (avatars, pills), and `rounded-sm` for smaller spots. The marketing/SEO pages (`app/100cims/`, `app/challenges/`, `app/page.tsx`, etc.) intentionally opt out of this rule.
@@ -289,7 +306,12 @@ void sendPushLocalized(
 
 Public-facing pages live under `src/app/`. Root layout is English. Canonical site URL: `SITE_URL` constant in `src/lib/app-links.ts`.
 
-- **Per-locale page**: root request config (`src/i18n/request.ts`) hardcodes `locale = "en"`. To render a single page in a different locale, use `createTranslator({ locale, messages: caMessages, namespace })` directly — do NOT try `getTranslations({ locale })` with a non-loaded locale (messages won't be available). See `src/app/100cims/_components/t.ts` for the pattern.
+- **Subdirectory i18n routing** (`/[locale]/...`): wired with `next-intl/middleware`. Three locales (`en | ca | es`) live under `src/app/[locale]/` (currently: home, `/shop`, `/shop/[slug]`). `src/middleware.ts` redirects unprefixed URLs (`/`, `/shop`, …) to the visitor's best-match locale; the matcher excludes `/api`, `/admin`, legacy single-locale pages, `/deeplink`, and static assets. Routing config in `src/i18n/routing.ts` exports `routing` + `SUPPORTED_LOCALES` — single source of truth, don't hardcode locale arrays.
+- **Per-page setup** (inside `[locale]/`): `params: Promise<{ locale: string }>`, call `setRequestLocale(asAppLocale(localeRaw))`, return `routing.locales.map(l => ({ locale: l }))` from `generateStaticParams`. Pages then render statically per locale at build time.
+- **hreflang + canonical**: `src/lib/hreflang.ts` exports `getLocalizedAlternates(locale, path)` returning `{ canonical, languages }` for `metadata.alternates`. Plug into every locale-prefixed page's `generateMetadata`.
+- **Language switcher**: `src/components/language-switcher.tsx` is a client component using Radix dropdown + CSS-gradient flag circles. The switcher sits inside `<SiteFooter>` when its optional `locale` prop is set.
+- **Fixed-locale legacy pages** (`/100cims`, `/challenges/[slug]`): hand-crafted SEO assets in one language each. They live OUTSIDE the `[locale]/` tree, use `createTranslator({ locale, messages, namespace })` directly, and call `<SiteFooter>` without the `locale` prop (footer falls back to unprefixed `/`, `/shop` hrefs which the middleware then redirects).
+- **Locale type**: `AppLocale` in `src/api/lib/locale.ts` is the single source of truth. `ChallengeLocale` re-exports it. `routing.locales` is the single runtime list. Don't redefine `"ca" | "es" | "en"` inline anywhere.
 - **Shared footer**: `src/components/site-footer.tsx` — accepts pre-resolved `SiteFooterStrings` (not a translator, because next-intl's translator type narrows to the consumer's namespace and rejects a generic prop type).
 - **SEO primitives in place**: `src/app/sitemap.ts` (MetadataRoute.Sitemap) and `src/app/robots.ts` (MetadataRoute.Robots). Add new pages to `sitemap.ts` manually.
 - **Server-side caching**: we default to **fully static** pages for marketing content (no `export const revalidate`). Stats and featured-peaks selection snapshot at build time; redeploy to refresh. Only opt into ISR if a page must change between deploys.
@@ -305,6 +327,12 @@ Pattern for SEO landing pages that scale across N items with per-item hand-writt
 - **DB helpers** in `src/lib/challenge-helpers.ts`: `getOfficialChallengeBySlug` (Promise.all of 3 queries), `getFeaturedPeaksForChallenge` (by id) and `…ForChallengeSlug` (by slug, for convenience).
 - **Shared footer strings**: `src/app/challenges/_components/build-footer-strings.ts` exports `buildFooterStrings(locale)` returning a `SiteFooterStrings`. The home page and `/100cims` use it too — single source of truth for the 14-key footer mapping.
 - **Hero image LCP**: above-the-fold `<img>` takes `fetchPriority="high"`.
+
+### Templated per-product pages (`/shop/[slug]`)
+
+- **Content in DB**: merch is fully DB-driven (no per-product JSON). `src/lib/merch-helpers.ts` exports `getActiveMerch()` and `getMerchBySlug()` — both wrapped in `React.cache()` so `generateStaticParams` + `generateMetadata` + the page body share a single round-trip per slug.
+- **Per-locale fields**: `src/lib/merch-format.ts` exposes `localizeMerch(row, locale)` (picks `nameCa | nameEs | nameEn` etc.) and `formatPrice(euros, locale)` (note: the DB stores whole euros, not cents).
+- **Buy flow**: unauthenticated visitors aren't on the JWT track. The client `MerchRequestForm` POSTs to `/api/public/contact` with a formatted `[MERCH REQUEST] …` message — reuses the existing Discord webhook pipeline.
 
 ## Environment Variables
 

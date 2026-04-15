@@ -324,6 +324,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/public/unsubscribe": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["postApiPublicUnsubscribe"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/public/resubscribe": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["postApiPublicResubscribe"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/protected/user/me": {
         parameters: {
             query?: never;
@@ -1220,6 +1252,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/emails/test": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["postApiAdminEmailsTest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1882,6 +1930,7 @@ export interface operations {
                             totalMountains: string;
                             totalEssentialMountains: string;
                             totalUsers: string;
+                            peakImageUrl: (string | null) | null;
                         }[];
                     };
                     "multipart/form-data": {
@@ -1894,6 +1943,7 @@ export interface operations {
                             totalMountains: string;
                             totalEssentialMountains: string;
                             totalUsers: string;
+                            peakImageUrl: (string | null) | null;
                         }[];
                     };
                     "text/plain": {
@@ -1906,6 +1956,7 @@ export interface operations {
                             totalMountains: string;
                             totalEssentialMountains: string;
                             totalUsers: string;
+                            peakImageUrl: (string | null) | null;
                         }[];
                     };
                 };
@@ -2858,6 +2909,116 @@ export interface operations {
             };
         };
     };
+    postApiPublicUnsubscribe: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    token: string;
+                };
+                "multipart/form-data": {
+                    token: string;
+                };
+                "text/plain": {
+                    token: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    postApiPublicResubscribe: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    token: string;
+                };
+                "multipart/form-data": {
+                    token: string;
+                };
+                "text/plain": {
+                    token: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
     getApiProtectedUserMe: {
         parameters: {
             query?: never;
@@ -2945,6 +3106,7 @@ export interface operations {
                     visibleOnHiscores?: boolean;
                     visibleOnPeopleSearch?: boolean;
                     activeChallengeId?: string;
+                    emailNotificationsEnabled?: boolean;
                 };
                 "multipart/form-data": {
                     firstName?: string;
@@ -2955,6 +3117,7 @@ export interface operations {
                     visibleOnHiscores?: boolean;
                     visibleOnPeopleSearch?: boolean;
                     activeChallengeId?: string;
+                    emailNotificationsEnabled?: boolean;
                 };
                 "text/plain": {
                     firstName?: string;
@@ -2965,6 +3128,7 @@ export interface operations {
                     visibleOnHiscores?: boolean;
                     visibleOnPeopleSearch?: boolean;
                     activeChallengeId?: string;
+                    emailNotificationsEnabled?: boolean;
                 };
             };
         };
@@ -4913,6 +5077,7 @@ export interface operations {
                             totalMountains: string;
                             totalUsers: string;
                             createdAt: string;
+                            peakImageUrl: string | null;
                         }[];
                     };
                     "multipart/form-data": {
@@ -4930,6 +5095,7 @@ export interface operations {
                             totalMountains: string;
                             totalUsers: string;
                             createdAt: string;
+                            peakImageUrl: string | null;
                         }[];
                     };
                     "text/plain": {
@@ -4947,6 +5113,7 @@ export interface operations {
                             totalMountains: string;
                             totalUsers: string;
                             createdAt: string;
+                            peakImageUrl: string | null;
                         }[];
                     };
                 };
@@ -5738,6 +5905,7 @@ export interface operations {
                     locale?: (string | null) | null;
                     visibleOnHiscores?: boolean;
                     visibleOnPeopleSearch?: boolean;
+                    emailNotificationsEnabled?: boolean;
                     admin?: boolean;
                 };
                 "multipart/form-data": {
@@ -5749,6 +5917,7 @@ export interface operations {
                     locale?: (string | null) | null;
                     visibleOnHiscores?: boolean;
                     visibleOnPeopleSearch?: boolean;
+                    emailNotificationsEnabled?: boolean;
                     admin?: boolean;
                 };
                 "text/plain": {
@@ -5760,6 +5929,7 @@ export interface operations {
                     locale?: (string | null) | null;
                     visibleOnHiscores?: boolean;
                     visibleOnPeopleSearch?: boolean;
+                    emailNotificationsEnabled?: boolean;
                     admin?: boolean;
                 };
             };
@@ -8129,6 +8299,89 @@ export interface operations {
                     };
                     "text/plain": {
                         error: string;
+                    };
+                };
+            };
+        };
+    };
+    postApiAdminEmailsTest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    slug: string;
+                    locale: "en" | "ca" | "es";
+                    props?: {
+                        [key: string]: string;
+                    };
+                };
+                "multipart/form-data": {
+                    slug: string;
+                    locale: "en" | "ca" | "es";
+                    props?: {
+                        [key: string]: string;
+                    };
+                };
+                "text/plain": {
+                    slug: string;
+                    locale: "en" | "ca" | "es";
+                    props?: {
+                        [key: string]: string;
+                    };
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
                     };
                 };
             };

@@ -147,7 +147,7 @@ export default function ChallengesScreen() {
               key={challenge.id}
               name={challenge.name}
               emoji={displayEmoji}
-              totalMountains={challenge.totalMountains}
+              peakImageUrl={challenge.peakImageUrl}
               index={index}
               isSelected={activeChallengeId === challenge.id}
               onPress={() => onChallengeSelect(challenge.id)}

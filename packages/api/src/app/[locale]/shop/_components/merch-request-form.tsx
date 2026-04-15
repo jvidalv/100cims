@@ -97,7 +97,10 @@ export const MerchRequestForm = ({ productName, hasSize }: Props) => {
       ) : null}
 
       <div>
-        <label htmlFor="merch-email" className="block text-sm font-semibold mb-2">
+        <label
+          htmlFor="merch-email"
+          className="block text-sm font-semibold mb-2"
+        >
           {t("email-label")}
         </label>
         <input
@@ -112,7 +115,10 @@ export const MerchRequestForm = ({ productName, hasSize }: Props) => {
       </div>
 
       <div>
-        <label htmlFor="merch-note" className="block text-sm font-semibold mb-2">
+        <label
+          htmlFor="merch-note"
+          className="block text-sm font-semibold mb-2"
+        >
           {t("note-label")}
         </label>
         <textarea
@@ -127,7 +133,12 @@ export const MerchRequestForm = ({ productName, hasSize }: Props) => {
 
       {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
-      <Button type="submit" size="lg" disabled={submitting} className="font-bold">
+      <Button
+        type="submit"
+        size="lg"
+        disabled={submitting}
+        className="font-bold"
+      >
         {submitting ? t("submitting") : t("submit")}
       </Button>
     </form>

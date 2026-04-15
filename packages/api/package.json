@@ -46,6 +46,7 @@
     "file-type": "^21.3.0",
     "geoip-lite": "^2.0.1",
     "googleapis": "^171.4.0",
+    "jose": "^6.2.2",
     "lucide-react": "^1.8.0",
     "next": "^16.2.1",
     "next-auth": "5.0.0-beta.30",

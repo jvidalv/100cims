@@ -2,6 +2,11 @@
   "shop-page": {
     "list-title": "Shop",
     "list-subtitle": "Merch from the Cims, sempre amunt project.",
+    "hero-eyebrow": "Shop",
+    "hero-title": "Wear Cims, support Cims.",
+    "hero-body": "Small-batch merch for the Cims app. Every purchase helps keep Cims free, ad-free, and independent.",
+    "supports-title": "100% of the margin supports Cims",
+    "supports-body": "Cims is a one-person side project. Servers, app-store fees, translations — it all costs real money. Buying something here covers those costs so the app stays free for everyone.",
     "list-empty": "No products right now — check back soon.",
     "back-to-list": "← Back to the catalog",
     "external-badge": "External shop",
@@ -58,7 +63,10 @@
     "featured-challenge-body": "The classic Catalan list of one hundred representative peaks. Our most complete page, fully translated, with FAQs and featured summits.",
     "featured-challenge-cta": "Explore 100 Cims →",
     "challenges-title": "All official challenges",
-    "challenges-subtitle": "Pick any challenge and start logging. The app tracks your progress across all of them."
+    "challenges-subtitle": "Pick any challenge and start logging. The app tracks your progress across all of them.",
+    "shop-title": "Merch",
+    "shop-subtitle": "Support the project with a t-shirt, a cap or a mug.",
+    "shop-cta": "See all →"
   },
   "footer": {
     "privacy-policy": "Privacy Policy",
@@ -74,6 +82,10 @@
     "col-app-android": "Google Play",
     "col-app-shop": "Shop",
     "col-challenges": "Challenges",
+    "language-label": "Language",
+    "language-en": "English",
+    "language-ca": "Català",
+    "language-es": "Español",
     "col-legal": "Legal",
     "col-contact": "Contact",
     "col-contact-help": "Help & Contact"
@@ -138,5 +150,16 @@
     "cta-title": "Start your challenge today",
     "cta-subtitle": "Install the app, pick your challenge and start logging your summits. Free, ad-free, made by hikers.",
     "available-on": "Available on iOS and Android"
+  },
+  "unsubscribe-page": {
+    "title": "You're unsubscribed",
+    "body": "You won't receive any more emails from Cims. Changed your mind? You can resubscribe below.",
+    "resubscribe-cta": "Resubscribe",
+    "resubscribe-pending": "Resubscribing…",
+    "resubscribed-title": "You're back in",
+    "resubscribed-body": "We'll keep sending you the occasional update.",
+    "error-title": "This link doesn't work",
+    "error-body": "It looks like this unsubscribe link has expired or is invalid. If you keep getting emails, just reply to one and we'll sort it out.",
+    "back-to-app": "Back to cims-sempre-amunt.app"
   }
 }

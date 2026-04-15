@@ -6,23 +6,32 @@ import {
   Heading,
   Hr,
   Html,
+  Img,
   Preview,
   Section,
   Tailwind,
   Text,
 } from "@react-email/components";
 
+import { EmailFooter } from "./_components/footer";
+
 export type WelcomeEmailLocale = "en" | "ca" | "es";
 
 type Props = {
   firstName: string | null;
   locale: WelcomeEmailLocale;
+  unsubscribeUrl: string;
 };
 
 // Deep link matches packages/app/lib/deeplink.ts at runtime — the app handler
 // lives on the marketing domain and bounces into the custom scheme.
 const SUPPORT_DEEPLINK =
   "https://cims-sempre-amunt.app/deeplink?link=centcims%3A%2F%2F%2Fsupport";
+
+// White logo flattened onto solid black so the asset reads correctly in any
+// email client (transparency is unreliable in mail). Pre-rendered by
+// scripts/build-email-assets.ts; re-run that script if the source changes.
+const LOGO_URL = "https://cims-sempre-amunt.app/emails/logo-on-black.png";
 
 type Copy = {
   preview: string;
@@ -50,8 +59,8 @@ const copy = {
       a: "Open a mountain, tap the camera button, pick a photo and the date you summited. That's it — it's added to your list.",
     },
     faq2: {
-      q: "I'm back from a trip with a dozen summits. How do I upload them all?",
-      a: "From your profile, go to your summit list and use batch upload. Pick several photos at once and match each one to a mountain and date.",
+      q: "I just downloaded the app and have lots of older summits to register. How do I add them?",
+      a: "You can register older summits without a photo — open a mountain and add the date. It's manual for each one for now, but it keeps your history complete.",
     },
     faq3: {
       q: "How do I plan a hike with friends?",
@@ -75,8 +84,8 @@ const copy = {
       a: "Obre una muntanya, toca el botó de la càmera, tria una foto i la data en què vas fer el cim. Ja està — queda afegit a la teva llista.",
     },
     faq2: {
-      q: "Torno d'una sortida amb una dotzena de cims. Com els pujo tots?",
-      a: "Des del teu perfil, ves a la llista de cims i fes servir la càrrega en lot. Tria diverses fotos alhora i associa cada una amb una muntanya i una data.",
+      q: "Acabo de baixar l'app i tinc molts cims antics per registrar. Com els afegeixo?",
+      a: "Pots registrar cims antics sense foto — obre una muntanya i afegeix la data. De moment s'ha de fer un a un, però així mantens tot el teu històric.",
     },
     faq3: {
       q: "Com planifico una sortida amb amics?",
@@ -100,8 +109,8 @@ const copy = {
       a: "Abre una montaña, toca el botón de la cámara, elige una foto y la fecha en que hiciste cima. Ya está — se añade a tu lista.",
     },
     faq2: {
-      q: "Vuelvo de una salida con una docena de cimas. ¿Cómo las subo todas?",
-      a: "Desde tu perfil, ve a la lista de cimas y usa la carga por lotes. Elige varias fotos a la vez y asocia cada una con una montaña y una fecha.",
+      q: "Acabo de descargar la app y tengo muchas cimas antiguas por registrar. ¿Cómo las añado?",
+      a: "Puedes registrar cimas antiguas sin foto — abre una montaña y añade la fecha. De momento hay que hacerlo una a una, pero así mantienes todo tu historial.",
     },
     faq3: {
       q: "¿Cómo planifico una salida con amigos?",
@@ -116,7 +125,7 @@ const copy = {
   },
 } satisfies Record<WelcomeEmailLocale, Copy>;
 
-export function WelcomeEmail({ firstName, locale }: Props) {
+export function WelcomeEmail({ firstName, locale, unsubscribeUrl }: Props) {
   const t = copy[locale];
   return (
     <Tailwind>
@@ -124,7 +133,17 @@ export function WelcomeEmail({ firstName, locale }: Props) {
         <Head />
         <Preview>{t.preview}</Preview>
         <Body className="bg-slate-50 font-sans">
-          <Container className="mx-auto my-10 max-w-xl rounded-xl bg-white p-8">
+          <Container className="mx-auto my-10 max-w-xl overflow-hidden rounded-xl bg-white">
+            <Section className="bg-black px-8 py-6 text-center">
+              <Img
+                src={LOGO_URL}
+                alt="Cims"
+                width="148"
+                height="80"
+                className="mx-auto block"
+              />
+            </Section>
+            <Section className="p-8">
             <Heading className="m-0 mb-2 text-2xl font-bold text-slate-900">
               {t.greeting(firstName)}
             </Heading>
@@ -165,8 +184,12 @@ export function WelcomeEmail({ firstName, locale }: Props) {
               </Button>
             </Section>
 
-            <Hr className="my-6 border-slate-200" />
-            <Text className="m-0 text-xs text-slate-500">{t.footer}</Text>
+            <EmailFooter
+              locale={locale}
+              unsubscribeUrl={unsubscribeUrl}
+              context={t.footer}
+            />
+            </Section>
           </Container>
         </Body>
       </Html>

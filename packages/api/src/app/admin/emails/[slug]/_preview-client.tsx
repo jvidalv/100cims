@@ -1,8 +1,9 @@
 "use client";
 
-import { Monitor, RefreshCw, Smartphone } from "lucide-react";
+import { Monitor, RefreshCw, Send, Smartphone } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useSendTestEmail } from "@/domains/admin/api";
 
 type FieldDef =
   | { type: "text"; default: string }
@@ -52,6 +54,22 @@ export function EmailPreviewClient({
   const router = useRouter();
   const [width, setWidth] = useState<Width>("desktop");
   const [draft, setDraft] = useState(propValues);
+  const sendTest = useSendTestEmail();
+
+  const onSendTest = () => {
+    sendTest.mutate(
+      {
+        slug,
+        locale: locale as "en" | "ca" | "es",
+        props: draft,
+      },
+      {
+        onSuccess: () => toast.success("Test email sent"),
+        onError: (e) =>
+          toast.error(e instanceof Error ? e.message : "Send failed"),
+      },
+    );
+  };
 
   const navigate = (
     nextLocale: string,
@@ -155,6 +173,15 @@ export function EmailPreviewClient({
           title="Refresh"
         >
           <RefreshCw className="size-4" />
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={onSendTest}
+          disabled={sendTest.isPending}
+          title="Send test email to my address"
+        >
+          <Send className="size-4" />
         </Button>
       </div>
 

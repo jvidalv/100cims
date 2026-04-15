@@ -61,9 +61,31 @@ export const CommunityChallengeSchema = t.Object({
 });
 
 /**
+ * Schema for a community challenge as returned by the list route — adds
+ * `peakImageUrl` (image of the tallest essential mountain, if any).
+ */
+export const CommunityChallengeListItemSchema = t.Object({
+  id: t.String(),
+  name: t.String(),
+  slug: t.String(),
+  description: t.Union([t.String(), t.Null()]),
+  country: t.String(),
+  imageUrl: t.Union([t.String(), t.Null()]),
+  emoji: t.Union([t.String(), t.Null()]),
+  isPublic: t.Boolean(),
+  creatorId: t.Union([t.String(), t.Null()]),
+  totalMountains: t.String(),
+  totalUsers: t.String(),
+  createdAt: t.String(),
+  peakImageUrl: t.Union([t.String(), t.Null()]),
+});
+
+/**
  * Schema for array of community challenges
  */
-export const CommunityChallengesArraySchema = t.Array(CommunityChallengeSchema);
+export const CommunityChallengesArraySchema = t.Array(
+  CommunityChallengeListItemSchema,
+);
 
 /**
  * Schema for community challenge detail with mountains

@@ -49,6 +49,7 @@ export const userMePostRoute = new Elysia().post(
         visibleOnPeopleSearch: body.visibleOnPeopleSearch,
         town: body.town,
         activeChallengeId: body.activeChallengeId,
+        emailNotificationsEnabled: body.emailNotificationsEnabled,
       })
       .where(eq(userTable.id, user.id));
 
@@ -66,6 +67,7 @@ export const userMePostRoute = new Elysia().post(
       visibleOnHiscores: t.Optional(t.Boolean()),
       visibleOnPeopleSearch: t.Optional(t.Boolean()),
       activeChallengeId: t.Optional(t.String()),
+      emailNotificationsEnabled: t.Optional(t.Boolean()),
     }),
     response: {
       200: SimpleSuccessResponse,
