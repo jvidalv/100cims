@@ -8,6 +8,8 @@ import { logErrorPostRoute } from "@/api/routes/public/log-error.post";
 import { publicMerchRoute } from "@/api/routes/public/merch";
 import { mountainsRoutes } from "@/api/routes/public/mountains";
 import { publicPlansRoute } from "@/api/routes/public/plans";
+import { resubscribePostRoute } from "@/api/routes/public/resubscribe.post";
+import { unsubscribePostRoute } from "@/api/routes/public/unsubscribe.post";
 import { publicUserRoute } from "@/api/routes/public/user";
 
 export const publicRoutes = new Elysia({ prefix: "/public" })
@@ -19,4 +21,6 @@ export const publicRoutes = new Elysia({ prefix: "/public" })
   .use(challengeRoutes)
   .use(publicUserRoute)
   .use(publicPlansRoute)
-  .use(publicMerchRoute);
+  .use(publicMerchRoute)
+  .use(unsubscribePostRoute)
+  .use(resubscribePostRoute);

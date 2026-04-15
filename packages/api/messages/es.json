@@ -2,6 +2,11 @@
   "shop-page": {
     "list-title": "Tienda",
     "list-subtitle": "Merchandising del proyecto Cims, sempre amunt.",
+    "hero-eyebrow": "Tienda",
+    "hero-title": "Viste Cims, apoya Cims.",
+    "hero-body": "Merchandising de la app Cims en pequeñas tiradas. Cada compra ayuda a que Cims siga siendo gratuita, sin anuncios e independiente.",
+    "supports-title": "El 100% del margen va a Cims",
+    "supports-body": "Cims es un proyecto personal mantenido por una sola persona. Los servidores, las comisiones de las tiendas de apps, las traducciones — todo cuesta dinero real. Lo que compras aquí cubre esos costes para que la app siga siendo gratis para todo el mundo.",
     "list-empty": "Ahora mismo no hay productos — vuelve pronto.",
     "back-to-list": "← Volver al catálogo",
     "external-badge": "Tienda externa",
@@ -58,7 +63,10 @@
     "featured-challenge-body": "La lista clásica de cumbres catalanas. Nuestra página más completa, totalmente en catalán, con FAQs y cumbres destacadas.",
     "featured-challenge-cta": "Explora 100 Cims →",
     "challenges-title": "Todos los retos oficiales",
-    "challenges-subtitle": "Elige cualquier reto y empieza a registrar cumbres. La app lleva tu progreso en todos a la vez."
+    "challenges-subtitle": "Elige cualquier reto y empieza a registrar cumbres. La app lleva tu progreso en todos a la vez.",
+    "shop-title": "Tienda",
+    "shop-subtitle": "Apoya el proyecto con una camiseta, una gorra o una taza.",
+    "shop-cta": "Ver todo →"
   },
   "footer": {
     "privacy-policy": "Política de Privacidad",
@@ -74,6 +82,10 @@
     "col-app-android": "Google Play",
     "col-app-shop": "Tienda",
     "col-challenges": "Retos",
+    "language-label": "Idioma",
+    "language-en": "English",
+    "language-ca": "Català",
+    "language-es": "Español",
     "col-legal": "Legal",
     "col-contact": "Contacto",
     "col-contact-help": "Ayuda y contacto"
@@ -138,5 +150,16 @@
     "cta-title": "Empieza tu reto hoy",
     "cta-subtitle": "Instala la app, elige tu reto y empieza a registrar tus cumbres. Gratis, sin anuncios, hecha por montañeros.",
     "available-on": "Disponible en iOS y Android"
+  },
+  "unsubscribe-page": {
+    "title": "Te has dado de baja",
+    "body": "Ya no recibirás más correos de Cims. ¿Has cambiado de opinión? Puedes volver a suscribirte abajo.",
+    "resubscribe-cta": "Volver a suscribirme",
+    "resubscribe-pending": "Suscribiendo…",
+    "resubscribed-title": "Ya estás de vuelta",
+    "resubscribed-body": "Te seguiremos enviando alguna actualización de vez en cuando.",
+    "error-title": "Este enlace no funciona",
+    "error-body": "Parece que este enlace para darte de baja ha caducado o no es válido. Si sigues recibiendo correos, responde a uno y lo solucionaremos.",
+    "back-to-app": "Volver a cims-sempre-amunt.app"
   }
 }

@@ -70,6 +70,7 @@ export const userTable = pgTable("user", {
   activeChallengeId: uuid(), // FK constraint in migration to avoid circular reference
   expoPushToken: text(),
   pushNotificationsEnabled: boolean().notNull().default(true),
+  emailNotificationsEnabled: boolean().notNull().default(true),
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp().notNull().defaultNow(),
 });
@@ -454,4 +455,23 @@ export const merchTable = pgTable(
     updatedAt: timestamp().notNull().defaultNow(),
   },
   (table) => [uniqueIndex("merch_featured_unique_idx").on(table.featured)],
+);
+
+export const emailLogTable = pgTable(
+  "email_log",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => userTable.id, { onDelete: "cascade" }),
+    slug: text().notNull(),
+    sentAt: timestamp("sent_at").notNull().defaultNow(),
+  },
+  (table) => [
+    index("email_log_user_slug_sent_idx").on(
+      table.userId,
+      table.slug,
+      table.sentAt,
+    ),
+  ],
 );

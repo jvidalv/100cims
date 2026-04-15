@@ -160,6 +160,7 @@ export const joinPostRoute = new Elysia().use(JWT()).post(
         ],
       });
       void sendWelcomeEmail({
+        id: user.id,
         email: user.email,
         firstName: user.firstName,
         locale: user.locale,

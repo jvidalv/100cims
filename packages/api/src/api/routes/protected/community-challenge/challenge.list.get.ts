@@ -57,6 +57,17 @@ export const challengeListGetRoute = new Elysia().get(
         createdAt: challengeTable.createdAt,
         totalMountains: sql<string>`COUNT(DISTINCT ${challengeHasMountainTable.mountainId})`,
         totalUsers: sql<string>`COUNT(DISTINCT COALESCE(${summitHasUsersTable.userId}, ${summitTable.userId}))`,
+        peakImageUrl: sql<string | null>`(
+          SELECT ${mountainTable.imageUrl}
+          FROM ${mountainTable}
+          INNER JOIN ${challengeHasMountainTable}
+            ON ${challengeHasMountainTable.mountainId} = ${mountainTable.id}
+          WHERE ${challengeHasMountainTable.challengeId} = ${challengeTable.id}
+            AND ${mountainTable.essential} = TRUE
+            AND ${mountainTable.imageUrl} IS NOT NULL
+          ORDER BY CAST(${mountainTable.height} AS FLOAT) DESC
+          LIMIT 1
+        )`,
       })
       .from(challengeTable)
       .leftJoin(
@@ -91,6 +102,7 @@ export const challengeListGetRoute = new Elysia().get(
         totalMountains: c.totalMountains,
         totalUsers: c.totalUsers,
         createdAt: c.createdAt.toISOString(),
+        peakImageUrl: c.peakImageUrl,
       })),
     };
   },

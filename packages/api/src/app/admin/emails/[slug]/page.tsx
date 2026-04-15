@@ -31,7 +31,7 @@ export default async function AdminEmailDetailPage({
     props[name] = typeof v === "string" ? v : def.default;
   }
 
-  const html = await render(template.render(props, locale));
+  const html = await render(template.render(props, locale, undefined));
 
   return (
     <div className="p-8 space-y-4">

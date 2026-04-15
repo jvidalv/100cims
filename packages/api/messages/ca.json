@@ -2,6 +2,11 @@
   "shop-page": {
     "list-title": "Botiga",
     "list-subtitle": "Merchandising del projecte Cims, sempre amunt.",
+    "hero-eyebrow": "Botiga",
+    "hero-title": "Vesteix Cims, dona suport a Cims.",
+    "hero-body": "Merchandising de l'app Cims fet en petites tirades. Cada compra ajuda que Cims segueixi sent gratuïta, sense anuncis i independent.",
+    "supports-title": "El 100% del marge va a Cims",
+    "supports-body": "Cims és un projecte lateral fet per una persona. Els servidors, les comissions de les botigues d'apps, les traduccions — tot costa diners reals. El que compres aquí cobreix aquests costos perquè l'app continuï gratuïta per a tothom.",
     "list-empty": "Ara mateix no hi ha productes — torna a mirar aviat.",
     "back-to-list": "← Tornar al catàleg",
     "external-badge": "Botiga externa",
@@ -52,7 +57,16 @@
     "feature-4-description": "Crea plans d'excursió, convida amics i coordina la teva propera aventura.",
     "cta-title": "Preparat per començar el teu viatge?",
     "cta-subtitle": "Descarrega l'app i comença a registrar les teves aventures de muntanya avui.",
-    "available-on": "Disponible a iOS i Android"
+    "available-on": "Disponible a iOS i Android",
+    "featured-challenge-eyebrow": "Repte destacat",
+    "featured-challenge-title": "El repte dels 100 Cims",
+    "featured-challenge-body": "La llista clàssica de cims catalans. La nostra pàgina més completa, totalment en català, amb FAQs i cims destacats.",
+    "featured-challenge-cta": "Explora 100 Cims →",
+    "challenges-title": "Tots els reptes oficials",
+    "challenges-subtitle": "Tria qualsevol repte i comença a registrar cims. L'app porta el teu progrés a tots alhora.",
+    "shop-title": "Botiga",
+    "shop-subtitle": "Dona suport al projecte amb una samarreta, una gorra o una tassa.",
+    "shop-cta": "Veure-ho tot →"
   },
   "footer": {
     "privacy-policy": "Política de Privacitat",
@@ -68,6 +82,10 @@
     "col-app-android": "Google Play",
     "col-app-shop": "Botiga",
     "col-challenges": "Reptes",
+    "language-label": "Idioma",
+    "language-en": "English",
+    "language-ca": "Català",
+    "language-es": "Español",
     "col-legal": "Legal",
     "col-contact": "Contacte",
     "col-contact-help": "Ajuda i contacte"
@@ -132,5 +150,16 @@
     "cta-title": "Comença el teu repte avui",
     "cta-subtitle": "Instal·la l'app, tria el teu repte i comença a registrar els teus cims. Gratuïta, sense anuncis, feta per muntanyencs.",
     "available-on": "Disponible a iOS i Android"
+  },
+  "unsubscribe-page": {
+    "title": "T'has donat de baixa",
+    "body": "Ja no rebràs més correus de Cims. Has canviat d'opinió? Pots tornar a subscriure't a sota.",
+    "resubscribe-cta": "Torna a subscriure'm",
+    "resubscribe-pending": "Subscrivint…",
+    "resubscribed-title": "Ja hi tornes a ser",
+    "resubscribed-body": "Et continuarem enviant alguna actualització de tant en tant.",
+    "error-title": "Aquest enllaç no funciona",
+    "error-body": "Sembla que aquest enllaç per donar-te de baixa ha caducat o no és vàlid. Si continues rebent correus, respon a un i ho solucionarem.",
+    "back-to-app": "Torna a cims-sempre-amunt.app"
   }
 }

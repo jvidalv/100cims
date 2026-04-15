@@ -29,6 +29,7 @@ export const sendDiscordEmbed = (
   embed: DiscordEmbed,
 ) => {
   if (!webhookUrl) return;
+  if (process.env.NODE_ENV !== "production") return;
   fetch(webhookUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json" },

@@ -1,17 +1,16 @@
 import { formatDistanceToNow } from "date-fns";
 import { ca, es, enUS } from "date-fns/locale";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
+import { useRef, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { View, Image } from "react-native";
+import { ActivityIndicator, Image, TouchableOpacity, View } from "react-native";
 
 import { SummitCard } from "@/components/summit";
 import { Icon, Skeleton, ThemedText } from "@/components/ui/atoms";
-import {
-  ActionRow,
-  AvatarGroup,
-  ChallengeGroup,
-} from "@/components/ui/molecules";
+import { ActionRow, AvatarGroup } from "@/components/ui/molecules";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
+import { UserShareCard } from "@/components/user";
+import { countryToEmoji } from "@/domains/challenge/challenge.model";
 import {
   useAnyUserSummits,
   useUserChallenges,
@@ -20,7 +19,7 @@ import {
   useUserProfile,
 } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
-import { shareDeeplink } from "@/lib/share";
+import { captureAndShare, shareDeeplink } from "@/lib/share";
 
 export default function UserScreen() {
   const intl = useIntl();
@@ -36,7 +35,19 @@ export default function UserScreen() {
 
   const isMe = me?.id === userId;
 
-  const handleShare = async () => {
+  const shareCardRef = useRef<View>(null);
+  const [isSharing, setIsSharing] = useState(false);
+
+  const sharedUsers = userDetails?.sharedUsers ?? [];
+  const topSummits = [...(summits ?? [])]
+    .sort(
+      (a, b) => (parseInt(b.mountainHeight) || 0) - (parseInt(a.mountainHeight) || 0),
+    )
+    .slice(0, 10)
+    .map((s) => ({ imageUrl: s.summitedImageUrl }));
+  const remainingCount = Math.max(0, (summits?.length ?? 0) - 10);
+
+  const handleShareLink = async () => {
     await shareDeeplink({
       intl,
       path: `user/${userId}`,
@@ -48,7 +59,25 @@ export default function UserScreen() {
     });
   };
 
+  const handleShareSocial = async () => {
+    if (!user || isSharing) return;
+    setIsSharing(true);
+    await captureAndShare({
+      cardRef: shareCardRef,
+      prefetchUrls: [
+        user.imageUrl,
+        ...topSummits.map((s) => s.imageUrl),
+        ...sharedUsers.slice(0, 3).map((u) => u.imageUrl),
+      ],
+      dialogTitle: intl.formatMessage({ defaultMessage: "Share profile" }),
+      fallback: handleShareLink,
+      logTag: "user/share-card",
+    });
+    setIsSharing(false);
+  };
+
   return (
+    <>
     <ParallaxScrollView
       title={user ? getFullName(user) : "..."}
       headerClassName="flex items-center justify-center bg-primary"
@@ -118,24 +147,6 @@ export default function UserScreen() {
               </View>
             </View>
           )}
-          {challenges && challenges.length > 0 && (
-            <View>
-              <View className="mb-2 flex-row items-center gap-1.5">
-                <Icon name="flag.fill" muted size={18} />
-                <ThemedText className="text-base font-medium">
-                  <FormattedMessage defaultMessage="Challenges" />
-                </ThemedText>
-              </View>
-              <View>
-                <ChallengeGroup
-                  items={challenges}
-                  onPress={(challenge) =>
-                    router.push(`/challenge/${challenge.id}`)
-                  }
-                />
-              </View>
-            </View>
-          )}
           {isMe && (
             <View className="mt-4 gap-2">
               <ThemedText className="text-2xl font-semibold">
@@ -151,11 +162,22 @@ export default function UserScreen() {
                 </ActionRow>
               </Link>
               <ActionRow
-                onPress={handleShare}
-                iconName="square.and.arrow.up"
+                onPress={handleShareLink}
+                iconName="link"
                 intent="muted"
               >
-                <FormattedMessage defaultMessage="Share with your friends" />
+                <FormattedMessage defaultMessage="Share link" />
+              </ActionRow>
+              <ActionRow
+                onPress={handleShareSocial}
+                iconName="photo"
+                intent="blue"
+                disabled={isSharing || isPendingSummits}
+                iconOverride={
+                  isSharing ? <ActivityIndicator size="sm" /> : undefined
+                }
+              >
+                <FormattedMessage defaultMessage="Share on social" />
               </ActionRow>
             </View>
           )}
@@ -247,6 +269,49 @@ export default function UserScreen() {
           />
         ))}
       </View>
+      {challenges && challenges.length > 0 && (
+        <View className="mt-8 gap-2 px-6">
+          <ThemedText className="mb-2 text-2xl font-semibold">
+            <FormattedMessage defaultMessage="Challenges" />
+          </ThemedText>
+          {challenges.map((challenge) => {
+            const displayEmoji =
+              challenge.emoji || countryToEmoji(challenge.country);
+            return (
+              <TouchableOpacity
+                key={challenge.id}
+                className="flex-row items-center gap-2"
+                onPress={() => router.push(`/challenge/${challenge.id}`)}
+              >
+                <View className="size-8 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700">
+                  <ThemedText className="text-base" style={{ lineHeight: 16 }}>
+                    {displayEmoji}
+                  </ThemedText>
+                </View>
+                <ThemedText className="text-muted-foreground">
+                  {challenge.name}
+                </ThemedText>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      )}
     </ParallaxScrollView>
+      {isMe && !!user && (
+        <View
+          collapsable={false}
+          pointerEvents="none"
+          style={{ position: "absolute", left: -10000, top: 0 }}
+        >
+          <UserShareCard
+            ref={shareCardRef}
+            fullName={getFullName(user)}
+            profileImageUrl={user.imageUrl}
+            topSummits={topSummits}
+            remainingCount={remainingCount}
+          />
+        </View>
+      )}
+    </>
   );
 }

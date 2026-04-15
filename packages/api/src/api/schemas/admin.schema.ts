@@ -66,6 +66,7 @@ export const AdminUserUpdateBodySchema = t.Object({
   locale: t.Optional(t.Nullable(t.String())),
   visibleOnHiscores: t.Optional(t.Boolean()),
   visibleOnPeopleSearch: t.Optional(t.Boolean()),
+  emailNotificationsEnabled: t.Optional(t.Boolean()),
   admin: t.Optional(t.Boolean()),
 });
 

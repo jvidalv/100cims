@@ -1,24 +1,26 @@
 import type { Metadata } from "next";
-import { getLocale, getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
 import { asAppLocale } from "@/api/lib/locale";
 import { truncate } from "@/api/lib/discord";
 import { buildFooterStrings } from "@/app/challenges/_components/build-footer-strings";
-import { MerchRequestForm } from "@/app/shop/_components/merch-request-form";
+import { MerchRequestForm } from "@/app/[locale]/shop/_components/merch-request-form";
 import { SiteFooter } from "@/components/site-footer";
 import { Button } from "@/components/ui/button";
-import { SITE_URL } from "@/lib/app-links";
+import { getLocalizedAlternates } from "@/lib/hreflang";
 import {
   getActiveMerch,
   getMerchBySlug,
   type MerchRow,
 } from "@/lib/merch-helpers";
 import { formatPrice, localizeMerch } from "@/lib/merch-format";
+import { routing } from "@/i18n/routing";
 
 export const dynamicParams = false;
 
 interface RouteParams {
+  locale: string;
   slug: string;
 }
 
@@ -26,26 +28,30 @@ interface Props {
   params: Promise<RouteParams>;
 }
 
-export async function generateStaticParams(): Promise<RouteParams[]> {
+export async function generateStaticParams(): Promise<
+  { locale: string; slug: string }[]
+> {
   const merch = await getActiveMerch();
-  return merch.map((m) => ({ slug: m.slug }));
+  return routing.locales.flatMap((locale) =>
+    merch.map((m) => ({ locale, slug: m.slug })),
+  );
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
-  const [row, localeRaw] = await Promise.all([getMerchBySlug(slug), getLocale()]);
-  if (!row) return {};
+  const { slug, locale: localeRaw } = await params;
   const locale = asAppLocale(localeRaw);
+  const row = await getMerchBySlug(slug);
+  if (!row) return {};
   const { name, description } = localizeMerch(row, locale);
-  const url = `${SITE_URL}/shop/${slug}`;
   const image = row.imageUrls[0];
+  const alternates = getLocalizedAlternates(locale, `/shop/${slug}`);
   return {
     title: `${name} · Cims, sempre amunt`,
     description: description ? truncate(description, 160) : undefined,
-    alternates: { canonical: url },
+    alternates,
     openGraph: {
       type: "website",
-      url,
+      url: alternates.canonical,
       siteName: "Cims, sempre amunt",
       title: name,
       description: description ? truncate(description, 160) : undefined,
@@ -122,15 +128,15 @@ const BuyBlock = ({
 };
 
 export default async function MerchDetailPage({ params }: Props) {
-  const { slug } = await params;
-  const [localeRaw, t, row] = await Promise.all([
-    getLocale(),
+  const { slug, locale: localeRaw } = await params;
+  const locale = asAppLocale(localeRaw);
+  setRequestLocale(locale);
+  const [t, row] = await Promise.all([
     getTranslations("shop-page"),
     getMerchBySlug(slug),
   ]);
   if (!row) notFound();
 
-  const locale = asAppLocale(localeRaw);
   const { name, description } = localizeMerch(row, locale);
 
   return (
@@ -139,7 +145,7 @@ export default async function MerchDetailPage({ params }: Props) {
         <section className="py-12 sm:py-16 px-4">
           <div className="max-w-6xl mx-auto">
             <a
-              href="/shop"
+              href={`/${locale}/shop`}
               className="inline-block text-sm text-muted-foreground hover:text-foreground mb-8"
             >
               {t("back-to-list")}
@@ -166,7 +172,7 @@ export default async function MerchDetailPage({ params }: Props) {
           </div>
         </section>
       </main>
-      <SiteFooter strings={buildFooterStrings(locale)} />
+      <SiteFooter strings={buildFooterStrings(locale)} locale={locale} />
     </div>
   );
 }

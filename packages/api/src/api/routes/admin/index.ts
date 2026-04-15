@@ -12,6 +12,7 @@ import { adminChallengeUpdatePostRoute } from "@/api/routes/admin/admin.challeng
 import { adminChallengesGetRoute } from "@/api/routes/admin/admin.challenges.get";
 import { adminCronsGetRoute } from "@/api/routes/admin/admin.crons.get";
 import { adminCronsTriggerPostRoute } from "@/api/routes/admin/admin.crons-trigger.post";
+import { adminEmailTestPostRoute } from "@/api/routes/admin/admin.email-test.post";
 import { adminMeGetRoute } from "@/api/routes/admin/admin.me.get";
 import { adminMerchCreatePostRoute } from "@/api/routes/admin/admin.merch-create.post";
 import { adminMerchDeleteDeleteRoute } from "@/api/routes/admin/admin.merch-delete.delete";
@@ -97,4 +98,5 @@ export const adminRoutes = new Elysia({ prefix: "/admin" })
   .use(adminMerchDeleteDeleteRoute)
   .use(adminStatsTimeseriesGetRoute)
   .use(adminCronsGetRoute)
-  .use(adminCronsTriggerPostRoute);
+  .use(adminCronsTriggerPostRoute)
+  .use(adminEmailTestPostRoute);

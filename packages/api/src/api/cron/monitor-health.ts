@@ -19,8 +19,6 @@ const shouldAlert = (key: string): boolean => {
 };
 
 export const monitorHealth = async (): Promise<void> => {
-  if (process.env.NODE_ENV !== "production") return;
-
   const snapshot = await runHealthCheck();
   if (snapshot.status === "healthy") return;
 

@@ -11,6 +11,7 @@ export const ChallengeWithCountsSchema = t.Object({
   totalMountains: t.String(),
   totalEssentialMountains: t.String(),
   totalUsers: t.String(),
+  peakImageUrl: t.Nullable(t.String()),
 });
 
 /**

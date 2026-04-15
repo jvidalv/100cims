@@ -524,6 +524,21 @@ export const useDeleteAdminMerch = (id: string) => {
   });
 };
 
+export type AdminEmailTestBody = {
+  slug: string;
+  locale: "en" | "ca" | "es";
+  props?: Record<string, string>;
+};
+
+export const useSendTestEmail = () =>
+  useMutation({
+    mutationFn: async (body: AdminEmailTestBody) => {
+      const { data, error } = await api.api.admin.emails.test.post(body);
+      if (error) throw error;
+      return data;
+    },
+  });
+
 export const useTriggerCron = () => {
   const qc = useQueryClient();
   return useMutation({

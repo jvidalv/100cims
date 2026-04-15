@@ -65,6 +65,8 @@ const MAPPING = {
   "flag.fill": "flag",
   "text.bubble.fill": "message-text",
   "person.2.fill": "account-multiple",
+  link: "link-variant",
+  photo: "image",
 } as Partial<
   Record<SFSymbol, React.ComponentProps<typeof MaterialCommunityIcons>["name"]>
 >;
