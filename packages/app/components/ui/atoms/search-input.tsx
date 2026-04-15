@@ -1,10 +1,11 @@
+import { Search } from "lucide-react-native";
 import { useColorScheme } from "nativewind";
 import { useState } from "react";
 import { useIntl } from "react-intl";
 import { BlurEvent, FocusEvent, TextInput, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
-import { Icon } from "@/components/ui/atoms/icon";
+import { LucideIcon } from "@/components/ui/atoms/lucide-icon";
 import { isAndroid } from "@/lib/device";
 
 const inputClassName =
@@ -31,12 +32,10 @@ export const SearchInput = ({
   return (
     <View className={twMerge("relative", className)}>
       <View className="absolute left-4 h-full items-center justify-center">
-        <Icon
-          name="magnifyingglass"
+        <LucideIcon
+          icon={Search}
           size={20}
-          weight="semibold"
           color={focused ? "#3b82f6" : undefined}
-          animationSpec={focused ? { effect: { type: "bounce" } } : undefined}
         />
       </View>
       <TextInput

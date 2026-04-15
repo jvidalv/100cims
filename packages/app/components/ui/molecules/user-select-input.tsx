@@ -1,3 +1,4 @@
+import { Lock, Plus, Square, SquareCheck, X } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { FormattedMessage } from "react-intl";
 import { Pressable, ScrollView, TouchableOpacity, View } from "react-native";
@@ -11,7 +12,7 @@ import { twMerge } from "tailwind-merge";
 
 import { Avatar } from "@/components/ui/atoms/avatar";
 import { Button } from "@/components/ui/atoms/button";
-import { Icon } from "@/components/ui/atoms/icon";
+import { LucideIcon } from "@/components/ui/atoms/lucide-icon";
 import { SearchInput } from "@/components/ui/atoms/search-input";
 import { Skeleton } from "@/components/ui/atoms/skeleton";
 import { ThemedText } from "@/components/ui/atoms/themed-text";
@@ -102,7 +103,7 @@ export const UserSelectInput = ({
               />
               {(index !== 0 || firstSelectedRemovable === true) && (
                 <View className="absolute right-0 top-0 size-4 items-center justify-center rounded-full bg-background/80">
-                  <Icon name="xmark" size={10} weight="semibold" />
+                  <LucideIcon icon={X} size={10} />
                 </View>
               )}
             </TouchableOpacity>
@@ -112,7 +113,7 @@ export const UserSelectInput = ({
           onPress={() => setIsOpen(true)}
           className="mx-4 size-10 items-center justify-center rounded bg-muted-foreground/30 shadow"
         >
-          <Icon name="plus" weight="semibold" color="white" size={16} />
+          <LucideIcon icon={Plus} color="white" size={16} />
         </TouchableOpacity>
       </Pressable>
       <BottomDrawer
@@ -195,16 +196,11 @@ export const UserSelectInput = ({
                   </View>
                   <View className="ml-auto text-green-500">
                     {isFirstSelectedAndNotRemovable ? (
-                      <Icon name="lock.fill" color="#22c55e" />
+                      <LucideIcon icon={Lock} color="#22c55e" />
                     ) : (
-                      <Icon
-                        name={isSelected ? "checkmark.square.fill" : "square"}
+                      <LucideIcon
+                        icon={isSelected ? SquareCheck : Square}
                         color={isSelected ? "#22c55e" : undefined}
-                        animationSpec={
-                          isSelected
-                            ? { effect: { type: "bounce" } }
-                            : undefined
-                        }
                       />
                     )}
                   </View>

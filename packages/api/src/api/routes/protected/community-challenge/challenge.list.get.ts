@@ -85,7 +85,12 @@ export const challengeListGetRoute = new Elysia().get(
       )
       .where(whereClause)
       .groupBy(challengeTable.id)
-      .orderBy(desc(challengeTable.createdAt));
+      .orderBy(
+        desc(
+          sql`COUNT(DISTINCT COALESCE(${summitHasUsersTable.userId}, ${summitTable.userId}))`,
+        ),
+        desc(challengeTable.createdAt),
+      );
 
     return {
       success: true,

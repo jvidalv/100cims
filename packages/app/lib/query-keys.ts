@@ -8,11 +8,14 @@ export const userKeys = {
   all: ["user"] as const,
   me: () => ["user", "me"] as const,
   summits: () => ["user", "summits"] as const,
+  summitsAll: (query: string, sort: "recent" | "height") =>
+    ["user", "summits", "all", query, sort] as const,
   summitsById: (userId: string) => ["user", "summits", userId] as const,
   one: (userId: string) => ["user", "one", userId] as const,
   profile: (userId: string) => ["user", "profile", userId] as const,
   challenges: (userId: string) => ["user", "challenges", userId] as const,
   search: (query: string) => ["user", "search", query] as const,
+  people: () => ["user", "people"] as const,
 };
 
 // Challenge keys

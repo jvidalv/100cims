@@ -1,6 +1,7 @@
 import { format } from "date-fns/format";
 import { nextSunday } from "date-fns/nextSunday";
 import { useRouter, Redirect } from "expo-router";
+import { Check } from "lucide-react-native";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
@@ -22,7 +23,7 @@ import { useAuth } from "@/components/providers/auth-provider";
 import {
   BlurView,
   Button,
-  Icon,
+  LucideIcon,
   SearchInput,
   ThemedText,
   ThemedTextInput,
@@ -167,12 +168,7 @@ const MountainsStep = memo(
                     style={{ width: 100, height: 100, borderRadius: 6 }}
                   >
                     <View className="absolute size-full bg-blue-500 opacity-50" />
-                    <Icon
-                      name="checkmark"
-                      size={32}
-                      color="white"
-                      animationSpec={{ effect: { type: "bounce" } }}
-                    />
+                    <LucideIcon icon={Check} size={32} color="white" />
                   </View>
                 )}
               </View>

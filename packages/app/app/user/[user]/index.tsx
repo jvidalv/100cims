@@ -1,12 +1,20 @@
 import { formatDistanceToNow } from "date-fns";
 import { ca, es, enUS } from "date-fns/locale";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
+import {
+  Calendar,
+  House,
+  Image as ImageIcon,
+  Link as LinkIcon,
+  SquarePen,
+  UsersRound,
+} from "lucide-react-native";
 import { useRef, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { ActivityIndicator, Image, TouchableOpacity, View } from "react-native";
 
 import { SummitCard } from "@/components/summit";
-import { Icon, Skeleton, ThemedText } from "@/components/ui/atoms";
+import { LucideIcon, Skeleton, ThemedText } from "@/components/ui/atoms";
 import { ActionRow, AvatarGroup } from "@/components/ui/molecules";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
 import { UserShareCard } from "@/components/user";
@@ -98,7 +106,7 @@ export default function UserScreen() {
           {!!user.town && (
             <View className="flex-row gap-4">
               <View className="flex-row items-center gap-1.5">
-                <Icon name="house.circle" muted size={18} />
+                <LucideIcon icon={House} muted size={18} />
                 <ThemedText className="text-base font-medium">
                   {user?.town}
                 </ThemedText>
@@ -106,7 +114,7 @@ export default function UserScreen() {
             </View>
           )}
           <View className="flex-row items-center gap-1.5">
-            <Icon name="calendar" muted size={18} />
+            <LucideIcon icon={Calendar} muted size={18} />
             <ThemedText className="text-base font-medium">
               <FormattedMessage
                 defaultMessage="Member of cims for {duration}"
@@ -129,7 +137,7 @@ export default function UserScreen() {
           {userDetails && !!userDetails?.sharedUsers?.length && (
             <View>
               <View className="mb-1 flex-row items-center gap-1.5">
-                <Icon name="person.3.fill" muted size={18} />
+                <LucideIcon icon={UsersRound} muted size={18} />
                 <ThemedText className="text-base font-medium">
                   <FormattedMessage defaultMessage="People" />
                 </ThemedText>
@@ -154,7 +162,7 @@ export default function UserScreen() {
               </ThemedText>
               <Link href="/user/me" asChild>
                 <ActionRow
-                  iconName="square.and.pencil"
+                  icon={SquarePen}
                   iconSize={18}
                   intent="primary"
                 >
@@ -163,14 +171,14 @@ export default function UserScreen() {
               </Link>
               <ActionRow
                 onPress={handleShareLink}
-                iconName="link"
+                icon={LinkIcon}
                 intent="muted"
               >
                 <FormattedMessage defaultMessage="Share link" />
               </ActionRow>
               <ActionRow
                 onPress={handleShareSocial}
-                iconName="photo"
+                icon={ImageIcon}
                 intent="blue"
                 disabled={isSharing || isPendingSummits}
                 iconOverride={

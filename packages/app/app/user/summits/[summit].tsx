@@ -1,5 +1,10 @@
 import { format } from "date-fns/format";
 import { Link, Redirect, useLocalSearchParams, useRouter } from "expo-router";
+import {
+  Share as ShareIcon,
+  SquarePen,
+  Trash2,
+} from "lucide-react-native";
 import { useRef, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
@@ -13,6 +18,7 @@ import {
   View,
 } from "react-native";
 import ConfettiCannon from "react-native-confetti-cannon";
+
 
 import { useAuth } from "@/components/providers/auth-provider";
 import { SummitShareCard } from "@/components/summit";
@@ -212,7 +218,7 @@ const Content = () => {
           </ThemedText>
           <ActionRow
             onPress={handleShare}
-            iconName="square.and.arrow.up"
+            icon={ShareIcon}
             intent="muted"
             iconOverride={isSharing ? <ActivityIndicator size="sm" /> : undefined}
             trailing={justCreated ? <SharePulseBadge /> : undefined}
@@ -227,13 +233,13 @@ const Content = () => {
               }}
               asChild
             >
-              <ActionRow iconName="square.and.pencil" intent="blue">
+              <ActionRow icon={SquarePen} intent="blue">
                 <FormattedMessage defaultMessage="Edit summit" />
               </ActionRow>
             </Link>
           )}
           {isUserParticipant && (
-            <ActionRow onPress={handleDelete} iconName="trash" intent="danger">
+            <ActionRow onPress={handleDelete} icon={Trash2} intent="danger">
               <FormattedMessage defaultMessage="Delete summit" />
             </ActionRow>
           )}

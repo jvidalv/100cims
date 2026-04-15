@@ -343,3 +343,12 @@ export const AdminMerchUpdateBodySchema = t.Object({
   featured: t.Optional(t.Nullable(t.Number({ minimum: 1, maximum: 5 }))),
   active: t.Optional(t.Boolean()),
 });
+
+export const AdminPersonSchema = t.Object({
+  userId: t.String(),
+  firstName: t.Nullable(t.String()),
+  lastName: t.Nullable(t.String()),
+  email: t.String(),
+  imageUrl: t.Nullable(t.String()),
+  connectedAt: t.Date(),
+});

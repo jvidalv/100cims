@@ -1,4 +1,5 @@
 import { useLocalSearchParams, useRouter, Redirect } from "expo-router";
+import { Plus, Trash2 } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
@@ -20,7 +21,7 @@ import {
   ActivityIndicator,
   BlurView,
   Button,
-  Icon,
+  LucideIcon,
   ThemedText,
   ThemedView,
 } from "@/components/ui/atoms";
@@ -230,7 +231,7 @@ export default function CommunityChallengeEditPage() {
                 disabled={isDeleting}
                 className="p-2"
               >
-                <Icon name="trash" size={18} muted />
+                <LucideIcon icon={Trash2} size={18} muted />
               </TouchableOpacity>
             </View>
             <ThemedText className="text-4xl font-semibold">
@@ -263,7 +264,7 @@ export default function CommunityChallengeEditPage() {
                   </ThemedText>
                 )}
                 <View className="size-10 items-center justify-center rounded bg-muted-foreground/30 shadow">
-                  <Icon name="plus" weight="semibold" color="white" size={16} />
+                  <LucideIcon icon={Plus} color="white" size={16} />
                 </View>
               </TouchableOpacity>
             </View>

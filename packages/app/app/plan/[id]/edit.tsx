@@ -1,4 +1,5 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { Plus } from "lucide-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { useIntl, FormattedMessage } from "react-intl";
 import {
@@ -10,9 +11,10 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 
+
 import {
   Button,
-  Icon,
+  LucideIcon,
   ThemedKeyboardAvoidingView,
   ThemedText,
   ThemedDateInput,
@@ -210,7 +212,7 @@ export default function PlanEditPage() {
                   <View className="h-8" />
                 )}
                 <View className="size-10 items-center justify-center rounded bg-muted-foreground/30 shadow">
-                  <Icon name="plus" weight="semibold" color="white" size={16} />
+                  <LucideIcon icon={Plus} color="white" size={16} />
                 </View>
               </TouchableOpacity>
             </View>

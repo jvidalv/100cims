@@ -3,6 +3,7 @@ export const PUSH_TYPE = {
   PLAN_LEAVE: "plan-leave",
   PLAN_CHAT: "plan-chat",
   MOUNTAIN_SUGGESTION: "mountain-suggestion",
+  SUMMIT_TAGGED: "summit-tagged",
 } as const;
 
 export type PushType = (typeof PUSH_TYPE)[keyof typeof PUSH_TYPE];

@@ -56,24 +56,9 @@ export const challengeAllGetRoute = new Elysia().get(
       .where(isNull(challengeTable.creatorId))
       .groupBy(challengeTable.id, challengeTable.slug);
 
-    const prioritySlugs = ["100-cims", "100-cims-usa"];
-
-    const sorted = challengesWithCounts.sort((a, b) => {
-      const indexA = prioritySlugs.indexOf(a.slug);
-      const indexB = prioritySlugs.indexOf(b.slug);
-
-      const isAInList = indexA !== -1;
-      const isBInList = indexB !== -1;
-
-      if (isAInList && isBInList) {
-        return indexA - indexB;
-      }
-
-      if (isAInList) return -1;
-      if (isBInList) return 1;
-
-      return 0; // keep relative order of others
-    });
+    const sorted = challengesWithCounts.sort(
+      (a, b) => Number(b.totalUsers) - Number(a.totalUsers),
+    );
 
     return {
       success: true,

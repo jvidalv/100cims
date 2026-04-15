@@ -1,5 +1,6 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
+import { ChevronLeft } from "lucide-react-native";
 import { PropsWithChildren, ReactElement, ReactNode } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Animated, {
@@ -13,7 +14,7 @@ import Animated, {
 import { twMerge } from "tailwind-merge";
 
 import { BlurView, ThemedText } from "@/components/ui/atoms";
-import { Icon } from "@/components/ui/atoms/icon";
+import { LucideIcon } from "@/components/ui/atoms/lucide-icon";
 import { ThemedView } from "@/components/ui/atoms/themed-view";
 import { hasDynamicIsland, isAndroid } from "@/lib/device";
 
@@ -135,11 +136,10 @@ export default function ParallaxScrollView({
             className="items-center justify-center"
             style={StyleSheet.absoluteFill}
           >
-            <Icon
-              size={isAndroid ? 24 : 16}
+            <LucideIcon
+              size={28}
               color={isAndroid ? undefined : "white"}
-              weight="semibold"
-              name="chevron.left"
+              icon={ChevronLeft}
             />
           </BlurView>
         </TouchableOpacity>
@@ -230,11 +230,7 @@ const Header = ({
           hitSlop={16}
           className="-mt-3 w-1/5 py-4 pl-6 pr-4"
         >
-          <Icon
-            size={isAndroid ? 24 : 16}
-            weight="medium"
-            name="chevron.left"
-          />
+          <LucideIcon size={28} icon={ChevronLeft} />
         </TouchableOpacity>
         <View className="mx-auto pb-3 text-center">{children}</View>
         <View className="w-1/5">{rightElement}</View>

@@ -9,7 +9,9 @@ import {
 } from "react-native";
 import MapView, { Callout, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 
-import { Icon, ThemedText } from "@/components/ui/atoms";
+import { BadgeCheck } from "lucide-react-native";
+
+import { LucideIcon, ThemedText } from "@/components/ui/atoms";
 
 interface Mountain {
   id: string;
@@ -88,7 +90,7 @@ function MountainMarker({ marker, onMountainPress }: MountainMarkerProps) {
             )}
             {marker.isSummited && (
               <View className="flex-row items-center gap-1 mt-1 px-4">
-                <Icon name="checkmark.seal.fill" size={14} color="#10b981" />
+                <LucideIcon icon={BadgeCheck} size={14} color="#10b981" />
                 <ThemedText className="text-sm" style={{ color: "#10b981" }}>
                   Summited
                 </ThemedText>

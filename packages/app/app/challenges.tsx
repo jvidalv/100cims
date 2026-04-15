@@ -1,13 +1,15 @@
 import { Link, useRouter } from "expo-router";
+import { Plus } from "lucide-react-native";
 import { useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Pressable, ScrollView, TouchableOpacity, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
+
 import { useAuth } from "@/components/providers/auth-provider";
 import {
   ActivityIndicator,
-  Icon,
+  LucideIcon,
   ThemedText,
   ThemedView,
 } from "@/components/ui/atoms";
@@ -19,7 +21,6 @@ import {
 import { countryToEmoji } from "@/domains/challenge/challenge.model";
 import { useCommunityChallengesList } from "@/domains/community-challenge/community-challenge.api";
 import { useUpdateUserMeMutation, useUserMe } from "@/domains/user/user.api";
-import { isAndroid } from "@/lib/device";
 
 type Tab = "official" | "community";
 
@@ -58,7 +59,15 @@ export default function ChallengesScreen() {
   };
 
   const isCommunityTab = activeTab === "community";
-  const challenges = isCommunityTab ? communityChallenges : officialChallenges;
+  const rawChallenges = isCommunityTab
+    ? communityChallenges
+    : officialChallenges;
+  const challenges = useMemo(() => {
+    if (!rawChallenges || !activeChallengeId) return rawChallenges;
+    const active = rawChallenges.find((c) => c.id === activeChallengeId);
+    if (!active) return rawChallenges;
+    return [active, ...rawChallenges.filter((c) => c.id !== activeChallengeId)];
+  }, [rawChallenges, activeChallengeId]);
 
   const tabs = useMemo<{ type: Tab; name: string }[]>(
     () => [
@@ -77,25 +86,10 @@ export default function ChallengesScreen() {
   return (
     <ThemedView className="flex-1">
       <ScreenHeader />
-      <View className="mx-6 mb-2 flex-row items-center justify-between">
+      <View className="mx-6 mb-2">
         <ThemedText className="text-4xl font-bold">
           <FormattedMessage defaultMessage="Challenges" />
         </ThemedText>
-        {isCommunityTab && (
-          <TouchableOpacity
-            onPress={onCreateChallenge}
-            className="flex-row items-center gap-1"
-          >
-            <ThemedText>
-              <FormattedMessage defaultMessage="New challenge" />
-            </ThemedText>
-            <Icon
-              name="plus"
-              size={isAndroid ? 22 : 14}
-              animationSpec={{ effect: { type: "bounce" } }}
-            />
-          </TouchableOpacity>
-        )}
       </View>
       <View className="mb-4 flex-row gap-1 px-6">
         {tabs.map(({ type, name }) => {
@@ -127,6 +121,17 @@ export default function ChallengesScreen() {
           );
         })}
       </View>
+      {isCommunityTab && (
+        <TouchableOpacity
+          onPress={onCreateChallenge}
+          className="mx-6 mb-4 flex-row items-center gap-2 rounded border-2 border-border p-4"
+        >
+          <LucideIcon icon={Plus} size={20} />
+          <ThemedText className="font-medium">
+            <FormattedMessage defaultMessage="New challenge" />
+          </ThemedText>
+        </TouchableOpacity>
+      )}
       <ScrollView
         contentContainerClassName="gap-2 px-6 pb-40"
         showsVerticalScrollIndicator={false}
@@ -148,6 +153,8 @@ export default function ChallengesScreen() {
               name={challenge.name}
               emoji={displayEmoji}
               peakImageUrl={challenge.peakImageUrl}
+              totalMountains={challenge.totalMountains}
+              totalUsers={challenge.totalUsers}
               index={index}
               isSelected={activeChallengeId === challenge.id}
               onPress={() => onChallengeSelect(challenge.id)}

@@ -17,6 +17,7 @@ export const adminKeys = {
   userDetail: (id: string) => ["admin", "users", id] as const,
   userSummits: (id: string, page: number) =>
     ["admin", "users", id, "summits", page] as const,
+  userPeople: (id: string) => ["admin", "users", id, "people"] as const,
   mountainsList: () => ["admin", "mountains"] as const,
   mountains: (params: { page: number; q: string }) =>
     ["admin", "mountains", params] as const,

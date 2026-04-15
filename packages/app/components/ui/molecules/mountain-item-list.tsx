@@ -1,8 +1,10 @@
 import { Link } from "expo-router";
+import { Camera } from "lucide-react-native";
 import { FormattedMessage } from "react-intl";
 import { Image, TouchableOpacity, View } from "react-native";
 
-import { Icon, ThemedText } from "@/components/ui/atoms";
+
+import { LucideIcon, ThemedText } from "@/components/ui/atoms";
 import { useUserChallengeSummits } from "@/domains/user/user.api";
 
 interface InternalProps {
@@ -54,7 +56,7 @@ export const MountainItemListCore = ({
           className="items-center justify-center bg-neutral-300 dark:bg-neutral-800 rounded"
           style={{ width: 100, height: 100 }}
         >
-          <Icon name="camera" color="white" muted size={32} />
+          <LucideIcon icon={Camera} color="white" muted size={32} />
         </View>
       )}
       <View className="flex-1 justify-center">

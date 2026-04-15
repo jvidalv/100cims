@@ -1,3 +1,4 @@
+import { SlidersHorizontal, X, type LucideIcon } from "lucide-react-native";
 import { ReactNode, useState } from "react";
 import { useIntl } from "react-intl";
 import {
@@ -13,8 +14,7 @@ import {
   ThemedView,
   ThemedText,
   SearchInput,
-  Icon,
-  type IconSymbolName,
+  LucideIcon as LucideIconView,
 } from "@/components/ui/atoms";
 
 export interface Filter<T extends string = string> {
@@ -22,13 +22,13 @@ export interface Filter<T extends string = string> {
   name: string;
   onSelectDeselect?: T[];
   showDot?: boolean;
-  icon?: string;
+  icon?: LucideIcon;
 }
 
 export interface SettingsOption<T extends string = string> {
   type: T;
   name: string;
-  icon?: IconSymbolName;
+  icon?: LucideIcon;
   dotColor?: string;
   disabled?: boolean;
 }
@@ -160,7 +160,7 @@ export function FilterableListHeader<
                     {intl.formatMessage({ defaultMessage: "Filters" })}
                   </ThemedText>
                   <TouchableOpacity onPress={() => setShowSettings(false)}>
-                    <Icon name="xmark" size={24} />
+                    <LucideIconView icon={X} size={24} />
                   </TouchableOpacity>
                 </View>
 
@@ -193,8 +193,8 @@ export function FilterableListHeader<
                               />
                             )}
                             {option.icon && (
-                              <Icon
-                                name={option.icon}
+                              <LucideIconView
+                                icon={option.icon}
                                 size={16}
                                 color={isSelected ? "white" : undefined}
                               />
@@ -265,8 +265,8 @@ export function FilterableListHeader<
                   />
                 )}
                 {icon && (
-                  <Icon
-                    name={icon as any}
+                  <LucideIconView
+                    icon={icon}
                     size={16}
                     color={isSelected ? "white" : undefined}
                   />
@@ -292,8 +292,8 @@ export function FilterableListHeader<
                 settingsSelected.length > 0 ? "bg-primary" : "bg-border",
               )}
             >
-              <Icon
-                name="slider.vertical.3"
+              <LucideIconView
+                icon={SlidersHorizontal}
                 size={16}
                 color={settingsSelected.length > 0 ? "white" : undefined}
               />

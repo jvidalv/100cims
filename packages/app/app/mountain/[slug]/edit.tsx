@@ -1,4 +1,5 @@
 import { Redirect, useLocalSearchParams, useRouter } from "expo-router";
+import { Camera } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
@@ -11,10 +12,11 @@ import {
   View,
 } from "react-native";
 
+
 import {
   ActivityIndicator,
   Button,
-  Icon,
+  LucideIcon,
   ThemedText,
   ThemedTextInput,
 } from "@/components/ui/atoms";
@@ -155,7 +157,7 @@ export default function MountainEditScreen() {
                     resizeMode="cover"
                   />
                 ) : (
-                  <Icon name="camera.fill" size={24} muted />
+                  <LucideIcon icon={Camera} size={24} muted />
                 )}
               </TouchableOpacity>
               <View className="flex-1">

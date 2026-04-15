@@ -227,9 +227,15 @@ In both cases:
 
 ### Database Migration
 
-1. Update `/src/db/schema.ts`
-2. Run `yarn drizzle-kit push` (pushes to DB)
-3. Verify schema changes in database
+**CRITICAL — always ask the user before applying a migration.** Prepare the migration file locally and wait for explicit approval before running `db:migrate`. Never run schema-altering commands autonomously.
+
+1. Update `packages/api/src/db/schema.ts`.
+2. Run `yarn api db:generate` to produce a versioned SQL file under `packages/api/src/db/drizzle/NNNN_*.sql`.
+3. Review and, if needed, append custom SQL (e.g. data backfills) to the generated file.
+4. **Ask the user** before running `yarn api db:migrate`.
+5. Verify in `psql` after the user applies it.
+
+Do **not** use `drizzle-kit push`: the command has been removed from the repo because it bypasses the versioned migration files, silently drops any custom SQL (backfills, CHECK edits, data transforms), and leaves the DB out of sync with the migration history — which then blocks future `db:migrate` runs.
 
 ### Image Upload to S3
 

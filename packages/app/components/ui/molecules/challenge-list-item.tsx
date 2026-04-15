@@ -1,13 +1,19 @@
+import { Mountain, Pencil, Users } from "lucide-react-native";
 import { ReactNode } from "react";
+import { FormattedMessage } from "react-intl";
 import { Image, TouchableOpacity, View } from "react-native";
+import { twMerge } from "tailwind-merge";
 
-import { Icon, ThemedText } from "@/components/ui/atoms";
+import { ThemedText } from "@/components/ui/atoms";
+import { LucideIcon } from "@/components/ui/atoms/lucide-icon";
 import { pastelColors } from "@/constants/colors";
 
 type ChallengeListItemProps = {
   name: string;
   emoji?: string | null;
   peakImageUrl?: string | null;
+  totalMountains: string;
+  totalUsers?: string;
   index: number;
   isSelected?: boolean;
   onPress: () => void;
@@ -19,52 +25,90 @@ export function ChallengeListItem({
   name,
   emoji,
   peakImageUrl,
+  totalMountains,
+  totalUsers,
   index,
   isSelected,
   onPress,
   onEditPress,
   rightElement,
 }: ChallengeListItemProps) {
+  const usersCount = totalUsers ? Number(totalUsers) : 0;
   return (
-    <View className="flex-row items-center gap-2">
+    <View className="gap-2">
       <TouchableOpacity
         onPress={onPress}
-        className="flex-1 flex-row items-center gap-4 rounded border-2 border-border p-2"
+        className={twMerge(
+          "overflow-hidden rounded border-2 border-border",
+          isSelected && "border-primary",
+        )}
       >
         {peakImageUrl ? (
           <Image
             source={{ uri: peakImageUrl, cache: "force-cache" }}
-            className="size-12 rounded bg-neutral-200 dark:bg-neutral-800"
+            className="h-40 w-full bg-neutral-200 dark:bg-neutral-800"
+            resizeMode="cover"
           />
         ) : (
           <View
-            className="size-12 items-center justify-center rounded"
+            className="h-40 w-full items-center justify-center"
             style={{
               backgroundColor:
                 pastelColors[index % pastelColors.length]?.bg || "#BAE1FF",
             }}
           >
-            <ThemedText>{emoji || "🏔️"}</ThemedText>
+            <ThemedText className="text-5xl">{emoji || "🏔️"}</ThemedText>
           </View>
         )}
-        <View className="flex-1">
-          <ThemedText
-            className={`text-2xl font-semibold tracking-tight ${isSelected ? "text-primary" : ""}`}
-          >
-            {name}
-          </ThemedText>
+        <View
+          className={twMerge(
+            "flex-row items-center justify-between gap-2 p-3",
+            isSelected && "bg-primary/10",
+          )}
+        >
+          <View className="flex-1 gap-1">
+            <ThemedText
+              className={`text-2xl font-semibold tracking-tight ${isSelected ? "text-primary" : ""}`}
+              numberOfLines={1}
+            >
+              {name}
+            </ThemedText>
+            <View className="flex-row items-center gap-3">
+              <View className="flex-row items-center gap-1.5">
+                <LucideIcon icon={Mountain} size={16} muted />
+                <ThemedText className="font-medium text-muted-foreground">
+                  {totalMountains}
+                </ThemedText>
+              </View>
+              {usersCount > 0 && (
+                <View className="flex-row items-center gap-1.5">
+                  <LucideIcon icon={Users} size={16} muted />
+                  <ThemedText className="font-medium text-muted-foreground">
+                    {totalUsers}
+                  </ThemedText>
+                </View>
+              )}
+              {isSelected && (
+                <View className="ml-auto rounded-full bg-primary px-2 py-0.5">
+                  <ThemedText className="text-xs font-semibold text-white">
+                    <FormattedMessage defaultMessage="Active" />
+                  </ThemedText>
+                </View>
+              )}
+            </View>
+          </View>
+          {rightElement}
         </View>
-        {rightElement}
       </TouchableOpacity>
       {onEditPress && (
         <TouchableOpacity
           onPress={onEditPress}
-          className=" items-center justify-center rounded border-2 border-border px-3"
-          style={{
-            height: 60,
-          }}
+          className="flex-row items-center justify-center gap-2 rounded border-2 border-border py-2"
         >
-          <Icon name="pencil" size={18} weight="black" />
+          <LucideIcon icon={Pencil} size={16} muted />
+          <ThemedText className="font-medium text-muted-foreground">
+            <FormattedMessage defaultMessage="Edit" />
+          </ThemedText>
         </TouchableOpacity>
       )}
     </View>

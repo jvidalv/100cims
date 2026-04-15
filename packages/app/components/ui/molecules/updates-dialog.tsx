@@ -1,3 +1,4 @@
+import { X } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import {
@@ -14,7 +15,8 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-import { Icon, ThemedText, ThemedView } from "@/components/ui/atoms";
+
+import { LucideIcon, ThemedText, ThemedView } from "@/components/ui/atoms";
 
 export interface Update {
   id: string;
@@ -106,7 +108,7 @@ export function UpdatesDialog({
                 onPress={onClose}
                 className="size-8 items-center justify-center rounded-full bg-black/40"
               >
-                <Icon name="xmark" size={16} color="white" />
+                <LucideIcon icon={X} size={16} color="white" />
               </TouchableOpacity>
             </View>
 

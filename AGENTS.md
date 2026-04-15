@@ -31,9 +31,15 @@ yarn translations:generate
 ```
 
 #### Database Migrations
-```bash
-yarn api drizzle-kit push
-```
+
+**CRITICAL**: Always **ask the user before applying a migration**. Never run `drizzle-kit migrate` / `drizzle-kit push` / any schema-change command on your own — prepare the migration file and wait for explicit approval.
+
+1. Edit `packages/api/src/db/schema.ts`.
+2. Run `yarn api db:generate` to produce the SQL file.
+3. Review / augment the generated SQL (e.g. backfill INSERTs).
+4. **Ask the user** before running `yarn api db:migrate`.
+
+Do **not** use `drizzle-kit push` anywhere: it bypasses the versioned migration files, skips custom SQL (like data backfills), and leaves the DB in a state that later `db:migrate` can't reconcile.
 
 ## Deployment Agents
 

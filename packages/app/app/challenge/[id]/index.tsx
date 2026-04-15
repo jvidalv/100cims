@@ -1,15 +1,24 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { setStatusBarStyle } from "expo-status-bar";
+import {
+  AlignLeft,
+  BadgeCheck,
+  CircleCheck,
+  Mountain,
+  Share as ShareIcon,
+  Target,
+} from "lucide-react-native";
 import { useColorScheme } from "nativewind";
 import { useEffect } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { TouchableOpacity, Image, View } from "react-native";
 
+
 import { useAuth } from "@/components/providers/auth-provider";
 import {
   ActivityIndicator,
   ThemedText,
-  Icon,
+  LucideIcon,
   Avatar,
   Skeleton,
   ThemedView,
@@ -165,7 +174,7 @@ export default function ChallengeDetailScreen() {
           </ThemedText>
           {challenge.isOfficial && (
             <View className="flex-row items-center gap-1.5 rounded-full bg-primary/20 px-3 py-1.5">
-              <Icon name="checkmark.seal.fill" color="#f43f5e" size={18} />
+              <LucideIcon icon={BadgeCheck} color="#f43f5e" size={18} />
               <ThemedText className="text-base font-semibold text-primary">
                 <FormattedMessage defaultMessage="Official" />
               </ThemedText>
@@ -173,7 +182,7 @@ export default function ChallengeDetailScreen() {
           )}
         </View>
         <View className="flex-row items-center gap-2">
-          <Icon name="mountain.2.fill" muted size={20} />
+          <LucideIcon icon={Mountain} muted size={20} />
           <ThemedText className="text-xl font-medium">
             {challenge.totalMountains}{" "}
             <ThemedText className="text-muted-foreground">
@@ -183,7 +192,7 @@ export default function ChallengeDetailScreen() {
         </View>
         {challenge.description && (
           <View className="flex-row gap-2">
-            <Icon name="text.alignleft" muted size={20} />
+            <LucideIcon icon={AlignLeft} muted size={20} />
             <ThemedText className="flex-1 text-base text-muted-foreground">
               {challenge.description}
             </ThemedText>
@@ -200,7 +209,7 @@ export default function ChallengeDetailScreen() {
         <ActionRow
           onPress={isActiveChallenge ? undefined : handleSwitchChallenge}
           disabled={isActiveChallenge || !challenge.isPublic || isUpdating}
-          iconName={isActiveChallenge ? "checkmark.circle.fill" : "target"}
+          icon={isActiveChallenge ? CircleCheck : Target}
           intent={isActiveChallenge ? "emerald" : "primary"}
           iconOverride={isUpdating ? <ActivityIndicator /> : undefined}
         >
@@ -213,7 +222,7 @@ export default function ChallengeDetailScreen() {
 
         <ActionRow
           onPress={handleShare}
-          iconName="square.and.arrow.up"
+          icon={ShareIcon}
           intent="muted"
         >
           <FormattedMessage defaultMessage="Share with your friends" />

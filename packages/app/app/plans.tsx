@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Link } from "expo-router";
+import { Plus, Star } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
@@ -16,8 +17,9 @@ import Animated, {
 } from "react-native-reanimated";
 import { twMerge } from "tailwind-merge";
 
+
 import { useAuth } from "@/components/providers/auth-provider";
-import { Icon, ThemedText, ThemedView } from "@/components/ui/atoms";
+import { LucideIcon, ThemedText, ThemedView } from "@/components/ui/atoms";
 import { ScreenHeader } from "@/components/ui/molecules";
 import {
   PlanItemList,
@@ -27,7 +29,6 @@ import {
   useMarkPlansAsVisited,
   usePlansInfinite,
 } from "@/domains/plan/plan.api";
-import { isAndroid } from "@/lib/device";
 
 const ALERT_KEY = "plans_alert_shown";
 
@@ -74,12 +75,7 @@ const FloatingAlert = ({ onClose }: { onClose: () => void }) => {
         className="relative rounded bg-background p-4 shadow-md"
       >
         <View className="absolute right-2 top-2">
-          <Icon
-            name="star.fill"
-            color="gold"
-            size={24}
-            animationSpec={{ effect: { type: "bounce" } }}
-          />
+          <LucideIcon icon={Star} color="gold" size={24} />
         </View>
         <ThemedText className="mb-1 font-semibold">
           <FormattedMessage defaultMessage="Do you know?" />
@@ -168,11 +164,7 @@ export default function PlansScreen() {
                   <ThemedText>
                     <FormattedMessage defaultMessage="New plan" />
                   </ThemedText>
-                  <Icon
-                    name="plus"
-                    size={isAndroid ? 22 : 14}
-                    animationSpec={{ effect: { type: "bounce" } }}
-                  />
+                  <LucideIcon icon={Plus} size={18} />
                 </TouchableOpacity>
               </Link>
             </View>

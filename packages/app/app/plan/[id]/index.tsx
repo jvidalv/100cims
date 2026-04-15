@@ -1,6 +1,15 @@
 import { isToday } from "date-fns/isToday";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, Link, useRouter } from "expo-router";
+import {
+  ArrowDown,
+  BadgeCheck,
+  Calendar,
+  Clock,
+  MessagesSquare,
+  Settings,
+  Share as ShareIcon,
+} from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
@@ -13,6 +22,7 @@ import {
 } from "react-native";
 import ConfettiCannon from "react-native-confetti-cannon";
 
+
 import { PlanShareCard } from "@/components/plan";
 import { useAuth } from "@/components/providers/auth-provider";
 import {
@@ -20,7 +30,7 @@ import {
   Avatar,
   Button,
   EnrichedThemedText,
-  Icon,
+  LucideIcon,
   Skeleton,
   ThemedText,
   ThemedView,
@@ -362,7 +372,7 @@ export default function PlanIdPage() {
             </View>
           )}
           <View className="flex-row items-center gap-2">
-            <Icon name="clock" size={20} />
+            <LucideIcon icon={Clock} size={20} />
             <ThemedText className="text-lg font-medium">{when}</ThemedText>
           </View>
         </View>
@@ -422,7 +432,7 @@ export default function PlanIdPage() {
             href={{ pathname: "/plan/[id]/complete", params: { id } }}
             asChild
           >
-            <ActionRow iconName="checkmark.seal.fill" intent="emerald">
+            <ActionRow icon={BadgeCheck} intent="emerald">
               <FormattedMessage defaultMessage="Complete plan" />
             </ActionRow>
           </Link>
@@ -432,7 +442,7 @@ export default function PlanIdPage() {
             href={{ pathname: "/plan/[id]/edit", params: { id } }}
             asChild
           >
-            <ActionRow iconName="calendar" intent="primary">
+            <ActionRow icon={Calendar} intent="primary">
               <FormattedMessage defaultMessage="Set plan date" />
             </ActionRow>
           </Link>
@@ -442,14 +452,14 @@ export default function PlanIdPage() {
             href={{ pathname: "/plan/[id]/edit", params: { id } }}
             asChild
           >
-            <ActionRow iconName="gear" intent="muted">
+            <ActionRow icon={Settings} intent="muted">
               <FormattedMessage defaultMessage="Modify plan" />
             </ActionRow>
           </Link>
         )}
         <ActionRow
           onPress={onShare}
-          iconName="square.and.arrow.up"
+          icon={ShareIcon}
           intent="muted"
           iconOverride={
             isSharing ? <ActivityIndicator size="sm" /> : undefined
@@ -464,7 +474,7 @@ export default function PlanIdPage() {
             asChild
           >
             <ActionRow
-              iconName="bubble.left.and.text.bubble.right"
+              icon={MessagesSquare}
               iconSize={20}
               intent="blue"
               badge={hasUnreadMessages}
@@ -476,7 +486,7 @@ export default function PlanIdPage() {
         {hasJoined && !isCreator && (
           <ActionRow
             onPress={() => handleLeave()}
-            iconName="arrow.down"
+            icon={ArrowDown}
             intent="danger"
             iconOverride={
               isLoadingLeavePLan ? (

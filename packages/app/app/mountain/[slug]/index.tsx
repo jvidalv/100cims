@@ -2,14 +2,23 @@ import { LinearGradient } from "expo-linear-gradient";
 import * as Linking from "expo-linking";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { setStatusBarStyle } from "expo-status-bar";
+import {
+  ArrowUp,
+  BadgeCheck,
+  Footprints,
+  Map,
+  MapPin,
+  Share as ShareIcon,
+} from "lucide-react-native";
 import { useColorScheme } from "nativewind";
 import { useEffect, useMemo } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { TouchableOpacity, Image, View, StyleSheet } from "react-native";
 
+
 import { useAuth } from "@/components/providers/auth-provider";
 import { SummitCard } from "@/components/summit";
-import { ThemedText, Icon, Skeleton } from "@/components/ui/atoms";
+import { ThemedText, LucideIcon, Skeleton } from "@/components/ui/atoms";
 import { ActionRow, MountainItemList } from "@/components/ui/molecules";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
 import { useMountainOne, useMountains } from "@/domains/mountain/mountain.api";
@@ -129,7 +138,7 @@ export default function MountainScreen() {
       <View className="gap-4">
         {isSummited && (
           <View className="flex flex-row items-center gap-2">
-            <Icon name="checkmark.seal.fill" color="#10b981" />
+            <LucideIcon icon={BadgeCheck} color="#10b981" />
             <ThemedText className="text-xl font-medium text-emerald-500">
               <FormattedMessage defaultMessage="You summited this mountain" />
             </ThemedText>
@@ -137,7 +146,7 @@ export default function MountainScreen() {
         )}
         <View className="flex-row gap-4">
           <View className="flex-row gap-2">
-            <Icon name="arrowshape.up.fill" muted />
+            <LucideIcon icon={ArrowUp} muted />
             <ThemedText className="text-xl font-medium">
               {mountain.height} m
             </ThemedText>
@@ -152,14 +161,14 @@ export default function MountainScreen() {
           )}
         </View>
         <View className="flex-row items-center gap-2">
-          <Icon name="map.fill" muted />
+          <LucideIcon icon={Map} muted />
           <ThemedText className="text-xl font-medium">
             {mountain.location}
           </ThemedText>
         </View>
         {distanceFromUser != null && (
           <View className="flex-row items-center gap-2">
-            <Icon name="location.fill" muted />
+            <LucideIcon icon={MapPin} muted />
             <ThemedText className="text-xl font-medium">
               <FormattedMessage
                 defaultMessage="{distance} km away from you"
@@ -181,7 +190,7 @@ export default function MountainScreen() {
           }
           asChild
         >
-          <ActionRow iconName="figure.hiking" iconSize={18} intent="primary">
+          <ActionRow icon={Footprints} iconSize={18} intent="primary">
             {isSummited ? (
               <FormattedMessage defaultMessage="Summit again" />
             ) : (
@@ -191,7 +200,7 @@ export default function MountainScreen() {
         </Link>
         <ActionRow
           onPress={handleShareMountain}
-          iconName="square.and.arrow.up"
+          icon={ShareIcon}
           intent="muted"
         >
           <FormattedMessage defaultMessage="Share with your friends" />
@@ -202,7 +211,7 @@ export default function MountainScreen() {
               `https://www.google.es/maps?q=${mountain.latitude},${mountain.longitude}`,
             );
           }}
-          iconName="map.fill"
+          icon={Map}
           intent="blue"
         >
           <FormattedMessage defaultMessage="View on maps" />
@@ -219,7 +228,7 @@ export default function MountainScreen() {
           className="flex-row items-center gap-2"
         >
           <View className="size-8 items-center justify-center rounded-full bg-green-100 dark:bg-green-900">
-            <Icon name="map.fill" size={16} color="#4b8c2a" />
+            <LucideIcon icon={Map} size={16} color="#4b8c2a" />
           </View>
           <ThemedText style={{ color: "#4b8c2a" }}>
             <FormattedMessage defaultMessage="View on wikiloc" />
@@ -256,6 +265,7 @@ export default function MountainScreen() {
                   longitude={longitude}
                 />
                 <View
+                  pointerEvents="none"
                   className="absolute overflow-hidden"
                   style={{ width: 100, height: 100, borderRadius: 6 }}
                 >
@@ -269,7 +279,10 @@ export default function MountainScreen() {
                     style={StyleSheet.absoluteFill}
                   />
                 </View>
-                <View className="absolute bottom-1 left-2">
+                <View
+                  pointerEvents="none"
+                  className="absolute bottom-1 left-2"
+                >
                   <ThemedText className="text-white font-medium">
                     {distance} km
                   </ThemedText>

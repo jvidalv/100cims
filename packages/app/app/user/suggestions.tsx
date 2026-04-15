@@ -1,10 +1,12 @@
+import { BadgeCheck } from "lucide-react-native";
 import { useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { View } from "react-native";
 
+
 import {
   Button,
-  Icon,
+  LucideIcon,
   ThemedText,
   ThemedTextInput,
   ThemedView,
@@ -57,7 +59,7 @@ export default function SuggestionsScreen() {
         </Button>
         {isSummited && (
           <View className="flex flex-row items-center gap-2">
-            <Icon name="checkmark.seal.fill" color="#10b981" />
+            <LucideIcon icon={BadgeCheck} color="#10b981" />
             <ThemedText className="font-medium text-emerald-500">
               <FormattedMessage defaultMessage="Received, thanks for your suggestion!" />
             </ThemedText>

@@ -25,6 +25,12 @@ const routeFromNotificationData = (data: unknown) => {
     return;
   }
 
+  if (type === "summit-tagged") {
+    const summitId = getStringField(data, "summitId");
+    if (summitId) router.push(`/user/summits/${summitId}`);
+    return;
+  }
+
   if (isPlanPushType(type)) {
     const planId = getStringField(data, "planId");
     if (planId) router.push(`/plan/${planId}`);

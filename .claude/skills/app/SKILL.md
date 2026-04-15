@@ -210,9 +210,13 @@ router.push('/user/123');
 router.push({ pathname: '/mountain/[id]', params: { id: '456' } });
 ```
 
+### Icons
+
+All icons use **lucide-react-native**. Import the component by name, pass it to `<LucideIcon icon={Mountain} />` — the wrapper handles theme-aware color (`useColorScheme`) and the `muted` gray treatment. There is no `<Icon name="...">` string-based component any more; don't recreate one. Plumbing components (`Button`, `ActionRow`, `SettingsOption.icon`, `Filter.icon`) take `icon: LucideIcon` (the component by reference) — never a name string. See `packages/app/components/ui/atoms/lucide-icon.tsx` and `app/index.tsx` for the canonical call shape. Don't use `@expo/vector-icons` or `expo-symbols` — both are removed from the app bundle.
+
 ### Action sections
 
-When building an "Actions" section on a detail screen (mountain, plan, user profile, etc.), use the `ActionRow` molecule from `@/components/ui/molecules` instead of hand-rolling icon+text rows. Intents map to design tokens (`primary`, `muted`, `blue`, `emerald`, `danger`). Wrap in `<Link asChild>` for navigation rows. Supports `badge` (red dot) and `iconOverride` (e.g. spinner). See `app/plan/[id]/index.tsx` and `app/mountain/[slug]/index.tsx` for examples.
+When building an "Actions" section on a detail screen (mountain, plan, user profile, etc.), use the `ActionRow` molecule from `@/components/ui/molecules` instead of hand-rolling icon+text rows. Intents map to design tokens (`primary`, `muted`, `blue`, `emerald`, `danger`). Wrap in `<Link asChild>` for navigation rows. Supports `badge` (red dot) and `iconOverride` (e.g. spinner). `icon` is a lucide component: `<ActionRow icon={Trash2} intent="danger">...`. See `app/plan/[id]/index.tsx` and `app/mountain/[slug]/index.tsx` for examples.
 
 ### Full-page edit screens
 
