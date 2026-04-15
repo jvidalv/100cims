@@ -6,14 +6,28 @@ import { db } from "@/db";
 import { mountainTable, summitHasUsersTable, summitTable } from "@/db/schema";
 import { formatDateForPostgresFromISOString } from "@/api/lib/dates";
 import { isBase64SizeValid } from "@/api/lib/images";
+import { sendPushLocalized } from "@/api/lib/push";
+import {
+  pushSummitTaggedBody,
+  pushSummitTaggedTitle,
+} from "@/api/lib/push-translations";
+import { PUSH_TYPE, getUserDisplayName } from "@/api/lib/push-types";
+import { getUserFromRequest } from "@/api/routes/@shared/auth";
 import { IMAGE_TO_BIG } from "@/api/routes/@shared/error-codes";
 import { getPublicUrl, putImageOnS3 } from "@/api/routes/@shared/s3";
 import { ErrorFieldResponse } from "@/api/schemas/common.schema";
 
 export const mountainSummitPostRoute = new Elysia().post(
   "/summit",
-  async ({ body, set }) => {
+  async ({ body, request, set }) => {
+    const actor = getUserFromRequest(request);
     const id = uuidv7();
+
+    const [mountain] = await db
+      .select({ name: mountainTable.name, imageUrl: mountainTable.imageUrl })
+      .from(mountainTable)
+      .where(eq(mountainTable.id, body.mountainId))
+      .limit(1);
 
     let imageUrl: string;
     if (body.image) {
@@ -25,11 +39,6 @@ export const mountainSummitPostRoute = new Elysia().post(
       await putImageOnS3(key, Buffer.from(body.image, "base64"));
       imageUrl = getPublicUrl(key);
     } else {
-      const [mountain] = await db
-        .select({ imageUrl: mountainTable.imageUrl })
-        .from(mountainTable)
-        .where(eq(mountainTable.id, body.mountainId))
-        .limit(1);
       if (!mountain?.imageUrl) {
         set.status = 500;
         return { error: "No mountain image available" };
@@ -56,6 +65,20 @@ export const mountainSummitPostRoute = new Elysia().post(
         })),
       );
     });
+
+    const recipients = body.usersId.filter((userId) => userId !== actor.id);
+    if (recipients.length > 0 && mountain?.name) {
+      const actorName = getUserDisplayName(actor);
+      const mountainName = mountain.name;
+      void sendPushLocalized(
+        recipients,
+        (locale) => ({
+          title: pushSummitTaggedTitle(locale, mountainName),
+          body: pushSummitTaggedBody(locale, actorName),
+        }),
+        { type: PUSH_TYPE.SUMMIT_TAGGED, summitId: id },
+      );
+    }
 
     return {
       success: true,

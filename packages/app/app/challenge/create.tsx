@@ -1,4 +1,5 @@
 import { useRouter, Redirect } from "expo-router";
+import { Info, Plus } from "lucide-react-native";
 import { useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
@@ -19,7 +20,7 @@ import { useAuth } from "@/components/providers/auth-provider";
 import {
   BlurView,
   Button,
-  Icon,
+  LucideIcon,
   ThemedText,
   ThemedView,
 } from "@/components/ui/atoms";
@@ -164,7 +165,7 @@ export default function CommunityChallengeCreatePage() {
                   </ThemedText>
                 )}
                 <View className="size-10 items-center justify-center rounded bg-muted-foreground/30 shadow">
-                  <Icon name="plus" weight="semibold" color="white" size={16} />
+                  <LucideIcon icon={Plus} color="white" size={16} />
                 </View>
               </TouchableOpacity>
             </View>
@@ -178,7 +179,7 @@ export default function CommunityChallengeCreatePage() {
           )}
         >
           <View className="mb-3 flex-row items-center gap-3 rounded border border-blue-500/30 bg-blue-500/10 p-3">
-            <Icon name="info.circle" size={18} color="#3b82f6" />
+            <LucideIcon icon={Info} size={18} color="#3b82f6" />
             <ThemedText className="flex-1 text-sm text-blue-500">
               <FormattedMessage defaultMessage="You can add or remove mountains later" />
             </ThemedText>

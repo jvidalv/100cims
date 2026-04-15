@@ -1,3 +1,4 @@
+import { Camera, Check, Globe, Plus, Sparkles } from "lucide-react-native";
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
@@ -10,10 +11,11 @@ import {
   View,
 } from "react-native";
 
+
 import {
   ActivityIndicator,
   Button,
-  Icon,
+  LucideIcon,
   SearchInput,
   ThemedText,
   ThemedTextInput,
@@ -251,7 +253,7 @@ export function MountainSelectionDrawer({
                     resizeMode="cover"
                   />
                 ) : (
-                  <Icon name="camera.fill" size={24} muted />
+                  <LucideIcon icon={Camera} size={24} muted />
                 )}
               </TouchableOpacity>
               <View className="flex-1">
@@ -344,7 +346,7 @@ export function MountainSelectionDrawer({
             <ThemedText className="text-muted-foreground">
               <FormattedMessage defaultMessage="Create new" />
             </ThemedText>
-            <Icon name="plus" size={14} muted />
+            <LucideIcon icon={Plus} size={14} muted />
           </TouchableOpacity>
         )}
       </View>
@@ -364,7 +366,7 @@ export function MountainSelectionDrawer({
                 {isSearching ? (
                   <ActivityIndicator size="sm" />
                 ) : (
-                  <Icon name="globe" size={14} muted />
+                  <LucideIcon icon={Globe} size={14} muted />
                 )}
                 <ThemedText className="text-xs text-muted-foreground">
                   <FormattedMessage defaultMessage="Searching all mountains" />
@@ -385,7 +387,7 @@ export function MountainSelectionDrawer({
                   className="items-center justify-center rounded-md border-2 border-dashed border-border bg-muted/30"
                   style={{ width: 100, height: 100 }}
                 >
-                  <Icon name="plus" size={32} muted />
+                  <LucideIcon icon={Plus} size={32} muted />
                 </View>
                 <View className="flex-1">
                   <ThemedText className="text-lg font-semibold">
@@ -419,11 +421,10 @@ export function MountainSelectionDrawer({
                   className={`pointer-events-none absolute left-0 top-2 items-center justify-center ${isNewMountain ? "bg-green-500" : "bg-blue-500"}`}
                   style={{ width: 100, height: 100, borderRadius: 6 }}
                 >
-                  <Icon
-                    name={isNewMountain ? "sparkles" : "checkmark"}
+                  <LucideIcon
+                    icon={isNewMountain ? Sparkles : Check}
                     size={32}
                     color="white"
-                    animationSpec={{ effect: { type: "bounce" } }}
                   />
                 </View>
               )}

@@ -59,6 +59,26 @@ export const UserSummitsResponseSchema = t.Object({
 });
 
 /**
+ * Schema for paginated all-challenges user summits response
+ */
+export const UserSummitsAllResponseSchema = t.Object({
+  items: t.Array(UserSummitSchema),
+  aggregates: t.Object({
+    score: t.Number(),
+    uniquePeaksCount: t.Number(),
+    essentialPeaksCount: t.Number(),
+    totalSummits: t.Number(),
+  }),
+  pagination: t.Object({
+    page: t.Number(),
+    pageSize: t.Number(),
+    totalItems: t.Number(),
+    totalPages: t.Number(),
+    hasMore: t.Boolean(),
+  }),
+});
+
+/**
  * Schema for a participant in a public summit
  */
 export const ParticipantSchema = t.Object({

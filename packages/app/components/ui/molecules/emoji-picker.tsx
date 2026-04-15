@@ -1,3 +1,13 @@
+import {
+  Flag,
+  Footprints,
+  Heart,
+  Leaf,
+  PawPrint,
+  Smile,
+  X,
+  type LucideIcon,
+} from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { FormattedMessage } from "react-intl";
 import {
@@ -13,7 +23,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-import { Icon, IconSymbolName } from "@/components/ui/atoms/icon";
+import { LucideIcon as LucideIconView } from "@/components/ui/atoms/lucide-icon";
 import { ThemedText } from "@/components/ui/atoms/themed-text";
 import { ThemedView } from "@/components/ui/atoms/themed-view";
 
@@ -196,12 +206,12 @@ const EMOJI_CATEGORIES = {
 
 type Category = keyof typeof EMOJI_CATEGORIES;
 
-const CATEGORY_ICONS: Record<Category, IconSymbolName> = {
-  nature: "leaf.fill",
-  animals: "pawprint.fill",
-  activities: "figure.hiking",
-  flags: "flag.fill",
-  symbols: "heart.fill",
+const CATEGORY_ICONS: Record<Category, LucideIcon> = {
+  nature: Leaf,
+  animals: PawPrint,
+  activities: Footprints,
+  flags: Flag,
+  symbols: Heart,
 };
 
 type EmojiPickerProps = {
@@ -227,7 +237,7 @@ export function EmojiPicker({ value, onSelect }: EmojiPickerProps) {
         {value ? (
           <ThemedText className="text-3xl">{value}</ThemedText>
         ) : (
-          <Icon name="face.smiling" muted size={28} />
+          <LucideIconView icon={Smile} muted size={28} />
         )}
       </TouchableOpacity>
 
@@ -306,11 +316,7 @@ function EmojiPickerModal({
             onPress={onClose}
             className="absolute -top-8 right-4"
           >
-            <Icon
-              name="xmark"
-              animationSpec={{ effect: { type: "bounce" } }}
-              size={18}
-            />
+            <LucideIconView icon={X} size={18} />
           </TouchableOpacity>
 
           <ThemedView className="p-4">
@@ -328,8 +334,8 @@ function EmojiPickerModal({
                     category === cat ? "bg-background" : ""
                   }`}
                 >
-                  <Icon
-                    name={CATEGORY_ICONS[cat]}
+                  <LucideIconView
+                    icon={CATEGORY_ICONS[cat]}
                     size={20}
                     muted={category !== cat}
                   />

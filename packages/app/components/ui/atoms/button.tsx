@@ -9,7 +9,9 @@ import { twMerge } from "tailwind-merge";
 import { tv, type VariantProps } from "tailwind-variants";
 
 import { ActivityIndicator } from "@/components/ui/atoms/activity-indicator";
-import { Icon, IconSymbolName } from "@/components/ui/atoms/icon";
+import { LucideIcon as LucideIconView } from "@/components/ui/atoms/lucide-icon";
+
+import type { LucideIcon } from "lucide-react-native";
 
 const buttonVariants = tv({
   base: "flex-row items-center justify-center gap-2 rounded border-2 border-transparent p-4",
@@ -36,7 +38,7 @@ const buttonVariants = tv({
 
 type Props = VariantProps<typeof buttonVariants> & {
   isLoading?: boolean;
-  iconName?: IconSymbolName;
+  icon?: LucideIcon;
   iconSize?: number;
   textClassName?: string;
 } & TouchableOpacityProps;
@@ -48,7 +50,7 @@ export const Button = forwardRef<View, Props>(
       intent,
       disabled,
       isLoading,
-      iconName,
+      icon,
       iconSize = 28,
       onPress,
       className,
@@ -69,9 +71,9 @@ export const Button = forwardRef<View, Props>(
         ref={ref}
         {...props}
       >
-        {iconName && (
+        {icon && (
           <View className={twMerge(isLoading && "opacity-0")}>
-            <Icon color={iconColor} name={iconName} size={iconSize} />
+            <LucideIconView color={iconColor} icon={icon} size={iconSize} />
           </View>
         )}
         {isLoading && (

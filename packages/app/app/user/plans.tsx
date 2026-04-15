@@ -1,8 +1,10 @@
 import { Link } from "expo-router";
+import { Plus, Star } from "lucide-react-native";
 import { FormattedMessage } from "react-intl";
 import { ScrollView, TouchableOpacity, View } from "react-native";
 
-import { Icon, ThemedText, ThemedView } from "@/components/ui/atoms";
+
+import { LucideIcon, ThemedText, ThemedView } from "@/components/ui/atoms";
 import { ScreenHeader } from "@/components/ui/molecules";
 import {
   PlanItemList,
@@ -10,7 +12,6 @@ import {
 } from "@/components/ui/molecules/plan-item-list";
 import { usePlans } from "@/domains/plan/plan.api";
 import { useUserMe } from "@/domains/user/user.api";
-import { isAndroid } from "@/lib/device";
 
 export default function UserPlansScreen() {
   const { data: me } = useUserMe();
@@ -31,11 +32,7 @@ export default function UserPlansScreen() {
             <ThemedText>
               <FormattedMessage defaultMessage="New plan" />
             </ThemedText>
-            <Icon
-              name="plus"
-              size={isAndroid ? 22 : 14}
-              animationSpec={{ effect: { type: "bounce" } }}
-            />
+            <LucideIcon icon={Plus} size={18} />
           </TouchableOpacity>
         </Link>
       </View>
@@ -53,12 +50,7 @@ export default function UserPlansScreen() {
         {!isPendingPlans && !data?.length && (
           <View className="relative mt-auto rounded border-2 border-border p-4">
             <View className="absolute right-2 top-2">
-              <Icon
-                name="star.fill"
-                color="gold"
-                size={24}
-                animationSpec={{ effect: { type: "bounce" } }}
-              />
+              <LucideIcon icon={Star} color="gold" size={24} />
             </View>
             <ThemedText className="mb-1 font-semibold">
               <FormattedMessage defaultMessage="Do you know?" />

@@ -1,3 +1,4 @@
+import { X } from "lucide-react-native";
 import { useState } from "react";
 import {
   View,
@@ -17,7 +18,8 @@ import Animated, {
   runOnJS,
 } from "react-native-reanimated";
 
-import { Icon } from "@/components/ui/atoms";
+
+import { LucideIcon } from "@/components/ui/atoms";
 
 interface ImagePreviewModalProps {
   visible: boolean;
@@ -127,7 +129,7 @@ export function ImagePreviewModal({
             className="absolute right-4 top-[15%] z-10"
             onPress={handleClose}
           >
-            <Icon name="xmark" size={20} color="white" weight="semibold" />
+            <LucideIcon icon={X} size={20} color="white" />
           </TouchableOpacity>
           {imageSource && (
             <GestureDetector gesture={composedGesture}>

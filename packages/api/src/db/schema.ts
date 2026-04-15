@@ -2,6 +2,7 @@ import { relations, sql } from "drizzle-orm";
 import {
   uuid,
   boolean,
+  check,
   integer,
   numeric,
   pgTable,
@@ -475,3 +476,29 @@ export const emailLogTable = pgTable(
     ),
   ],
 );
+
+export const userPeopleTable = pgTable(
+  "user_people",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    userAId: uuid("user_a_id")
+      .notNull()
+      .references(() => userTable.id, { onDelete: "cascade" }),
+    userBId: uuid("user_b_id")
+      .notNull()
+      .references(() => userTable.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("user_people_pair_uniq").on(table.userAId, table.userBId),
+    index("user_people_user_a_idx").on(table.userAId),
+    index("user_people_user_b_idx").on(table.userBId),
+    check(
+      "user_people_pair_ordered",
+      sql`${table.userAId} < ${table.userBId}`,
+    ),
+  ],
+);
+
+export const orderPeoplePair = (x: string, y: string): [string, string] =>
+  x < y ? [x, y] : [y, x];

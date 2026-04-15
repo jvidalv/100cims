@@ -1,8 +1,9 @@
+import { Hourglass } from "lucide-react-native";
 import { useEffect, useRef } from "react";
 import { Animated } from "react-native";
 import { twMerge } from "tailwind-merge";
 
-import { Icon } from "@/components/ui/atoms/icon";
+import { LucideIcon } from "@/components/ui/atoms/lucide-icon";
 
 type SpinnerProps = {
   size?: "sm" | "md" | "lg";
@@ -49,7 +50,7 @@ export function ActivityIndicator({
       }}
       className={twMerge("justify-center items-center", className)}
     >
-      <Icon name="hourglass" color={color} size={iconSize} />
+      <LucideIcon icon={Hourglass} color={color} size={iconSize} />
     </Animated.View>
   );
 }

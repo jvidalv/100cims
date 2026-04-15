@@ -1,3 +1,4 @@
+import { X } from "lucide-react-native";
 import { ReactNode, useEffect, useState } from "react";
 import {
   Modal as RNModal,
@@ -12,7 +13,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-import { Icon } from "@/components/ui/atoms/icon";
+import { LucideIcon } from "@/components/ui/atoms/lucide-icon";
 
 export function useBottomDrawer(initialOpen: boolean = false) {
   return useState(initialOpen);
@@ -92,11 +93,7 @@ export function BottomDrawer({
             onPress={onRequestClose}
             className="absolute -top-8 right-4"
           >
-            <Icon
-              name="xmark"
-              animationSpec={{ effect: { type: "bounce" } }}
-              size={18}
-            />
+            <LucideIcon icon={X} size={18} />
           </TouchableOpacity>
           {children}
         </Animated.View>

@@ -1,5 +1,6 @@
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
+import { Camera } from "lucide-react-native";
 import React, { useEffect, useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
@@ -17,7 +18,7 @@ import { useAuth } from "@/components/providers/auth-provider";
 import { queryClient } from "@/components/providers/query-client-provider";
 import {
   ThemedText,
-  Icon,
+  LucideIcon,
   ThemedToggleInput,
   ThemedKeyboardAvoidingView,
   ThemedTextInput,
@@ -225,24 +226,13 @@ export default function UserMeScreen() {
             />
             {(image || me.imageUrl) && (
               <View className="absolute bottom-0 right-0 size-7 items-center justify-center rounded-full border-2 border-background bg-primary">
-                <Icon
-                  name="camera.fill"
-                  size={12}
-                  color="white"
-                  weight="bold"
-                />
+                <LucideIcon icon={Camera} size={12} color="white" />
               </View>
             )}
           </TouchableOpacity>
           {!image && !me.imageUrl && (
             <View className="pointer-events-none absolute size-full items-center justify-center">
-              <Icon
-                name="camera"
-                size={30}
-                color="white"
-                weight="bold"
-                animationSpec={{ effect: { type: "bounce" } }}
-              />
+              <LucideIcon icon={Camera} size={30} color="white" />
             </View>
           )}
         </View>

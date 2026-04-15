@@ -1,15 +1,17 @@
 import * as ImagePicker from "expo-image-picker";
 import { ImagePickerAsset } from "expo-image-picker";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { Camera } from "lucide-react-native";
 import { useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Alert, Image, ScrollView, TouchableOpacity, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
+
 import {
   ActivityIndicator,
   Button,
-  Icon,
+  LucideIcon,
   Skeleton,
   ThemedText,
   ThemedView,
@@ -183,7 +185,7 @@ export default function EditSummitScreen() {
                     {isLoadingImage ? (
                       <ActivityIndicator color="white" />
                     ) : (
-                      <Icon name="camera" size={18} color="white" />
+                      <LucideIcon icon={Camera} size={18} color="white" />
                     )}
                   </View>
                 </View>
@@ -192,7 +194,7 @@ export default function EditSummitScreen() {
                   {isLoadingImage ? (
                     <ActivityIndicator className="opacity-50" />
                   ) : (
-                    <Icon name="camera" size={32} muted />
+                    <LucideIcon icon={Camera} size={32} muted />
                   )}
                 </View>
               )}

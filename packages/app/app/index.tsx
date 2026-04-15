@@ -18,8 +18,23 @@ import Animated, {
 } from "react-native-reanimated";
 import { twMerge } from "tailwind-merge";
 
+import {
+  ArrowRight,
+  Backpack,
+  Map,
+  Moon,
+  Mountain,
+  Sun,
+  Trophy,
+} from "lucide-react-native";
+
 import { useAuth } from "@/components/providers/auth-provider";
-import { Avatar, BlurView, Icon, Skeleton } from "@/components/ui/atoms";
+import {
+  Avatar,
+  BlurView,
+  LucideIcon,
+  Skeleton,
+} from "@/components/ui/atoms";
 import { ThemedText } from "@/components/ui/atoms/themed-text";
 import { ThemedView } from "@/components/ui/atoms/themed-view";
 import {
@@ -89,7 +104,7 @@ const MountainsDone = ({
           {showAllMountains && (
             <View className="flex-row items-center gap-1 rounded border-2 border-border px-2 py-1">
               <View>
-                <Icon name="mountain.2.fill" muted size={20} />
+                <LucideIcon icon={Mountain} size={20} muted />
               </View>
               <ThemedText>
                 {isAuthenticated ? userSummits?.uniquePeaksCount : 0}
@@ -208,7 +223,7 @@ const ThemeToggleButton = () => {
       onPress={() => Appearance.setColorScheme(isDark ? "light" : "dark")}
       className="size-10 items-center justify-center rounded-full border-2 border-border"
     >
-      <Icon name={isDark ? "sun.max.fill" : "moon.fill"} muted />
+      <LucideIcon icon={isDark ? Sun : Moon} muted />
     </TouchableOpacity>
   );
 };
@@ -253,7 +268,7 @@ const PageHeader = ({
           <ThemeToggleButton />
           <Link href="/hiscores" asChild>
             <TouchableOpacity className="size-10 items-center justify-center rounded-full border-2 border-border">
-              <Icon name="trophy.fill" muted />
+              <LucideIcon icon={Trophy} muted />
             </TouchableOpacity>
           </Link>
           <Link
@@ -269,7 +284,7 @@ const PageHeader = ({
               {showBadge && (
                 <View className="absolute -right-0.5 -top-0.5 size-3 rounded-full bg-yellow-400" />
               )}
-              <Icon name="map" muted />
+              <LucideIcon icon={Map} muted />
             </TouchableOpacity>
           </Link>
           <Link href="/plans" asChild>
@@ -277,7 +292,7 @@ const PageHeader = ({
               {hasNewPlans && (
                 <View className="absolute -right-0.5 -top-0.5 size-3 rounded-full bg-blue-500" />
               )}
-              <Icon name="backpack" muted />
+              <LucideIcon icon={Backpack} muted />
             </TouchableOpacity>
           </Link>
           <Link href={isAuthenticated ? "/user" : "/join"} asChild>
@@ -499,7 +514,7 @@ export default function IndexScreen() {
                 <ThemedText className="text-muted-foreground">
                   <FormattedMessage defaultMessage="More" />
                 </ThemedText>
-                <Icon name="arrow.forward" size={12} weight="bold" muted />
+                <LucideIcon icon={ArrowRight} size={12} muted />
               </View>
             </Link>
           </View>
@@ -516,7 +531,7 @@ export default function IndexScreen() {
                   <ThemedText className="text-muted-foreground">
                     <FormattedMessage defaultMessage="More" />
                   </ThemedText>
-                  <Icon name="arrow.forward" size={12} weight="bold" muted />
+                  <LucideIcon icon={ArrowRight} size={12} muted />
                 </View>
               </Link>
             </View>
@@ -554,7 +569,7 @@ export default function IndexScreen() {
                 <ThemedText className="text-muted-foreground">
                   <FormattedMessage defaultMessage="All" />
                 </ThemedText>
-                <Icon name="arrow.forward" size={12} weight="bold" muted />
+                <LucideIcon icon={ArrowRight} size={12} muted />
               </View>
             </Link>
           </View>
@@ -596,7 +611,7 @@ export default function IndexScreen() {
                 <ThemedText className="text-muted-foreground">
                   <FormattedMessage defaultMessage="All plans" />
                 </ThemedText>
-                <Icon name="arrow.forward" size={12} weight="bold" muted />
+                <LucideIcon icon={ArrowRight} size={12} muted />
               </View>
             </Link>
           </View>
@@ -613,7 +628,7 @@ export default function IndexScreen() {
                   <ThemedText className="text-muted-foreground">
                     <FormattedMessage defaultMessage="View all" />
                   </ThemedText>
-                  <Icon name="arrow.forward" size={12} weight="bold" muted />
+                  <LucideIcon icon={ArrowRight} size={12} muted />
                 </View>
               </Link>
             </View>

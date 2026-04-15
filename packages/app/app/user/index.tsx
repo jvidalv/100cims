@@ -1,16 +1,31 @@
 import * as Application from "expo-application";
+import { LinearGradient } from "expo-linear-gradient";
 import { Link, useRouter } from "expo-router";
 import { Fragment } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { TouchableOpacity, View } from "react-native";
 
 import {
+  ArrowRight,
+  Backpack,
+  ChevronRight,
+  Flag,
+  Heart,
+  Info,
+  List,
+  MessageCircle,
+  User,
+  UsersRound,
+  type LucideIcon as LucideIconType,
+} from "lucide-react-native";
+
+import {
   ThemedText,
   ThemedView,
-  Icon,
-  IconSymbolName,
+  LucideIcon,
 } from "@/components/ui/atoms";
-import { MerchUpsellCard, ScreenHeader } from "@/components/ui/molecules";
+import { ScreenHeader } from "@/components/ui/molecules";
+import { Colors } from "@/constants/colors";
 import { usePlanChatUnread } from "@/domains/plan/plan-chat.api";
 import { useUserMe } from "@/domains/user/user.api";
 
@@ -22,39 +37,44 @@ export default function UserIndexScreen() {
   const hasUnreadMessages = !!plansUnread?.length;
 
   const items: {
-    iconName: IconSymbolName;
+    icon: LucideIconType;
     text: string;
     onPress: () => void;
     showDot?: boolean;
   }[] = [
     {
-      iconName: "person.fill",
+      icon: User,
       text: intl.formatMessage({ defaultMessage: "My information" }),
       onPress: () => router.push("/user/me"),
     },
     {
-      iconName: "list.bullet",
+      icon: UsersRound,
+      text: intl.formatMessage({ defaultMessage: "My people" }),
+      onPress: () => router.push("/user/people"),
+    },
+    {
+      icon: List,
       text: intl.formatMessage({ defaultMessage: "My summits" }),
       onPress: () => router.push("/user/summits"),
     },
     {
-      iconName: "backpack.fill",
+      icon: Backpack,
       text: intl.formatMessage({ defaultMessage: "My plans" }),
       onPress: () => router.push("/user/plans"),
       showDot: hasUnreadMessages,
     },
     {
-      iconName: "flag.fill",
+      icon: Flag,
       text: intl.formatMessage({ defaultMessage: "My challenges" }),
       onPress: () => router.push("/user/challenges"),
     },
     {
-      iconName: "info.circle.fill",
+      icon: Info,
       text: intl.formatMessage({ defaultMessage: "About the app" }),
       onPress: () => router.push("/user/about-the-app"),
     },
     {
-      iconName: "text.bubble.fill",
+      icon: MessageCircle,
       text: intl.formatMessage({ defaultMessage: "Help & Suggestions" }),
       onPress: () => router.push("/user/suggestions"),
     },
@@ -76,19 +96,19 @@ export default function UserIndexScreen() {
               <ThemedText className="text-muted-foreground">
                 <FormattedMessage defaultMessage="Your profile" />
               </ThemedText>
-              <Icon name="arrow.forward" size={12} weight="bold" muted />
+              <LucideIcon icon={ArrowRight} size={12} muted />
             </View>
           </Link>
         </View>
         <View className="mb-4 rounded border-2 border-border">
-          {items.map(({ iconName, showDot, text, onPress }, index) => (
+          {items.map(({ icon, showDot, text, onPress }, index) => (
             <Fragment key={text}>
               <TouchableOpacity
                 onPress={onPress}
                 className="justify-center p-4"
               >
                 <View className="flex-row items-center gap-4">
-                  <Icon name={iconName} />
+                  <LucideIcon icon={icon} />
                   <ThemedText className="text-xl font-semibold">
                     {text}
                   </ThemedText>
@@ -96,7 +116,7 @@ export default function UserIndexScreen() {
                     <View className="-ml-2 size-3 rounded-full bg-primary" />
                   )}
                   <View className="ml-auto opacity-25">
-                    <Icon name="chevron.right" weight="semibold" size={16} />
+                    <LucideIcon icon={ChevronRight} size={16} />
                   </View>
                 </View>
               </TouchableOpacity>
@@ -106,9 +126,32 @@ export default function UserIndexScreen() {
             </Fragment>
           ))}
         </View>
-        <View className="mb-4">
-          <MerchUpsellCard onPress={() => router.push("/support")} />
-        </View>
+        <TouchableOpacity
+          onPress={() => router.push("/support")}
+          className="mb-4"
+        >
+          <LinearGradient
+            colors={[Colors.light.primary, Colors.light.accent]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={{ borderRadius: 6, padding: 2 }}
+          >
+            <View
+              className="justify-center bg-background p-4"
+              style={{ borderRadius: 4 }}
+            >
+              <View className="flex-row items-center gap-4">
+                <LucideIcon icon={Heart} color={Colors.light.primary} />
+                <ThemedText className="text-xl font-semibold text-primary">
+                  <FormattedMessage defaultMessage="Support Cims" />
+                </ThemedText>
+                <View className="ml-auto opacity-25">
+                  <LucideIcon icon={ChevronRight} size={16} />
+                </View>
+              </View>
+            </View>
+          </LinearGradient>
+        </TouchableOpacity>
         <View className="mt-auto pb-12">
           <ThemedText className="text-center text-muted-foreground">
             <FormattedMessage defaultMessage="Version" />

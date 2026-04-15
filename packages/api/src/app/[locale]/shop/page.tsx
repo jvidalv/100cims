@@ -11,7 +11,7 @@ import { getLocalizedAlternates } from "@/lib/hreflang";
 import { getActiveMerch } from "@/lib/merch-helpers";
 import { formatPrice, localizeMerch } from "@/lib/merch-format";
 
-const HERO_IMAGE = CHALLENGE_CONTENT["100-cims"].heroImageUrl;
+const HERO_IMAGE = CHALLENGE_CONTENT["100-cims"]?.heroImageUrl ?? null;
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -44,14 +44,16 @@ export default async function ShopPage({ params }: Props) {
       <main className="flex-1">
         {/* Hero */}
         <section className="relative overflow-hidden border-b border-border/40">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={HERO_IMAGE}
-            alt=""
-            aria-hidden
-            fetchPriority="high"
-            className="absolute inset-0 w-full h-full object-cover"
-          />
+          {HERO_IMAGE ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={HERO_IMAGE}
+              alt=""
+              aria-hidden
+              fetchPriority="high"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          ) : null}
           <div className="absolute inset-0 bg-gradient-to-b from-background via-background/80 to-background" />
           <div className="relative max-w-6xl mx-auto px-4 py-24 sm:py-32">
             <p className="text-sm font-semibold tracking-widest uppercase text-primary mb-4">

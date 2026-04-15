@@ -1,6 +1,7 @@
 import { format } from "date-fns/format";
 import * as ImagePicker from "expo-image-picker";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { Camera } from "lucide-react-native";
 import { useState } from "react";
 import { useIntl, FormattedMessage } from "react-intl";
 import { Alert, ScrollView, TouchableOpacity, View, Image } from "react-native";
@@ -14,7 +15,7 @@ import {
   Button,
   ThemedText,
   ThemedView,
-  Icon,
+  LucideIcon,
 } from "@/components/ui/atoms";
 import { ScreenHeader } from "@/components/ui/molecules";
 import { useSummitPost } from "@/domains/mountain/mountain.api";
@@ -226,7 +227,7 @@ export default function PlanCompleteScreen() {
                         />
                       )}
                       <View className="absolute inset-0 items-center justify-center">
-                        <Icon name="camera" size={32} muted />
+                        <LucideIcon icon={Camera} size={32} muted />
                       </View>
                     </View>
                   )}

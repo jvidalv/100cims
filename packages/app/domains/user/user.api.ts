@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 
 import { queryClient } from "@/components/providers/query-client-provider";
@@ -75,6 +75,37 @@ export const useUserChallengeSummits = () => {
   return props;
 };
 
+export const useUserAllSummits = (
+  search: string = "",
+  sort: "recent" | "height" = "recent",
+) => {
+  const { isAuthenticated } = useAuth();
+
+  return useInfiniteQuery({
+    queryKey: userKeys.summitsAll(search, sort),
+    enabled: () => isAuthenticated,
+    initialPageParam: 1,
+    queryFn: async ({ pageParam }) => {
+      const { data, error } = await apiClient.GET(
+        "/api/protected/user/summits/all",
+        {
+          params: {
+            query: {
+              page: pageParam,
+              sort,
+              ...(search.length > 0 ? { q: search } : {}),
+            },
+          },
+        },
+      );
+      if (error) throw error;
+      return data.message;
+    },
+    getNextPageParam: (last) =>
+      last.pagination.hasMore ? last.pagination.page + 1 : undefined,
+  });
+};
+
 export const useUserOneGet = ({ userId }: { userId: string }) => {
   const props = useQuery({
     queryKey: userKeys.one(userId),
@@ -119,6 +150,21 @@ export const useUserProfile = ({ userId }: { userId: string }) => {
   });
 
   return props;
+};
+
+export const useUserPeople = () => {
+  const { isAuthenticated } = useAuth();
+  return useQuery({
+    queryKey: userKeys.people(),
+    enabled: () => isAuthenticated,
+    queryFn: async () => {
+      const { data, error } = await apiClient.GET(
+        "/api/protected/user/people",
+      );
+      if (error) throw error;
+      return data.message;
+    },
+  });
 };
 
 export const useUserChallenges = ({ userId }: { userId: string }) => {

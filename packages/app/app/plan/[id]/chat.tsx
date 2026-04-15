@@ -2,6 +2,7 @@ import { format } from "date-fns/format";
 import { isSameDay } from "date-fns/isSameDay";
 import * as Clipboard from "expo-clipboard";
 import { Link, useLocalSearchParams } from "expo-router";
+import { CircleHelp, Send } from "lucide-react-native";
 import { useColorScheme } from "nativewind";
 import { useEffect, useRef, useState, useMemo } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
@@ -17,8 +18,9 @@ import {
 } from "react-native";
 import { twMerge } from "tailwind-merge";
 
+
 import {
-  Icon,
+  LucideIcon,
   Avatar,
   ThemedKeyboardAvoidingView,
   ActivityIndicator,
@@ -98,7 +100,7 @@ export default function PlanChatPage() {
         <ScreenHeader
           rightElement={
             <Link href="/user/suggestions" className="pr-6">
-              <Icon name="questionmark.circle" />
+              <LucideIcon icon={CircleHelp} />
             </Link>
           }
         >
@@ -208,8 +210,8 @@ export default function PlanChatPage() {
                 {isSendingMessage ? (
                   <ActivityIndicator color="white" />
                 ) : (
-                  <Icon
-                    name="paperplane"
+                  <LucideIcon
+                    icon={Send}
                     muted={!message}
                     color={!!message ? "white" : undefined}
                   />

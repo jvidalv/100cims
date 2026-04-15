@@ -1,4 +1,5 @@
 import { Link, Redirect, useRouter } from "expo-router";
+import { Plus, Star } from "lucide-react-native";
 import { useCallback, useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
@@ -13,7 +14,7 @@ import { twMerge } from "tailwind-merge";
 import { useAuth } from "@/components/providers/auth-provider";
 import {
   ActivityIndicator,
-  Icon,
+  LucideIcon,
   Skeleton,
   ThemedText,
   ThemedView,
@@ -28,7 +29,6 @@ import { countryToEmoji } from "@/domains/challenge/challenge.model";
 import { useCommunityChallengesList } from "@/domains/community-challenge/community-challenge.api";
 import { useMyMountains } from "@/domains/mountain/mountain.api";
 import { useUpdateUserMeMutation } from "@/domains/user/user.api";
-import { isAndroid } from "@/lib/device";
 import { MountainWithChallengeCount } from "@/types/mountain";
 
 type Tab = "challenges" | "mountains";
@@ -139,11 +139,7 @@ export default function UserChallengesScreen() {
               <ThemedText>
                 <FormattedMessage defaultMessage="New" />
               </ThemedText>
-              <Icon
-                name="plus"
-                size={isAndroid ? 22 : 14}
-                animationSpec={{ effect: { type: "bounce" } }}
-              />
+              <LucideIcon icon={Plus} size={18} />
             </TouchableOpacity>
           </Link>
         )}
@@ -185,12 +181,7 @@ export default function UserChallengesScreen() {
           {!isPendingChallenges && !challenges?.length && (
             <View className="relative mt-auto rounded border-2 border-border p-4">
               <View className="absolute right-2 top-2">
-                <Icon
-                  name="star.fill"
-                  color="gold"
-                  size={24}
-                  animationSpec={{ effect: { type: "bounce" } }}
-                />
+                <LucideIcon icon={Star} color="gold" size={24} />
               </View>
               <ThemedText className="mb-1 font-semibold">
                 <FormattedMessage defaultMessage="Do you know?" />
@@ -212,6 +203,8 @@ export default function UserChallengesScreen() {
                   name={item.name}
                   emoji={item.emoji || countryToEmoji(item.country)}
                   peakImageUrl={item.peakImageUrl}
+                  totalMountains={item.totalMountains}
+                  totalUsers={item.totalUsers}
                   index={index}
                   isSelected={activeChallenge?.id === item.id}
                   onPress={() => onChallengeSelect(item.id)}
@@ -224,13 +217,6 @@ export default function UserChallengesScreen() {
                   rightElement={
                     isUpdating && variables?.activeChallengeId === item.id ? (
                       <ActivityIndicator className="opacity-30" />
-                    ) : Number(item.totalUsers) > 0 ? (
-                      <View className="flex-row items-center gap-1">
-                        <ThemedText className="font-medium text-muted-foreground">
-                          {item.totalUsers}
-                        </ThemedText>
-                        <Icon name="person.2.fill" muted size={18} />
-                      </View>
                     ) : null
                   }
                 />
@@ -249,6 +235,8 @@ export default function UserChallengesScreen() {
                   name={item.name}
                   emoji={item.emoji || countryToEmoji(item.country)}
                   peakImageUrl={item.peakImageUrl}
+                  totalMountains={item.totalMountains}
+                  totalUsers={item.totalUsers}
                   index={publicChallenges.length + index}
                   isSelected={activeChallenge?.id === item.id}
                   onPress={() => onChallengeSelect(item.id)}
@@ -261,13 +249,6 @@ export default function UserChallengesScreen() {
                   rightElement={
                     isUpdating && variables?.activeChallengeId === item.id ? (
                       <ActivityIndicator className="opacity-30" />
-                    ) : Number(item.totalUsers) > 0 ? (
-                      <View className="flex-row items-center gap-1">
-                        <ThemedText className="font-medium text-muted-foreground">
-                          {item.totalUsers}
-                        </ThemedText>
-                        <Icon name="person.2.fill" muted size={18} />
-                      </View>
                     ) : null
                   }
                 />
@@ -292,12 +273,7 @@ export default function UserChallengesScreen() {
         <View className="px-6">
           <View className="relative rounded border-2 border-border p-4">
             <View className="absolute right-2 top-2">
-              <Icon
-                name="star.fill"
-                color="gold"
-                size={24}
-                animationSpec={{ effect: { type: "bounce" } }}
-              />
+              <LucideIcon icon={Star} color="gold" size={24} />
             </View>
             <ThemedText className="mb-1 font-semibold">
               <FormattedMessage defaultMessage="Do you know?" />

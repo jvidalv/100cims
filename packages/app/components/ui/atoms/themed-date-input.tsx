@@ -1,12 +1,13 @@
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { isValid } from "date-fns/isValid";
+import { Calendar } from "lucide-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { FormattedMessage } from "react-intl";
 import { Platform, Pressable, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
 import { Button } from "@/components/ui/atoms/button";
-import { Icon } from "@/components/ui/atoms/icon";
+import { LucideIcon } from "@/components/ui/atoms/lucide-icon";
 import { ThemedText } from "@/components/ui/atoms/themed-text";
 import { BottomDrawer } from "@/components/ui/molecules/bottom-drawer";
 
@@ -115,7 +116,7 @@ export const ThemedDateInput = ({
         )}
       >
         <View className="absolute left-4 h-full items-center justify-center">
-          <Icon name="calendar" size={20} muted />
+          <LucideIcon icon={Calendar} size={20} muted />
         </View>
         <View className="flex-row items-center py-2">
           <ThemedText

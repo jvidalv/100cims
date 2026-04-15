@@ -2,8 +2,10 @@ import { forwardRef, ReactNode } from "react";
 import { TouchableOpacity, TouchableOpacityProps, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
-import { Icon, IconSymbolName, ThemedText } from "@/components/ui/atoms";
+import { LucideIcon as LucideIconView, ThemedText } from "@/components/ui/atoms";
 import { Colors } from "@/constants/colors";
+
+import type { LucideIcon } from "lucide-react-native";
 
 export type ActionRowIntent =
   | "primary"
@@ -43,7 +45,7 @@ const INTENT_STYLES: Record<
 };
 
 type Props = {
-  iconName: IconSymbolName;
+  icon: LucideIcon;
   intent?: ActionRowIntent;
   iconSize?: number;
   badge?: boolean;
@@ -55,7 +57,7 @@ type Props = {
 export const ActionRow = forwardRef<View, Props>(
   (
     {
-      iconName,
+      icon,
       intent = "muted",
       iconSize = 16,
       badge,
@@ -82,7 +84,11 @@ export const ActionRow = forwardRef<View, Props>(
           )}
         >
           {iconOverride ?? (
-            <Icon name={iconName} size={iconSize} color={styles.iconColor} />
+            <LucideIconView
+              icon={icon}
+              size={iconSize}
+              color={styles.iconColor}
+            />
           )}
           {badge && (
             <View className="absolute -right-0.5 -top-0.5 size-3 rounded-full bg-primary" />

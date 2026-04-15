@@ -28,5 +28,10 @@
   "engines": {
     "node": ">=18.0.0",
     "yarn": ">=1.22.19"
+  },
+  "dependencies": {
+    "expo": "~55.0.14",
+    "react": "19.2.0",
+    "react-native": "0.83.4"
   }
 }

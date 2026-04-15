@@ -59,8 +59,14 @@
   "3MGPGB": {
     "defaultMessage": "Dark theme?"
   },
+  "3a5wL8": {
+    "defaultMessage": "Active"
+  },
   "3dqsvA": {
     "defaultMessage": "Donors"
+  },
+  "3f6HhZ": {
+    "defaultMessage": "When you summit with other cims users, they'll appear here."
   },
   "3wJHrF": {
     "defaultMessage": "Join plan"
@@ -140,9 +146,6 @@
   "9RZWmW": {
     "defaultMessage": "Participants will be notified."
   },
-  "9atgUj": {
-    "defaultMessage": "Select product"
-  },
   "9cfIxB": {
     "defaultMessage": "My mountains"
   },
@@ -154,6 +157,9 @@
   },
   "AD7tFG": {
     "defaultMessage": "Error, try again."
+  },
+  "ADKef8": {
+    "defaultMessage": "Add to cart"
   },
   "AKQuur": {
     "defaultMessage": "Any mountains?"
@@ -200,6 +206,12 @@
   "Dlpujw": {
     "defaultMessage": "You decide who comes, don't worry about removing users that joined if you feel like it."
   },
+  "DtYaOc": {
+    "defaultMessage": "Recent first"
+  },
+  "Dxd1uB": {
+    "defaultMessage": "Shop"
+  },
   "E1EEy4": {
     "defaultMessage": "Error, try again or use another image."
   },
@@ -241,6 +253,9 @@
   },
   "H5v61s": {
     "defaultMessage": "Set plan date"
+  },
+  "HV9rgD": {
+    "defaultMessage": "Product not found"
   },
   "HaD+k2": {
     "defaultMessage": "For you to know"
@@ -341,6 +356,9 @@
   "OKhRC6": {
     "defaultMessage": "Share"
   },
+  "ObEm2I": {
+    "defaultMessage": "Highest first"
+  },
   "Oj1HSZ": {
     "defaultMessage": "No extra information added."
   },
@@ -365,8 +383,8 @@
   "Pe0ogR": {
     "defaultMessage": "Theme"
   },
-  "PoX2HN": {
-    "defaultMessage": "Send request"
+  "Q0rG1w": {
+    "defaultMessage": "My people"
   },
   "Q8Qw5B": {
     "defaultMessage": "Description"
@@ -443,6 +461,9 @@
   "Xai36g": {
     "defaultMessage": "Cancel this plan?"
   },
+  "Y8lhVt": {
+    "defaultMessage": "Add people"
+  },
   "YdQ8KR": {
     "defaultMessage": "No results, please change the search."
   },
@@ -469,6 +490,9 @@
   },
   "aiy3+p": {
     "defaultMessage": "Type to search."
+  },
+  "aq+9m8": {
+    "defaultMessage": "No people yet"
   },
   "aqAp+n": {
     "defaultMessage": "Delete summit"
@@ -575,6 +599,9 @@
   "icHbvn": {
     "defaultMessage": "All summits"
   },
+  "ihTd0A": {
+    "defaultMessage": "No summits match \"{query}\""
+  },
   "itPgxd": {
     "defaultMessage": "Profile"
   },
@@ -616,6 +643,9 @@
   },
   "nEbAUi": {
     "defaultMessage": "This screen does not exist."
+  },
+  "nNIocP": {
+    "defaultMessage": "{count} cims"
   },
   "nOxI4K": {
     "defaultMessage": "Product engineer"
@@ -664,6 +694,9 @@
   },
   "qvc9uM": {
     "defaultMessage": "This cannot be undone."
+  },
+  "r+6lRr": {
+    "defaultMessage": "You haven't summited any mountains yet."
   },
   "rO8WR3": {
     "defaultMessage": "Country/Region is required"
@@ -734,6 +767,9 @@
   "w6oJwY": {
     "defaultMessage": "One summit of 1000 meters ="
   },
+  "wEQDC6": {
+    "defaultMessage": "Edit"
+  },
   "wL7VAE": {
     "defaultMessage": "Actions"
   },
@@ -748,6 +784,9 @@
   },
   "wyxJrL": {
     "defaultMessage": "Delete account"
+  },
+  "x/ZVlU": {
+    "defaultMessage": "Product"
   },
   "x4j+4r": {
     "defaultMessage": "Nearby summits"
@@ -778,9 +817,6 @@
   },
   "z5Ppf1": {
     "defaultMessage": "Member of cims for {duration}"
-  },
-  "zHXK/y": {
-    "defaultMessage": "Thanks for supporting Cims! We will contact you soon."
   },
   "zQvVDJ": {
     "defaultMessage": "All"

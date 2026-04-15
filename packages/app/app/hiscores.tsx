@@ -1,4 +1,5 @@
 import { Link, useRouter } from "expo-router";
+import { ArrowRight, Info, Mountain } from "lucide-react-native";
 import { useEffect } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { ActivityIndicator, TouchableOpacity, View } from "react-native";
@@ -11,11 +12,12 @@ import Animated, {
 } from "react-native-reanimated";
 import { twMerge } from "tailwind-merge";
 
+
 import {
   ThemedView,
   ThemedText,
   Avatar,
-  Icon,
+  LucideIcon,
   Skeleton,
 } from "@/components/ui/atoms";
 import { BottomDrawer, ScreenHeader } from "@/components/ui/molecules";
@@ -104,7 +106,7 @@ export default function HiscoresScreen() {
                 className="-mt-1"
                 onPress={() => setIsOpen((o) => !o)}
               >
-                <Icon name="info.circle.fill" size={20} muted />
+                <LucideIcon icon={Info} size={20} muted />
               </TouchableOpacity>
               <BottomDrawer
                 isOpen={isOpen}
@@ -139,9 +141,8 @@ export default function HiscoresScreen() {
                   <ThemedText className="font-medium text-primary">
                     <FormattedMessage defaultMessage="I want to be visible on the hiscores" />
                   </ThemedText>
-                  <Icon
-                    name="arrow.forward"
-                    weight="medium"
+                  <LucideIcon
+                    icon={ArrowRight}
                     size={16}
                     color={Colors.dark.primary}
                   />
@@ -224,7 +225,7 @@ export default function HiscoresScreen() {
                   <View className="flex-row items-center gap-2">
                     <View className="flex-row items-center gap-1 rounded border-2 border-border px-2 py-1">
                       <View className="mr-1">
-                        <Icon name="mountain.2.fill" muted size={18} />
+                        <LucideIcon icon={Mountain} muted size={18} />
                       </View>
                       <ThemedText>{uniquePeaksCount}</ThemedText>
                       <ThemedText className="font-medium text-muted-foreground">

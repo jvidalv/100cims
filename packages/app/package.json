@@ -15,8 +15,6 @@
     "translations:generate": "formatjs compile './translations/raw-en.json' --out-file translations/en.json",
     "translations": "yarn translations:extract && yarn translations:generate",
     "generate-api-types": "openapi-typescript http://localhost:3000/api/swagger/json -o ./types/api.ts",
-    "db:push": "EXPO_PUBLIC_API_URL=http://localhost:8081/ DATABASE_URL=postgresql://admin:admin@localhost:5433/cims npx drizzle-kit push",
-    "db:push:prod": "npx drizzle-kit push",
     "db:local:up": "docker-compose up -d",
     "build:development:ios": "npx expo run:ios",
     "build:development:android": "npx expo run:android"
@@ -25,7 +23,6 @@
     "preset": "jest-expo"
   },
   "dependencies": {
-    "@expo/vector-icons": "^15.1.1",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-community/datetimepicker": "8.6.0",
     "@react-native-google-signin/google-signin": "16.1.2",
@@ -59,10 +56,10 @@
     "expo-splash-screen": "~55.0.17",
     "expo-status-bar": "~55.0.5",
     "expo-store-review": "~55.0.13",
-    "expo-symbols": "~55.0.7",
     "expo-system-ui": "~55.0.15",
     "expo-updates": "~55.0.20",
     "expo-web-browser": "~55.0.14",
+    "lucide-react-native": "^1.8.0",
     "nativewind": "^5.0.0-preview.3",
     "openapi-fetch": "0.17.0",
     "react": "19.2.0",
@@ -77,6 +74,7 @@
     "react-native-reanimated": "^4.3.0",
     "react-native-safe-area-context": "^5.7.0",
     "react-native-screens": "^4.24.0",
+    "react-native-svg": "15.15.3",
     "react-native-view-shot": "^4.0.3",
     "react-native-web": "^0.21.0",
     "react-native-webview": "^13.16.1",

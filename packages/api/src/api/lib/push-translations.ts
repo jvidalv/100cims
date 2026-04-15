@@ -45,6 +45,26 @@ export const pushPlanLeft = (locale: string | null, name: string) =>
 export const pushPlanChat = (locale: string | null) =>
   planChat[normalizeAppLocale(locale)];
 
+const summitTaggedTitle = {
+  en: (mountainName: string) => `New summit of ${mountainName}`,
+  ca: (mountainName: string) => `Nou cim del ${mountainName}`,
+  es: (mountainName: string) => `Nueva cima del ${mountainName}`,
+} satisfies Record<AppLocale, (mountainName: string) => string>;
+
+const summitTaggedBody = {
+  en: (name: string) => `${name} added you to a summit`,
+  ca: (name: string) => `${name} t'ha afegit a un cim`,
+  es: (name: string) => `${name} te ha añadido a una cima`,
+} satisfies Record<AppLocale, (name: string) => string>;
+
+export const pushSummitTaggedTitle = (
+  locale: string | null,
+  mountainName: string,
+) => summitTaggedTitle[normalizeAppLocale(locale)](mountainName);
+
+export const pushSummitTaggedBody = (locale: string | null, name: string) =>
+  summitTaggedBody[normalizeAppLocale(locale)](name);
+
 export const pushMountainSuggestionTitle = (
   locale: string | null,
   km: number,

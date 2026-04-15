@@ -1,7 +1,9 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { ChevronUp, Map, MapPin } from "lucide-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { FlatList, View } from "react-native";
+
 
 import { useAuth } from "@/components/providers/auth-provider";
 import { ThemedView } from "@/components/ui/atoms";
@@ -98,13 +100,13 @@ export default function MountainsScreen() {
           {
             type: "closest-first",
             name: intl.formatMessage({ defaultMessage: "Closest first" }),
-            icon: "location.fill",
+            icon: MapPin,
             disabled: isMapView,
           },
           {
             type: "higher-first",
             name: intl.formatMessage({ defaultMessage: "Higher first" }),
-            icon: "chevron.up",
+            icon: ChevronUp,
             disabled: isMapView,
           },
         ],
@@ -133,7 +135,7 @@ export default function MountainsScreen() {
       {
         type: "map",
         name: intl.formatMessage({ defaultMessage: "Map" }),
-        icon: "map.fill",
+        icon: Map,
       },
       {
         type: "essentials",

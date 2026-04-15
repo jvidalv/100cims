@@ -11,8 +11,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   type AdminUserUpdateBody,
+  useAddAdminUserPerson,
   useAdminUserDetail,
+  useAdminUserPeople,
+  useAdminUsers,
   useAdminUserSummits,
+  useRemoveAdminUserPerson,
   useUpdateAdminUser,
 } from "@/domains/admin/api";
 import { formatDate, formatDateTime } from "@/lib/format-date";
@@ -55,6 +59,19 @@ export default function AdminUserDetailPage({
     parseAsInteger.withDefault(1),
   );
   const summits = useAdminUserSummits(id, summitsPage);
+
+  const people = useAdminUserPeople(id);
+  const addPerson = useAddAdminUserPerson(id);
+  const removePerson = useRemoveAdminUserPerson(id);
+  const [personSearch, setPersonSearch] = useState("");
+  const personSearchResults = useAdminUsers({
+    page: 1,
+    q: personSearch,
+    country: "",
+    platform: "",
+    version: "",
+    sort: "",
+  });
 
   const [form, setForm] = useState<Form>(emptyForm);
   const [initial, setInitial] = useState<Form>(emptyForm);
@@ -355,6 +372,142 @@ export default function AdminUserDetailPage({
               </div>
             )}
           </>
+        )}
+      </section>
+
+      <section className="space-y-3">
+        <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+          People {people.data ? `(${people.data.length})` : ""}
+        </h2>
+
+        <div className="flex gap-2 items-start">
+          <div className="flex-1 relative">
+            <Input
+              value={personSearch}
+              onChange={(e) => setPersonSearch(e.target.value)}
+              placeholder="Search by name, username or email…"
+            />
+            {personSearch.length > 1 &&
+              personSearchResults.data?.items &&
+              personSearchResults.data.items.length > 0 && (
+                <div className="absolute z-10 mt-1 w-full rounded-md border bg-background shadow-lg max-h-60 overflow-y-auto">
+                  {personSearchResults.data.items
+                    .filter(
+                      (u) =>
+                        u.id !== id &&
+                        !people.data?.some((p) => p.userId === u.id),
+                    )
+                    .slice(0, 10)
+                    .map((u) => (
+                      <button
+                        key={u.id}
+                        type="button"
+                        className="flex w-full items-center gap-2 px-3 py-2 hover:bg-muted text-left"
+                        onClick={() => {
+                          addPerson.mutate(u.id, {
+                            onSuccess: () => {
+                              setPersonSearch("");
+                              toast.success("Person added");
+                            },
+                            onError: (err) =>
+                              toast.error(err.message ?? "Add failed"),
+                          });
+                        }}
+                      >
+                        <Avatar className="size-6">
+                          <AvatarImage src={u.imageUrl ?? undefined} />
+                          <AvatarFallback>
+                            {(u.firstName ?? u.username ?? "?")
+                              .slice(0, 1)
+                              .toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className="text-sm">
+                          {u.firstName} {u.lastName}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          @{u.username}
+                        </span>
+                      </button>
+                    ))}
+                </div>
+              )}
+          </div>
+        </div>
+
+        {people.error && <p className="text-red-600">{people.error.message}</p>}
+        {people.isLoading && !people.data && (
+          <p className="text-muted-foreground">Loading…</p>
+        )}
+
+        {people.data && (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b text-left">
+                  <th className="py-2 pr-4 font-medium">User</th>
+                  <th className="py-2 pr-4 font-medium">Email</th>
+                  <th className="py-2 pr-4 font-medium">Connected</th>
+                  <th className="py-2 pr-4 font-medium" />
+                </tr>
+              </thead>
+              <tbody>
+                {people.data.map((p) => (
+                  <tr key={p.userId} className="border-b">
+                    <td className="py-2 pr-4">
+                      <Link
+                        href={`/admin/users/${p.userId}`}
+                        className="flex items-center gap-2 hover:underline"
+                      >
+                        <Avatar className="size-6">
+                          <AvatarImage src={p.imageUrl ?? undefined} />
+                          <AvatarFallback>
+                            {(p.firstName ?? p.email ?? "?")
+                              .slice(0, 1)
+                              .toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span>
+                          {p.firstName} {p.lastName}
+                        </span>
+                      </Link>
+                    </td>
+                    <td className="py-2 pr-4 text-muted-foreground">
+                      {p.email}
+                    </td>
+                    <td className="py-2 pr-4 text-muted-foreground">
+                      {formatDateTime(p.connectedAt)}
+                    </td>
+                    <td className="py-2 pr-4 text-right">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => {
+                          removePerson.mutate(p.userId, {
+                            onSuccess: () => toast.success("Removed"),
+                            onError: (err) =>
+                              toast.error(err.message ?? "Remove failed"),
+                          });
+                        }}
+                      >
+                        Remove
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+                {people.data.length === 0 && (
+                  <tr>
+                    <td
+                      colSpan={4}
+                      className="py-8 text-center text-muted-foreground"
+                    >
+                      No people yet.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         )}
       </section>
     </div>

@@ -35,6 +35,9 @@ import { adminSummitDetailGetRoute } from "@/api/routes/admin/admin.summit-detai
 import { adminSummitUpdatePostRoute } from "@/api/routes/admin/admin.summit-update.post";
 import { adminSummitsGetRoute } from "@/api/routes/admin/admin.summits.get";
 import { adminUserDetailGetRoute } from "@/api/routes/admin/admin.user-detail.get";
+import { adminUserPeopleGetRoute } from "@/api/routes/admin/admin.user-people.get";
+import { adminUserPersonAddPostRoute } from "@/api/routes/admin/admin.user-person-add.post";
+import { adminUserPersonRemoveDeleteRoute } from "@/api/routes/admin/admin.user-person-remove.delete";
 import { adminUserSummitsGetRoute } from "@/api/routes/admin/admin.user-summits.get";
 import { adminUserUpdatePostRoute } from "@/api/routes/admin/admin.user-update.post";
 import { adminUsersGetRoute } from "@/api/routes/admin/admin.users.get";
@@ -72,6 +75,9 @@ export const adminRoutes = new Elysia({ prefix: "/admin" })
   .use(adminUserDetailGetRoute)
   .use(adminUserUpdatePostRoute)
   .use(adminUserSummitsGetRoute)
+  .use(adminUserPeopleGetRoute)
+  .use(adminUserPersonAddPostRoute)
+  .use(adminUserPersonRemoveDeleteRoute)
   .use(adminMountainsGetRoute)
   .use(adminMountainDetailGetRoute)
   .use(adminMountainUpdatePostRoute)

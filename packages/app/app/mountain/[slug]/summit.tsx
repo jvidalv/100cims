@@ -1,6 +1,7 @@
 import * as ImagePicker from "expo-image-picker";
 import { ImagePickerAsset } from "expo-image-picker";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { Camera } from "lucide-react-native";
 import { useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Alert, Image, ScrollView, TouchableOpacity, View } from "react-native";
@@ -9,7 +10,7 @@ import { queryClient } from "@/components/providers/query-client-provider";
 import {
   ActivityIndicator,
   Button,
-  Icon,
+  LucideIcon,
   ThemedText,
   ThemedView,
 } from "@/components/ui/atoms";
@@ -197,14 +198,7 @@ export default function SummitMountainScreen() {
                     {isLoadingImage ? (
                       <ActivityIndicator className="opacity-50" />
                     ) : (
-                      <Icon
-                        name="camera"
-                        size={32}
-                        muted
-                        animationSpec={{
-                          effect: { type: "bounce" },
-                        }}
-                      />
+                      <LucideIcon icon={Camera} size={32} muted />
                     )}
                   </View>
                 </View>

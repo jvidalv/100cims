@@ -5,8 +5,10 @@ import { FormattedMessage, useIntl } from "react-intl";
 import { View, TouchableOpacity, Image, Pressable } from "react-native";
 import { twMerge } from "tailwind-merge";
 
+import { BadgeCheck, Info, ShoppingBag } from "lucide-react-native";
+
 import { useAuth } from "@/components/providers/auth-provider";
-import { Button, Icon, ThemedText } from "@/components/ui/atoms";
+import { Button, LucideIcon, ThemedText } from "@/components/ui/atoms";
 import { ImagePreviewModal, useImagePreview } from "@/components/ui/molecules";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
 import { useMerch } from "@/domains/merch/merch.api";
@@ -117,7 +119,7 @@ export default function SupportScreen() {
 
       {/* Monthly costs info */}
       <View className="mb-6 flex-row items-center gap-3 rounded bg-amber-500/10 p-4">
-        <Icon name="info.circle.fill" size={24} color="#f59e0b" />
+        <LucideIcon icon={Info} size={24} color="#f59e0b" />
         <ThemedText className="flex-1 text-sm">
           <FormattedMessage defaultMessage="Monthly costs of maintaining Cims: 50€. Your support helps keep the app running!" />
         </ThemedText>
@@ -170,7 +172,7 @@ export default function SupportScreen() {
               </Pressable>
             ) : (
               <View className="size-16 items-center justify-center rounded bg-border">
-                <Icon name="bag" size={24} muted />
+                <LucideIcon icon={ShoppingBag} size={24} muted />
               </View>
             )}
             <ThemedText className="flex-1 font-medium">
@@ -223,7 +225,7 @@ export default function SupportScreen() {
       {/* Success Message */}
       {isSubmitted && (
         <View className="mt-4 flex-row items-center gap-3 rounded bg-emerald-500/10 p-4">
-          <Icon name="checkmark.seal.fill" size={24} color="#10b981" />
+          <LucideIcon icon={BadgeCheck} size={24} color="#10b981" />
           <ThemedText className="flex-1 text-sm text-emerald-600 dark:text-emerald-400">
             <FormattedMessage defaultMessage="Thanks for supporting Cims! We will contact you soon." />
           </ThemedText>

@@ -103,6 +103,49 @@ export const useAdminUserSummits = (id: string, page: number) =>
     placeholderData: (prev) => prev,
   });
 
+export const useAdminUserPeople = (id: string) =>
+  useQuery({
+    queryKey: adminKeys.userPeople(id),
+    queryFn: async () => {
+      const { data, error } = await api.api.admin.users({ id }).people.get();
+      if (error) throw error;
+      return data.message;
+    },
+  });
+
+export const useAddAdminUserPerson = (id: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (personUserId: string) => {
+      const { data, error } = await api.api.admin
+        .users({ id })
+        .people.post({ personUserId });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: adminKeys.userPeople(id) });
+    },
+  });
+};
+
+export const useRemoveAdminUserPerson = (id: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (personUserId: string) => {
+      const { data, error } = await api.api.admin
+        .users({ id })
+        .people({ personUserId })
+        .delete();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: adminKeys.userPeople(id) });
+    },
+  });
+};
+
 export const useAdminMountains = ({ page, q }: { page: number; q: string }) =>
   useQuery({
     queryKey: adminKeys.mountains({ page, q }),

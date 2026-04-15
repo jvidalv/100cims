@@ -6,7 +6,7 @@ export { ThemedText } from "./themed-text";
 export { ThemedTextInput } from "./themed-text-input";
 export { ThemedDateInput } from "./themed-date-input";
 export { ThemedKeyboardAvoidingView } from "./themed-keyboard-avoiding-view";
-export { Icon, IconSymbolName } from "./icon";
+export { LucideIcon } from "./lucide-icon";
 export { SearchInput } from "./search-input";
 export { ActivityIndicator } from "./activity-indicator";
 export { ThemedToggleInput } from "./themed-toggle-input";
