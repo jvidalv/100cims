@@ -134,6 +134,9 @@
   "7Ni8Cl": {
     "defaultMessage": "No plans found for given status."
   },
+  "7qOQpv": {
+    "defaultMessage": "Select a date"
+  },
   "7wLcIi": {
     "defaultMessage": "Plans have an internal chat, but we recommend that you all share your phone number once ready."
   },
@@ -266,6 +269,9 @@
   "FDVuFX": {
     "defaultMessage": "You can now create more plans and share them!"
   },
+  "FS5//y": {
+    "defaultMessage": "{count} of {total}"
+  },
   "Ff9qrH": {
     "defaultMessage": "Can’t find someone? They may have “Visible on people search” turned off in their profile — ask them to enable it."
   },
@@ -391,9 +397,6 @@
   },
   "NozjOy": {
     "defaultMessage": "Color: {color}"
-  },
-  "Ntjkqd": {
-    "defaultMessage": "or"
   },
   "NyrFn7": {
     "defaultMessage": "Also unblock..."
@@ -928,6 +931,9 @@
   },
   "xkgeNE": {
     "defaultMessage": "Activity title"
+  },
+  "y1Z3or": {
+    "defaultMessage": "Language"
   },
   "y5oyGg": {
     "defaultMessage": "View on maps"

@@ -2,7 +2,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { isValid } from "date-fns/isValid";
 import { Calendar } from "lucide-react-native";
 import { useEffect, useMemo, useState } from "react";
-import { FormattedMessage } from "react-intl";
+import { FormattedDate, FormattedMessage } from "react-intl";
 import { Platform, Pressable, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
@@ -73,17 +73,6 @@ export const ThemedDateInput = ({
       : null;
   }, [d, isComplete, m, y]);
 
-  const Separator = () => (
-    <ThemedText
-      className={twMerge(
-        "text-muted-foreground",
-        isComplete && !parsedDate && "text-red-500",
-      )}
-    >
-      /
-    </ThemedText>
-  );
-
   const handleDateChange = (event: { type: string }, selectedDate?: Date) => {
     if (event.type === "set" && selectedDate) {
       const today = new Date();
@@ -110,7 +99,7 @@ export const ThemedDateInput = ({
       <Pressable
         onPress={() => setShowPicker(true)}
         className={twMerge(
-          "border-2 border-border justify-center rounded py-3 pl-10 relative",
+          "border-2 border-border justify-center rounded py-3 pl-12 relative",
           isComplete && !parsedDate && "border-red-500",
           className,
         )}
@@ -118,33 +107,26 @@ export const ThemedDateInput = ({
         <View className="absolute left-4 h-full items-center justify-center">
           <LucideIcon icon={Calendar} size={20} muted />
         </View>
-        <View className="flex-row items-center py-2">
-          <ThemedText
-            className={twMerge(
-              "text-foreground font-medium w-12 text-right pr-4",
-              !day && "text-muted-foreground",
-            )}
-          >
-            {day || "dd"}
-          </ThemedText>
-          <Separator />
-          <ThemedText
-            className={twMerge(
-              "text-foreground font-medium w-12 text-center px-1",
-              !month && "text-muted-foreground",
-            )}
-          >
-            {month || "mm"}
-          </ThemedText>
-          <Separator />
-          <ThemedText
-            className={twMerge(
-              "text-foreground font-medium pl-4 flex-1",
-              !year && "text-muted-foreground",
-            )}
-          >
-            {year || "yyyy"}
-          </ThemedText>
+        <View className="py-2">
+          {parsedDate ? (
+            <ThemedText className="font-medium capitalize">
+              <FormattedDate
+                value={parsedDate}
+                day="numeric"
+                month="long"
+                year="numeric"
+              />
+            </ThemedText>
+          ) : (
+            <ThemedText
+              className={twMerge(
+                "font-medium text-muted-foreground",
+                isComplete && !parsedDate && "text-red-500",
+              )}
+            >
+              <FormattedMessage defaultMessage="Select a date" />
+            </ThemedText>
+          )}
         </View>
       </Pressable>
       {Platform.OS === "ios" ? (

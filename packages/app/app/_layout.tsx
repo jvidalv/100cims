@@ -26,7 +26,7 @@ import { useLocation } from "@/hooks/use-location";
 import { setApiLocation, setAuthToken } from "@/lib/api-client";
 import { getJwt } from "@/lib/auth";
 import { isIpadOS } from "@/lib/device";
-import { getDateFnsLocale, getLocale } from "@/lib/locale";
+import { getDateFnsLocale, getLocale, initLocale } from "@/lib/locale";
 import ca from "@/translations/ca.json";
 import en from "@/translations/en.json";
 import es from "@/translations/es.json";
@@ -160,6 +160,14 @@ function RootProviders() {
 }
 
 export default function Root() {
+  const [localeReady, setLocaleReady] = useState(false);
+
+  useEffect(() => {
+    void initLocale().then(() => setLocaleReady(true));
+  }, []);
+
+  if (!localeReady) return null;
+
   return (
     <ThemeProvider>
       <RootProviders />

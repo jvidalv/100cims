@@ -60,32 +60,41 @@ export default function HiscoresScreen() {
   } = useHiscoresGet();
   const { data: challenge } = useActiveChallenge();
 
-  const hiscores = hiscoresData?.pages?.flatMap((p) => p?.items ?? []) ?? [];
-  const podium = hiscores.slice(0, 3);
-  const restOfList = hiscores.slice(3);
+  const hiscores = useMemo(
+    () => hiscoresData?.pages?.flatMap((p) => p?.items ?? []) ?? [],
+    [hiscoresData],
+  );
+  const podium = useMemo(() => hiscores.slice(0, 3), [hiscores]);
+  const restOfList = useMemo(() => hiscores.slice(3), [hiscores]);
 
-  const myHiscoreIndex = user
-    ? hiscores.findIndex((h) => h.userId === user.id)
-    : -1;
+  const myHiscoreIndex = useMemo(
+    () => (user ? hiscores.findIndex((h) => h.userId === user.id) : -1),
+    [hiscores, user],
+  );
 
   const [isOpen, setIsOpen] = useBottomDrawer();
   const isVisibleOnHiscores = user?.visibleOnHiscores;
 
   const listRef = useRef<FlatList<HiscoreItem>>(null);
-  const [firstViewableIndex, setFirstViewableIndex] = useState<number | null>(
-    null,
-  );
+  const [viewableRange, setViewableRange] = useState<{
+    first: number;
+    last: number;
+  } | null>(null);
 
   const onViewableItemsChanged = useRef(
     ({ viewableItems }: { viewableItems: ViewToken[] }) => {
-      let firstIdx: number | null = null;
+      let first: number | null = null;
+      let last: number | null = null;
       for (const v of viewableItems) {
-        if (firstIdx === null && typeof v.index === "number") {
-          firstIdx = v.index;
-          break;
-        }
+        if (typeof v.index !== "number") continue;
+        if (first === null || v.index < first) first = v.index;
+        if (last === null || v.index > last) last = v.index;
       }
-      setFirstViewableIndex((prev) => (prev === firstIdx ? prev : firstIdx));
+      setViewableRange((prev) => {
+        if (first === null || last === null) return prev === null ? prev : null;
+        if (prev && prev.first === first && prev.last === last) return prev;
+        return { first, last };
+      });
     },
   ).current;
 
@@ -120,23 +129,24 @@ export default function HiscoresScreen() {
     }
   }, [fetchNextPage, hasNextPage, hiscoresData, user]);
 
+  const myListIndex = myHiscoreIndex - 3;
   const isMyRowLoaded = myHiscoreIndex >= 0;
-  const isMyRowBelowViewport =
-    isMyRowLoaded &&
-    myHiscoreIndex >= 3 &&
-    firstViewableIndex !== null &&
-    myHiscoreIndex - 3 > firstViewableIndex;
+
   const isMyRowAboveViewport =
     isMyRowLoaded &&
-    firstViewableIndex !== null &&
-    (myHiscoreIndex < 3
-      ? firstViewableIndex > 0
-      : myHiscoreIndex - 3 < firstViewableIndex);
+    viewableRange !== null &&
+    (myListIndex < 0
+      ? viewableRange.first > 0
+      : myListIndex < viewableRange.first);
+  const isMyRowBelowViewport =
+    !isMyRowLoaded ||
+    (myListIndex >= 0 &&
+      viewableRange !== null &&
+      myListIndex > viewableRange.last);
 
   const showFab =
     !!user &&
     !!isVisibleOnHiscores &&
-    isMyRowLoaded &&
     (isMyRowBelowViewport || isMyRowAboveViewport);
 
   const scoreFormatter = useMemo(
@@ -168,6 +178,19 @@ export default function HiscoresScreen() {
           offset: ROW_HEIGHT * index,
           index,
         })}
+        onScrollToIndexFailed={({ index, averageItemLength }) => {
+          listRef.current?.scrollToOffset({
+            offset: index * (averageItemLength || ROW_HEIGHT),
+            animated: true,
+          });
+          setTimeout(() => {
+            listRef.current?.scrollToIndex({
+              index,
+              animated: true,
+              viewPosition: 0.3,
+            });
+          }, 100);
+        }}
         ListHeaderComponent={
           <ThemedView className="px-6 pb-4">
             <View className="flex-row items-center justify-between">

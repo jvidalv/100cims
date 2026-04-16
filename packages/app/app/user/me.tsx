@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/atoms";
 import { ScreenHeader } from "@/components/ui/molecules";
 import { AppIconPicker } from "@/components/user/app-icon-picker";
+import { LanguagePicker } from "@/components/user/language-picker";
 import { ThemePicker } from "@/components/user/theme-picker";
 import { useHiscoresGet } from "@/domains/hiscores/hiscores.api";
 import { SUMMITS_KEY } from "@/domains/summit/summit.api";
@@ -283,6 +284,7 @@ export default function UserMeScreen() {
               defaultValue={me.town}
               onChangeText={onChangeTown}
             />
+            <LanguagePicker />
           </View>
         )}
 
