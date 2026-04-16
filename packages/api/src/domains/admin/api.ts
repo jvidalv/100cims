@@ -73,6 +73,7 @@ export type AdminUserUpdateBody = {
   visibleOnHiscores?: boolean;
   visibleOnPeopleSearch?: boolean;
   admin?: boolean;
+  unlockables?: ("merch" | "share" | "forcat" | "picat")[];
 };
 
 export const useUpdateAdminUser = (id: string) => {

@@ -103,10 +103,12 @@ export function ChallengeListItem({
       {onEditPress && (
         <TouchableOpacity
           onPress={onEditPress}
-          className="flex-row items-center justify-center gap-2 rounded border-2 border-border py-2"
+          className="flex-row items-center gap-2"
         >
-          <LucideIcon icon={Pencil} size={16} muted />
-          <ThemedText className="font-medium text-muted-foreground">
+          <View className="size-8 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700">
+            <LucideIcon icon={Pencil} size={16} muted />
+          </View>
+          <ThemedText className="text-muted-foreground">
             <FormattedMessage defaultMessage="Edit" />
           </ThemedText>
         </TouchableOpacity>

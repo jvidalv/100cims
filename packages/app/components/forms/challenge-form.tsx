@@ -6,12 +6,10 @@ import {
   ThemedTextInput,
 } from "@/components/ui/atoms";
 import { ThemedToggleInput } from "@/components/ui/atoms/themed-toggle-input";
-import { EmojiPicker } from "@/components/ui/molecules";
 
 export type ChallengeFormData = {
   name: string;
   country: string;
-  emoji: string;
   description: string;
   isPublic: boolean;
 };
@@ -41,19 +39,11 @@ export function ChallengeForm({ data, onChange, children }: ChallengeFormProps) 
         onChangeText={(value) => handleChange("name", value)}
       />
 
-      <View className="flex-row items-end gap-3">
-        <EmojiPicker
-          value={data.emoji}
-          onSelect={(value) => handleChange("emoji", value)}
-        />
-        <View className="flex-1">
-          <ThemedTextInput
-            label={intl.formatMessage({ defaultMessage: "Country/Region" })}
-            value={data.country}
-            onChangeText={(value) => handleChange("country", value)}
-          />
-        </View>
-      </View>
+      <ThemedTextInput
+        label={intl.formatMessage({ defaultMessage: "Country/Region" })}
+        value={data.country}
+        onChangeText={(value) => handleChange("country", value)}
+      />
 
       <ThemedTextInput
         label={intl.formatMessage({ defaultMessage: "Description" })}

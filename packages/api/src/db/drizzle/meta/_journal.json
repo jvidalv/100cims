@@ -176,6 +176,20 @@
       "when": 1776324022546,
       "tag": "0024_merge-merch-colors",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1776335735414,
+      "tag": "0025_add_unlockables",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1776335781330,
+      "tag": "0026_backfill_summit_unlockables",
+      "breakpoints": true
     }
   ]
 }

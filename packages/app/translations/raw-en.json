@@ -50,6 +50,9 @@
   "25oM9Q": {
     "defaultMessage": "Sort"
   },
+  "2E0xhC": {
+    "defaultMessage": "Share Cims with a friend."
+  },
   "2YBqTq": {
     "defaultMessage": "Mountains"
   },
@@ -65,11 +68,14 @@
   "3IlAwo": {
     "defaultMessage": "Something went wrong, try again later!"
   },
-  "3MGPGB": {
-    "defaultMessage": "Dark theme?"
-  },
   "3a5wL8": {
     "defaultMessage": "Active"
+  },
+  "3adAry": {
+    "defaultMessage": "Check out Cims! https://cims-sempre-amunt.app/share"
+  },
+  "3cc4Ct": {
+    "defaultMessage": "Light"
   },
   "3dqsvA": {
     "defaultMessage": "Donors"
@@ -101,11 +107,11 @@
   "4tflZQ": {
     "defaultMessage": "Delete plan?"
   },
+  "4wpUNc": {
+    "defaultMessage": "Or"
+  },
   "53YYSH": {
     "defaultMessage": "Cancel plan"
-  },
-  "5WK7jL": {
-    "defaultMessage": "Create new"
   },
   "5YsvtF": {
     "defaultMessage": "Altitude"
@@ -137,6 +143,9 @@
   "82GzU3": {
     "defaultMessage": "Upcoming plans"
   },
+  "89eDMC": {
+    "defaultMessage": "Picat"
+  },
   "8N2GKa": {
     "defaultMessage": "Your cart is empty."
   },
@@ -151,6 +160,9 @@
   },
   "95stPq": {
     "defaultMessage": "Completed"
+  },
+  "9Dtoo5": {
+    "defaultMessage": "Pick up some merch and support the app."
   },
   "9MidH4": {
     "defaultMessage": "Challenge"
@@ -212,6 +224,9 @@
   "DJbyE/": {
     "defaultMessage": "You summited this mountain"
   },
+  "DR+23P": {
+    "defaultMessage": "Contact email"
+  },
   "DYrQVF": {
     "defaultMessage": "Complete plan"
   },
@@ -250,6 +265,9 @@
   },
   "FDVuFX": {
     "defaultMessage": "You can now create more plans and share them!"
+  },
+  "Ff9qrH": {
+    "defaultMessage": "Can’t find someone? They may have “Visible on people search” turned off in their profile — ask them to enable it."
   },
   "FgydNe": {
     "defaultMessage": "View"
@@ -311,6 +329,9 @@
   "J9wo18": {
     "defaultMessage": "more mountains"
   },
+  "JLegne": {
+    "defaultMessage": "Forcat"
+  },
   "JXdbo8": {
     "defaultMessage": "Done"
   },
@@ -355,9 +376,6 @@
   },
   "MUP7n7": {
     "defaultMessage": "Still deciding a date"
-  },
-  "MUedip": {
-    "defaultMessage": "Mountain added!"
   },
   "MmuKRi": {
     "defaultMessage": "Cims costs around 50€ a month to run. Pick up some merch to help keep it free."
@@ -431,6 +449,9 @@
   "Qh4l3L": {
     "defaultMessage": "Other participants"
   },
+  "RM9rPX": {
+    "defaultMessage": "Summit Pedraforca."
+  },
   "S+o8nA": {
     "defaultMessage": "Delete message?"
   },
@@ -443,8 +464,14 @@
   "SEtMn+": {
     "defaultMessage": "At least one mountain is required"
   },
+  "T9bZ8o": {
+    "defaultMessage": "Edit mountains"
+  },
   "TV3YdK": {
     "defaultMessage": "Share profile"
+  },
+  "TazRBj": {
+    "defaultMessage": "Genteta"
   },
   "TdbPNK": {
     "defaultMessage": "Me"
@@ -482,6 +509,9 @@
   "VuzjdC": {
     "defaultMessage": "Ongoing"
   },
+  "VyFsSc": {
+    "defaultMessage": "Keep shopping"
+  },
   "WIwKkx": {
     "defaultMessage": "Your profile"
   },
@@ -503,11 +533,17 @@
   "Y8lhVt": {
     "defaultMessage": "Add people"
   },
+  "YDCrG0": {
+    "defaultMessage": "Your Apple email hides your address. Give us a real one so we can reach you."
+  },
   "YdQ8KR": {
     "defaultMessage": "No results, please change the search."
   },
   "YddCHw": {
     "defaultMessage": "Type here..."
+  },
+  "Yl7Xze": {
+    "defaultMessage": "Buy any item from the Cims shop."
   },
   "YtJ1iO": {
     "defaultMessage": "Browse the shop"
@@ -533,6 +569,9 @@
   "aKaNIY": {
     "defaultMessage": "Go to home screen"
   },
+  "afNq31": {
+    "defaultMessage": "Icon locked"
+  },
   "aiy3+p": {
     "defaultMessage": "Type to search."
   },
@@ -547,6 +586,9 @@
   },
   "b1zuN9": {
     "defaultMessage": "Price"
+  },
+  "bBdCTh": {
+    "defaultMessage": "Add new mountain"
   },
   "bW7B87": {
     "defaultMessage": "New"
@@ -698,6 +740,9 @@
   "l7IOuJ": {
     "defaultMessage": "Challenge not found"
   },
+  "lKv8ex": {
+    "defaultMessage": "Default"
+  },
   "lOEFGH": {
     "defaultMessage": "Height (meters)"
   },
@@ -725,11 +770,20 @@
   "nfhxxT": {
     "defaultMessage": "Login out"
   },
+  "o863Ko": {
+    "defaultMessage": "App icon"
+  },
+  "oL/Koa": {
+    "defaultMessage": "Add more merch before sending."
+  },
   "oUWADl": {
     "defaultMessage": "No"
   },
   "om7joI": {
     "defaultMessage": "that you can share with the world."
+  },
+  "p/Xd3M": {
+    "defaultMessage": "Share with a friend"
   },
   "pNTyiX": {
     "defaultMessage": "Keep"
@@ -761,14 +815,17 @@
   "r+6lRr": {
     "defaultMessage": "You haven't summited any mountains yet."
   },
-  "r0OXAf": {
-    "defaultMessage": "We'll reach you at {email} to arrange payment + shipping."
-  },
   "rO8WR3": {
     "defaultMessage": "Country/Region is required"
   },
+  "rbj+wd": {
+    "defaultMessage": "Your mountains"
+  },
   "rbrahO": {
     "defaultMessage": "Close"
+  },
+  "rc/r09": {
+    "defaultMessage": "Summit Pica d'Estats."
   },
   "rfzuQv": {
     "defaultMessage": "Essential"
@@ -782,9 +839,6 @@
   "rnIBmu": {
     "defaultMessage": "Deleting summit"
   },
-  "rrWaC4": {
-    "defaultMessage": "Add a new mountain"
-  },
   "rvirM2": {
     "defaultMessage": "Location"
   },
@@ -794,6 +848,9 @@
   "sy+pv5": {
     "defaultMessage": "Email"
   },
+  "tOdNiY": {
+    "defaultMessage": "Dark"
+  },
   "txUL0F": {
     "defaultMessage": "Last name"
   },
@@ -802,6 +859,9 @@
   },
   "u11gQO": {
     "defaultMessage": "Are you sure you want to leave this plan?"
+  },
+  "uE3Xhr": {
+    "defaultMessage": "On Android, the icon may briefly disappear from your launcher while switching."
   },
   "uhu5aG": {
     "defaultMessage": "Public"
@@ -871,6 +931,9 @@
   },
   "y5oyGg": {
     "defaultMessage": "View on maps"
+  },
+  "yG2DG5": {
+    "defaultMessage": "We'll reach you at {email}."
   },
   "yPryo6": {
     "defaultMessage": "You can add or remove mountains later"

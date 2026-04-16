@@ -2,11 +2,13 @@ import { VariableContextProvider } from "nativewind";
 import { PropsWithChildren } from "react";
 import { useColorScheme } from "react-native";
 
+import { Colors } from "@/constants/colors";
+
 const themes = {
   brand: {
     light: {
-      "--color-primary": "#f43f5e",
-      "--color-accent": "#963ff4",
+      "--color-primary": Colors.light.primary,
+      "--color-accent": Colors.light.accent,
       "--color-background": "#ffffff",
       "--color-foreground": "#050505",
       "--color-muted-foreground": "#505050",
@@ -14,8 +16,8 @@ const themes = {
       "--color-border": "#e5e7eb",
     },
     dark: {
-      "--color-primary": "#f43f5e",
-      "--color-accent": "#963ff4",
+      "--color-primary": Colors.dark.primary,
+      "--color-accent": Colors.dark.accent,
       "--color-background": "#000000",
       "--color-foreground": "#ecedee",
       "--color-muted-foreground": "#bebebe",

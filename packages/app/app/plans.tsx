@@ -26,6 +26,7 @@ import {
   PlanItemListSkeleton,
 } from "@/components/ui/molecules/plan-item-list";
 import {
+  type PlanStatus,
   useMarkPlansAsVisited,
   usePlansInfinite,
 } from "@/domains/plan/plan.api";
@@ -90,9 +91,7 @@ const FloatingAlert = ({ onClose }: { onClose: () => void }) => {
 
 export default function PlansScreen() {
   const intl = useIntl();
-  const [status, setStatus] = useState<"open" | "completed" | "canceled">(
-    "open",
-  );
+  const [status, setStatus] = useState<PlanStatus>("open");
   const { isAuthenticated } = useAuth();
   const [showAlert, setShowAlert] = useState(false);
   const { mutate: markAsVisited } = useMarkPlansAsVisited();
@@ -122,8 +121,7 @@ export default function PlansScreen() {
     }
   }, [isAuthenticated, markAsVisited]);
 
-  const statuses: { type: "open" | "completed" | "canceled"; name: string }[] =
-    [
+  const statuses: { type: PlanStatus; name: string }[] = [
       {
         type: "open",
         name: intl.formatMessage({ defaultMessage: "Open" }),

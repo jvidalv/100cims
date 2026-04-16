@@ -3,7 +3,6 @@ import { Camera } from "lucide-react-native";
 import { FormattedMessage } from "react-intl";
 import { Image, TouchableOpacity, View } from "react-native";
 
-
 import { LucideIcon, ThemedText } from "@/components/ui/atoms";
 import { useUserChallengeSummits } from "@/domains/user/user.api";
 

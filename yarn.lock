@@ -7257,6 +7257,11 @@ exact-mirror@^0.2.7:
   resolved "https://registry.yarnpkg.com/exact-mirror/-/exact-mirror-0.2.7.tgz#ee8e75c362a67ca0e07cb13fea92b61adaabfa29"
   integrity sha512-+MeEmDcLA4o/vjK2zujgk+1VTxPR4hdp23qLqkWfStbECtAq9gmsvQa3LW6z/0GXZyHJobrCnmy1cdeE7BjsYg==
 
+expo-alternate-app-icons@^8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/expo-alternate-app-icons/-/expo-alternate-app-icons-8.0.0.tgz#c53fa4c2caa5934d7bb0161240de9b73292e8a63"
+  integrity sha512-iqvcxu3fNPtOtZ/y0/VPlxol9WUhkvbj7VI6SMwSAEAgOZ1D5k7KvF54U0oLC/i0k+HL0YOaIuZcLJuLaphIIw==
+
 expo-apple-authentication@~55.0.13:
   version "55.0.13"
   resolved "https://registry.yarnpkg.com/expo-apple-authentication/-/expo-apple-authentication-55.0.13.tgz#0045228dbc991877001790eff1f1afbdd2e295f7"

@@ -1,7 +1,7 @@
 import { useRouter, useSegments } from "expo-router";
 import { ShoppingCart } from "lucide-react-native";
 import { useEffect, useState } from "react";
-import { TouchableOpacity, View } from "react-native";
+import { TouchableOpacity } from "react-native";
 
 import { useAuth } from "@/components/providers/auth-provider";
 import { LucideIcon, ThemedText } from "@/components/ui/atoms";
@@ -18,16 +18,16 @@ export function FloatingCartButton() {
     return subscribeCart(setCart);
   }, []);
 
-  const count = cart.reduce((sum, item) => sum + item.qty, 0);
-  const isShopRoute = segments[0] === "shop";
+  const count = cart.length;
+  const isCartRoute = segments[0] === "shop" && segments[1] === "cart";
 
-  if (!isAuthenticated || count === 0 || isShopRoute) return null;
+  if (!isAuthenticated || count === 0 || isCartRoute) return null;
 
   return (
     <TouchableOpacity
       onPress={() => router.push("/shop/cart")}
       activeOpacity={0.85}
-      className="absolute bottom-8 right-6 size-14 items-center justify-center rounded border-2 border-border bg-background shadow-lg"
+      className="absolute bottom-8 right-6 h-14 flex-row items-center justify-center gap-1.5 rounded border-2 border-border bg-background px-4 shadow-lg"
       style={{
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 4 },
@@ -37,11 +37,9 @@ export function FloatingCartButton() {
       }}
     >
       <LucideIcon icon={ShoppingCart} size={22} />
-      <View className="absolute -right-1.5 -top-1.5 min-w-5 items-center justify-center rounded-full border-2 border-background bg-primary px-1">
-        <ThemedText className="text-[11px] font-bold text-white">
-          {count}
-        </ThemedText>
-      </View>
+      <ThemedText className="text-base font-bold text-primary">
+        {count}
+      </ThemedText>
     </TouchableOpacity>
   );
 }

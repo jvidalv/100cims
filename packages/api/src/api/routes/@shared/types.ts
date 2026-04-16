@@ -17,5 +17,6 @@ export type User = {
   username: string | null;
   locale: string | null;
   activeChallengeId: string | null;
+  unlockables: string[];
   createdAt: Date;
 };

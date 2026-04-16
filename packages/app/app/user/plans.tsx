@@ -1,8 +1,9 @@
 import { Link } from "expo-router";
 import { Plus, Star } from "lucide-react-native";
-import { FormattedMessage } from "react-intl";
-import { ScrollView, TouchableOpacity, View } from "react-native";
-
+import { useState } from "react";
+import { FormattedMessage, useIntl } from "react-intl";
+import { Pressable, ScrollView, TouchableOpacity, View } from "react-native";
+import { twMerge } from "tailwind-merge";
 
 import { LucideIcon, ThemedText, ThemedView } from "@/components/ui/atoms";
 import { ScreenHeader } from "@/components/ui/molecules";
@@ -10,20 +11,34 @@ import {
   PlanItemList,
   PlanItemListSkeleton,
 } from "@/components/ui/molecules/plan-item-list";
-import { usePlans } from "@/domains/plan/plan.api";
+import { type PlanStatus, usePlans } from "@/domains/plan/plan.api";
 import { useUserMe } from "@/domains/user/user.api";
 
 export default function UserPlansScreen() {
+  const intl = useIntl();
   const { data: me } = useUserMe();
+  const [status, setStatus] = useState<PlanStatus>("open");
   const { data, isPending: isPendingPlans } = usePlans(
-    { userId: me?.id },
+    { userId: me?.id, status },
     { enabled: !!me?.id },
   );
+
+  const statuses: { type: PlanStatus; name: string }[] = [
+    { type: "open", name: intl.formatMessage({ defaultMessage: "Open" }) },
+    {
+      type: "completed",
+      name: intl.formatMessage({ defaultMessage: "Completed" }),
+    },
+    {
+      type: "canceled",
+      name: intl.formatMessage({ defaultMessage: "Canceled" }),
+    },
+  ];
 
   return (
     <ThemedView className="flex-1">
       <ScreenHeader />
-      <View className="mb-6 flex-row items-end justify-between px-6">
+      <View className="mb-3 flex-row items-end justify-between px-6">
         <ThemedText className="text-4xl font-bold">
           <FormattedMessage defaultMessage="My plans" />
         </ThemedText>
@@ -35,6 +50,30 @@ export default function UserPlansScreen() {
             <LucideIcon icon={Plus} size={18} />
           </TouchableOpacity>
         </Link>
+      </View>
+      <View className="mb-4 flex-row gap-1 px-6">
+        {statuses.map(({ type: pillStatus, name }) => {
+          const isSelected = status === pillStatus;
+          return (
+            <Pressable
+              key={pillStatus}
+              onPress={() => setStatus(pillStatus)}
+              className={twMerge(
+                "rounded py-2 px-2.5 mr-1",
+                isSelected ? "bg-primary" : "bg-border",
+              )}
+            >
+              <ThemedText
+                className={twMerge(
+                  "font-medium text-foreground",
+                  isSelected && "text-white",
+                )}
+              >
+                {name}
+              </ThemedText>
+            </Pressable>
+          );
+        })}
       </View>
       <ScrollView contentContainerClassName="gap-3 px-6 pb-28">
         {isPendingPlans && (

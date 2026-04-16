@@ -174,7 +174,7 @@ export default function ChallengeDetailScreen() {
           </ThemedText>
           {challenge.isOfficial && (
             <View className="flex-row items-center gap-1.5 rounded-full bg-primary/20 px-3 py-1.5">
-              <LucideIcon icon={BadgeCheck} color="#f43f5e" size={18} />
+              <LucideIcon icon={BadgeCheck} primary size={18} />
               <ThemedText className="text-base font-semibold text-primary">
                 <FormattedMessage defaultMessage="Official" />
               </ThemedText>

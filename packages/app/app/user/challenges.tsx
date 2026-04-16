@@ -96,21 +96,6 @@ export default function UserChallengesScreen() {
           slug={item.slug}
           height={item.height}
         />
-        {item.challengeCount > 0 && (
-          <ThemedText className="ml-[108px] -mt-1 text-xs text-muted-foreground">
-            {item.challengeCount === 1 ? (
-              <FormattedMessage
-                defaultMessage="Used in {count} challenge"
-                values={{ count: item.challengeCount }}
-              />
-            ) : (
-              <FormattedMessage
-                defaultMessage="Used in {count} challenges"
-                values={{ count: item.challengeCount }}
-              />
-            )}
-          </ThemedText>
-        )}
       </View>
     ),
     [router],

@@ -7,15 +7,17 @@
  * This file can be removed once all users have updated to app versions
  * that use the new /mountains/summit endpoint.
  */
+import { eq } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 import { uuidv7 } from "uuidv7";
 
 import { db } from "@/db";
-import { summitHasUsersTable, summitTable } from "@/db/schema";
+import { mountainTable, summitHasUsersTable, summitTable } from "@/db/schema";
 import { formatDateForPostgresFromISOString } from "@/api/lib/dates";
 import { isBase64SizeValid } from "@/api/lib/images";
 import { IMAGE_TO_BIG } from "@/api/routes/@shared/error-codes";
 import { getPublicUrl, putImageOnS3 } from "@/api/routes/@shared/s3";
+import { unlockIcon } from "@/api/routes/@shared/unlockables";
 import {
   SimpleSuccessResponse,
   ErrorFieldResponse,
@@ -54,6 +56,28 @@ export const mountainLegacyPostRoute = new Elysia({ prefix: "/mountain" }).post(
         })),
       );
     });
+
+    const [mountain] = await db
+      .select({ slug: mountainTable.slug })
+      .from(mountainTable)
+      .where(eq(mountainTable.id, body.mountainId))
+      .limit(1);
+    if (mountain?.slug) {
+      const unlockKey: "forcat" | "picat" | null =
+        mountain.slug === "pollego-superior-pedraforca" ||
+        mountain.slug === "pollego-inferior-pedraforca"
+          ? "forcat"
+          : mountain.slug === "pica-destats"
+            ? "picat"
+            : null;
+      if (unlockKey) {
+        for (const userId of body.usersId) {
+          void unlockIcon(userId, unlockKey).catch((err) =>
+            console.error("unlockIcon failed", { userId, unlockKey, err }),
+          );
+        }
+      }
+    }
 
     return {
       success: true,

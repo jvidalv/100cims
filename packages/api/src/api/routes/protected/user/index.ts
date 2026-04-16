@@ -12,6 +12,7 @@ import { userPushTokenPostRoute } from "@/api/routes/protected/user/user.push-to
 import { userSuggestionPostRoute } from "@/api/routes/protected/user/user.suggestion.post";
 import { userSummitsGetRoute } from "@/api/routes/protected/user/user.summits.get";
 import { userSummitsAllGetRoute } from "@/api/routes/protected/user/user.summits.all.get";
+import { userUnlockablesPostRoute } from "@/api/routes/protected/user/user.unlockables.post";
 import { userUnseenUpdatesGetRoute } from "@/api/routes/protected/user/user.unseen-updates.get";
 
 export const userRoute = new Elysia({ prefix: "/user" })
@@ -27,4 +28,5 @@ export const userRoute = new Elysia({ prefix: "/user" })
   .use(userDeleteGetRoute)
   .use(userSuggestionPostRoute)
   .use(userUnseenUpdatesGetRoute)
-  .use(userMarkUpdateSeenPostRoute);
+  .use(userMarkUpdateSeenPostRoute)
+  .use(userUnlockablesPostRoute);

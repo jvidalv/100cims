@@ -10,28 +10,21 @@ import {
   SquarePen,
   UserMinus,
   UserPlus,
+  type LucideIcon as LucideIconType,
 } from "lucide-react-native";
 import { useRef, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import {
-  ActivityIndicator,
-  Alert,
-  Image,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, Alert, Image, View } from "react-native";
 
 import { SummitCard } from "@/components/summit";
 import { LucideIcon, Skeleton, ThemedText } from "@/components/ui/atoms";
 import { ActionRow, PersonRow } from "@/components/ui/molecules";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
 import { UserShareCard } from "@/components/user";
-import { countryToEmoji } from "@/domains/challenge/challenge.model";
 import {
   useAddUserPerson,
   useAnyUserSummits,
   useRemoveUserPerson,
-  useUserChallenges,
   useUserMe,
   useUserOneGet,
   useUserPeople,
@@ -52,7 +45,6 @@ export default function UserScreen() {
   const { data: summits, isPending: isPendingSummits } = useAnyUserSummits({
     userId,
   });
-  const { data: challenges } = useUserChallenges({ userId });
 
   const isMe = me?.id === userId;
 
@@ -169,38 +161,26 @@ export default function UserScreen() {
       }
     >
       {!!user ? (
-        <View className="mx-6 mb-6 gap-3">
-          {!!user.town && (
-            <View className="flex-row gap-4">
-              <View className="flex-row items-center gap-1.5">
-                <LucideIcon icon={House} muted size={18} />
-                <ThemedText className="text-base font-medium">
-                  {user?.town}
-                </ThemedText>
-              </View>
-            </View>
-          )}
-          <View className="flex-row items-center gap-1.5">
-            <LucideIcon icon={Calendar} muted size={18} />
-            <ThemedText className="text-base font-medium">
-              <FormattedMessage
-                defaultMessage="Member of cims for {duration}"
-                values={{
-                  duration: formatDistanceToNow(
-                    new Date(user.createdAt as string | number),
-                    {
-                      locale:
-                        intl.locale === "ca"
-                          ? ca
-                          : intl.locale === "es"
-                            ? es
-                            : enUS,
-                    }
-                  ),
-                }}
-              />
-            </ThemedText>
-          </View>
+        <View className="mx-6 mb-6 gap-2">
+          {!!user.town && <InfoRow icon={House}>{user.town}</InfoRow>}
+          <InfoRow icon={Calendar}>
+            <FormattedMessage
+              defaultMessage="Member of cims for {duration}"
+              values={{
+                duration: formatDistanceToNow(
+                  new Date(user.createdAt as string | number),
+                  {
+                    locale:
+                      intl.locale === "ca"
+                        ? ca
+                        : intl.locale === "es"
+                          ? es
+                          : enUS,
+                  },
+                ),
+              }}
+            />
+          </InfoRow>
           {isMe && (
             <View className="mt-4 gap-2">
               <ThemedText className="text-2xl font-semibold">
@@ -385,34 +365,7 @@ export default function UserScreen() {
           />
         ))}
       </View>
-      {challenges && challenges.length > 0 && (
-        <View className="mt-8 gap-2 px-6">
-          <ThemedText className="mb-2 text-2xl font-semibold">
-            <FormattedMessage defaultMessage="Challenges" />
-          </ThemedText>
-          {challenges.map((challenge) => {
-            const displayEmoji =
-              challenge.emoji || countryToEmoji(challenge.country);
-            return (
-              <TouchableOpacity
-                key={challenge.id}
-                className="flex-row items-center gap-2"
-                onPress={() => router.push(`/challenge/${challenge.id}`)}
-              >
-                <View className="size-8 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700">
-                  <ThemedText className="text-base" style={{ lineHeight: 16 }}>
-                    {displayEmoji}
-                  </ThemedText>
-                </View>
-                <ThemedText className="text-muted-foreground">
-                  {challenge.name}
-                </ThemedText>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-      )}
-    </ParallaxScrollView>
+      </ParallaxScrollView>
       {isMe && !!user && (
         <View
           collapsable={false}
@@ -429,5 +382,22 @@ export default function UserScreen() {
         </View>
       )}
     </>
+  );
+}
+
+function InfoRow({
+  icon,
+  children,
+}: {
+  icon: LucideIconType;
+  children: React.ReactNode;
+}) {
+  return (
+    <View className="flex-row items-center gap-2">
+      <View className="size-8 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700">
+        <LucideIcon icon={icon} size={16} />
+      </View>
+      <ThemedText className="text-muted-foreground">{children}</ThemedText>
+    </View>
   );
 }

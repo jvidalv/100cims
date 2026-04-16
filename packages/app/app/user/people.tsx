@@ -1,7 +1,7 @@
 import { Link } from "expo-router";
-import { ChevronRight, Mountain, Plus } from "lucide-react-native";
-import { FormattedMessage } from "react-intl";
-import { ScrollView, TouchableOpacity, View } from "react-native";
+import { ChevronRight, Mountain, Plus, Share2 } from "lucide-react-native";
+import { FormattedMessage, useIntl } from "react-intl";
+import { Share, ScrollView, TouchableOpacity, View } from "react-native";
 
 import {
   LucideIcon,
@@ -10,10 +10,24 @@ import {
   ThemedView,
 } from "@/components/ui/atoms";
 import { PersonRow, ScreenHeader } from "@/components/ui/molecules";
-import { useUserPeople } from "@/domains/user/user.api";
+import { useUnlockableUnlock, useUserPeople } from "@/domains/user/user.api";
 
 export default function UserPeopleScreen() {
+  const intl = useIntl();
   const { data, isPending } = useUserPeople();
+  const { mutate: unlock } = useUnlockableUnlock();
+
+  const handleShareApp = async () => {
+    const result = await Share.share({
+      message: intl.formatMessage({
+        defaultMessage:
+          "Check out Cims! https://cims-sempre-amunt.app/share",
+      }),
+    });
+    if (result.action === "sharedAction") {
+      unlock("share");
+    }
+  };
 
   return (
     <ThemedView className="flex-1">
@@ -72,19 +86,35 @@ export default function UserPeopleScreen() {
           </Link>
         ))}
         {!isPending && (
-          <Link href="/user/people/add" asChild>
-            <TouchableOpacity className="flex-row items-center gap-3">
-              <View className="size-12 items-center justify-center rounded-full border-2 border-muted-foreground/50">
-                <LucideIcon icon={Plus} size={22} muted />
+          <>
+            <Link href="/user/people/add" asChild>
+              <TouchableOpacity className="flex-row items-center gap-3">
+                <View className="size-12 items-center justify-center rounded-full border-2 border-muted-foreground/50">
+                  <LucideIcon icon={Plus} size={22} muted />
+                </View>
+                <ThemedText className="text-lg font-medium">
+                  <FormattedMessage defaultMessage="Add people" />
+                </ThemedText>
+                <View className="ml-auto">
+                  <LucideIcon icon={ChevronRight} size={20} muted />
+                </View>
+              </TouchableOpacity>
+            </Link>
+            <TouchableOpacity
+              className="flex-row items-center gap-3"
+              onPress={handleShareApp}
+            >
+              <View className="size-12 items-center justify-center rounded-full border-2 border-primary">
+                <LucideIcon icon={Share2} size={20} primary />
               </View>
-              <ThemedText className="text-lg font-medium">
-                <FormattedMessage defaultMessage="Add people" />
+              <ThemedText className="text-lg font-medium text-primary">
+                <FormattedMessage defaultMessage="Share with a friend" />
               </ThemedText>
               <View className="ml-auto">
-                <LucideIcon icon={ChevronRight} size={20} muted />
+                <LucideIcon icon={ChevronRight} size={20} primary />
               </View>
             </TouchableOpacity>
-          </Link>
+          </>
         )}
       </ScrollView>
     </ThemedView>

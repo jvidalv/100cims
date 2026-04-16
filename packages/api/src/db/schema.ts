@@ -72,6 +72,10 @@ export const userTable = pgTable("user", {
   expoPushToken: text(),
   pushNotificationsEnabled: boolean().notNull().default(true),
   emailNotificationsEnabled: boolean().notNull().default(true),
+  unlockables: text()
+    .array()
+    .notNull()
+    .default(sql`ARRAY[]::text[]`),
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp().notNull().defaultNow(),
 });

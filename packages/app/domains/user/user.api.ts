@@ -6,6 +6,8 @@ import { useAuth } from "@/components/providers/auth-provider";
 import apiClient from "@/lib/api-client";
 import { userKeys, challengeKeys, mountainKeys } from "@/lib/query-keys";
 
+const UNAUTHORIZED = "Unauthorized";
+
 export const useUserMe = () => {
   const { isAuthenticated, logout } = useAuth();
 
@@ -18,9 +20,8 @@ export const useUserMe = () => {
         "/api/protected/user/me",
       );
 
-      // Check for 401 unauthorized
       if (response.status === 401) {
-        throw new Error("Unauthorized");
+        throw new Error(UNAUTHORIZED);
       }
 
       if (error) throw error;
@@ -29,7 +30,7 @@ export const useUserMe = () => {
   });
 
   useEffect(() => {
-    if (props.error) {
+    if (props.error?.message === UNAUTHORIZED) {
       logout();
     }
   }, [logout, props.error]);
@@ -330,6 +331,22 @@ export const useDeleteAccountMutation = () => {
       const { data, error } = await apiClient.GET("/api/protected/user/delete");
       if (error) throw error;
       return data;
+    },
+  });
+};
+
+export const useUnlockableUnlock = () => {
+  return useMutation({
+    mutationFn: async (key: "merch" | "share" | "forcat" | "picat") => {
+      const { data, error } = await apiClient.POST(
+        "/api/protected/user/unlockables",
+        { body: { key } },
+      );
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: userKeys.me() });
     },
   });
 };

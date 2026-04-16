@@ -7,9 +7,11 @@ import { planKeys } from "@/lib/query-keys";
 
 const PLANS_PAGE_SIZE = 20;
 
+export type PlanStatus = "open" | "completed" | "canceled";
+
 export const usePlans = (
   params?: {
-    status?: string;
+    status?: PlanStatus;
     limit?: number;
     creatorId?: string;
     userId?: string;
@@ -31,7 +33,7 @@ export const usePlans = (
 };
 
 export const usePlansInfinite = (params?: {
-  status?: "open" | "completed" | "canceled";
+  status?: PlanStatus;
   creatorId?: string;
   userId?: string;
   sort?: "upcoming";

@@ -1,5 +1,7 @@
 import { t } from "elysia";
 
+import { UnlockablesArraySchema } from "@/api/schemas/unlockables";
+
 export const AdminUserEntrySchema = t.Object({
   id: t.String(),
   firstName: t.Nullable(t.String()),
@@ -54,6 +56,7 @@ export const AdminUserDetailSchema = t.Object({
   activeChallengeName: t.Nullable(t.String()),
   pushNotificationsEnabled: t.Boolean(),
   expoPushToken: t.Nullable(t.String()),
+  unlockables: t.Array(t.String()),
   createdAt: t.Date(),
 });
 
@@ -68,6 +71,7 @@ export const AdminUserUpdateBodySchema = t.Object({
   visibleOnPeopleSearch: t.Optional(t.Boolean()),
   emailNotificationsEnabled: t.Optional(t.Boolean()),
   admin: t.Optional(t.Boolean()),
+  unlockables: t.Optional(UnlockablesArraySchema),
 });
 
 export const AdminSummitEntrySchema = t.Object({

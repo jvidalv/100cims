@@ -1,5 +1,11 @@
 import { FC, useEffect, useRef, useState } from "react";
-import { TextInput, View, Animated, KeyboardTypeOptions } from "react-native";
+import {
+  TextInput,
+  View,
+  Animated,
+  KeyboardTypeOptions,
+  TextInputProps,
+} from "react-native";
 import { ReturnKeyType } from "react-native/Libraries/Components/TextInput/TextInput";
 import { twMerge } from "tailwind-merge";
 
@@ -17,6 +23,10 @@ type InputProps = {
   onBlur?: () => void;
   returnKeyType?: ReturnKeyType;
   keyboardType?: KeyboardTypeOptions;
+  placeholder?: string;
+  autoCapitalize?: TextInputProps["autoCapitalize"];
+  autoComplete?: TextInputProps["autoComplete"];
+  textContentType?: TextInputProps["textContentType"];
   onChangeText?: (text: string) => void;
 };
 
@@ -33,6 +43,10 @@ export const ThemedTextInput: FC<InputProps> = ({
   autoFocus,
   returnKeyType,
   keyboardType,
+  placeholder,
+  autoCapitalize,
+  autoComplete,
+  textContentType,
   onBlur,
   onFocus,
 }) => {
@@ -83,6 +97,10 @@ export const ThemedTextInput: FC<InputProps> = ({
         maxLength={maxLength}
         keyboardType={keyboardType}
         returnKeyType={returnKeyType}
+        placeholder={placeholder}
+        autoCapitalize={autoCapitalize}
+        autoComplete={autoComplete}
+        textContentType={textContentType}
         className={twMerge(
           "w-full border-2 border-border rounded flex py-5 px-4 text-foreground focus:border-blue-500",
           disabled && "bg-gray-50 dark:bg-neutral-900 text-foreground/60",

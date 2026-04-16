@@ -44,9 +44,25 @@ const INTENT_STYLES: Record<
   },
 };
 
+export type ActionRowSize = "sm" | "lg";
+
+const SIZE_STYLES: Record<
+  ActionRowSize,
+  { row: string; circle: string; icon: number; text: string }
+> = {
+  sm: { row: "gap-2", circle: "size-8", icon: 16, text: "" },
+  lg: {
+    row: "gap-3 py-2",
+    circle: "size-12",
+    icon: 20,
+    text: "text-base font-semibold",
+  },
+};
+
 type Props = {
   icon: LucideIcon;
   intent?: ActionRowIntent;
+  size?: ActionRowSize;
   iconSize?: number;
   badge?: boolean;
   iconOverride?: ReactNode;
@@ -59,7 +75,8 @@ export const ActionRow = forwardRef<View, Props>(
     {
       icon,
       intent = "muted",
-      iconSize = 16,
+      size = "sm",
+      iconSize,
       badge,
       iconOverride,
       trailing,
@@ -70,23 +87,25 @@ export const ActionRow = forwardRef<View, Props>(
     ref,
   ) => {
     const styles = INTENT_STYLES[intent];
+    const sizing = SIZE_STYLES[size];
 
     return (
       <TouchableOpacity
         ref={ref}
-        className={twMerge("flex-row items-center gap-2", className)}
+        className={twMerge("flex-row items-center", sizing.row, className)}
         {...props}
       >
         <View
           className={twMerge(
-            "relative size-8 items-center justify-center rounded-full",
+            "relative items-center justify-center rounded-full",
+            sizing.circle,
             styles.bg,
           )}
         >
           {iconOverride ?? (
             <LucideIconView
               icon={icon}
-              size={iconSize}
+              size={iconSize ?? sizing.icon}
               color={styles.iconColor}
             />
           )}
@@ -94,7 +113,9 @@ export const ActionRow = forwardRef<View, Props>(
             <View className="absolute -right-0.5 -top-0.5 size-3 rounded-full bg-primary" />
           )}
         </View>
-        <ThemedText className={styles.text}>{children}</ThemedText>
+        <ThemedText className={twMerge(sizing.text, styles.text)}>
+          {children}
+        </ThemedText>
         {trailing}
       </TouchableOpacity>
     );
