@@ -43,7 +43,7 @@ export const userSummitsAllGetRoute = new Elysia().get(
       .where(whereCondition)
       .orderBy(
         query.sort === "height"
-          ? desc(sql`CAST(${mountainTable.height} AS FLOAT)`)
+          ? desc(mountainTable.height)
           : desc(summitTable.summitedAt),
         desc(summitTable.createdAt),
       )

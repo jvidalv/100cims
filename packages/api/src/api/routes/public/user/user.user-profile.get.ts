@@ -40,6 +40,7 @@ export const userUserProfileGetRoute = new Elysia().get(
           odImageUrl: userTable.imageUrl,
           odHeight: mountainTable.height,
           odEssential: mountainTable.essential,
+          odSummitId: summitTable.id,
         })
         .from(summitTable)
         .innerJoin(mountainTable, eq(summitTable.mountainId, mountainTable.id))
@@ -73,6 +74,7 @@ export const userUserProfileGetRoute = new Elysia().get(
         lastName: string | null;
         imageUrl: string | null;
         score: number;
+        summitIds: Set<string>;
       }
     > = {};
 
@@ -84,11 +86,20 @@ export const userUserProfileGetRoute = new Elysia().get(
           lastName: u.odLastName,
           imageUrl: u.odImageUrl,
           score: 0,
+          summitIds: new Set(),
         };
       }
       userMap[u.odUserId].score +=
         (Number(u.odHeight) / 10) * (u.odEssential ? 2 : 1);
+      userMap[u.odUserId].summitIds.add(u.odSummitId);
     }
+
+    const sharedUsers = Object.values(userMap).map(
+      ({ summitIds, ...rest }) => ({
+        ...rest,
+        summitsTogetherCount: summitIds.size,
+      }),
+    );
 
     return {
       success: true,
@@ -96,7 +107,7 @@ export const userUserProfileGetRoute = new Elysia().get(
         firstSummitDate,
         lastSummitDate,
         score,
-        sharedUsers: Object.values(userMap),
+        sharedUsers,
       },
     };
   },

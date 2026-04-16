@@ -7,7 +7,6 @@ import { optimizeS3Images } from "@/api/cron/optimize-s3-images";
 import { syncImageUrlsToCdn } from "@/api/cron/sync-image-urls-to-cdn";
 import { monitorHealth } from "@/api/cron/monitor-health";
 import { recommendWeeklyMountain } from "@/api/cron/recommend-weekly-mountain";
-import { reengageUsers } from "@/api/cron/reengage-users";
 import { dailyRestart } from "@/api/cron/self-restart";
 
 export interface CronEntry {
@@ -81,13 +80,6 @@ export const CRON_REGISTRY: CronEntry[] = [
     description:
       "Push the closest non-summited essential mountain to each opted-in user with recent location. Falls back to non-essential if all essentials are summited. Runs Tuesday at 17:00 UTC.",
     fn: recommendWeeklyMountain,
-  },
-  {
-    name: "reengage-users",
-    pattern: "0 0 10 * * 1",
-    description:
-      "Send re-engagement emails. Cohort A: 0–1 own summits, signed up >30 days ago (gentle reintroduction). Cohort B: 2+ own summits, last summit >90 days ago (summer nudge). Cap of 50 per cohort per run, 60-day per-user cooldown across both slugs. Runs Mondays at 10:00 UTC.",
-    fn: reengageUsers,
   },
   {
     name: "backdate-bulk-summits",

@@ -25,6 +25,8 @@ export const userPeopleGetRoute = new Elysia().get(
     const shuA = alias(summitHasUsersTable, "shu_a");
     const shuB = alias(summitHasUsersTable, "shu_b");
 
+    // Scope the self-join to pairs that involve the caller — otherwise we'd
+    // aggregate every co-summit pair in the DB on each request.
     const sharedCounts = db
       .select({
         userAId: sql<string>`LEAST(${shuA.userId}, ${shuB.userId})`.as(
@@ -38,8 +40,12 @@ export const userPeopleGetRoute = new Elysia().get(
       .from(shuA)
       .innerJoin(
         shuB,
-        and(eq(shuA.summitId, shuB.summitId), sql`${shuA.userId} < ${shuB.userId}`),
+        and(
+          eq(shuA.summitId, shuB.summitId),
+          sql`${shuA.userId} < ${shuB.userId}`,
+        ),
       )
+      .where(or(eq(shuA.userId, user.id), eq(shuB.userId, user.id)))
       .groupBy(
         sql`LEAST(${shuA.userId}, ${shuB.userId})`,
         sql`GREATEST(${shuA.userId}, ${shuB.userId})`,
@@ -73,7 +79,10 @@ export const userPeopleGetRoute = new Elysia().get(
           eq(userPeopleTable.userBId, user.id),
         ),
       )
-      .orderBy(desc(userPeopleTable.createdAt));
+      .orderBy(
+        desc(sql`COALESCE("shared_counts"."count", 0)`),
+        desc(userPeopleTable.createdAt),
+      );
 
     return { success: true, message: rows };
   },

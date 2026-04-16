@@ -2,9 +2,17 @@ import { render } from "@react-email/render";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { EMAIL_LOCALES, EMAIL_TEMPLATES, isEmailSlug } from "../_registry";
+import { campaignDescription } from "@/api/lib/campaigns";
+
+import {
+  EMAIL_LOCALES,
+  EMAIL_TEMPLATES,
+  isEmailSlug,
+  type EmailTemplate,
+} from "../_registry";
 import type { WelcomeEmailLocale } from "../../../../../emails/welcome";
 
+import { CampaignTrigger } from "./_campaign-trigger";
 import { EmailPreviewClient } from "./_preview-client";
 
 const isLocale = (s: string): s is WelcomeEmailLocale =>
@@ -19,7 +27,7 @@ export default async function AdminEmailDetailPage({
 }) {
   const { slug } = await params;
   if (!isEmailSlug(slug)) notFound();
-  const template = EMAIL_TEMPLATES[slug];
+  const template: EmailTemplate = EMAIL_TEMPLATES[slug];
 
   const sp = await searchParams;
   const localeParam = typeof sp.locale === "string" ? sp.locale : "en";
@@ -45,6 +53,13 @@ export default async function AdminEmailDetailPage({
         <h1 className="text-2xl font-bold">{template.label}</h1>
         <p className="text-sm text-muted-foreground">{template.description}</p>
       </div>
+
+      {template.campaignSlug && (
+        <CampaignTrigger
+          slug={template.campaignSlug}
+          audienceDescription={campaignDescription(template.campaignSlug)}
+        />
+      )}
 
       <EmailPreviewClient
         slug={slug}

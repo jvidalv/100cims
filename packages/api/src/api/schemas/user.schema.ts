@@ -26,6 +26,7 @@ export const BasicUserSchema = t.Object({
   firstName: t.Nullable(t.String()),
   lastName: t.Nullable(t.String()),
   imageUrl: t.Nullable(t.String()),
+  isPerson: t.Optional(t.Boolean()),
 });
 
 /**
@@ -118,6 +119,7 @@ export const SharedUserSchema = t.Object({
   lastName: t.Nullable(t.String()),
   imageUrl: t.Nullable(t.String()),
   score: t.Number(),
+  summitsTogetherCount: t.Number(),
 });
 
 /**

@@ -458,6 +458,26 @@ export const merchTable = pgTable(
   (table) => [uniqueIndex("merch_featured_unique_idx").on(table.featured)],
 );
 
+export const merchVariantTable = pgTable(
+  "merch_variant",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    merchId: uuid()
+      .references(() => merchTable.id, { onDelete: "cascade" })
+      .notNull(),
+    color: text().notNull(),
+    imageUrls: text()
+      .array()
+      .notNull()
+      .default(sql`ARRAY[]::text[]`),
+    createdAt: timestamp().notNull().defaultNow(),
+  },
+  (table) => [
+    index("merch_variant_merch_id_idx").on(table.merchId),
+    unique("merch_variant_unique").on(table.merchId, table.color),
+  ],
+);
+
 export const emailLogTable = pgTable(
   "email_log",
   {
@@ -474,6 +494,7 @@ export const emailLogTable = pgTable(
       table.slug,
       table.sentAt,
     ),
+    index("email_log_slug_user_idx").on(table.slug, table.userId),
   ],
 );
 
@@ -493,10 +514,7 @@ export const userPeopleTable = pgTable(
     uniqueIndex("user_people_pair_uniq").on(table.userAId, table.userBId),
     index("user_people_user_a_idx").on(table.userAId),
     index("user_people_user_b_idx").on(table.userBId),
-    check(
-      "user_people_pair_ordered",
-      sql`${table.userAId} < ${table.userBId}`,
-    ),
+    check("user_people_pair_ordered", sql`${table.userAId} < ${table.userBId}`),
   ],
 );
 

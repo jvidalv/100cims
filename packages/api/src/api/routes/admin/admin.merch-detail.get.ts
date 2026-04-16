@@ -1,8 +1,8 @@
-import { eq } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 
 import { db } from "@/db";
-import { merchTable } from "@/db/schema";
+import { merchTable, merchVariantTable } from "@/db/schema";
 import { AdminMerchEntrySchema } from "@/api/schemas/admin.schema";
 import {
   ErrorFieldResponse,
@@ -20,7 +20,15 @@ export const adminMerchDetailGetRoute = new Elysia().get(
       set.status = 404;
       return { error: "Merch not found" };
     }
-    return { success: true, message: row };
+    const variants = await db
+      .select({
+        color: merchVariantTable.color,
+        imageUrls: merchVariantTable.imageUrls,
+      })
+      .from(merchVariantTable)
+      .where(eq(merchVariantTable.merchId, params.id))
+      .orderBy(asc(merchVariantTable.createdAt));
+    return { success: true, message: { ...row, variants } };
   },
   {
     params: t.Object({ id: t.String() }),

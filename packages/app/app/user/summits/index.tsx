@@ -24,6 +24,8 @@ import { useUserMe, useUserAllSummits } from "@/domains/user/user.api";
 
 type SortOption = "recent" | "height";
 
+const keyExtractor = ({ summitId }: { summitId: string }) => summitId;
+
 type SummitRowProps = {
   summitId: string;
   mountainName: string;
@@ -129,20 +131,23 @@ export default function UserSummitsScreen() {
     [],
   );
 
+  const sortOptions = useMemo<{ value: SortOption; label: string }[]>(
+    () => [
+      {
+        value: "recent",
+        label: intl.formatMessage({ defaultMessage: "Recent first" }),
+      },
+      {
+        value: "height",
+        label: intl.formatMessage({ defaultMessage: "Highest first" }),
+      },
+    ],
+    [intl],
+  );
+
   if (!me) {
     return <Redirect href="/join" />;
   }
-
-  const sortOptions: { value: SortOption; label: string }[] = [
-    {
-      value: "recent",
-      label: intl.formatMessage({ defaultMessage: "Recent first" }),
-    },
-    {
-      value: "height",
-      label: intl.formatMessage({ defaultMessage: "Highest first" }),
-    },
-  ];
 
   return (
     <ThemedView className="flex-1">
@@ -228,7 +233,7 @@ export default function UserSummitsScreen() {
             <View className="h-32" />
           )
         }
-        keyExtractor={({ summitId }) => summitId}
+        keyExtractor={keyExtractor}
         contentContainerClassName="gap-4 pt-2"
         renderItem={renderItem}
       />

@@ -276,6 +276,11 @@ export const AdminPlanUpdateBodySchema = t.Object({
   routeUrl: t.Optional(t.Nullable(t.String())),
 });
 
+export const MerchVariantSchema = t.Object({
+  color: t.String(),
+  imageUrls: t.Array(t.String()),
+});
+
 export const MerchEntrySchema = t.Object({
   id: t.String(),
   slug: t.String(),
@@ -287,6 +292,7 @@ export const MerchEntrySchema = t.Object({
   price: t.Number(),
   featured: t.Nullable(t.Number()),
   createdAt: t.Date(),
+  variants: t.Array(MerchVariantSchema),
 });
 
 export const AdminMerchEntrySchema = t.Object({
@@ -306,6 +312,7 @@ export const AdminMerchEntrySchema = t.Object({
   active: t.Boolean(),
   createdAt: t.Date(),
   updatedAt: t.Date(),
+  variants: t.Array(MerchVariantSchema),
 });
 
 export const AdminMerchListResponseSchema = t.Object({
@@ -326,6 +333,7 @@ export const AdminMerchCreateBodySchema = t.Object({
   hasSize: t.Optional(t.Boolean()),
   featured: t.Optional(t.Nullable(t.Number({ minimum: 1, maximum: 5 }))),
   active: t.Optional(t.Boolean()),
+  variants: t.Optional(t.Array(MerchVariantSchema)),
 });
 
 export const AdminMerchUpdateBodySchema = t.Object({
@@ -342,6 +350,7 @@ export const AdminMerchUpdateBodySchema = t.Object({
   hasSize: t.Optional(t.Boolean()),
   featured: t.Optional(t.Nullable(t.Number({ minimum: 1, maximum: 5 }))),
   active: t.Optional(t.Boolean()),
+  variants: t.Optional(t.Array(MerchVariantSchema)),
 });
 
 export const AdminPersonSchema = t.Object({

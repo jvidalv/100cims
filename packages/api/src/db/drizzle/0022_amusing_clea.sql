@@ -1,0 +1,1 @@
+CREATE INDEX "email_log_slug_user_idx" ON "email_log" USING btree ("slug","user_id");

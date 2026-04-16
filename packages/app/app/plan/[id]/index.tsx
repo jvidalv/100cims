@@ -3,6 +3,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, Link, useRouter } from "expo-router";
 import {
   ArrowDown,
+  ArrowUp,
   BadgeCheck,
   Calendar,
   Clock,
@@ -28,7 +29,6 @@ import { useAuth } from "@/components/providers/auth-provider";
 import {
   ActivityIndicator,
   Avatar,
-  Button,
   EnrichedThemedText,
   LucideIcon,
   Skeleton,
@@ -392,26 +392,23 @@ export default function PlanIdPage() {
         <ThemedText className="text-2xl font-semibold">
           <FormattedMessage defaultMessage="Participants" />
         </ThemedText>
-        <View className="gap-3">
-          <View className="gap-2">
-            {plan.users.map((user) => (
-              <Link
-                key={user.id}
-                href={{ pathname: "/user/[user]", params: { user: user.id } }}
-                asChild
-              >
-                <TouchableOpacity className="flex-row items-center gap-2">
-                  <Avatar
-                    size="xs"
-                    initials={getInitials(getFullName(user))}
-                    imageUrl={user.imageUrl}
-                  />
-                  <ThemedText>{getFullName(user)}</ThemedText>
-                </TouchableOpacity>
-              </Link>
-            ))}
-          </View>
-
+        <View className="gap-2">
+          {plan.users.map((user) => (
+            <Link
+              key={user.id}
+              href={{ pathname: "/user/[user]", params: { user: user.id } }}
+              asChild
+            >
+              <TouchableOpacity className="flex-row items-center gap-2">
+                <Avatar
+                  size="xs"
+                  initials={getInitials(getFullName(user))}
+                  imageUrl={user.imageUrl}
+                />
+                <ThemedText>{getFullName(user)}</ThemedText>
+              </TouchableOpacity>
+            </Link>
+          ))}
         </View>
       </View>
       <View className="gap-2">
@@ -419,13 +416,17 @@ export default function PlanIdPage() {
           <FormattedMessage defaultMessage="Actions" />
         </ThemedText>
         {isOpen && !hasJoined && (
-          <Button
+          <ActionRow
             onPress={handleJoin}
-            isLoading={isLoadingJoinPlan}
-            className="mb-2"
+            icon={ArrowUp}
+            intent="primary"
+            disabled={isLoadingJoinPlan}
+            iconOverride={
+              isLoadingJoinPlan ? <ActivityIndicator size="sm" /> : undefined
+            }
           >
             <FormattedMessage defaultMessage="Join plan" />
-          </Button>
+          </ActionRow>
         )}
         {isOpen && isCreator && !!plan.startDate && (
           <Link

@@ -21,4 +21,7 @@ export { MountainSelectionDrawer } from "./mountain-selection-drawer";
 export { ImagePreviewModal, useImagePreview } from "./image-preview-modal";
 export { MerchUpsellCard } from "./merch-upsell-card";
 export { ActionRow, type ActionRowIntent } from "./action-row";
+export { FloatingCartButton } from "./floating-cart-button";
 export { SharePulseBadge } from "./share-pulse-badge";
+export { PersonRow } from "./person-row";
+export { PeopleList } from "./people-list";

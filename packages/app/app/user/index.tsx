@@ -1,10 +1,6 @@
 import * as Application from "expo-application";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, useRouter } from "expo-router";
-import { Fragment } from "react";
-import { FormattedMessage, useIntl } from "react-intl";
-import { TouchableOpacity, View } from "react-native";
-
 import {
   ArrowRight,
   Backpack,
@@ -18,6 +14,10 @@ import {
   UsersRound,
   type LucideIcon as LucideIconType,
 } from "lucide-react-native";
+import { Fragment } from "react";
+import { FormattedMessage, useIntl } from "react-intl";
+import { TouchableOpacity, View } from "react-native";
+
 
 import {
   ThemedText,
@@ -127,7 +127,7 @@ export default function UserIndexScreen() {
           ))}
         </View>
         <TouchableOpacity
-          onPress={() => router.push("/support")}
+          onPress={() => router.push("/shop")}
           className="mb-4"
         >
           <LinearGradient

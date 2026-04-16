@@ -31,6 +31,7 @@ import {
 import {
   ActionRow,
   ImagePreviewModal,
+  MountainItemList,
   ScreenHeader,
   SharePulseBadge,
   useImagePreview,
@@ -147,34 +148,14 @@ const Content = () => {
         showsVerticalScrollIndicator={false}
         contentContainerClassName="pb-24 pt-2"
       >
-        <Link
-          href={{
-            pathname: "/mountain/[slug]",
-            params: { slug: data.mountainSlug },
-          }}
-          asChild
-        >
-          <TouchableOpacity className="mb-4 flex-row justify-between bg-background gap-4 px-6 pb-2">
-            <View className="flex-1">
-              <ThemedText className="text-3xl font-bold">
-                {data.mountainName}
-              </ThemedText>
-              <View className="flex-row items-center gap-1">
-                <ThemedText className="text-lg font-semibold text-muted-foreground">
-                  {format(data.summitedAt, "dd MMM yyyy")}
-                </ThemedText>
-              </View>
-            </View>
-            {data.mountainImageUrl ? (
-              <Image
-                className="size-16 rounded"
-                source={{ uri: data.mountainImageUrl }}
-              />
-            ) : (
-              <View className="rounded bg-neutral-500" />
-            )}
-          </TouchableOpacity>
-        </Link>
+        <View className="mb-4 bg-background px-6 pb-2">
+          <ThemedText className="text-3xl font-bold">
+            {data.mountainName}
+          </ThemedText>
+          <ThemedText className="text-lg font-semibold text-muted-foreground">
+            {format(data.summitedAt, "dd MMM yyyy")}
+          </ThemedText>
+        </View>
         <Pressable
           className="overflow-hidden rounded"
           disabled={isSharing}
@@ -243,6 +224,21 @@ const Content = () => {
               <FormattedMessage defaultMessage="Delete summit" />
             </ActionRow>
           )}
+        </View>
+        <View className="mt-6 gap-2 px-6">
+          <ThemedText className="mb-2 text-2xl font-semibold">
+            <FormattedMessage defaultMessage="Mountain" />
+          </ThemedText>
+          <MountainItemList
+            slug={data.mountainSlug}
+            name={data.mountainName}
+            location={data.mountainLocation}
+            latitude={data.mountainLatitude ?? undefined}
+            longitude={data.mountainLongitude ?? undefined}
+            height={data.mountainHeight}
+            essential={data.mountainEssential}
+            imageUrl={data.mountainImageUrl ?? null}
+          />
         </View>
       </ScrollView>
       {/*

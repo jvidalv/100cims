@@ -1,8 +1,8 @@
-import { asc, desc, eq, sql } from "drizzle-orm";
+import { asc, desc, eq, inArray, sql } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 
 import { db } from "@/db";
-import { merchTable } from "@/db/schema";
+import { merchTable, merchVariantTable } from "@/db/schema";
 import { resolveLocaleFromRequest } from "@/api/lib/request-headers";
 import { MerchEntrySchema } from "@/api/schemas/admin.schema";
 import { SuccessResponse } from "@/api/schemas/common.schema";
@@ -20,6 +20,30 @@ export const merchAllGetRoute = new Elysia().get(
         desc(merchTable.createdAt),
         asc(merchTable.slug),
       );
+
+    const merchIds = rows.map((r) => r.id);
+    const variantRows = merchIds.length
+      ? await db
+          .select({
+            merchId: merchVariantTable.merchId,
+            color: merchVariantTable.color,
+            imageUrls: merchVariantTable.imageUrls,
+          })
+          .from(merchVariantTable)
+          .where(inArray(merchVariantTable.merchId, merchIds))
+          .orderBy(asc(merchVariantTable.createdAt))
+      : [];
+
+    const variantsByMerch = new Map<
+      string,
+      { color: string; imageUrls: string[] }[]
+    >();
+    for (const v of variantRows) {
+      const list = variantsByMerch.get(v.merchId) ?? [];
+      list.push({ color: v.color, imageUrls: v.imageUrls });
+      variantsByMerch.set(v.merchId, list);
+    }
+
     const items = rows.map((r) => ({
       id: r.id,
       slug: r.slug,
@@ -37,6 +61,7 @@ export const merchAllGetRoute = new Elysia().get(
       price: r.price,
       featured: r.featured,
       createdAt: r.createdAt,
+      variants: variantsByMerch.get(r.id) ?? [],
     }));
     return { success: true, message: items };
   },

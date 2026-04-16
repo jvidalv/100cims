@@ -1,4 +1,13 @@
 import { Link, useRouter } from "expo-router";
+import {
+  ArrowRight,
+  Backpack,
+  Map,
+  Moon,
+  Mountain,
+  Sun,
+  Trophy,
+} from "lucide-react-native";
 import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
@@ -18,15 +27,6 @@ import Animated, {
 } from "react-native-reanimated";
 import { twMerge } from "tailwind-merge";
 
-import {
-  ArrowRight,
-  Backpack,
-  Map,
-  Moon,
-  Mountain,
-  Sun,
-  Trophy,
-} from "lucide-react-native";
 
 import { useAuth } from "@/components/providers/auth-provider";
 import {
@@ -47,7 +47,6 @@ import {
   PlanItemListSkeleton,
 } from "@/components/ui/molecules/plan-item-list";
 import { useActiveChallenge } from "@/domains/challenge/challenge.api";
-import { useMerch } from "@/domains/merch/merch.api";
 import {
   useMountains,
   useRecommendedPeaks,
@@ -351,11 +350,6 @@ export default function IndexScreen() {
     limit: 8,
   });
   const { data: mountains } = useMountains();
-  const { data: merch } = useMerch();
-  const featuredMerch = (merch ?? [])
-    .filter((m) => m.featured != null)
-    .sort((a, b) => (a.featured ?? 0) - (b.featured ?? 0))
-    .slice(0, 5);
 
   const isCurrentRoute = useIsCurrentScreen("/");
   const { showBadge, markAsSeen } = useMapNotificationBadge();
@@ -617,56 +611,28 @@ export default function IndexScreen() {
           </View>
           <PlansSection />
         </View>
-        {featuredMerch.length > 0 && (
-          <View className="gap-4 pb-16">
-            <View className="flex-row items-end justify-between">
-              <ThemedText className="text-2xl font-bold">
-                <FormattedMessage defaultMessage="Support Cims" />
-              </ThemedText>
-              <Link href="/support" className="-mx-2 -mb-2 p-2">
-                <View className="flex-row items-center gap-1">
-                  <ThemedText className="text-muted-foreground">
-                    <FormattedMessage defaultMessage="View all" />
-                  </ThemedText>
-                  <LucideIcon icon={ArrowRight} size={12} muted />
-                </View>
-              </Link>
-            </View>
-            <Link href="/support">
-              <View className="gap-2">
-                <View className="aspect-square w-full overflow-hidden rounded bg-border">
-                  {featuredMerch[0]?.imageUrls[0] && (
-                    <Image
-                      source={{ uri: featuredMerch[0].imageUrls[0] }}
-                      className="size-full"
-                      resizeMode="cover"
-                    />
-                  )}
-                </View>
-                <View className="flex-row gap-2">
-                  {featuredMerch.slice(1, 3).map((product) => (
-                    <Image
-                      key={product.slug}
-                      source={{ uri: product.imageUrls[0] }}
-                      className="aspect-square flex-1 rounded bg-border"
-                      resizeMode="cover"
-                    />
-                  ))}
-                </View>
-                <View className="flex-row gap-2">
-                  {featuredMerch.slice(3).map((product) => (
-                    <Image
-                      key={product.slug}
-                      source={{ uri: product.imageUrls[0] }}
-                      className="aspect-square flex-1 rounded bg-border"
-                      resizeMode="cover"
-                    />
-                  ))}
-                </View>
+        <View className="gap-4 pb-16">
+          <View className="flex-row items-end justify-between">
+            <ThemedText className="text-2xl font-bold">
+              <FormattedMessage defaultMessage="Support Cims" />
+            </ThemedText>
+            <Link href="/shop" className="-mx-2 -mb-2 p-2">
+              <View className="flex-row items-center gap-1">
+                <ThemedText className="text-muted-foreground">
+                  <FormattedMessage defaultMessage="View more" />
+                </ThemedText>
+                <LucideIcon icon={ArrowRight} size={12} muted />
               </View>
             </Link>
           </View>
-        )}
+          <Link href="/shop">
+            <Image
+              source={require("@/assets/images/shop-header.jpg")}
+              className="h-48 w-full rounded bg-border"
+              resizeMode="cover"
+            />
+          </Link>
+        </View>
       </Animated.ScrollView>
     </ThemedView>
   );

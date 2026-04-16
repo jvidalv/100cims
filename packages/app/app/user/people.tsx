@@ -4,16 +4,13 @@ import { FormattedMessage } from "react-intl";
 import { ScrollView, TouchableOpacity, View } from "react-native";
 
 import {
-  Avatar,
   LucideIcon,
   Skeleton,
   ThemedText,
   ThemedView,
 } from "@/components/ui/atoms";
-import { ScreenHeader } from "@/components/ui/molecules";
+import { PersonRow, ScreenHeader } from "@/components/ui/molecules";
 import { useUserPeople } from "@/domains/user/user.api";
-import { getFullName } from "@/domains/user/user.utils";
-import { getInitials } from "@/lib/strings";
 
 export default function UserPeopleScreen() {
   const { data, isPending } = useUserPeople();
@@ -56,34 +53,29 @@ export default function UserPeopleScreen() {
             }}
             asChild
           >
-            <TouchableOpacity className="flex-row items-center gap-3">
-              <Avatar
-                size="md"
-                imageUrl={person.imageUrl}
-                initials={getInitials(getFullName(person))}
-              />
-              <ThemedText className="text-lg font-medium">
-                {getFullName(person)}
-              </ThemedText>
-              {person.sharedSummitCount > 0 && (
-                <View className="ml-auto flex-row items-center gap-1">
-                  <LucideIcon icon={Mountain} size={14} muted />
-                  <ThemedText className="text-base text-muted-foreground">
-                    <FormattedMessage
-                      defaultMessage="{count} cims"
-                      values={{ count: person.sharedSummitCount }}
-                    />
-                  </ThemedText>
-                </View>
-              )}
-            </TouchableOpacity>
+            <PersonRow
+              person={person}
+              trailing={
+                person.sharedSummitCount > 0 ? (
+                  <View className="flex-row items-center gap-1">
+                    <ThemedText className="text-base text-muted-foreground">
+                      <FormattedMessage
+                        defaultMessage="{count} cims"
+                        values={{ count: person.sharedSummitCount }}
+                      />
+                    </ThemedText>
+                    <LucideIcon icon={Mountain} size={14} muted />
+                  </View>
+                ) : undefined
+              }
+            />
           </Link>
         ))}
         {!isPending && (
           <Link href="/user/people/add" asChild>
             <TouchableOpacity className="flex-row items-center gap-3">
-              <View className="size-12 items-center justify-center rounded-full border-2 border-muted-foreground">
-                <LucideIcon icon={Plus} size={22} />
+              <View className="size-12 items-center justify-center rounded-full border-2 border-muted-foreground/50">
+                <LucideIcon icon={Plus} size={22} muted />
               </View>
               <ThemedText className="text-lg font-medium">
                 <FormattedMessage defaultMessage="Add people" />

@@ -76,6 +76,10 @@ export default function AdminMerchDetailPage({
     featured: m.featured,
     active: m.active,
     imageUrls: m.imageUrls,
+    variants: m.variants.map((v) => ({
+      color: v.color,
+      imageUrls: v.imageUrls,
+    })),
   };
 
   const onDelete = () =>
@@ -121,6 +125,7 @@ export default function AdminMerchDetailPage({
               featured: values.featured,
               active: values.active,
               imageUrls: values.imageUrls,
+              variants: values.variants,
             },
             {
               onSuccess: () => toast.success("Saved"),

@@ -5,6 +5,8 @@ import { getToken } from "next-auth/jwt";
 import { db } from "@/db";
 import { userTable } from "@/db/schema";
 import { setAdminContext } from "@/api/routes/admin/admin-context";
+import { adminCampaignStatsGetRoute } from "@/api/routes/admin/admin.campaign-stats.get";
+import { adminCampaignTriggerPostRoute } from "@/api/routes/admin/admin.campaign-trigger.post";
 import { adminChallengeDeleteDeleteRoute } from "@/api/routes/admin/admin.challenge-delete.delete";
 import { adminChallengeDetailGetRoute } from "@/api/routes/admin/admin.challenge-detail.get";
 import { adminChallengeMountainsGetRoute } from "@/api/routes/admin/admin.challenge-mountains.get";
@@ -105,4 +107,6 @@ export const adminRoutes = new Elysia({ prefix: "/admin" })
   .use(adminStatsTimeseriesGetRoute)
   .use(adminCronsGetRoute)
   .use(adminCronsTriggerPostRoute)
-  .use(adminEmailTestPostRoute);
+  .use(adminEmailTestPostRoute)
+  .use(adminCampaignStatsGetRoute)
+  .use(adminCampaignTriggerPostRoute);

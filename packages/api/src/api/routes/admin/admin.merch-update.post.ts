@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 
 import { db } from "@/db";
-import { merchTable } from "@/db/schema";
+import { merchTable, merchVariantTable } from "@/db/schema";
 import { MerchImageError, resolveMerchImageUrls } from "@/api/lib/merch-images";
 import { AdminMerchUpdateBodySchema } from "@/api/schemas/admin.schema";
 import {
@@ -16,26 +16,61 @@ export const adminMerchUpdatePostRoute = new Elysia().post(
     try {
       // Slug is the stable identifier (used in suggestion logs and translation
       // keys). Disallow editing post-create even if the body sends one.
-      const { slug, imageUrls, ...rest } = body;
+      const { slug, imageUrls, variants, ...rest } = body;
       void slug;
       const resolvedImageUrls =
         imageUrls === undefined
           ? undefined
           : await resolveMerchImageUrls(imageUrls, params.id);
 
-      const [row] = await db
-        .update(merchTable)
-        .set({
-          ...rest,
-          ...(resolvedImageUrls !== undefined && {
-            imageUrls: resolvedImageUrls,
-          }),
-          updatedAt: new Date(),
-        })
-        .where(eq(merchTable.id, params.id))
-        .returning({ id: merchTable.id });
+      const resolvedVariants =
+        variants === undefined
+          ? undefined
+          : await Promise.all(
+              variants.map(async (v) => ({
+                color: v.color,
+                imageUrls: await resolveMerchImageUrls(
+                  v.imageUrls,
+                  params.id,
+                  v.color,
+                ),
+              })),
+            );
 
-      if (!row) {
+      const updated = await db.transaction(async (tx) => {
+        const [row] = await tx
+          .update(merchTable)
+          .set({
+            ...rest,
+            ...(resolvedImageUrls !== undefined && {
+              imageUrls: resolvedImageUrls,
+            }),
+            updatedAt: new Date(),
+          })
+          .where(eq(merchTable.id, params.id))
+          .returning({ id: merchTable.id });
+
+        if (!row) return null;
+
+        if (resolvedVariants !== undefined) {
+          await tx
+            .delete(merchVariantTable)
+            .where(eq(merchVariantTable.merchId, params.id));
+          if (resolvedVariants.length) {
+            await tx.insert(merchVariantTable).values(
+              resolvedVariants.map((v) => ({
+                merchId: params.id,
+                color: v.color,
+                imageUrls: v.imageUrls,
+              })),
+            );
+          }
+        }
+
+        return row;
+      });
+
+      if (!updated) {
         set.status = 404;
         return { error: "Merch not found" };
       }
