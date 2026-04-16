@@ -1,7 +1,7 @@
 import * as ImagePicker from "expo-image-picker";
 import { ImagePickerAsset } from "expo-image-picker";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { Camera } from "lucide-react-native";
+import { Camera, Check, Clock } from "lucide-react-native";
 import { useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Alert, Image, ScrollView, TouchableOpacity, View } from "react-native";
@@ -9,13 +9,12 @@ import { Alert, Image, ScrollView, TouchableOpacity, View } from "react-native";
 import { queryClient } from "@/components/providers/query-client-provider";
 import {
   ActivityIndicator,
-  Button,
   LucideIcon,
   ThemedText,
   ThemedView,
 } from "@/components/ui/atoms";
 import { ThemedDateInput } from "@/components/ui/atoms/themed-date-input";
-import { PeopleList, ScreenHeader } from "@/components/ui/molecules";
+import { ActionRow, PeopleList, ScreenHeader } from "@/components/ui/molecules";
 import { useMountains, useSummitPost } from "@/domains/mountain/mountain.api";
 import { SUMMITS_KEY } from "@/domains/summit/summit.api";
 import { type PeoplePickerUser } from "@/domains/user/people-picker-session";
@@ -211,19 +210,27 @@ export default function SummitMountainScreen() {
               onChange={setSelectedUsers}
             />
           </View>
-          <Button
-            isLoading={isPending}
-            intent="success"
-            className="mt-6"
-            onPress={onSubmit}
-          >
-            <FormattedMessage defaultMessage="Summit" />
-          </Button>
-          <TouchableOpacity className="mb-4 mt-2" onPress={router.back}>
-            <ThemedText className="text-center text-muted-foreground underline">
+          <View className="mt-6 pb-4">
+            <ActionRow
+              icon={Check}
+              size="lg"
+              intent="emerald"
+              onPress={onSubmit}
+              disabled={isPending}
+              activeOpacity={0.85}
+              iconOverride={isPending ? <ActivityIndicator /> : undefined}
+            >
+              <FormattedMessage defaultMessage="Summit" />
+            </ActionRow>
+            <ActionRow
+              icon={Clock}
+              size="lg"
+              onPress={router.back}
+              activeOpacity={0.85}
+            >
               <FormattedMessage defaultMessage="I'll summit later" />
-            </ThemedText>
-          </TouchableOpacity>
+            </ActionRow>
+          </View>
         </View>
       </ScrollView>
     </ThemedView>

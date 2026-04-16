@@ -1,12 +1,10 @@
 import { useLocalSearchParams, useRouter, Redirect } from "expo-router";
-import { Trash2 } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
   Alert,
   Keyboard,
   ScrollView,
-  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
@@ -21,7 +19,6 @@ import {
   ActivityIndicator,
   BlurView,
   Button,
-  LucideIcon,
   ThemedText,
   ThemedView,
 } from "@/components/ui/atoms";
@@ -31,7 +28,6 @@ import {
 } from "@/components/ui/molecules";
 import {
   toInlineMountain,
-  useCommunityChallengeDelete,
   useCommunityChallengeDetail,
   useCommunityChallengeUpdate,
 } from "@/domains/community-challenge/community-challenge.api";
@@ -66,8 +62,6 @@ export default function CommunityChallengeEditPage() {
   } = useMountainSelection();
 
   const { mutateAsync, isPending } = useCommunityChallengeUpdate();
-  const { mutateAsync: deleteChallenge, isPending: isDeleting } =
-    useCommunityChallengeDelete();
 
   const isOwner = isCreator(challenge?.creatorId, user?.id);
 
@@ -134,38 +128,6 @@ export default function CommunityChallengeEditPage() {
     }
   };
 
-  const handleDelete = () => {
-    Alert.alert(
-      intl.formatMessage({ defaultMessage: "Delete challenge" }),
-      intl.formatMessage({
-        defaultMessage:
-          "Are you sure you want to delete this challenge? This action cannot be undone.",
-      }),
-      [
-        {
-          text: intl.formatMessage({ defaultMessage: "Cancel" }),
-          style: "cancel",
-        },
-        {
-          text: intl.formatMessage({ defaultMessage: "Delete" }),
-          style: "destructive",
-          onPress: async () => {
-            try {
-              await deleteChallenge({ id: id! });
-              router.back();
-            } catch {
-              Alert.alert(
-                intl.formatMessage({
-                  defaultMessage: "Failed to delete challenge",
-                }),
-              );
-            }
-          },
-        },
-      ],
-    );
-  };
-
   if (!isAuthenticated) {
     return <Redirect href="/join" />;
   }
@@ -202,18 +164,9 @@ export default function CommunityChallengeEditPage() {
           keyboardShouldPersistTaps="handled"
         >
           <View className={twMerge("px-6 pt-2 pb-4", isAndroid && "pt-24")}>
-            <View className="flex-row items-center justify-between">
-              <ThemedText className="text-muted-foreground">
-                <FormattedMessage defaultMessage="Edit challenge" />
-              </ThemedText>
-              <TouchableOpacity
-                onPress={handleDelete}
-                disabled={isDeleting}
-                className="p-2"
-              >
-                <LucideIcon icon={Trash2} size={18} muted />
-              </TouchableOpacity>
-            </View>
+            <ThemedText className="text-muted-foreground">
+              <FormattedMessage defaultMessage="Edit challenge" />
+            </ThemedText>
             <ThemedText className="text-4xl font-semibold">
               {challenge.name}
             </ThemedText>

@@ -137,3 +137,24 @@ export const useMountainUpdate = () => {
     },
   });
 };
+
+export const useMountainDelete = () => {
+  return useMutation({
+    mutationKey: ["mountain", "delete"],
+    mutationFn: async (input: { id: string }) => {
+      const { data, error } = await apiClient.POST(
+        "/api/protected/mountains/delete",
+        { body: input }
+      );
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      void import("@/components/providers/query-client-provider").then(
+        ({ queryClient }) => {
+          void queryClient.invalidateQueries({ queryKey: mountainKeys.all });
+        }
+      );
+    },
+  });
+};

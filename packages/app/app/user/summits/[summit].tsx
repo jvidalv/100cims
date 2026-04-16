@@ -125,17 +125,42 @@ const Content = () => {
     return (
       <ThemedView className="flex-1">
         <ScreenHeader />
-        <View className="px-6">
-          <View className="flex-row justify-between">
-            <View>
-              <Skeleton className="mb-1 h-9 w-64" />
-              <Skeleton className="mb-8 h-6 w-20" />
-            </View>
-            <Skeleton className="size-16 rounded" />
-          </View>
-          <Skeleton className="mb-6 size-10 rounded-full" />
+        <View className="px-6 pb-2">
+          <Skeleton className="mb-2 h-9 w-64" />
+          <Skeleton className="h-6 w-32" />
         </View>
-        <Skeleton className="size-full min-h-[500px]" />
+        <Skeleton className="aspect-square w-full rounded-none" />
+        <View className="mt-6 gap-3 px-6">
+          <Skeleton className="h-7 w-24" />
+          <View className="flex-row items-center gap-2">
+            <Skeleton className="size-8 rounded-full" />
+            <Skeleton className="h-5 w-32" />
+          </View>
+          <View className="flex-row items-center gap-2">
+            <Skeleton className="size-8 rounded-full" />
+            <Skeleton className="h-5 w-28" />
+          </View>
+        </View>
+        <View className="mt-6 gap-3 px-6">
+          <Skeleton className="h-7 w-20" />
+          {[0, 1, 2].map((i) => (
+            <View key={i} className="flex-row items-center gap-2">
+              <Skeleton className="size-8 rounded-full" />
+              <Skeleton className="h-5 w-40" />
+            </View>
+          ))}
+        </View>
+        <View className="mt-6 gap-3 px-6">
+          <Skeleton className="h-7 w-24" />
+          <View className="flex-row gap-4">
+            <Skeleton className="size-[100px] rounded" />
+            <View className="flex-1 justify-center gap-2">
+              <Skeleton className="h-5 w-40" />
+              <Skeleton className="h-4 w-28" />
+              <Skeleton className="h-4 w-20" />
+            </View>
+          </View>
+        </View>
       </ThemedView>
     );
   }

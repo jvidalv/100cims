@@ -1,23 +1,21 @@
 import * as ImagePicker from "expo-image-picker";
 import { ImagePickerAsset } from "expo-image-picker";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { Camera } from "lucide-react-native";
+import { Camera, Check, X } from "lucide-react-native";
 import { useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Alert, Image, ScrollView, TouchableOpacity, View } from "react-native";
-import { twMerge } from "tailwind-merge";
 
 
 import {
   ActivityIndicator,
-  Button,
   LucideIcon,
   Skeleton,
   ThemedText,
   ThemedView,
 } from "@/components/ui/atoms";
 import { ThemedDateInput } from "@/components/ui/atoms/themed-date-input";
-import { PeopleList, ScreenHeader } from "@/components/ui/molecules";
+import { ActionRow, PeopleList, ScreenHeader } from "@/components/ui/molecules";
 import {
   useSummitGet,
   useUpdateSummitMutation,
@@ -205,19 +203,27 @@ export default function EditSummitScreen() {
               onChange={setSelectedUsers}
             />
           </View>
-          <Button
-            isLoading={isPending}
-            intent="success"
-            className={twMerge("mt-6")}
-            onPress={onSubmit}
-          >
-            <FormattedMessage defaultMessage="Save" />
-          </Button>
-          <TouchableOpacity className="mb-4 mt-2" onPress={router.back}>
-            <ThemedText className="text-center text-muted-foreground underline">
+          <View className="mt-6 pb-4">
+            <ActionRow
+              icon={Check}
+              size="lg"
+              intent="emerald"
+              onPress={onSubmit}
+              disabled={isPending}
+              activeOpacity={0.85}
+              iconOverride={isPending ? <ActivityIndicator /> : undefined}
+            >
+              <FormattedMessage defaultMessage="Save" />
+            </ActionRow>
+            <ActionRow
+              icon={X}
+              size="lg"
+              onPress={router.back}
+              activeOpacity={0.85}
+            >
               <FormattedMessage defaultMessage="Cancel" />
-            </ThemedText>
-          </TouchableOpacity>
+            </ActionRow>
+          </View>
         </View>
       </ScrollView>
     </ThemedView>

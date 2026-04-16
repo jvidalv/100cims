@@ -130,12 +130,12 @@ export default function PeoplePickerScreen() {
               onPress={() => toggle(user)}
               trailing={
                 isLocked ? (
-                  <LucideIcon icon={Lock} size={20} color="#22c55e" />
+                  <LucideIcon icon={Lock} size={20} success />
                 ) : (
                   <LucideIcon
                     icon={isSelected ? SquareCheck : Square}
                     size={20}
-                    color={isSelected ? "#22c55e" : undefined}
+                    success={isSelected}
                   />
                 )
               }
@@ -180,7 +180,7 @@ export default function PeoplePickerScreen() {
           onPress={() => router.back()}
         >
           <View className="size-12 items-center justify-center rounded-full border-2 border-emerald-500/70">
-            <LucideIcon icon={Check} size={22} color="#22c55e" />
+            <LucideIcon icon={Check} size={22} success />
           </View>
           <ThemedText className="text-lg font-medium text-emerald-500">
             <FormattedMessage defaultMessage="Done" />

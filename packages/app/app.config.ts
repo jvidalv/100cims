@@ -50,7 +50,7 @@ const config: ExpoConfig & { newArchEnabled?: boolean } = {
           ios: "./assets/images/app-icons/icon-merch.png",
           android: {
             foregroundImage: "./assets/images/app-icons/icon-merch-fg.png",
-            backgroundColor: "#ffffff",
+            backgroundColor: "#7B3058",
           },
         },
         {
@@ -66,7 +66,7 @@ const config: ExpoConfig & { newArchEnabled?: boolean } = {
           ios: "./assets/images/app-icons/icon-forcat.png",
           android: {
             foregroundImage: "./assets/images/app-icons/icon-forcat-fg.png",
-            backgroundColor: "#ffffff",
+            backgroundColor: "#000000",
           },
         },
         {
@@ -74,11 +74,12 @@ const config: ExpoConfig & { newArchEnabled?: boolean } = {
           ios: "./assets/images/app-icons/icon-picat.png",
           android: {
             foregroundImage: "./assets/images/app-icons/icon-picat-fg.png",
-            backgroundColor: "#ffffff",
+            backgroundColor: "#2D496E",
           },
         },
       ],
     ],
+    "./plugins/with-alternate-icons-plist",
     "expo-localization",
     "expo-apple-authentication",
     "expo-router",
@@ -101,6 +102,10 @@ const config: ExpoConfig & { newArchEnabled?: boolean } = {
         dark: {
           image: "./assets/images/logo-light.png",
           backgroundColor: "#000000",
+        },
+        android: {
+          imageWidth: 192,
+          resizeMode: "contain",
         },
       },
     ],
