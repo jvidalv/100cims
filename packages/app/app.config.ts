@@ -79,7 +79,6 @@ const config: ExpoConfig & { newArchEnabled?: boolean } = {
         },
       ],
     ],
-    "./plugins/with-alternate-icons-plist",
     "expo-localization",
     "expo-apple-authentication",
     "expo-router",
