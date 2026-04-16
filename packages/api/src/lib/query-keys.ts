@@ -42,4 +42,6 @@ export const adminKeys = {
     ["admin", "challenges", id, "mountains"] as const,
   merchList: () => ["admin", "merch"] as const,
   merchDetail: (id: string) => ["admin", "merch", id] as const,
+  campaignStats: (slug: string) =>
+    ["admin", "campaigns", slug, "stats"] as const,
 };

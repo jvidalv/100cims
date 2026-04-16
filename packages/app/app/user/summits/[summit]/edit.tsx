@@ -17,16 +17,13 @@ import {
   ThemedView,
 } from "@/components/ui/atoms";
 import { ThemedDateInput } from "@/components/ui/atoms/themed-date-input";
-import { ScreenHeader } from "@/components/ui/molecules";
-import {
-  UserForSelectInput,
-  UserSelectInput,
-} from "@/components/ui/molecules/user-select-input";
+import { PeopleList, ScreenHeader } from "@/components/ui/molecules";
 import {
   useSummitGet,
   useUpdateSummitMutation,
 } from "@/domains/summit/summit.api";
-import { useUserMe, useUsers } from "@/domains/user/user.api";
+import { type PeoplePickerUser } from "@/domains/user/people-picker-cache";
+import { useUserMe } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
 import { getImageOptimized } from "@/lib/images";
 import { logError } from "@/lib/log-error";
@@ -39,17 +36,12 @@ export default function EditSummitScreen() {
   const { data: me } = useUserMe();
   const { mutateAsync, isPending } = useUpdateSummitMutation();
 
-  const [userQuery, setUserQuery] = useState<string>("");
-  const { data: users, isPending: isPendingUsers } = useUsers({
-    query: userQuery,
-  });
-
   const [image, setImage] = useState<ImagePickerAsset | null>(null);
   const [isLoadingImage, setIsLoadingImage] = useState(false);
   const [date, setDate] = useState<Date | null>(null);
-  const [selectedUsers, setSelectedUsers] = useState<UserForSelectInput[] | null>(
-    null,
-  );
+  const [selectedUsers, setSelectedUsers] = useState<
+    PeoplePickerUser[] | null
+  >(null);
 
   if (!data || !me) {
     return (
@@ -65,7 +57,7 @@ export default function EditSummitScreen() {
   }
 
   const initialDate = new Date(data.summitedAt);
-  const initialUsers: UserForSelectInput[] = data.users.map((u) => ({
+  const initialUsers: PeoplePickerUser[] = data.users.map((u) => ({
     id: u.userId,
     fullName: getFullName(u) || "?",
     imageUrl: u.imageUrl,
@@ -137,7 +129,11 @@ export default function EditSummitScreen() {
   return (
     <ThemedView className="flex-1">
       <ScreenHeader />
-      <ScrollView className="flex-1" keyboardShouldPersistTaps="handled">
+      <ScrollView
+        className="flex-1"
+        contentContainerClassName="pb-24"
+        keyboardShouldPersistTaps="handled"
+      >
         <View className="gap-6 px-6 pt-2">
           <ThemedText className="text-4xl font-bold">
             {data.mountainName}
@@ -200,23 +196,13 @@ export default function EditSummitScreen() {
               )}
             </TouchableOpacity>
           </View>
-          <View className="gap-2">
+          <View className="gap-3">
             <ThemedText className="text-lg font-bold">
               <FormattedMessage defaultMessage="People" />
             </ThemedText>
-            <UserSelectInput
-              maxSelected={5}
-              firstSelectedRemovable={false}
-              selectedUsers={effectiveUsers}
-              onQueryChange={setUserQuery}
-              query={userQuery}
-              isFetchingUsers={isPendingUsers}
-              selectableUsers={users?.map((selectableUser) => ({
-                id: selectableUser.id,
-                fullName: getFullName(selectableUser) || "?",
-                imageUrl: selectableUser.imageUrl,
-              }))}
-              onSelectedUsersChange={setSelectedUsers}
+            <PeopleList
+              selected={effectiveUsers}
+              onChange={setSelectedUsers}
             />
           </View>
           <Button

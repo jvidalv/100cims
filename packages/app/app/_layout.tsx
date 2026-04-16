@@ -15,6 +15,7 @@ import { QueryClientProvider } from "@/components/providers";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { ThemedLogo } from "@/components/ui/atoms";
+import { FloatingCartButton } from "@/components/ui/molecules";
 import { useMountains } from "@/domains/mountain/mountain.api";
 import { usePlanChatUnread } from "@/domains/plan/plan-chat.api";
 import { usePlans } from "@/domains/plan/plan.api";
@@ -81,6 +82,7 @@ function Content() {
         options={{ presentation: isIpadOS ? "fullScreenModal" : "modal" }}
       />
     </Stack>
+      <FloatingCartButton />
     </>
   );
 }

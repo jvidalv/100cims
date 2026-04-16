@@ -34,10 +34,18 @@ yarn translations:generate
 
 **CRITICAL**: Always **ask the user before applying a migration**. Never run `drizzle-kit migrate` / `drizzle-kit push` / any schema-change command on your own — prepare the migration file and wait for explicit approval.
 
+**Never hand-author files under `packages/api/src/db/drizzle/` and never hand-edit `drizzle/meta/_journal.json`.** Always use drizzle-kit to create migration files, which keeps the indexed filename + journal entry in sync. Two flows:
+
+**Schema changed** (added/removed column, new table, constraint change):
 1. Edit `packages/api/src/db/schema.ts`.
-2. Run `yarn api db:generate` to produce the SQL file.
-3. Review / augment the generated SQL (e.g. backfill INSERTs).
+2. Run `yarn api db:generate` (optionally with `--name <slug>`).
+3. Review / augment the generated SQL if you also need data backfills for the same migration.
 4. **Ask the user** before running `yarn api db:migrate`.
+
+**Pure data change** (backfill, rename, merge rows, delete obsolete data) with **no schema diff**:
+1. Run `yarn api db:generate --custom --name <slug>` — produces an empty migration file tracked in the journal.
+2. Write the SQL inside that file.
+3. **Ask the user** before running `yarn api db:migrate`.
 
 Do **not** use `drizzle-kit push` anywhere: it bypasses the versioned migration files, skips custom SQL (like data backfills), and leaves the DB in a state that later `db:migrate` can't reconcile.
 

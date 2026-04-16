@@ -1,28 +1,40 @@
 import { useEffect, useState } from "react";
-import { Image, View, useWindowDimensions } from "react-native";
+import {
+  Image,
+  StyleSheet,
+  View,
+  useWindowDimensions,
+} from "react-native";
 import {
   GestureDetector,
   Gesture,
   GestureHandlerRootView,
 } from "react-native-gesture-handler";
 import Animated, {
+  runOnJS,
   useSharedValue,
   useAnimatedStyle,
   withTiming,
 } from "react-native-reanimated";
 
+import { BlurView } from "@/components/ui/atoms/blur-view";
 import { Skeleton } from "@/components/ui/atoms/skeleton";
 
 const MIN_SCALE = 1;
 const MAX_SCALE = 2.5;
 
-export const DynamicImage = ({ uri }: { uri: string }) => {
+export const DynamicImage = ({
+  uri,
+  onClose,
+}: {
+  uri: string;
+  onClose?: () => void;
+}) => {
   const [size, setSize] = useState<{ width: number; height: number } | null>(
     null,
   );
-  const { width: screenWidth } = useWindowDimensions();
+  const { width: screenWidth, height: screenHeight } = useWindowDimensions();
 
-  // Gesture state
   const scale = useSharedValue(1);
   const savedScale = useSharedValue(1);
   const translateX = useSharedValue(0);
@@ -108,6 +120,11 @@ export const DynamicImage = ({ uri }: { uri: string }) => {
     doubleTapGesture,
   );
 
+  const backdropTap = Gesture.Tap().onEnd(() => {
+    "worklet";
+    if (onClose) runOnJS(onClose)();
+  });
+
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [
       { scale: scale.value },
@@ -119,25 +136,46 @@ export const DynamicImage = ({ uri }: { uri: string }) => {
   if (!size) return <Skeleton className="size-full min-h-[500px]" />;
 
   const aspectRatio = size.width / size.height;
-  const displayHeight = screenWidth / aspectRatio;
+  const fitByWidth = screenWidth / aspectRatio <= screenHeight;
+  const displayWidth = fitByWidth ? screenWidth : screenHeight * aspectRatio;
+  const displayHeight = fitByWidth ? screenWidth / aspectRatio : screenHeight;
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <GestureDetector gesture={composedGesture}>
-          <Animated.Image
-            source={{ uri }}
+      <GestureDetector gesture={backdropTap}>
+        <View
+          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+        >
+          <BlurView
+            intensity={60}
+            tint="dark"
+            style={StyleSheet.absoluteFill}
+          />
+          <View
             style={[
-              {
-                width: screenWidth,
-                height: displayHeight,
-                resizeMode: "contain",
-              },
-              animatedStyle,
+              StyleSheet.absoluteFill,
+              { backgroundColor: "rgba(0,0,0,0.75)" },
             ]}
           />
-        </GestureDetector>
-      </View>
+          <GestureDetector gesture={composedGesture}>
+            <Animated.View
+              style={[
+                { width: displayWidth, height: displayHeight },
+                animatedStyle,
+              ]}
+            >
+              <Image
+                source={{ uri }}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  resizeMode: "contain",
+                }}
+              />
+            </Animated.View>
+          </GestureDetector>
+        </View>
+      </GestureDetector>
     </GestureHandlerRootView>
   );
 };

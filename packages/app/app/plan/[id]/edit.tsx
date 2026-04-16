@@ -24,9 +24,8 @@ import {
   AvatarGroup,
   BottomDrawer,
   MountainSelectionDrawer,
+  PeopleList,
   ScreenHeader,
-  UserSelectInput,
-  UserForSelectInput,
 } from "@/components/ui/molecules";
 import { useMountains } from "@/domains/mountain/mountain.api";
 import {
@@ -34,7 +33,7 @@ import {
   usePlanOne,
   usePlanUpdate,
 } from "@/domains/plan/plan.api";
-import { useUsers } from "@/domains/user/user.api";
+import { type PeoplePickerUser } from "@/domains/user/people-picker-cache";
 import { getFullName } from "@/domains/user/user.utils";
 
 export default function PlanEditPage() {
@@ -60,7 +59,7 @@ export default function PlanEditPage() {
   );
   const [editingMountains, setEditingMountains] = useState(false);
   const [mountainIds, setMountainIds] = useState<string[]>([]);
-  const [users, setUsers] = useState<UserForSelectInput[]>([]);
+  const [users, setUsers] = useState<PeoplePickerUser[]>([]);
 
   useEffect(() => {
     if (plan) {
@@ -68,13 +67,18 @@ export default function PlanEditPage() {
       setDescription(plan.description ?? undefined);
       setDate(plan.startDate ? new Date(plan.startDate) : null);
       setMountainIds(plan.mountains?.map((m) => m.id) ?? []);
-      setUsers(
-        plan?.users?.map((u) => ({
-          id: u.id,
-          fullName: getFullName(u),
-          imageUrl: u.imageUrl,
-        })) || [],
-      );
+
+      // Ensure the creator is always first. PeopleList locks index 0, and
+      // PeopleList's split treats index 0 as "keep in the toggleable bucket
+      // no matter what" so the creator never lands in the non-people extras.
+      const mapped: PeoplePickerUser[] = (plan.users ?? []).map((u) => ({
+        id: u.id,
+        fullName: getFullName(u),
+        imageUrl: u.imageUrl,
+      }));
+      const creator = mapped.find((u) => u.id === plan.creatorId);
+      const rest = mapped.filter((u) => u.id !== plan.creatorId);
+      setUsers(creator ? [creator, ...rest] : mapped);
     }
   }, [plan]);
 
@@ -183,17 +187,6 @@ export default function PlanEditPage() {
 
             <View className="mb-2">
               <ThemedText className="mb-2 text-lg font-medium">
-                <FormattedMessage defaultMessage="Participants" />
-              </ThemedText>
-              <UserSelection
-                creatorId={plan.creatorId}
-                selectedUsers={users}
-                onChange={setUsers}
-              />
-            </View>
-
-            <View className="mb-2">
-              <ThemedText className="mb-2 text-lg font-medium">
                 <FormattedMessage defaultMessage="Mountains" />
               </ThemedText>
               <TouchableOpacity
@@ -215,6 +208,18 @@ export default function PlanEditPage() {
                   <LucideIcon icon={Plus} color="white" size={16} />
                 </View>
               </TouchableOpacity>
+            </View>
+
+            <View className="mb-2 gap-3">
+              <ThemedText className="text-lg font-medium">
+                <FormattedMessage defaultMessage="Participants" />
+              </ThemedText>
+              <PeopleList
+                selected={users}
+                onChange={setUsers}
+                firstSelectedRemovable={false}
+                splitNonPeople
+              />
             </View>
             <Button
               className="mt-6"
@@ -258,37 +263,3 @@ export default function PlanEditPage() {
   );
 }
 
-const UserSelection = ({
-  creatorId,
-  selectedUsers,
-  onChange,
-}: {
-  creatorId: string;
-  selectedUsers: UserForSelectInput[];
-  onChange: (selectedUsers: UserForSelectInput[]) => void;
-}) => {
-  const [userQuery, setUserQuery] = useState("");
-  const { data: allUsersData, isFetching: isFetchingUsers } = useUsers({
-    query: userQuery,
-  });
-
-  const allUsersDataMinusCreator = allUsersData?.filter(
-    (u) => u.id !== creatorId,
-  );
-
-  return (
-    <UserSelectInput
-      query={userQuery}
-      onQueryChange={setUserQuery}
-      selectedUsers={selectedUsers}
-      firstSelectedRemovable={false}
-      selectableUsers={allUsersDataMinusCreator?.map((u) => ({
-        id: u.id,
-        fullName: getFullName(u),
-        imageUrl: u.imageUrl,
-      }))}
-      onSelectedUsersChange={onChange}
-      isFetchingUsers={isFetchingUsers}
-    />
-  );
-};

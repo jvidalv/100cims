@@ -2,6 +2,9 @@
   "+Z/Wja": {
     "defaultMessage": "I don't know exactly when."
   },
+  "+hctbG": {
+    "defaultMessage": "Already added"
+  },
   "+pZqnP": {
     "defaultMessage": "You have total control over it"
   },
@@ -41,6 +44,9 @@
   "1ps8x4": {
     "defaultMessage": "Are you sure you want to delete this challenge? This action cannot be undone."
   },
+  "22KmPv": {
+    "defaultMessage": "Edit people"
+  },
   "25oM9Q": {
     "defaultMessage": "Sort"
   },
@@ -49,6 +55,9 @@
   },
   "2slxzN": {
     "defaultMessage": "Required information missing!"
+  },
+  "34Up+l": {
+    "defaultMessage": "View more"
   },
   "3GLhZz": {
     "defaultMessage": "No one summited yet."
@@ -128,6 +137,9 @@
   "82GzU3": {
     "defaultMessage": "Upcoming plans"
   },
+  "8N2GKa": {
+    "defaultMessage": "Your cart is empty."
+  },
   "8Rj4Wg": {
     "defaultMessage": "Copy message"
   },
@@ -169,6 +181,9 @@
   },
   "AouTVa": {
     "defaultMessage": "Failed to update mountain"
+  },
+  "AryDSl": {
+    "defaultMessage": "Support the app"
   },
   "BEbOqj": {
     "defaultMessage": "Oops!"
@@ -239,6 +254,9 @@
   "FgydNe": {
     "defaultMessage": "View"
   },
+  "G/yZLu": {
+    "defaultMessage": "Remove"
+  },
   "G5NVqu": {
     "defaultMessage": "This can't be undone."
   },
@@ -250,6 +268,9 @@
   },
   "Gvxoji": {
     "defaultMessage": "Name is required"
+  },
+  "Gx2Ha6": {
+    "defaultMessage": "Back to shop"
   },
   "H5v61s": {
     "defaultMessage": "Set plan date"
@@ -302,6 +323,9 @@
   "JqiqNj": {
     "defaultMessage": "Something went wrong"
   },
+  "K/unOm": {
+    "defaultMessage": "Your cart"
+  },
   "K3r6DQ": {
     "defaultMessage": "Delete"
   },
@@ -326,11 +350,17 @@
   "M7VcNh": {
     "defaultMessage": "where you can compete with other mountain lovers."
   },
+  "MJ2jZQ": {
+    "defaultMessage": "Total"
+  },
   "MUP7n7": {
     "defaultMessage": "Still deciding a date"
   },
   "MUedip": {
     "defaultMessage": "Mountain added!"
+  },
+  "MmuKRi": {
+    "defaultMessage": "Cims costs around 50€ a month to run. Pick up some merch to help keep it free."
   },
   "NDV5Mq": {
     "defaultMessage": "Options"
@@ -340,6 +370,9 @@
   },
   "NWHHpt": {
     "defaultMessage": "Chat within plans"
+  },
+  "NozjOy": {
+    "defaultMessage": "Color: {color}"
   },
   "Ntjkqd": {
     "defaultMessage": "or"
@@ -395,6 +428,9 @@
   "QZoli7": {
     "defaultMessage": "Edit challenge"
   },
+  "Qh4l3L": {
+    "defaultMessage": "Other participants"
+  },
   "S+o8nA": {
     "defaultMessage": "Delete message?"
   },
@@ -440,6 +476,9 @@
   "VKfWR3": {
     "defaultMessage": "Recommended"
   },
+  "VPyacz": {
+    "defaultMessage": "Send order"
+  },
   "VuzjdC": {
     "defaultMessage": "Ongoing"
   },
@@ -470,17 +509,23 @@
   "YddCHw": {
     "defaultMessage": "Type here..."
   },
+  "YtJ1iO": {
+    "defaultMessage": "Browse the shop"
+  },
   "YzLFgz": {
     "defaultMessage": "Image too big."
-  },
-  "ZMHY+g": {
-    "defaultMessage": "Monthly costs of maintaining Cims: 50€. Your support helps keep the app running!"
   },
   "ZPboiN": {
     "defaultMessage": "Chat with others"
   },
+  "ZYxiR7": {
+    "defaultMessage": "Remove from your people?"
+  },
   "a5msuh": {
     "defaultMessage": "Yes"
+  },
+  "aJwH6f": {
+    "defaultMessage": "Type to search by name or email"
   },
   "aJxdzZ": {
     "defaultMessage": "Select one"
@@ -500,8 +545,14 @@
   "aqaOUn": {
     "defaultMessage": "{count} of {max} challenges"
   },
+  "b1zuN9": {
+    "defaultMessage": "Price"
+  },
   "bW7B87": {
     "defaultMessage": "New"
+  },
+  "bWST2F": {
+    "defaultMessage": "Add to your people"
   },
   "bbPfn0": {
     "defaultMessage": "Longitude"
@@ -517,6 +568,9 @@
   },
   "cXBJ7U": {
     "defaultMessage": "Privacy"
+  },
+  "cZ369Z": {
+    "defaultMessage": "Thanks for supporting Cims. We will contact you soon."
   },
   "ciVgJV": {
     "defaultMessage": "Received, thanks for your suggestion!"
@@ -547,6 +601,9 @@
   },
   "e2LofZ": {
     "defaultMessage": "Non-lucrative app whose main goal is to promote knowledge of the territory while practicing hiking."
+  },
+  "eAxGGJ": {
+    "defaultMessage": "Remove from your people"
   },
   "eDuQmI": {
     "defaultMessage": "Used in {count} challenges"
@@ -581,6 +638,9 @@
   "gzZWtl": {
     "defaultMessage": "The ability to"
   },
+  "gzhhds": {
+    "defaultMessage": "Select color"
+  },
   "hP78XN": {
     "defaultMessage": "My challenges"
   },
@@ -589,6 +649,9 @@
   },
   "hx5eQE": {
     "defaultMessage": "Edit mountain"
+  },
+  "iH0rqF": {
+    "defaultMessage": "Order sent!"
   },
   "iV2iNU": {
     "defaultMessage": "Updating plan"
@@ -622,6 +685,9 @@
   },
   "kyYf9Q": {
     "defaultMessage": "{points} pts"
+  },
+  "l1LOYZ": {
+    "defaultMessage": "Size: {size}"
   },
   "l3MiXo": {
     "defaultMessage": "Not mandatory"
@@ -665,9 +731,6 @@
   "om7joI": {
     "defaultMessage": "that you can share with the world."
   },
-  "pFK6bJ": {
-    "defaultMessage": "View all"
-  },
   "pNTyiX": {
     "defaultMessage": "Keep"
   },
@@ -697,6 +760,9 @@
   },
   "r+6lRr": {
     "defaultMessage": "You haven't summited any mountains yet."
+  },
+  "r0OXAf": {
+    "defaultMessage": "We'll reach you at {email} to arrange payment + shipping."
   },
   "rO8WR3": {
     "defaultMessage": "Country/Region is required"
@@ -766,6 +832,9 @@
   },
   "w6oJwY": {
     "defaultMessage": "One summit of 1000 meters ="
+  },
+  "wBMkI1": {
+    "defaultMessage": "Mountain"
   },
   "wEQDC6": {
     "defaultMessage": "Edit"

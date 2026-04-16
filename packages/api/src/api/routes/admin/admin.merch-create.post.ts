@@ -2,7 +2,7 @@ import { Elysia, t } from "elysia";
 import { uuidv7 } from "uuidv7";
 
 import { db } from "@/db";
-import { merchTable } from "@/db/schema";
+import { merchTable, merchVariantTable } from "@/db/schema";
 import { MerchImageError, resolveMerchImageUrls } from "@/api/lib/merch-images";
 import { AdminMerchCreateBodySchema } from "@/api/schemas/admin.schema";
 import {
@@ -19,21 +19,39 @@ export const adminMerchCreatePostRoute = new Elysia().post(
       const id = uuidv7();
       const imageUrls = await resolveMerchImageUrls(body.imageUrls ?? [], id);
 
-      await db.insert(merchTable).values({
-        id,
-        slug: body.slug,
-        nameEn: body.nameEn,
-        nameCa: body.nameCa ?? null,
-        nameEs: body.nameEs ?? null,
-        descriptionEn: body.descriptionEn ?? null,
-        descriptionCa: body.descriptionCa ?? null,
-        descriptionEs: body.descriptionEs ?? null,
-        shopUrl: body.shopUrl ?? null,
-        price: body.price,
-        hasSize: body.hasSize ?? false,
-        featured: body.featured ?? null,
-        active: body.active ?? true,
-        imageUrls,
+      const resolvedVariants = await Promise.all(
+        (body.variants ?? []).map(async (v) => ({
+          color: v.color,
+          imageUrls: await resolveMerchImageUrls(v.imageUrls, id, v.color),
+        })),
+      );
+
+      await db.transaction(async (tx) => {
+        await tx.insert(merchTable).values({
+          id,
+          slug: body.slug,
+          nameEn: body.nameEn,
+          nameCa: body.nameCa ?? null,
+          nameEs: body.nameEs ?? null,
+          descriptionEn: body.descriptionEn ?? null,
+          descriptionCa: body.descriptionCa ?? null,
+          descriptionEs: body.descriptionEs ?? null,
+          shopUrl: body.shopUrl ?? null,
+          price: body.price,
+          hasSize: body.hasSize ?? false,
+          featured: body.featured ?? null,
+          active: body.active ?? true,
+          imageUrls,
+        });
+        if (resolvedVariants.length) {
+          await tx.insert(merchVariantTable).values(
+            resolvedVariants.map((v) => ({
+              merchId: id,
+              color: v.color,
+              imageUrls: v.imageUrls,
+            })),
+          );
+        }
       });
 
       return { success: true, message: { id } };

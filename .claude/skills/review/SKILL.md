@@ -36,6 +36,7 @@ If `packages/app/types/api.ts` is in the diff, flag it. This file is regenerated
 - S3 upload endpoints without image size / MIME validation.
 - Multiple Elysia endpoints bundled into one file (see `packages/api/CLAUDE.md` — **one file = one endpoint**).
 - Routes added but not mounted in the parent `index.ts` composer.
+- **Hand-authored migration files** under `packages/api/src/db/drizzle/` or **hand-edited `drizzle/meta/_journal.json`** — flag either. Migration files must be produced by drizzle-kit: `yarn api db:generate` for schema changes, `yarn api db:generate --custom --name <slug>` for pure data changes (backfills, renames, merges). Root `CLAUDE.md` has the full flow.
 
 ### 5. API backwards compatibility (CRITICAL)
 

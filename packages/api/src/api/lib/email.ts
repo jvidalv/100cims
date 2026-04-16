@@ -115,10 +115,18 @@ export const sendWelcomeEmail = async (user: EmailRecipient): Promise<void> => {
   }
 };
 
-export const sendReengageColdEmail = async (
+type CampaignTemplate = (props: {
+  firstName: string | null;
+  locale: EmailLocale;
+  unsubscribeUrl: string;
+}) => ReactElement;
+
+const sendCampaignEmail = async (
+  slug: string,
+  template: CampaignTemplate,
   user: EmailRecipient,
 ): Promise<boolean> => {
-  if (dropOutsideProduction(EMAIL_SLUGS.reengageCold)) return false;
+  if (dropOutsideProduction(slug)) return false;
   const from = process.env.RESEND_FROM_EMAIL;
   const resend = getResend();
   if (!resend || !from) return false;
@@ -130,50 +138,22 @@ export const sendReengageColdEmail = async (
     await resend.emails.send({
       from,
       to: user.email,
-      subject: subjects.reengage_cold[locale],
-      react: ReengageColdEmail({
-        firstName: user.firstName,
-        locale,
-        unsubscribeUrl,
-      }),
+      subject: subjectForTemplate(slug, locale),
+      react: template({ firstName: user.firstName, locale, unsubscribeUrl }),
       headers: listUnsubscribeHeaders(unsubscribeUrl),
     });
     return true;
   } catch (e) {
-    console.error("[sendReengageColdEmail] failed", e);
+    console.error(`[sendCampaignEmail:${slug}] failed`, e);
     return false;
   }
 };
 
-export const sendReengageSummerEmail = async (
-  user: EmailRecipient,
-): Promise<boolean> => {
-  if (dropOutsideProduction(EMAIL_SLUGS.reengageSummer)) return false;
-  const from = process.env.RESEND_FROM_EMAIL;
-  const resend = getResend();
-  if (!resend || !from) return false;
+export const sendReengageColdEmail = (user: EmailRecipient) =>
+  sendCampaignEmail(EMAIL_SLUGS.reengageCold, ReengageColdEmail, user);
 
-  const locale = pickLocale(user.locale);
-  const unsubscribeUrl = await buildUnsubscribeUrl(user.id, locale);
-
-  try {
-    await resend.emails.send({
-      from,
-      to: user.email,
-      subject: subjects.reengage_summer[locale],
-      react: ReengageSummerEmail({
-        firstName: user.firstName,
-        locale,
-        unsubscribeUrl,
-      }),
-      headers: listUnsubscribeHeaders(unsubscribeUrl),
-    });
-    return true;
-  } catch (e) {
-    console.error("[sendReengageSummerEmail] failed", e);
-    return false;
-  }
-};
+export const sendReengageSummerEmail = (user: EmailRecipient) =>
+  sendCampaignEmail(EMAIL_SLUGS.reengageSummer, ReengageSummerEmail, user);
 
 export const sendRenderedEmail = async (
   args: {

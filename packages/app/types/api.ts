@@ -413,8 +413,24 @@ export interface paths {
         };
         get: operations["getApiProtectedUserPeople"];
         put?: never;
-        post?: never;
+        post: operations["postApiProtectedUserPeople"];
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/protected/user/people/{personUserId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["deleteApiProtectedUserPeopleByPersonUserId"];
         options?: never;
         head?: never;
         patch?: never;
@@ -1326,6 +1342,38 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["postApiAdminEmailsTest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/campaigns/{slug}/stats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiAdminCampaignsBySlugStats"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/campaigns/{slug}/trigger": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["postApiAdminCampaignsBySlugTrigger"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2338,6 +2386,7 @@ export interface operations {
                                 lastName: (string | null) | null;
                                 imageUrl: (string | null) | null;
                                 score: number;
+                                summitsTogetherCount: number;
                             }[];
                         };
                     };
@@ -2353,6 +2402,7 @@ export interface operations {
                                 lastName: (string | null) | null;
                                 imageUrl: (string | null) | null;
                                 score: number;
+                                summitsTogetherCount: number;
                             }[];
                         };
                     };
@@ -2368,6 +2418,7 @@ export interface operations {
                                 lastName: (string | null) | null;
                                 imageUrl: (string | null) | null;
                                 score: number;
+                                summitsTogetherCount: number;
                             }[];
                         };
                     };
@@ -2937,6 +2988,10 @@ export interface operations {
                             price: number;
                             featured: (number | null) | null;
                             createdAt: Record<string, never> | string | number;
+                            variants: {
+                                color: string;
+                                imageUrls: string[];
+                            }[];
                         }[];
                     };
                     "multipart/form-data": {
@@ -2952,6 +3007,10 @@ export interface operations {
                             price: number;
                             featured: (number | null) | null;
                             createdAt: Record<string, never> | string | number;
+                            variants: {
+                                color: string;
+                                imageUrls: string[];
+                            }[];
                         }[];
                     };
                     "text/plain": {
@@ -2967,6 +3026,10 @@ export interface operations {
                             price: number;
                             featured: (number | null) | null;
                             createdAt: Record<string, never> | string | number;
+                            variants: {
+                                color: string;
+                                imageUrls: string[];
+                            }[];
                         }[];
                     };
                 };
@@ -3399,6 +3462,106 @@ export interface operations {
             };
         };
     };
+    postApiProtectedUserPeople: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    personUserId: string;
+                };
+                "multipart/form-data": {
+                    personUserId: string;
+                };
+                "text/plain": {
+                    personUserId: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    deleteApiProtectedUserPeopleByPersonUserId: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                personUserId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+        };
+    };
     getApiProtectedUserSummitsAll: {
         parameters: {
             query?: {
@@ -3513,6 +3676,7 @@ export interface operations {
         parameters: {
             query: {
                 q: string;
+                mode?: "picker" | "search";
             };
             header?: never;
             path?: never;
@@ -3532,6 +3696,7 @@ export interface operations {
                             firstName: (string | null) | null;
                             lastName: (string | null) | null;
                             imageUrl: (string | null) | null;
+                            isPerson?: boolean;
                         }[];
                     };
                     "multipart/form-data": {
@@ -3541,6 +3706,7 @@ export interface operations {
                             firstName: (string | null) | null;
                             lastName: (string | null) | null;
                             imageUrl: (string | null) | null;
+                            isPerson?: boolean;
                         }[];
                     };
                     "text/plain": {
@@ -3550,6 +3716,7 @@ export interface operations {
                             firstName: (string | null) | null;
                             lastName: (string | null) | null;
                             imageUrl: (string | null) | null;
+                            isPerson?: boolean;
                         }[];
                     };
                 };
@@ -8071,6 +8238,10 @@ export interface operations {
                                 active: boolean;
                                 createdAt: Record<string, never> | string | number;
                                 updatedAt: Record<string, never> | string | number;
+                                variants: {
+                                    color: string;
+                                    imageUrls: string[];
+                                }[];
                             }[];
                         };
                     };
@@ -8094,6 +8265,10 @@ export interface operations {
                                 active: boolean;
                                 createdAt: Record<string, never> | string | number;
                                 updatedAt: Record<string, never> | string | number;
+                                variants: {
+                                    color: string;
+                                    imageUrls: string[];
+                                }[];
                             }[];
                         };
                     };
@@ -8117,6 +8292,10 @@ export interface operations {
                                 active: boolean;
                                 createdAt: Record<string, never> | string | number;
                                 updatedAt: Record<string, never> | string | number;
+                                variants: {
+                                    color: string;
+                                    imageUrls: string[];
+                                }[];
                             }[];
                         };
                     };
@@ -8147,6 +8326,10 @@ export interface operations {
                     hasSize?: boolean;
                     featured?: (number | null) | null;
                     active?: boolean;
+                    variants?: {
+                        color: string;
+                        imageUrls: string[];
+                    }[];
                 };
                 "multipart/form-data": {
                     slug: string;
@@ -8162,6 +8345,10 @@ export interface operations {
                     hasSize?: boolean;
                     featured?: (number | null) | null;
                     active?: boolean;
+                    variants?: {
+                        color: string;
+                        imageUrls: string[];
+                    }[];
                 };
                 "text/plain": {
                     slug: string;
@@ -8177,6 +8364,10 @@ export interface operations {
                     hasSize?: boolean;
                     featured?: (number | null) | null;
                     active?: boolean;
+                    variants?: {
+                        color: string;
+                        imageUrls: string[];
+                    }[];
                 };
             };
         };
@@ -8291,6 +8482,10 @@ export interface operations {
                             active: boolean;
                             createdAt: Record<string, never> | string | number;
                             updatedAt: Record<string, never> | string | number;
+                            variants: {
+                                color: string;
+                                imageUrls: string[];
+                            }[];
                         };
                     };
                     "multipart/form-data": {
@@ -8312,6 +8507,10 @@ export interface operations {
                             active: boolean;
                             createdAt: Record<string, never> | string | number;
                             updatedAt: Record<string, never> | string | number;
+                            variants: {
+                                color: string;
+                                imageUrls: string[];
+                            }[];
                         };
                     };
                     "text/plain": {
@@ -8333,6 +8532,10 @@ export interface operations {
                             active: boolean;
                             createdAt: Record<string, never> | string | number;
                             updatedAt: Record<string, never> | string | number;
+                            variants: {
+                                color: string;
+                                imageUrls: string[];
+                            }[];
                         };
                     };
                 };
@@ -8380,6 +8583,10 @@ export interface operations {
                     hasSize?: boolean;
                     featured?: (number | null) | null;
                     active?: boolean;
+                    variants?: {
+                        color: string;
+                        imageUrls: string[];
+                    }[];
                 };
                 "multipart/form-data": {
                     slug?: string;
@@ -8395,6 +8602,10 @@ export interface operations {
                     hasSize?: boolean;
                     featured?: (number | null) | null;
                     active?: boolean;
+                    variants?: {
+                        color: string;
+                        imageUrls: string[];
+                    }[];
                 };
                 "text/plain": {
                     slug?: string;
@@ -8410,6 +8621,10 @@ export interface operations {
                     hasSize?: boolean;
                     featured?: (number | null) | null;
                     active?: boolean;
+                    variants?: {
+                        color: string;
+                        imageUrls: string[];
+                    }[];
                 };
             };
         };
@@ -8751,6 +8966,141 @@ export interface operations {
                 };
             };
             500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    getApiAdminCampaignsBySlugStats: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: "reengage_cold" | "reengage_summer";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            slug: string;
+                            description: string;
+                            reached: number;
+                            eligibleRemaining: number;
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            slug: string;
+                            description: string;
+                            reached: number;
+                            eligibleRemaining: number;
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            slug: string;
+                            description: string;
+                            reached: number;
+                            eligibleRemaining: number;
+                        };
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    postApiAdminCampaignsBySlugTrigger: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: "reengage_cold" | "reengage_summer";
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    batchSize: string | number;
+                };
+                "multipart/form-data": {
+                    batchSize: string | number;
+                };
+                "text/plain": {
+                    batchSize: string | number;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            attempted: number;
+                            sent: number;
+                            failed: number;
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            attempted: number;
+                            sent: number;
+                            failed: number;
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            attempted: number;
+                            sent: number;
+                            failed: number;
+                        };
+                    };
+                };
+            };
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };

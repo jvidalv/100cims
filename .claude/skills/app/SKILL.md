@@ -75,6 +75,16 @@ Example: `/domains/user/user.api.ts` exports `useUser()`, `useUpdateUser()`, etc
 | `NewMountainData` | `types/mountain.ts` | New mountain for local state |
 | `MountainInfo` | `types/mountain.ts` | Minimal mountain info for display |
 
+When a domain needs to name a specific field from a response (a slug, an id union, a status enum), anchor the alias to the generated openapi path instead of re-declaring as `string` — that way the type stays in lockstep if the backend later tightens it to a literal union. Example from `domains/merch/cart.ts`:
+
+```typescript
+import type { paths } from "@/types/api";
+
+type MerchEntry =
+  paths["/api/public/merch/"]["get"]["responses"][200]["content"]["application/json"]["message"][number];
+type MerchSlug = MerchEntry["slug"];
+```
+
 ## Key Patterns
 
 ### Using Shared Hooks

@@ -44,6 +44,7 @@ export default function AdminMerchNewPage() {
               featured: values.featured,
               active: values.active,
               imageUrls: values.imageUrls,
+              variants: values.variants,
             },
             {
               onSuccess: ({ id }) => {

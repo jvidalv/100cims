@@ -16,6 +16,11 @@ import {
 const MAX_IMAGES = 4;
 const FEATURED_OPTIONS = ["none", "1", "2", "3", "4", "5"] as const;
 
+export type MerchVariantFormValue = {
+  color: string;
+  imageUrls: string[];
+};
+
 export type MerchFormValues = {
   slug: string;
   nameEn: string;
@@ -30,6 +35,7 @@ export type MerchFormValues = {
   featured: number | null;
   active: boolean;
   imageUrls: string[];
+  variants: MerchVariantFormValue[];
 };
 
 export const emptyMerchForm: MerchFormValues = {
@@ -46,6 +52,7 @@ export const emptyMerchForm: MerchFormValues = {
   featured: null,
   active: true,
   imageUrls: [],
+  variants: [],
 };
 
 const fileToBase64 = (file: File) =>
@@ -77,27 +84,6 @@ export function MerchForm({
 }) {
   const [form, setForm] = useState<MerchFormValues>(initial);
   const [uploading, setUploading] = useState(false);
-
-  const removeImage = (idx: number) =>
-    setForm((f) => ({
-      ...f,
-      imageUrls: f.imageUrls.filter((_, i) => i !== idx),
-    }));
-
-  const onPickFiles = async (files: FileList | null) => {
-    if (!files || files.length === 0) return;
-    const remaining = MAX_IMAGES - form.imageUrls.length;
-    const picked = Array.from(files).slice(0, remaining);
-    setUploading(true);
-    try {
-      const next = await Promise.all(picked.map(fileToBase64));
-      setForm((f) => ({ ...f, imageUrls: [...f.imageUrls, ...next] }));
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const isImageFull = form.imageUrls.length >= MAX_IMAGES;
 
   return (
     <div className="space-y-4 max-w-2xl">
@@ -217,82 +203,120 @@ export function MerchForm({
         </label>
       </div>
 
+      <ImageUploader
+        label="Images"
+        imageUrls={form.imageUrls}
+        onChange={(next) => setForm((f) => ({ ...f, imageUrls: next }))}
+        uploading={uploading}
+        setUploading={setUploading}
+      />
+
       <div className="space-y-2">
-        <Label>
-          Images ({form.imageUrls.length}/{MAX_IMAGES})
-        </Label>
-        {form.imageUrls.length > 0 && (
-          <ul className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {form.imageUrls.map((src, i) => {
-              const isHttp = src.startsWith("http");
-              return (
-                <li
-                  key={`${i}-${src.slice(0, 16)}`}
-                  className="relative rounded border bg-muted/40 overflow-hidden"
-                >
-                  <img
-                    src={isHttp ? src : `data:image/jpeg;base64,${src}`}
-                    alt=""
-                    className="aspect-square w-full object-cover"
-                  />
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="destructive"
-                    className="absolute top-1 right-1 h-7 px-2"
-                    onClick={() => removeImage(i)}
-                  >
-                    ×
-                  </Button>
-                  {!isHttp && (
-                    <span className="absolute bottom-1 left-1 text-[10px] bg-amber-200 text-amber-900 rounded px-1">
-                      pending upload
-                    </span>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-        )}
-        {!isImageFull && (
-          <label
-            className={`flex flex-col items-center justify-center gap-1 border-2 border-dashed border-input rounded px-4 py-6 text-sm transition-colors ${
-              uploading
-                ? "opacity-50 cursor-not-allowed"
-                : "cursor-pointer hover:border-primary hover:bg-muted/40"
-            }`}
+        <div className="flex items-center justify-between">
+          <Label>Color variants</Label>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() =>
+              setForm((f) => ({
+                ...f,
+                variants: [...f.variants, { color: "", imageUrls: [] }],
+              }))
+            }
           >
-            <span className="text-2xl leading-none">＋</span>
-            <span className="font-medium">
-              {uploading ? "Uploading…" : "Click to add images"}
-            </span>
-            <span className="text-xs text-muted-foreground">
-              JPG, PNG or WebP · up to {MAX_IMAGES - form.imageUrls.length} more
-            </span>
-            <input
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              multiple
-              disabled={uploading}
-              onChange={(e) => {
-                void onPickFiles(e.target.files);
-                e.target.value = "";
-              }}
-              className="sr-only"
-            />
-          </label>
-        )}
-        {isImageFull && (
+            + Add color
+          </Button>
+        </div>
+        {form.variants.length === 0 && (
           <p className="text-xs text-muted-foreground">
-            Max {MAX_IMAGES} images. Remove one to add more.
+            Add colors like "black" or "white" with their own images. Hidden when
+            fewer than 2 variants exist.
           </p>
         )}
+        {form.variants.map((v, idx) => (
+          <div
+            key={idx}
+            className="space-y-2 rounded border border-input bg-muted/20 p-3"
+          >
+            <div className="flex items-end gap-2">
+              <div className="flex-1 space-y-1">
+                <Label>Color token</Label>
+                <Input
+                  value={v.color}
+                  placeholder="black"
+                  onChange={(e) =>
+                    setForm((f) => ({
+                      ...f,
+                      variants: f.variants.map((x, i) =>
+                        i === idx
+                          ? { ...x, color: e.target.value.trim().toLowerCase() }
+                          : x,
+                      ),
+                    }))
+                  }
+                />
+              </div>
+              <Button
+                type="button"
+                variant="destructive"
+                size="sm"
+                onClick={() =>
+                  setForm((f) => ({
+                    ...f,
+                    variants: f.variants.filter((_, i) => i !== idx),
+                  }))
+                }
+              >
+                Remove
+              </Button>
+            </div>
+            <ImageUploader
+              label="Variant images"
+              imageUrls={v.imageUrls}
+              onChange={(next) =>
+                setForm((f) => ({
+                  ...f,
+                  variants: f.variants.map((x, i) =>
+                    i === idx ? { ...x, imageUrls: next } : x,
+                  ),
+                }))
+              }
+              uploading={uploading}
+              setUploading={setUploading}
+            />
+          </div>
+        ))}
       </div>
+
+      {(() => {
+        const colors = form.variants.map((v) => v.color);
+        const hasDuplicates =
+          colors.length !== new Set(colors).size;
+        const hasEmpty = form.variants.some((v) => !v.color);
+        if (hasDuplicates || hasEmpty) {
+          return (
+            <p className="text-xs text-red-500">
+              {hasEmpty
+                ? "Every variant needs a color token."
+                : "Duplicate color tokens are not allowed."}
+            </p>
+          );
+        }
+        return null;
+      })()}
 
       <div className="flex items-center gap-3 pt-2">
         <Button
           disabled={
-            saving || uploading || !form.slug || !form.nameEn || form.price < 0
+            saving ||
+            uploading ||
+            !form.slug ||
+            !form.nameEn ||
+            form.price < 0 ||
+            form.variants.some((v) => !v.color) ||
+            form.variants.length !==
+              new Set(form.variants.map((v) => v.color)).size
           }
           onClick={() => onSubmitForm(form)}
         >
@@ -362,6 +386,112 @@ function LocaleField({
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+function ImageUploader({
+  label,
+  imageUrls,
+  onChange,
+  uploading,
+  setUploading,
+}: {
+  label: string;
+  imageUrls: string[];
+  onChange: (next: string[]) => void;
+  uploading: boolean;
+  setUploading: (v: boolean) => void;
+}) {
+  const removeImage = (idx: number) =>
+    onChange(imageUrls.filter((_, i) => i !== idx));
+
+  const onPickFiles = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    const remaining = MAX_IMAGES - imageUrls.length;
+    const picked = Array.from(files).slice(0, remaining);
+    setUploading(true);
+    try {
+      const next = await Promise.all(picked.map(fileToBase64));
+      onChange([...imageUrls, ...next]);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const isImageFull = imageUrls.length >= MAX_IMAGES;
+
+  return (
+    <div className="space-y-2">
+      <Label>
+        {label} ({imageUrls.length}/{MAX_IMAGES})
+      </Label>
+      {imageUrls.length > 0 && (
+        <ul className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {imageUrls.map((src, i) => {
+            const isHttp = src.startsWith("http");
+            return (
+              <li
+                key={`${i}-${src.slice(0, 16)}`}
+                className="relative rounded border bg-muted/40 overflow-hidden"
+              >
+                <img
+                  src={isHttp ? src : `data:image/jpeg;base64,${src}`}
+                  alt=""
+                  className="aspect-square w-full object-cover"
+                />
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="destructive"
+                  className="absolute top-1 right-1 h-7 px-2"
+                  onClick={() => removeImage(i)}
+                >
+                  ×
+                </Button>
+                {!isHttp && (
+                  <span className="absolute bottom-1 left-1 text-[10px] bg-amber-200 text-amber-900 rounded px-1">
+                    pending upload
+                  </span>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      )}
+      {!isImageFull && (
+        <label
+          className={`flex flex-col items-center justify-center gap-1 border-2 border-dashed border-input rounded px-4 py-6 text-sm transition-colors ${
+            uploading
+              ? "opacity-50 cursor-not-allowed"
+              : "cursor-pointer hover:border-primary hover:bg-muted/40"
+          }`}
+        >
+          <span className="text-2xl leading-none">＋</span>
+          <span className="font-medium">
+            {uploading ? "Uploading…" : "Click to add images"}
+          </span>
+          <span className="text-xs text-muted-foreground">
+            JPG, PNG or WebP · up to {MAX_IMAGES - imageUrls.length} more
+          </span>
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            multiple
+            disabled={uploading}
+            onChange={(e) => {
+              void onPickFiles(e.target.files);
+              e.target.value = "";
+            }}
+            className="sr-only"
+          />
+        </label>
+      )}
+      {isImageFull && (
+        <p className="text-xs text-muted-foreground">
+          Max {MAX_IMAGES} images. Remove one to add more.
+        </p>
+      )}
     </div>
   );
 }

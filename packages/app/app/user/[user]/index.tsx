@@ -6,28 +6,41 @@ import {
   House,
   Image as ImageIcon,
   Link as LinkIcon,
+  Mountain,
   SquarePen,
-  UsersRound,
+  UserMinus,
+  UserPlus,
 } from "lucide-react-native";
 import { useRef, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { ActivityIndicator, Image, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  Image,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 import { SummitCard } from "@/components/summit";
 import { LucideIcon, Skeleton, ThemedText } from "@/components/ui/atoms";
-import { ActionRow, AvatarGroup } from "@/components/ui/molecules";
+import { ActionRow, PersonRow } from "@/components/ui/molecules";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
 import { UserShareCard } from "@/components/user";
 import { countryToEmoji } from "@/domains/challenge/challenge.model";
 import {
+  useAddUserPerson,
   useAnyUserSummits,
+  useRemoveUserPerson,
   useUserChallenges,
   useUserMe,
   useUserOneGet,
+  useUserPeople,
   useUserProfile,
 } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
+import { logError } from "@/lib/log-error";
 import { captureAndShare, shareDeeplink } from "@/lib/share";
+import { getInitials } from "@/lib/strings";
 
 export default function UserScreen() {
   const intl = useIntl();
@@ -84,6 +97,60 @@ export default function UserScreen() {
     setIsSharing(false);
   };
 
+  const { data: myPeople } = useUserPeople();
+  const isMyPerson = !isMe && !!myPeople?.some((p) => p.userId === userId);
+  const addPerson = useAddUserPerson();
+  const removePerson = useRemoveUserPerson();
+  const [isTogglingPerson, setIsTogglingPerson] = useState(false);
+
+  const handleAddPerson = async () => {
+    if (isTogglingPerson) return;
+    setIsTogglingPerson(true);
+    try {
+      await addPerson.mutateAsync(userId);
+    } catch (error) {
+      logError(error, "user/profile/add-person");
+      Alert.alert(
+        intl.formatMessage({ defaultMessage: "Something went wrong" }),
+      );
+    } finally {
+      setIsTogglingPerson(false);
+    }
+  };
+
+  const handleRemovePerson = () => {
+    if (isTogglingPerson) return;
+    Alert.alert(
+      intl.formatMessage({ defaultMessage: "Remove from your people?" }),
+      intl.formatMessage({
+        defaultMessage: "Are you sure you want to continue?",
+      }),
+      [
+        {
+          text: intl.formatMessage({ defaultMessage: "Cancel" }),
+          style: "cancel",
+        },
+        {
+          text: intl.formatMessage({ defaultMessage: "Remove" }),
+          style: "destructive",
+          onPress: async () => {
+            setIsTogglingPerson(true);
+            try {
+              await removePerson.mutateAsync(userId);
+            } catch (error) {
+              logError(error, "user/profile/remove-person");
+              Alert.alert(
+                intl.formatMessage({ defaultMessage: "Something went wrong" }),
+              );
+            } finally {
+              setIsTogglingPerson(false);
+            }
+          },
+        },
+      ],
+    );
+  };
+
   return (
     <>
     <ParallaxScrollView
@@ -134,27 +201,6 @@ export default function UserScreen() {
               />
             </ThemedText>
           </View>
-          {userDetails && !!userDetails?.sharedUsers?.length && (
-            <View>
-              <View className="mb-1 flex-row items-center gap-1.5">
-                <LucideIcon icon={UsersRound} muted size={18} />
-                <ThemedText className="text-base font-medium">
-                  <FormattedMessage defaultMessage="People" />
-                </ThemedText>
-              </View>
-              <View>
-                <AvatarGroup
-                  size="sm"
-                  items={userDetails.sharedUsers.map((person) => ({
-                    name: getFullName(person),
-                    imageUrl: person.imageUrl,
-                    id: person.userId,
-                  }))}
-                  onPress={({ id }) => router.push(`/user/${id}`)}
-                />
-              </View>
-            </View>
-          )}
           {isMe && (
             <View className="mt-4 gap-2">
               <ThemedText className="text-2xl font-semibold">
@@ -189,10 +235,72 @@ export default function UserScreen() {
               </ActionRow>
             </View>
           )}
+          {!isMe && (
+            <View className="mt-4 gap-2">
+              <ThemedText className="text-2xl font-semibold">
+                <FormattedMessage defaultMessage="Actions" />
+              </ThemedText>
+              {isMyPerson ? (
+                <ActionRow
+                  onPress={handleRemovePerson}
+                  icon={UserMinus}
+                  intent="danger"
+                  disabled={isTogglingPerson}
+                  iconOverride={
+                    isTogglingPerson ? (
+                      <ActivityIndicator size="sm" color="#ef4444" />
+                    ) : undefined
+                  }
+                >
+                  <FormattedMessage defaultMessage="Remove from your people" />
+                </ActionRow>
+              ) : (
+                <ActionRow
+                  onPress={handleAddPerson}
+                  icon={UserPlus}
+                  intent="emerald"
+                  disabled={isTogglingPerson}
+                  iconOverride={
+                    isTogglingPerson ? (
+                      <ActivityIndicator size="sm" color="#10b981" />
+                    ) : undefined
+                  }
+                >
+                  <FormattedMessage defaultMessage="Add to your people" />
+                </ActionRow>
+              )}
+            </View>
+          )}
         </View>
       ) : (
         <View className="mx-6 ">
           <Skeleton className="mb-6 h-24 w-full" />
+        </View>
+      )}
+      {userDetails && !!userDetails.sharedUsers?.length && (
+        <View className="mb-6 gap-2 px-6">
+          <ThemedText className="text-2xl font-semibold">
+            <FormattedMessage defaultMessage="People" />
+          </ThemedText>
+          {userDetails.sharedUsers.map((person) => (
+            <PersonRow
+              key={person.userId}
+              person={person}
+              avatarSize="xs"
+              onPress={() => router.push(`/user/${person.userId}`)}
+              trailing={
+                <View className="flex-row items-center gap-1">
+                  <ThemedText className="text-base text-muted-foreground">
+                    <FormattedMessage
+                      defaultMessage="{count} cims"
+                      values={{ count: person.summitsTogetherCount }}
+                    />
+                  </ThemedText>
+                  <LucideIcon icon={Mountain} size={14} muted />
+                </View>
+              }
+            />
+          ))}
         </View>
       )}
       <View className="relative flex-row items-center justify-between">

@@ -582,6 +582,39 @@ export const useSendTestEmail = () =>
     },
   });
 
+export type CampaignSlug = "reengage_cold" | "reengage_summer";
+
+export const useCampaignStats = (slug: CampaignSlug) =>
+  useQuery({
+    queryKey: adminKeys.campaignStats(slug),
+    queryFn: async () => {
+      const { data, error } = await api.api.admin
+        .campaigns({ slug })
+        .stats.get();
+      if (error) throw error;
+      return data.message;
+    },
+    staleTime: 5 * 60_000,
+  });
+
+export const useTriggerCampaign = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (args: { slug: CampaignSlug; batchSize: number }) => {
+      const { data, error } = await api.api.admin
+        .campaigns({ slug: args.slug })
+        .trigger.post({ batchSize: args.batchSize });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (_res, args) => {
+      void qc.invalidateQueries({
+        queryKey: adminKeys.campaignStats(args.slug),
+      });
+    },
+  });
+};
+
 export const useTriggerCron = () => {
   const qc = useQueryClient();
   return useMutation({

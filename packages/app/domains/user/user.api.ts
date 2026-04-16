@@ -37,16 +37,22 @@ export const useUserMe = () => {
   return props;
 };
 
-export const useUsers = ({ query }: { query?: string }) => {
+export const useUsers = ({
+  query,
+  mode,
+}: {
+  query?: string;
+  mode?: "picker" | "search";
+}) => {
   const { isAuthenticated } = useAuth();
 
   const args = useQuery({
-    queryKey: userKeys.search(query || ""),
+    queryKey: [...userKeys.search(query || ""), mode ?? "picker"] as const,
     enabled: () => isAuthenticated && !!query,
     queryFn: async () => {
       if (!isAuthenticated || !query) return null;
       const { data, error } = await apiClient.GET("/api/protected/user/all", {
-        params: { query: { q: query } },
+        params: { query: { q: query, ...(mode ? { mode } : {}) } },
       });
       if (error) throw error;
       return data.message;
@@ -163,6 +169,90 @@ export const useUserPeople = () => {
       );
       if (error) throw error;
       return data.message;
+    },
+  });
+};
+
+type PersonListItem = {
+  userId: string;
+  firstName: string | null;
+  lastName: string | null;
+  imageUrl: string | null;
+  connectedAt: string;
+  sharedSummitCount: number;
+};
+
+export const useAddUserPerson = () => {
+  return useMutation({
+    mutationFn: async (personUserId: string) => {
+      const { data, error } = await apiClient.POST(
+        "/api/protected/user/people",
+        { body: { personUserId } },
+      );
+      if (error) throw error;
+      return data;
+    },
+    onMutate: async (personUserId) => {
+      await queryClient.cancelQueries({ queryKey: userKeys.people() });
+      const prev = queryClient.getQueryData<PersonListItem[]>(
+        userKeys.people(),
+      );
+      if (prev) {
+        queryClient.setQueryData<PersonListItem[]>(userKeys.people(), [
+          {
+            userId: personUserId,
+            firstName: null,
+            lastName: null,
+            imageUrl: null,
+            connectedAt: new Date().toISOString(),
+            sharedSummitCount: 0,
+          },
+          ...prev.filter((p) => p.userId !== personUserId),
+        ]);
+      }
+      return { prev };
+    },
+    onError: (_err, _vars, ctx) => {
+      if (ctx?.prev) {
+        queryClient.setQueryData(userKeys.people(), ctx.prev);
+      }
+    },
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: userKeys.people() });
+    },
+  });
+};
+
+export const useRemoveUserPerson = () => {
+  return useMutation({
+    mutationFn: async (personUserId: string) => {
+      const { data, error } = await apiClient.DELETE(
+        "/api/protected/user/people/{personUserId}",
+        { params: { path: { personUserId } } },
+      );
+      if (error) throw error;
+      return data;
+    },
+    onMutate: async (personUserId) => {
+      await queryClient.cancelQueries({ queryKey: userKeys.people() });
+      const prev = queryClient.getQueryData<PersonListItem[]>(
+        userKeys.people(),
+      );
+      if (prev) {
+        queryClient.setQueryData<PersonListItem[]>(
+          userKeys.people(),
+          prev.filter((p) => p.userId !== personUserId),
+        );
+      }
+      return { prev };
+    },
+    onError: (_err, _vars, ctx) => {
+      if (ctx?.prev) {
+        queryClient.setQueryData(userKeys.people(), ctx.prev);
+      }
+    },
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: userKeys.people() });
     },
   });
 };

@@ -5,6 +5,8 @@ import {
   type WelcomeEmailLocale,
 } from "../../../../emails/welcome";
 
+import type { CampaignSlug } from "@/api/lib/campaigns";
+
 export const EMAIL_LOCALES: WelcomeEmailLocale[] = ["en", "ca", "es"];
 
 type FieldDef =
@@ -23,14 +25,12 @@ export type EmailTemplate = {
     locale: WelcomeEmailLocale,
     unsubscribeUrl?: string,
   ) => React.ReactElement;
+  campaignSlug?: CampaignSlug;
 };
 
 const firstNameOrNull = (raw: string | undefined): string | null =>
   raw?.trim() ? raw : null;
 
-// Preview-only stub URL — admin previews don't have a real recipient and
-// don't need a real signed token. The "Send test" route in
-// admin.email-test.post.ts mints a real token tied to the admin's id.
 const PREVIEW_UNSUBSCRIBE_URL =
   "https://cims-sempre-amunt.app/unsubscribe?token=preview";
 
@@ -52,8 +52,8 @@ export const EMAIL_TEMPLATES = {
   reengage_cold: {
     label: "Re-engage: cold signup",
     description:
-      "Weekly. Users with 0–1 summits who signed up >30 days ago. Gentle reintroduction.",
-    trigger: "Cron: reengage-users (Mondays 10:00 UTC)",
+      "Campaign. Users with 0–1 summits who signed up >30 days ago. Gentle reintroduction.",
+    trigger: "Admin-triggered campaign",
     fields: {
       firstName: { type: "text", default: "Josep" },
     },
@@ -63,12 +63,13 @@ export const EMAIL_TEMPLATES = {
         locale,
         unsubscribeUrl: unsubscribeUrl ?? PREVIEW_UNSUBSCRIBE_URL,
       }),
+    campaignSlug: "reengage_cold",
   },
   reengage_summer: {
     label: "Re-engage: summer nudge",
     description:
-      "Weekly. Users with 2+ summits whose last summit is >90 days old. Seasonal nudge.",
-    trigger: "Cron: reengage-users (Mondays 10:00 UTC)",
+      "Campaign. Users with 2+ summits whose last summit is >90 days old. Seasonal nudge.",
+    trigger: "Admin-triggered campaign",
     fields: {
       firstName: { type: "text", default: "Anna" },
     },
@@ -78,6 +79,7 @@ export const EMAIL_TEMPLATES = {
         locale,
         unsubscribeUrl: unsubscribeUrl ?? PREVIEW_UNSUBSCRIBE_URL,
       }),
+    campaignSlug: "reengage_summer",
   },
 } satisfies Record<string, EmailTemplate>;
 

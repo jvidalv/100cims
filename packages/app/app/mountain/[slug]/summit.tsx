@@ -15,14 +15,11 @@ import {
   ThemedView,
 } from "@/components/ui/atoms";
 import { ThemedDateInput } from "@/components/ui/atoms/themed-date-input";
-import { ScreenHeader } from "@/components/ui/molecules";
-import {
-  UserForSelectInput,
-  UserSelectInput,
-} from "@/components/ui/molecules/user-select-input";
+import { PeopleList, ScreenHeader } from "@/components/ui/molecules";
 import { useMountains, useSummitPost } from "@/domains/mountain/mountain.api";
 import { SUMMITS_KEY } from "@/domains/summit/summit.api";
-import { useUserMe, useUsers } from "@/domains/user/user.api";
+import { type PeoplePickerUser } from "@/domains/user/people-picker-cache";
+import { useUserMe } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
 import { getImageOptimized } from "@/lib/images";
 import { logError } from "@/lib/log-error";
@@ -35,15 +32,11 @@ export default function SummitMountainScreen() {
   const { mutateAsync, isPending } = useSummitPost(slug);
   const { data: mountains } = useMountains();
   const { data: user } = useUserMe();
-  const [userQuery, setUserQuery] = useState<string>("");
-  const { data: users, isPending: isPendingUsers } = useUsers({
-    query: userQuery,
-  });
 
   const [image, setImage] = useState<ImagePickerAsset | null>(null);
   const [isLoadingImage, setIsLoadingImage] = useState(false);
   const [date, setDate] = useState<Date>(new Date());
-  const [selectedUsers, setSelectedUsers] = useState<UserForSelectInput[]>(
+  const [selectedUsers, setSelectedUsers] = useState<PeoplePickerUser[]>(
     user
       ? [
           {
@@ -140,7 +133,11 @@ export default function SummitMountainScreen() {
   return (
     <ThemedView className="flex-1">
       <ScreenHeader />
-      <ScrollView className="flex-1" keyboardShouldPersistTaps="handled">
+      <ScrollView
+        className="flex-1"
+        contentContainerClassName="pb-24"
+        keyboardShouldPersistTaps="handled"
+      >
         <View className="gap-6 px-6 pt-2">
           <ThemedText className="text-4xl font-bold">
             {mountain.name}
@@ -205,23 +202,13 @@ export default function SummitMountainScreen() {
               )}
             </TouchableOpacity>
           </View>
-          <View className="gap-2">
+          <View className="gap-3">
             <ThemedText className="text-lg font-bold">
               <FormattedMessage defaultMessage="People" />
             </ThemedText>
-            <UserSelectInput
-              maxSelected={5}
-              firstSelectedRemovable={false}
-              selectedUsers={selectedUsers}
-              onQueryChange={setUserQuery}
-              query={userQuery}
-              isFetchingUsers={isPendingUsers}
-              selectableUsers={users?.map((selectableUser) => ({
-                id: selectableUser.id,
-                fullName: getFullName(selectableUser) || "?",
-                imageUrl: selectableUser.imageUrl,
-              }))}
-              onSelectedUsersChange={setSelectedUsers}
+            <PeopleList
+              selected={selectedUsers}
+              onChange={setSelectedUsers}
             />
           </View>
           <Button
