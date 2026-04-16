@@ -207,20 +207,49 @@ export default function PlanIdPage() {
 
   if (!plan)
     return (
-      <ThemedView>
-        <Skeleton className="mb-6 h-[300px] w-full" />
-        <View className="gap-4 px-6">
-          <View className="flex-row gap-4">
-            <View className="flex-row items-center gap-2">
-              <Skeleton className="size-6" />
-              <Skeleton className="h-6 w-20" />
+      <ThemedView className="flex-1">
+        <Skeleton className="h-[300px] w-full rounded-none" />
+        <View className="gap-8 px-6 py-6">
+          <View className="gap-4">
+            <View className="flex-row gap-4">
+              <View className="flex-row items-center gap-2">
+                <Skeleton className="size-5" />
+                <Skeleton className="h-5 w-24" />
+              </View>
+              <View className="flex-row items-center gap-2">
+                <Skeleton className="size-5" />
+                <Skeleton className="h-5 w-32" />
+              </View>
             </View>
-            <View className="flex-row items-center gap-2">
-              <Skeleton className="size-6" />
-              <Skeleton className="h-6 w-36" />
+            <View className="gap-2">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-3/4" />
             </View>
           </View>
-          <Skeleton className="h-6 w-full" />
+          <View className="gap-4">
+            <Skeleton className="h-7 w-32" />
+            <View className="flex-row items-center gap-2">
+              <Skeleton className="size-6 rounded-full" />
+              <Skeleton className="h-5 w-28" />
+            </View>
+            <View className="flex-row items-center gap-2">
+              <Skeleton className="size-6 rounded-full" />
+              <Skeleton className="h-5 w-24" />
+            </View>
+          </View>
+          <View className="gap-4">
+            <Skeleton className="h-7 w-24" />
+            {[0, 1, 2].map((i) => (
+              <View key={i} className="flex-row gap-4">
+                <Skeleton className="size-[100px] rounded" />
+                <View className="flex-1 justify-center gap-2">
+                  <Skeleton className="h-5 w-40" />
+                  <Skeleton className="h-4 w-28" />
+                  <Skeleton className="h-4 w-20" />
+                </View>
+              </View>
+            ))}
+          </View>
         </View>
       </ThemedView>
     );

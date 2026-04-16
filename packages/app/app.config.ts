@@ -34,6 +34,51 @@ const config: ExpoConfig & { newArchEnabled?: boolean } = {
       process.env.GOOGLE_SERVICES_JSON ?? "./google-services.json",
   },
   plugins: [
+    [
+      "expo-alternate-app-icons",
+      [
+        {
+          name: "Light",
+          ios: "./assets/images/app-icons/icon-light.png",
+          android: {
+            foregroundImage: "./assets/images/app-icons/icon-light-fg.png",
+            backgroundColor: "#ffffff",
+          },
+        },
+        {
+          name: "Merch",
+          ios: "./assets/images/app-icons/icon-merch.png",
+          android: {
+            foregroundImage: "./assets/images/app-icons/icon-merch-fg.png",
+            backgroundColor: "#ffffff",
+          },
+        },
+        {
+          name: "Share",
+          ios: "./assets/images/app-icons/icon-share.png",
+          android: {
+            foregroundImage: "./assets/images/app-icons/icon-share-fg.png",
+            backgroundColor: "#ffffff",
+          },
+        },
+        {
+          name: "Forcat",
+          ios: "./assets/images/app-icons/icon-forcat.png",
+          android: {
+            foregroundImage: "./assets/images/app-icons/icon-forcat-fg.png",
+            backgroundColor: "#ffffff",
+          },
+        },
+        {
+          name: "Picat",
+          ios: "./assets/images/app-icons/icon-picat.png",
+          android: {
+            foregroundImage: "./assets/images/app-icons/icon-picat-fg.png",
+            backgroundColor: "#ffffff",
+          },
+        },
+      ],
+    ],
     "expo-localization",
     "expo-apple-authentication",
     "expo-router",

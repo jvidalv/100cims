@@ -532,6 +532,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/protected/user/unlockables": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["postApiProtectedUserUnlockables"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/protected/mountain/summit": {
         parameters: {
             query?: never;
@@ -2237,6 +2253,7 @@ export interface operations {
                             locale: (string | null) | null;
                             username: (string | null) | null;
                             activeChallengeId: (string | null) | null;
+                            unlockables?: string[];
                             createdAt: Record<string, never> | string | number;
                         };
                     };
@@ -2254,6 +2271,7 @@ export interface operations {
                             locale: (string | null) | null;
                             username: (string | null) | null;
                             activeChallengeId: (string | null) | null;
+                            unlockables?: string[];
                             createdAt: Record<string, never> | string | number;
                         };
                     };
@@ -2271,6 +2289,7 @@ export interface operations {
                             locale: (string | null) | null;
                             username: (string | null) | null;
                             activeChallengeId: (string | null) | null;
+                            unlockables?: string[];
                             createdAt: Record<string, never> | string | number;
                         };
                     };
@@ -3174,6 +3193,7 @@ export interface operations {
                             locale: (string | null) | null;
                             username: (string | null) | null;
                             activeChallengeId: (string | null) | null;
+                            unlockables?: string[];
                             createdAt: Record<string, never> | string | number;
                         };
                     };
@@ -3191,6 +3211,7 @@ export interface operations {
                             locale: (string | null) | null;
                             username: (string | null) | null;
                             activeChallengeId: (string | null) | null;
+                            unlockables?: string[];
                             createdAt: Record<string, never> | string | number;
                         };
                     };
@@ -3208,6 +3229,7 @@ export interface operations {
                             locale: (string | null) | null;
                             username: (string | null) | null;
                             activeChallengeId: (string | null) | null;
+                            unlockables?: string[];
                             createdAt: Record<string, never> | string | number;
                         };
                     };
@@ -3854,6 +3876,45 @@ export interface operations {
                 };
                 "text/plain": {
                     updateId: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+        };
+    };
+    postApiProtectedUserUnlockables: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    key: "merch" | "share" | "forcat" | "picat";
+                };
+                "multipart/form-data": {
+                    key: "merch" | "share" | "forcat" | "picat";
+                };
+                "text/plain": {
+                    key: "merch" | "share" | "forcat" | "picat";
                 };
             };
         };
@@ -5997,6 +6058,7 @@ export interface operations {
                             locale: (string | null) | null;
                             username: (string | null) | null;
                             activeChallengeId: (string | null) | null;
+                            unlockables?: string[];
                             createdAt: Record<string, never> | string | number;
                         };
                     };
@@ -6014,6 +6076,7 @@ export interface operations {
                             locale: (string | null) | null;
                             username: (string | null) | null;
                             activeChallengeId: (string | null) | null;
+                            unlockables?: string[];
                             createdAt: Record<string, never> | string | number;
                         };
                     };
@@ -6031,6 +6094,7 @@ export interface operations {
                             locale: (string | null) | null;
                             username: (string | null) | null;
                             activeChallengeId: (string | null) | null;
+                            unlockables?: string[];
                             createdAt: Record<string, never> | string | number;
                         };
                     };
@@ -6200,6 +6264,7 @@ export interface operations {
                             activeChallengeName: (string | null) | null;
                             pushNotificationsEnabled: boolean;
                             expoPushToken: (string | null) | null;
+                            unlockables: string[];
                             createdAt: Record<string, never> | string | number;
                         };
                     };
@@ -6227,6 +6292,7 @@ export interface operations {
                             activeChallengeName: (string | null) | null;
                             pushNotificationsEnabled: boolean;
                             expoPushToken: (string | null) | null;
+                            unlockables: string[];
                             createdAt: Record<string, never> | string | number;
                         };
                     };
@@ -6254,6 +6320,7 @@ export interface operations {
                             activeChallengeName: (string | null) | null;
                             pushNotificationsEnabled: boolean;
                             expoPushToken: (string | null) | null;
+                            unlockables: string[];
                             createdAt: Record<string, never> | string | number;
                         };
                     };
@@ -6299,6 +6366,7 @@ export interface operations {
                     visibleOnPeopleSearch?: boolean;
                     emailNotificationsEnabled?: boolean;
                     admin?: boolean;
+                    unlockables?: ("merch" | "share" | "forcat" | "picat")[];
                 };
                 "multipart/form-data": {
                     firstName?: (string | null) | null;
@@ -6311,6 +6379,7 @@ export interface operations {
                     visibleOnPeopleSearch?: boolean;
                     emailNotificationsEnabled?: boolean;
                     admin?: boolean;
+                    unlockables?: ("merch" | "share" | "forcat" | "picat")[];
                 };
                 "text/plain": {
                     firstName?: (string | null) | null;
@@ -6323,6 +6392,7 @@ export interface operations {
                     visibleOnPeopleSearch?: boolean;
                     emailNotificationsEnabled?: boolean;
                     admin?: boolean;
+                    unlockables?: ("merch" | "share" | "forcat" | "picat")[];
                 };
             };
         };

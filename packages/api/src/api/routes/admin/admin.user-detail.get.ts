@@ -35,6 +35,7 @@ export const adminUserDetailGetRoute = new Elysia().get(
         activeChallengeName: challengeTable.name,
         pushNotificationsEnabled: userTable.pushNotificationsEnabled,
         expoPushToken: userTable.expoPushToken,
+        unlockables: userTable.unlockables,
         createdAt: userTable.createdAt,
       })
       .from(userTable)

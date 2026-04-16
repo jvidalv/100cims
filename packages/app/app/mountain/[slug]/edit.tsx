@@ -1,5 +1,5 @@
 import { Redirect, useLocalSearchParams, useRouter } from "expo-router";
-import { Camera } from "lucide-react-native";
+import { Camera, Check, X } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
@@ -15,13 +15,12 @@ import {
 
 import {
   ActivityIndicator,
-  Button,
   LucideIcon,
   ThemedText,
   ThemedTextInput,
 } from "@/components/ui/atoms";
 import { ThemedToggleInput } from "@/components/ui/atoms/themed-toggle-input";
-import { ScreenHeader } from "@/components/ui/molecules";
+import { ActionRow, ScreenHeader } from "@/components/ui/molecules";
 import {
   useMountainUpdate,
   useMyMountains,
@@ -210,17 +209,26 @@ export default function MountainEditScreen() {
             />
           </View>
 
-          <View className="mt-6 gap-2 pb-12">
-            <Button isLoading={isSaving} onPress={handleSave}>
+          <View className="mt-6 pb-12">
+            <ActionRow
+              icon={Check}
+              size="lg"
+              intent="primary"
+              onPress={handleSave}
+              disabled={isSaving}
+              activeOpacity={0.85}
+              iconOverride={isSaving ? <ActivityIndicator /> : undefined}
+            >
               <FormattedMessage defaultMessage="Save changes" />
-            </Button>
-            <Button
-              intent="ghost"
+            </ActionRow>
+            <ActionRow
+              icon={X}
+              size="lg"
               onPress={() => router.back()}
-              textClassName="text-muted-foreground"
+              activeOpacity={0.85}
             >
               <FormattedMessage defaultMessage="Cancel" />
-            </Button>
+            </ActionRow>
           </View>
         </ScrollView>
       </View>

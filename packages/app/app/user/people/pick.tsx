@@ -18,7 +18,7 @@ import {
   clearPeoplePickerSession,
   commitPeoplePickerSession,
   readPeoplePickerSession,
-} from "@/domains/user/people-picker-cache";
+} from "@/domains/user/people-picker-session";
 import { useUserMe, useUserPeople } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
 

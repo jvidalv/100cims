@@ -68,6 +68,13 @@ export default function AddPeopleScreen() {
         contentContainerClassName="gap-3 px-6 pb-28"
         keyboardShouldPersistTaps="handled"
       >
+        {!debounced && (
+          <View className="rounded border-2 border-border p-4">
+            <ThemedText className="text-sm text-muted-foreground">
+              <FormattedMessage defaultMessage="Can’t find someone? They may have “Visible on people search” turned off in their profile — ask them to enable it." />
+            </ThemedText>
+          </View>
+        )}
         {debounced && !isFetching && results && results.length === 0 && (
           <ThemedText className="text-muted-foreground">
             <FormattedMessage defaultMessage="No results, please change the search." />

@@ -199,6 +199,7 @@ const items = data?.pages?.flatMap((p) => p?.items ?? []) ?? [];
 - JWT stored in AsyncStorage
 - `setAuthToken(token)` in lib/api-client.ts sets Authorization header
 - Protected routes check auth state in _layout.tsx
+- **Only log out on HTTP 401**, never on generic query errors. React Query fires errors for network failures, 5xx, and `ECONNREFUSED` (e.g. when the API server restarts in dev) — logging out on any of those wipes the AsyncStorage JWT and boots the user to the login screen on every API restart. See `domains/user/user.api.ts` `useUserMe`: queryFn throws `new Error(UNAUTHORIZED)` specifically on `response.status === 401`, and the logout effect gates on `error.message === UNAUTHORIZED`. Mirror this pattern in any new hook that reacts to auth errors.
 
 ### Styling with NativeWind
 

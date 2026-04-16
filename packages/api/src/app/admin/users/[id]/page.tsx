@@ -21,6 +21,15 @@ import {
 } from "@/domains/admin/api";
 import { formatDate, formatDateTime } from "@/lib/format-date";
 
+const UNLOCKABLES = ["merch", "share", "forcat", "picat"] as const;
+type Unlockable = (typeof UNLOCKABLES)[number];
+const UNLOCKABLE_LABELS: Record<Unlockable, string> = {
+  merch: "Or (merch)",
+  share: "Genteta (share)",
+  forcat: "Forcat (Pedraforca)",
+  picat: "Picat (Pica d'Estats)",
+};
+
 type Form = {
   firstName: string;
   lastName: string;
@@ -31,6 +40,7 @@ type Form = {
   visibleOnHiscores: boolean;
   visibleOnPeopleSearch: boolean;
   admin: boolean;
+  unlockables: Unlockable[];
 };
 
 const emptyForm: Form = {
@@ -43,6 +53,7 @@ const emptyForm: Form = {
   visibleOnHiscores: false,
   visibleOnPeopleSearch: true,
   admin: false,
+  unlockables: [],
 };
 
 export default function AdminUserDetailPage({
@@ -88,14 +99,23 @@ export default function AdminUserDetailPage({
       visibleOnHiscores: detail.data.visibleOnHiscores,
       visibleOnPeopleSearch: detail.data.visibleOnPeopleSearch,
       admin: detail.data.admin,
+      unlockables: detail.data.unlockables.filter((u): u is Unlockable =>
+        (UNLOCKABLES as readonly string[]).includes(u),
+      ),
     };
     setForm(next);
     setInitial(next);
   }, [detail.data, update.isPending]);
 
-  const dirty = (Object.keys(form) as (keyof Form)[]).some(
-    (k) => form[k] !== initial[k],
-  );
+  const unlockablesDirty =
+    form.unlockables.length !== initial.unlockables.length ||
+    form.unlockables.some((u) => !initial.unlockables.includes(u));
+
+  const dirty =
+    unlockablesDirty ||
+    (Object.keys(form) as (keyof Form)[]).some(
+      (k) => k !== "unlockables" && form[k] !== initial[k],
+    );
 
   const onSave = () => {
     const body: AdminUserUpdateBody = {};
@@ -112,6 +132,7 @@ export default function AdminUserDetailPage({
     if (form.visibleOnPeopleSearch !== initial.visibleOnPeopleSearch)
       body.visibleOnPeopleSearch = form.visibleOnPeopleSearch;
     if (form.admin !== initial.admin) body.admin = form.admin;
+    if (unlockablesDirty) body.unlockables = form.unlockables;
 
     update.mutate(body, {
       onSuccess: () => toast.success("Saved"),
@@ -226,6 +247,29 @@ export default function AdminUserDetailPage({
             checked={form.admin}
             onChange={(v) => setForm((p) => ({ ...p, admin: v }))}
           />
+        </div>
+
+        <div className="space-y-2">
+          <Label className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+            Unlockables
+          </Label>
+          <div className="flex flex-wrap gap-6">
+            {UNLOCKABLES.map((slug) => (
+              <FieldCheckbox
+                key={slug}
+                label={UNLOCKABLE_LABELS[slug]}
+                checked={form.unlockables.includes(slug)}
+                onChange={(v) =>
+                  setForm((p) => ({
+                    ...p,
+                    unlockables: v
+                      ? [...p.unlockables, slug]
+                      : p.unlockables.filter((u) => u !== slug),
+                  }))
+                }
+              />
+            ))}
+          </div>
         </div>
 
         <div className="flex items-center gap-3">

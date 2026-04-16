@@ -5,12 +5,10 @@ import React, { useEffect, useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
   Alert,
-  Appearance,
   Pressable,
   ScrollView,
   TouchableOpacity,
   View,
-  useColorScheme,
 } from "react-native";
 import { twMerge } from "tailwind-merge";
 
@@ -25,6 +23,8 @@ import {
   Avatar,
 } from "@/components/ui/atoms";
 import { ScreenHeader } from "@/components/ui/molecules";
+import { AppIconPicker } from "@/components/user/app-icon-picker";
+import { ThemePicker } from "@/components/user/theme-picker";
 import { useHiscoresGet } from "@/domains/hiscores/hiscores.api";
 import { SUMMITS_KEY } from "@/domains/summit/summit.api";
 import {
@@ -48,7 +48,6 @@ export default function UserMeScreen() {
   const { mutateAsync: updateUserMe } = useUpdateUserMeMutation();
   const { mutateAsync: deleteAccount } = useDeleteAccountMutation();
   const { data: me, refetch } = useUserMe();
-  const colorScheme = useColorScheme();
   const [image, setImage] = useState<string | null>(null);
   const [tab, setTab] = useState<Tab>("details");
 
@@ -308,13 +307,8 @@ export default function UserMeScreen() {
 
         {tab === "theme" && (
           <View className="gap-6 pb-8">
-            <ThemedToggleInput
-              label={intl.formatMessage({ defaultMessage: "Dark theme?" })}
-              defaultChecked={colorScheme === "dark"}
-              onChecked={(checked) =>
-                Appearance.setColorScheme(checked ? "dark" : "light")
-              }
-            />
+            <ThemePicker />
+            <AppIconPicker />
           </View>
         )}
 

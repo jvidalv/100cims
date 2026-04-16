@@ -1,39 +1,40 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { Plus } from "lucide-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { useIntl, FormattedMessage } from "react-intl";
 import {
   Alert,
   View,
   ScrollView,
-  TouchableOpacity,
   Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
+import { Ban, Check, Trash2, X } from "lucide-react-native";
 
 
 import {
-  Button,
-  LucideIcon,
+  ActivityIndicator,
   ThemedKeyboardAvoidingView,
   ThemedText,
   ThemedDateInput,
   ThemedTextInput,
 } from "@/components/ui/atoms";
 import {
-  AvatarGroup,
-  BottomDrawer,
-  MountainSelectionDrawer,
+  ActionRow,
+  MountainList,
   PeopleList,
   ScreenHeader,
 } from "@/components/ui/molecules";
+import {
+  type MountainPickerMountain,
+  toPickerMountain,
+} from "@/domains/mountain/mountain-picker-session";
 import { useMountains } from "@/domains/mountain/mountain.api";
 import {
   usePlanDelete,
   usePlanOne,
   usePlanUpdate,
 } from "@/domains/plan/plan.api";
-import { type PeoplePickerUser } from "@/domains/user/people-picker-cache";
+import { type PeoplePickerUser } from "@/domains/user/people-picker-session";
 import { getFullName } from "@/domains/user/user.utils";
 
 export default function PlanEditPage() {
@@ -57,8 +58,7 @@ export default function PlanEditPage() {
   const [date, setDate] = useState<Date | null>(
     plan?.startDate ? new Date(plan?.startDate) : null,
   );
-  const [editingMountains, setEditingMountains] = useState(false);
-  const [mountainIds, setMountainIds] = useState<string[]>([]);
+  const [mountains, setMountains] = useState<MountainPickerMountain[]>([]);
   const [users, setUsers] = useState<PeoplePickerUser[]>([]);
 
   useEffect(() => {
@@ -66,7 +66,6 @@ export default function PlanEditPage() {
       setTitle(plan.title);
       setDescription(plan.description ?? undefined);
       setDate(plan.startDate ? new Date(plan.startDate) : null);
-      setMountainIds(plan.mountains?.map((m) => m.id) ?? []);
 
       // Ensure the creator is always first. PeopleList locks index 0, and
       // PeopleList's split treats index 0 as "keep in the toggleable bucket
@@ -82,9 +81,18 @@ export default function PlanEditPage() {
     }
   }, [plan]);
 
-  const selectedMountains = useMemo(() => {
-    return allMountains.filter((m) => mountainIds.includes(m.id));
-  }, [mountainIds, allMountains]);
+  // Seed mountains once both the plan and the catalog are available. The
+  // catalog has `staleTime: 10h`, so re-runs after initial seed are rare — a
+  // `seeded` guard prevents a late refetch from wiping user edits.
+  const [seededMountains, setSeededMountains] = useState(false);
+  useEffect(() => {
+    if (seededMountains || !plan || allMountains.length === 0) return;
+    const planMountainIds = new Set(plan.mountains?.map((m) => m.id) ?? []);
+    setMountains(
+      allMountains.filter((m) => planMountainIds.has(m.id)).map(toPickerMountain),
+    );
+    setSeededMountains(true);
+  }, [plan, allMountains, seededMountains]);
 
   const handleUpdate = async () => {
     if (!title?.trim()) {
@@ -98,7 +106,7 @@ export default function PlanEditPage() {
       title,
       description,
       startDate: date ? date.toISOString() : undefined,
-      mountainIds,
+      mountainIds: mountains.map((m) => m.id),
       userIds: users.map((u) => u.id),
     });
 
@@ -178,6 +186,7 @@ export default function PlanEditPage() {
               multiline
               value={description}
               onChangeText={setDescription}
+              inputClassName="h-[120px]"
             />
             <ThemedDateInput
               value={date}
@@ -185,29 +194,11 @@ export default function PlanEditPage() {
               noPastDates
             />
 
-            <View className="mb-2">
-              <ThemedText className="mb-2 text-lg font-medium">
+            <View className="mb-2 gap-3">
+              <ThemedText className="text-lg font-medium">
                 <FormattedMessage defaultMessage="Mountains" />
               </ThemedText>
-              <TouchableOpacity
-                onPress={() => setEditingMountains(true)}
-                className="flex-row items-center justify-between gap-4 rounded border-2 border-border px-4 py-2"
-              >
-                {!!selectedMountains?.length ? (
-                  <AvatarGroup
-                    limit={6}
-                    items={selectedMountains.map((m) => ({
-                      name: m.name,
-                      imageUrl: m.imageUrl,
-                    }))}
-                  />
-                ) : (
-                  <View className="h-8" />
-                )}
-                <View className="size-10 items-center justify-center rounded bg-muted-foreground/30 shadow">
-                  <LucideIcon icon={Plus} color="white" size={16} />
-                </View>
-              </TouchableOpacity>
+              <MountainList selected={mountains} onChange={setMountains} />
             </View>
 
             <View className="mb-2 gap-3">
@@ -221,42 +212,44 @@ export default function PlanEditPage() {
                 splitNonPeople
               />
             </View>
-            <Button
-              className="mt-6"
-              intent="success"
-              onPress={handleUpdate}
-              isLoading={isPendingUpdate}
-            >
-              <FormattedMessage defaultMessage="Update" />
-            </Button>
-            <Button intent="outline" onPress={() => router.dismiss()}>
-              <FormattedMessage defaultMessage="Close" />
-            </Button>
-            <View className="flex-row items-center justify-center">
-              <TouchableOpacity onPress={handleCancel} className="px-2 py-4">
-                <ThemedText className="text-muted-foreground">
-                  <FormattedMessage defaultMessage="Cancel" />
-                </ThemedText>
-              </TouchableOpacity>
-              <ThemedText className="text-muted-foreground/50">
-                <FormattedMessage defaultMessage="or" />
-              </ThemedText>
-              <TouchableOpacity onPress={handleDelete} className="px-2 py-4">
-                <ThemedText className="text-muted-foreground">
-                  <FormattedMessage defaultMessage="Delete" />
-                </ThemedText>
-              </TouchableOpacity>
+            <View className="mt-6">
+              <ActionRow
+                icon={Check}
+                size="lg"
+                intent="emerald"
+                onPress={handleUpdate}
+                disabled={isPendingUpdate}
+                iconOverride={
+                  isPendingUpdate ? <ActivityIndicator /> : undefined
+                }
+              >
+                <FormattedMessage defaultMessage="Update" />
+              </ActionRow>
+              <ActionRow
+                icon={X}
+                size="lg"
+                onPress={() => router.dismiss()}
+              >
+                <FormattedMessage defaultMessage="Close" />
+              </ActionRow>
+              <ActionRow
+                icon={Ban}
+                size="lg"
+                intent="danger"
+                onPress={handleCancel}
+              >
+                <FormattedMessage defaultMessage="Cancel" />
+              </ActionRow>
+              <ActionRow
+                icon={Trash2}
+                size="lg"
+                intent="danger"
+                onPress={handleDelete}
+              >
+                <FormattedMessage defaultMessage="Delete" />
+              </ActionRow>
             </View>
           </ScrollView>
-          <BottomDrawer
-            isOpen={editingMountains}
-            onRequestClose={() => setEditingMountains(false)}
-          >
-            <MountainSelectionDrawer
-              selectedIds={mountainIds}
-              onSelectionChange={setMountainIds}
-            />
-          </BottomDrawer>
         </ThemedKeyboardAvoidingView>
       </View>
     </TouchableWithoutFeedback>

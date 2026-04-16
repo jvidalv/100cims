@@ -22,7 +22,7 @@ import {
   useSummitGet,
   useUpdateSummitMutation,
 } from "@/domains/summit/summit.api";
-import { type PeoplePickerUser } from "@/domains/user/people-picker-cache";
+import { type PeoplePickerUser } from "@/domains/user/people-picker-session";
 import { useUserMe } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
 import { getImageOptimized } from "@/lib/images";

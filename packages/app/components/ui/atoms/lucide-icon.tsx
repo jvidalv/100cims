@@ -1,6 +1,8 @@
 import { useColorScheme } from "nativewind";
 import { StyleProp, ViewStyle } from "react-native";
 
+import { Colors } from "@/constants/colors";
+
 import type { LucideIcon as LucideIconType } from "lucide-react-native";
 
 interface Props {
@@ -8,6 +10,7 @@ interface Props {
   size?: number;
   color?: string;
   muted?: boolean;
+  primary?: boolean;
   strokeWidth?: number;
   className?: string;
   style?: StyleProp<ViewStyle>;
@@ -18,6 +21,7 @@ export function LucideIcon({
   size = 24,
   color,
   muted,
+  primary,
   strokeWidth,
   className,
   style,
@@ -26,7 +30,15 @@ export function LucideIcon({
   const isDark = colorScheme === "dark";
   const tint =
     color ??
-    (muted ? (isDark ? "#737373" : "#a3a3a3") : isDark ? "white" : "black");
+    (primary
+      ? Colors[isDark ? "dark" : "light"].primary
+      : muted
+        ? isDark
+          ? "#737373"
+          : "#a3a3a3"
+        : isDark
+          ? "white"
+          : "black");
   return (
     <Icon
       size={size}

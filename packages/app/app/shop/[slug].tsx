@@ -41,11 +41,18 @@ export default function ShopProductScreen() {
     setActiveImageIndex(0);
   }, [selectedColor]);
 
+  const product = merch?.find((p) => p.slug === slug);
+  const firstVariantColor = product?.variants[0]?.color ?? null;
+
+  useEffect(() => {
+    if (firstVariantColor && selectedColor === null) {
+      setSelectedColor(firstVariantColor);
+    }
+  }, [firstVariantColor, selectedColor]);
+
   if (!isAuthenticated) {
     return <Redirect href="/join" />;
   }
-
-  const product = merch?.find((p) => p.slug === slug);
 
   if (!product) {
     return (

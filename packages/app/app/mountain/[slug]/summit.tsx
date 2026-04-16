@@ -18,7 +18,7 @@ import { ThemedDateInput } from "@/components/ui/atoms/themed-date-input";
 import { PeopleList, ScreenHeader } from "@/components/ui/molecules";
 import { useMountains, useSummitPost } from "@/domains/mountain/mountain.api";
 import { SUMMITS_KEY } from "@/domains/summit/summit.api";
-import { type PeoplePickerUser } from "@/domains/user/people-picker-cache";
+import { type PeoplePickerUser } from "@/domains/user/people-picker-session";
 import { useUserMe } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
 import { getImageOptimized } from "@/lib/images";

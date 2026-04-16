@@ -4,6 +4,8 @@ import { queryClient } from "@/components/providers/query-client-provider";
 import apiClient from "@/lib/api-client";
 import { communityChallengeKeys, mountainKeys } from "@/lib/query-keys";
 
+import type { NewMountainData } from "@/types/mountain";
+
 export const useCommunityChallengesList = (
   params?: { filter?: "mine" | "public" },
   { enabled }: { enabled?: boolean } = {}
@@ -49,6 +51,16 @@ export type InlineMountain = {
   essential?: boolean;
   image: string;
 };
+
+export const toInlineMountain = (m: NewMountainData): InlineMountain => ({
+  name: m.name,
+  location: m.location,
+  height: m.height,
+  latitude: m.latitude,
+  longitude: m.longitude,
+  essential: m.essential,
+  image: m.image,
+});
 
 export const useCommunityChallengeCreate = () => {
   return useMutation({

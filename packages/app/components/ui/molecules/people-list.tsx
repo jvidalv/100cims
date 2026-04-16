@@ -8,7 +8,7 @@ import { PersonRow } from "@/components/ui/molecules/person-row";
 import {
   openPeoplePickerSession,
   type PeoplePickerUser,
-} from "@/domains/user/people-picker-cache";
+} from "@/domains/user/people-picker-session";
 import { useUserPeople } from "@/domains/user/user.api";
 
 type Props = {

@@ -1,0 +1,1 @@
+ALTER TABLE "user" ADD COLUMN "unlockables" text[] DEFAULT ARRAY[]::text[] NOT NULL;

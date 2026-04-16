@@ -3,7 +3,9 @@ import {
   BadgeCheck,
   Minus,
   Plus,
+  Send,
   ShoppingBag,
+  Store,
 } from "lucide-react-native";
 import { useCallback, useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
@@ -15,8 +17,10 @@ import {
   Button,
   LucideIcon,
   ThemedText,
+  ThemedTextInput,
 } from "@/components/ui/atoms";
 import { ScreenHeader } from "@/components/ui/molecules";
+import { Colors } from "@/constants/colors";
 import {
   clearCart,
   loadCart,
@@ -26,8 +30,15 @@ import {
 import { useMerch } from "@/domains/merch/merch.api";
 import {
   useSubmitSuggestionMutation,
+  useUnlockableUnlock,
   useUserMe,
 } from "@/domains/user/user.api";
+
+const APPLE_RELAY_DOMAIN = "@privaterelay.appleid.com";
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const isAppleRelayEmail = (email: string | null | undefined) =>
+  !!email && email.toLowerCase().endsWith(APPLE_RELAY_DOMAIN);
 
 export default function ShopCartScreen() {
   const intl = useIntl();
@@ -37,7 +48,9 @@ export default function ShopCartScreen() {
   const { data: me } = useUserMe();
   const { mutateAsync: submitSuggestion, isPending } =
     useSubmitSuggestionMutation();
+  const { mutate: unlock } = useUnlockableUnlock();
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [contactEmailOverride, setContactEmailOverride] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   useFocusEffect(
@@ -99,14 +112,25 @@ export default function ShopCartScreen() {
         return `- ${l.product.name}${color}${size}${qty} (${l.product.price}€)`;
       })
       .join("\n");
+    const trimmedOverride = contactEmailOverride.trim();
+    const validOverride =
+      trimmedOverride && EMAIL_RE.test(trimmedOverride) ? trimmedOverride : null;
+    const relayEmail = me?.email ?? "unknown";
+    const effectiveEmail = validOverride ?? relayEmail;
+    const hiddenLine =
+      validOverride && isAppleRelayEmail(me?.email)
+        ? `Apple hidden email: ${relayEmail}\n`
+        : "";
     const message =
       `[MERCH ORDER]\n` +
-      `From: ${me?.email ?? "unknown"}\n` +
+      `From: ${effectiveEmail}\n` +
+      hiddenLine +
       `Total: ${total}€\n\n` +
       `Items:\n${itemLines}`;
 
     try {
       await submitSuggestion({ suggestion: message });
+      unlock("merch");
       await clearCart();
       setCart([]);
       setIsSubmitted(true);
@@ -143,14 +167,26 @@ export default function ShopCartScreen() {
           <ActivityIndicator />
         </View>
       ) : lines.length === 0 ? (
-        <View className="flex-1 items-center justify-center gap-4 px-6">
-          <View className="size-16 items-center justify-center rounded-full bg-border">
-            <LucideIcon icon={ShoppingBag} size={28} muted />
+        <View className="flex-1 items-center justify-center gap-6 px-8">
+          <View className="size-28 items-center justify-center rounded-3xl border-2 border-primary bg-primary/10">
+            <LucideIcon
+              icon={ShoppingBag}
+              size={52}
+              color={Colors.light.primary}
+            />
           </View>
-          <ThemedText className="text-center text-muted-foreground">
-            <FormattedMessage defaultMessage="Your cart is empty." />
-          </ThemedText>
-          <Button onPress={() => router.replace("/shop")}>
+          <View className="gap-2">
+            <ThemedText className="text-center text-2xl font-bold">
+              <FormattedMessage defaultMessage="Your cart is empty." />
+            </ThemedText>
+            <ThemedText className="text-center text-muted-foreground">
+              <FormattedMessage defaultMessage="Pick up some merch and support the app." />
+            </ThemedText>
+          </View>
+          <Button
+            onPress={() => router.replace("/shop")}
+            className="w-full"
+          >
             <FormattedMessage defaultMessage="Browse the shop" />
           </Button>
         </View>
@@ -158,7 +194,7 @@ export default function ShopCartScreen() {
         <>
           <ScrollView
             className="flex-1"
-            contentContainerClassName="px-6 pb-40 pt-4 gap-3"
+            contentContainerClassName="px-6 pb-32 pt-4 gap-3"
             showsVerticalScrollIndicator={false}
           >
             {lines.map((line) => {
@@ -190,11 +226,14 @@ export default function ShopCartScreen() {
                   </View>
                 )}
                 <View className="flex-1 gap-1">
-                  <ThemedText className="font-semibold" numberOfLines={1}>
+                  <ThemedText
+                    className="text-lg font-semibold"
+                    numberOfLines={1}
+                  >
                     {line.product.name}
                   </ThemedText>
                   {capitalizedColor && (
-                    <ThemedText className="text-xs text-muted-foreground">
+                    <ThemedText className="text-sm text-muted-foreground">
                       <FormattedMessage
                         defaultMessage="Color: {color}"
                         values={{ color: capitalizedColor }}
@@ -202,15 +241,15 @@ export default function ShopCartScreen() {
                     </ThemedText>
                   )}
                   {line.size && (
-                    <ThemedText className="text-xs text-muted-foreground">
+                    <ThemedText className="text-sm text-muted-foreground">
                       <FormattedMessage
                         defaultMessage="Size: {size}"
                         values={{ size: line.size }}
                       />
                     </ThemedText>
                   )}
-                  <ThemedText className="text-sm font-medium">
-                    {line.product.price * line.qty}€
+                  <ThemedText className="text-base font-semibold">
+                    {line.product.price}€
                   </ThemedText>
                 </View>
                 <View className="flex-row items-center gap-2 rounded border border-border">
@@ -233,24 +272,91 @@ export default function ShopCartScreen() {
               </View>
               );
             })}
+
+            {isAppleRelayEmail(me?.email) && (
+              <View className="mt-4 gap-2 rounded border-2 border-border bg-muted/30 p-4">
+                <ThemedText className="text-xs text-muted-foreground">
+                  <FormattedMessage defaultMessage="Your Apple email hides your address. Give us a real one so we can reach you." />
+                </ThemedText>
+                <ThemedTextInput
+                  label={intl.formatMessage({
+                    defaultMessage: "Contact email",
+                  })}
+                  value={contactEmailOverride}
+                  onChangeText={setContactEmailOverride}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoComplete="email"
+                  textContentType="emailAddress"
+                  placeholder="you@example.com"
+                  maxLength={200}
+                />
+              </View>
+            )}
+
+            <TouchableOpacity
+              onPress={onSubmit}
+              disabled={isPending}
+              activeOpacity={0.85}
+              className="mt-2 flex-row items-center gap-3 py-2"
+            >
+              <View className="size-12 items-center justify-center rounded-full bg-primary/15">
+                {isPending ? (
+                  <ActivityIndicator />
+                ) : (
+                  <LucideIcon
+                    icon={Send}
+                    size={20}
+                    color={Colors.light.primary}
+                  />
+                )}
+              </View>
+              <View className="flex-1 gap-0.5">
+                <ThemedText className="text-base font-semibold text-primary">
+                  <FormattedMessage defaultMessage="Send order" />
+                </ThemedText>
+                <ThemedText className="text-xs text-muted-foreground">
+                  {(() => {
+                    const trimmed = contactEmailOverride.trim();
+                    const valid =
+                      trimmed && EMAIL_RE.test(trimmed) ? trimmed : null;
+                    return (
+                      <FormattedMessage
+                        defaultMessage="We'll reach you at {email}."
+                        values={{ email: valid ?? me?.email ?? "—" }}
+                      />
+                    );
+                  })()}
+                </ThemedText>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => router.push("/shop")}
+              activeOpacity={0.85}
+              className="flex-row items-center gap-3 py-2"
+            >
+              <View className="size-12 items-center justify-center rounded-full bg-border">
+                <LucideIcon icon={Store} size={20} muted />
+              </View>
+              <View className="flex-1 gap-0.5">
+                <ThemedText className="text-base font-semibold">
+                  <FormattedMessage defaultMessage="Keep shopping" />
+                </ThemedText>
+                <ThemedText className="text-xs text-muted-foreground">
+                  <FormattedMessage defaultMessage="Add more merch before sending." />
+                </ThemedText>
+              </View>
+            </TouchableOpacity>
           </ScrollView>
 
           <View className="absolute bottom-0 left-0 right-0 border-t border-border bg-background px-6 pb-10 pt-4">
-            <View className="mb-3 flex-row items-center justify-between">
+            <View className="flex-row items-center justify-between">
               <ThemedText className="text-lg font-semibold">
                 <FormattedMessage defaultMessage="Total" />
               </ThemedText>
               <ThemedText className="text-2xl font-bold">{total}€</ThemedText>
             </View>
-            <Button onPress={onSubmit} isLoading={isPending}>
-              <FormattedMessage defaultMessage="Send order" />
-            </Button>
-            <ThemedText className="mt-2 text-center text-xs text-muted-foreground">
-              <FormattedMessage
-                defaultMessage="We'll reach you at {email} to arrange payment + shipping."
-                values={{ email: me?.email ?? "—" }}
-              />
-            </ThemedText>
           </View>
         </>
       )}

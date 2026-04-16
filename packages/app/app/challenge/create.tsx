@@ -1,12 +1,11 @@
 import { useRouter, Redirect } from "expo-router";
-import { Info, Plus } from "lucide-react-native";
+import { Info } from "lucide-react-native";
 import { useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
   Alert,
   Keyboard,
   ScrollView,
-  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
@@ -25,13 +24,13 @@ import {
   ThemedView,
 } from "@/components/ui/atoms";
 import {
-  AvatarGroup,
-  BottomDrawer,
-  MountainSelectionDrawer,
+  ChallengeMountainList,
   ScreenHeader,
 } from "@/components/ui/molecules";
-import { useCommunityChallengeCreate } from "@/domains/community-challenge/community-challenge.api";
-import { useMountains } from "@/domains/mountain/mountain.api";
+import {
+  toInlineMountain,
+  useCommunityChallengeCreate,
+} from "@/domains/community-challenge/community-challenge.api";
 import { useIsKeyboardVisible } from "@/hooks/use-is-keyboard-visible";
 import { useMountainSelection } from "@/hooks/use-mountain-selection";
 import { isAndroid } from "@/lib/device";
@@ -41,26 +40,20 @@ export default function CommunityChallengeCreatePage() {
   const intl = useIntl();
   const { isAuthenticated } = useAuth();
   const isKeyboardVisible = useIsKeyboardVisible();
-  const { data: allMountains } = useMountains();
 
-  const [editingMountains, setEditingMountains] = useState(false);
   const [formData, setFormData] = useState<ChallengeFormData>({
     name: "",
     country: "",
-    emoji: "",
     description: "",
     isPublic: true,
   });
 
   const {
-    selectedMountainIds,
+    selected,
     newMountains,
-    selectedMountainsForDisplay,
     totalMountainCount,
-    handleSelectionChange,
-    handleAddNewMountain,
-    handleRemoveNewMountain,
-  } = useMountainSelection({ allMountains });
+    handlePickerResult,
+  } = useMountainSelection();
 
   const { mutateAsync, isPending } = useCommunityChallengeCreate();
 
@@ -94,21 +87,12 @@ export default function CommunityChallengeCreatePage() {
         name: formData.name.trim(),
         description: formData.description.trim() || undefined,
         country: formData.country.trim(),
-        emoji: formData.emoji || undefined,
         isPublic: formData.isPublic,
         mountainIds:
-          selectedMountainIds.length > 0 ? selectedMountainIds : undefined,
+          selected.length > 0 ? selected.map((m) => m.id) : undefined,
         newMountains:
           newMountains.length > 0
-            ? newMountains.map((m) => ({
-                name: m.name,
-                location: m.location,
-                height: m.height,
-                latitude: m.latitude,
-                longitude: m.longitude,
-                essential: m.essential,
-                image: m.image,
-              }))
+            ? newMountains.map(toInlineMountain)
             : undefined,
       });
 
@@ -141,33 +125,16 @@ export default function CommunityChallengeCreatePage() {
           keyboardShouldPersistTaps="handled"
         >
           <ChallengeForm data={formData} onChange={setFormData}>
-            {/* Mountains Section */}
-            <View>
-              <ThemedText className="mb-2 text-lg font-medium">
+            <View className="gap-3">
+              <ThemedText className="text-lg font-medium">
                 <FormattedMessage defaultMessage="Mountains" />
                 <ThemedText className="text-destructive"> *</ThemedText>
               </ThemedText>
-              <TouchableOpacity
-                onPress={() => setEditingMountains(true)}
-                className="flex-row items-center justify-between gap-4 rounded border-2 border-border px-4 py-2"
-              >
-                {selectedMountainsForDisplay.length > 0 ? (
-                  <AvatarGroup
-                    limit={6}
-                    items={selectedMountainsForDisplay.map((m) => ({
-                      name: m.name,
-                      imageUrl: m.imageUrl,
-                    }))}
-                  />
-                ) : (
-                  <ThemedText className="text-muted-foreground">
-                    <FormattedMessage defaultMessage="Add mountain" />
-                  </ThemedText>
-                )}
-                <View className="size-10 items-center justify-center rounded bg-muted-foreground/30 shadow">
-                  <LucideIcon icon={Plus} color="white" size={16} />
-                </View>
-              </TouchableOpacity>
+              <ChallengeMountainList
+                selected={selected}
+                newMountains={newMountains}
+                onChange={handlePickerResult}
+              />
             </View>
           </ChallengeForm>
         </ScrollView>
@@ -195,20 +162,6 @@ export default function CommunityChallengeCreatePage() {
             <FormattedMessage defaultMessage="Cancel" />
           </Button>
         </BlurView>
-
-        <BottomDrawer
-          isOpen={editingMountains}
-          onRequestClose={() => setEditingMountains(false)}
-        >
-          <MountainSelectionDrawer
-            selectedIds={selectedMountainIds}
-            onSelectionChange={handleSelectionChange}
-            allowCreate
-            newMountains={newMountains}
-            onAddNewMountain={handleAddNewMountain}
-            onRemoveNewMountain={handleRemoveNewMountain}
-          />
-        </BottomDrawer>
       </ThemedView>
     </TouchableWithoutFeedback>
   );

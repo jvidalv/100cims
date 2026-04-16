@@ -15,6 +15,7 @@ export const UserSchema = t.Object({
   locale: t.Nullable(t.String()),
   username: t.Nullable(t.String()),
   activeChallengeId: t.Nullable(t.String()),
+  unlockables: t.Optional(t.Array(t.String())),
   createdAt: t.Date(),
 });
 

@@ -12,6 +12,7 @@ import MapView, { Callout, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { BadgeCheck } from "lucide-react-native";
 
 import { LucideIcon, ThemedText } from "@/components/ui/atoms";
+import { Colors } from "@/constants/colors";
 
 interface Mountain {
   id: string;
@@ -55,7 +56,7 @@ function MountainMarker({ marker, onMountainPress }: MountainMarkerProps) {
   const pinColor = marker.isSummited
     ? "#10b981"
     : marker.essential
-      ? "#f43f5e"
+      ? Colors.light.primary
       : "#6b7280";
 
   return (

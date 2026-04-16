@@ -227,15 +227,22 @@ In both cases:
 
 ### Database Migration
 
+**🚫 NEVER run `drizzle-kit push` or `yarn api drizzle-kit push`. Ever. No exceptions.**
+
+`push` syncs the DB to the current schema without writing a migration file and without updating `drizzle.__drizzle_migrations`. After a `push`:
+- No SQL file exists for the change → other environments and fresh clones can't reproduce it.
+- `db:migrate` will later try to re-apply the "missing" migration and crash on "column already exists", blocking every subsequent migration until someone manually hacks `drizzle.__drizzle_migrations`.
+- Any custom SQL you intended to append (data backfills, CHECK constraints, seed rows) is silently skipped.
+
+If you see yourself reaching for `push` — stop. Use `db:generate` + `db:migrate` instead. There is no scenario in this repo where `push` is correct.
+
 **CRITICAL — always ask the user before applying a migration.** Prepare the migration file locally and wait for explicit approval before running `db:migrate`. Never run schema-altering commands autonomously.
 
 1. Update `packages/api/src/db/schema.ts`.
 2. Run `yarn api db:generate` to produce a versioned SQL file under `packages/api/src/db/drizzle/NNNN_*.sql`.
-3. Review and, if needed, append custom SQL (e.g. data backfills) to the generated file.
+3. Review and, if needed, append custom SQL (e.g. data backfills) to the generated file — or create a separate `NNNN_custom_*.sql` for data-only migrations (register it in `meta/_journal.json` + copy the previous snapshot).
 4. **Ask the user** before running `yarn api db:migrate`.
 5. Verify in `psql` after the user applies it.
-
-Do **not** use `drizzle-kit push`: the command has been removed from the repo because it bypasses the versioned migration files, silently drops any custom SQL (backfills, CHECK edits, data transforms), and leaves the DB out of sync with the migration history — which then blocks future `db:migrate` runs.
 
 ### Image Upload to S3
 

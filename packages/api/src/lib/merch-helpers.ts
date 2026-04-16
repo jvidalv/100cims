@@ -1,8 +1,13 @@
-import { and, asc, desc, eq, sql } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
 import { cache } from "react";
 
 import { db } from "@/db";
-import { merchTable } from "@/db/schema";
+import { merchTable, merchVariantTable } from "@/db/schema";
+
+export interface MerchVariant {
+  color: string;
+  imageUrls: string[];
+}
 
 export interface MerchRow {
   id: string;
@@ -19,6 +24,7 @@ export interface MerchRow {
   price: number;
   featured: number | null;
   createdAt: Date;
+  variants: MerchVariant[];
 }
 
 const SELECT = {
@@ -38,18 +44,44 @@ const SELECT = {
   createdAt: merchTable.createdAt,
 };
 
-export const getActiveMerch = cache(
-  (): Promise<MerchRow[]> =>
-    db
-      .select(SELECT)
-      .from(merchTable)
-      .where(eq(merchTable.active, true))
-      .orderBy(
-        sql`${merchTable.featured} ASC NULLS LAST`,
-        desc(merchTable.createdAt),
-        asc(merchTable.slug),
-      ),
-);
+const loadVariantsByMerch = async (
+  merchIds: string[],
+): Promise<Map<string, MerchVariant[]>> => {
+  const map = new Map<string, MerchVariant[]>();
+  if (!merchIds.length) return map;
+  const rows = await db
+    .select({
+      merchId: merchVariantTable.merchId,
+      color: merchVariantTable.color,
+      imageUrls: merchVariantTable.imageUrls,
+    })
+    .from(merchVariantTable)
+    .where(inArray(merchVariantTable.merchId, merchIds))
+    .orderBy(asc(merchVariantTable.createdAt));
+  for (const r of rows) {
+    const list = map.get(r.merchId) ?? [];
+    list.push({ color: r.color, imageUrls: r.imageUrls });
+    map.set(r.merchId, list);
+  }
+  return map;
+};
+
+export const getActiveMerch = cache(async (): Promise<MerchRow[]> => {
+  const rows = await db
+    .select(SELECT)
+    .from(merchTable)
+    .where(eq(merchTable.active, true))
+    .orderBy(
+      sql`${merchTable.featured} ASC NULLS LAST`,
+      desc(merchTable.createdAt),
+      asc(merchTable.slug),
+    );
+  const variantsByMerch = await loadVariantsByMerch(rows.map((r) => r.id));
+  return rows.map((r) => ({
+    ...r,
+    variants: variantsByMerch.get(r.id) ?? [],
+  }));
+});
 
 export const getMerchBySlug = cache(
   async (slug: string): Promise<MerchRow | null> => {
@@ -58,6 +90,8 @@ export const getMerchBySlug = cache(
       .from(merchTable)
       .where(and(eq(merchTable.slug, slug), eq(merchTable.active, true)))
       .limit(1);
-    return row ?? null;
+    if (!row) return null;
+    const variantsByMerch = await loadVariantsByMerch([row.id]);
+    return { ...row, variants: variantsByMerch.get(row.id) ?? [] };
   },
 );

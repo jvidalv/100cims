@@ -15,6 +15,7 @@ import { PUSH_TYPE, getUserDisplayName } from "@/api/lib/push-types";
 import { getUserFromRequest } from "@/api/routes/@shared/auth";
 import { IMAGE_TO_BIG } from "@/api/routes/@shared/error-codes";
 import { getPublicUrl, putImageOnS3 } from "@/api/routes/@shared/s3";
+import { unlockIcon } from "@/api/routes/@shared/unlockables";
 import { ErrorFieldResponse } from "@/api/schemas/common.schema";
 
 export const mountainSummitPostRoute = new Elysia().post(
@@ -24,7 +25,11 @@ export const mountainSummitPostRoute = new Elysia().post(
     const id = uuidv7();
 
     const [mountain] = await db
-      .select({ name: mountainTable.name, imageUrl: mountainTable.imageUrl })
+      .select({
+        name: mountainTable.name,
+        slug: mountainTable.slug,
+        imageUrl: mountainTable.imageUrl,
+      })
       .from(mountainTable)
       .where(eq(mountainTable.id, body.mountainId))
       .limit(1);
@@ -65,6 +70,23 @@ export const mountainSummitPostRoute = new Elysia().post(
         })),
       );
     });
+
+    if (mountain?.slug) {
+      const unlockKey: "forcat" | "picat" | null =
+        mountain.slug === "pollego-superior-pedraforca" ||
+        mountain.slug === "pollego-inferior-pedraforca"
+          ? "forcat"
+          : mountain.slug === "pica-destats"
+            ? "picat"
+            : null;
+      if (unlockKey) {
+        for (const userId of body.usersId) {
+          void unlockIcon(userId, unlockKey).catch((err) =>
+            console.error("unlockIcon failed", { userId, unlockKey, err }),
+          );
+        }
+      }
+    }
 
     const recipients = body.usersId.filter((userId) => userId !== actor.id);
     if (recipients.length > 0 && mountain?.name) {
