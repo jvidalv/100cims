@@ -3,6 +3,7 @@ import { Plus, Star } from "lucide-react-native";
 import { useCallback, useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
+  Alert,
   FlatList,
   Pressable,
   ScrollView,
@@ -26,7 +27,10 @@ import {
 } from "@/components/ui/molecules";
 import { useActiveChallenge } from "@/domains/challenge/challenge.api";
 import { countryToEmoji } from "@/domains/challenge/challenge.model";
-import { useCommunityChallengesList } from "@/domains/community-challenge/community-challenge.api";
+import {
+  useCommunityChallengeDelete,
+  useCommunityChallengesList,
+} from "@/domains/community-challenge/community-challenge.api";
 import { useMyMountains } from "@/domains/mountain/mountain.api";
 import { useUpdateUserMeMutation } from "@/domains/user/user.api";
 import { MountainWithChallengeCount } from "@/types/mountain";
@@ -47,6 +51,41 @@ export default function UserChallengesScreen() {
     isPending: isUpdating,
     variables,
   } = useUpdateUserMeMutation();
+  const { mutateAsync: deleteChallenge } = useCommunityChallengeDelete();
+
+  const handleDeleteChallenge = useCallback(
+    (id: string) => {
+      Alert.alert(
+        intl.formatMessage({ defaultMessage: "Delete challenge" }),
+        intl.formatMessage({
+          defaultMessage:
+            "Are you sure you want to delete this challenge? This action cannot be undone.",
+        }),
+        [
+          {
+            text: intl.formatMessage({ defaultMessage: "Cancel" }),
+            style: "cancel",
+          },
+          {
+            text: intl.formatMessage({ defaultMessage: "Delete" }),
+            style: "destructive",
+            onPress: async () => {
+              try {
+                await deleteChallenge({ id });
+              } catch {
+                Alert.alert(
+                  intl.formatMessage({
+                    defaultMessage: "Failed to delete challenge",
+                  }),
+                );
+              }
+            },
+          },
+        ],
+      );
+    },
+    [deleteChallenge, intl],
+  );
 
   const { data: mountains, isLoading: isLoadingMountains } = useMyMountains();
 
@@ -199,6 +238,7 @@ export default function UserChallengesScreen() {
                       params: { id: item.id },
                     })
                   }
+                  onDeletePress={() => handleDeleteChallenge(item.id)}
                   rightElement={
                     isUpdating && variables?.activeChallengeId === item.id ? (
                       <ActivityIndicator className="opacity-30" />
@@ -231,6 +271,7 @@ export default function UserChallengesScreen() {
                       params: { id: item.id },
                     })
                   }
+                  onDeletePress={() => handleDeleteChallenge(item.id)}
                   rightElement={
                     isUpdating && variables?.activeChallengeId === item.id ? (
                       <ActivityIndicator className="opacity-30" />

@@ -11,6 +11,7 @@ interface Props {
   color?: string;
   muted?: boolean;
   primary?: boolean;
+  success?: boolean;
   strokeWidth?: number;
   className?: string;
   style?: StyleProp<ViewStyle>;
@@ -22,23 +23,21 @@ export function LucideIcon({
   color,
   muted,
   primary,
+  success,
   strokeWidth,
   className,
   style,
 }: Props) {
   const { colorScheme } = useColorScheme();
-  const isDark = colorScheme === "dark";
-  const tint =
-    color ??
-    (primary
-      ? Colors[isDark ? "dark" : "light"].primary
-      : muted
-        ? isDark
-          ? "#737373"
-          : "#a3a3a3"
-        : isDark
-          ? "white"
-          : "black");
+  const themeColors = Colors[colorScheme === "dark" ? "dark" : "light"];
+  const resolveTint = () => {
+    if (color) return color;
+    if (primary) return themeColors.primary;
+    if (success) return themeColors.success;
+    if (muted) return themeColors.muted;
+    return themeColors.foreground;
+  };
+  const tint = resolveTint();
   return (
     <Icon
       size={size}

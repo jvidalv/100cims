@@ -1,6 +1,5 @@
 import { format } from "date-fns/format";
 import { Link, Redirect } from "expo-router";
-import { ArrowUp, Calendar } from "lucide-react-native";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
@@ -13,7 +12,6 @@ import {
 import { twMerge } from "tailwind-merge";
 
 import {
-  LucideIcon,
   ThemedText,
   ThemedView,
   SearchInput,
@@ -68,20 +66,9 @@ const SummitRow = memo(function SummitRow({
           <ThemedText className="font-medium" numberOfLines={1}>
             {mountainName}
           </ThemedText>
-          <View className="flex-row items-center gap-3">
-            <View className="flex-row items-center gap-1">
-              <LucideIcon icon={ArrowUp} size={14} muted />
-              <ThemedText className="text-sm text-muted-foreground">
-                {mountainHeight}m
-              </ThemedText>
-            </View>
-            <View className="flex-row items-center gap-1">
-              <LucideIcon icon={Calendar} size={14} muted />
-              <ThemedText className="text-sm text-muted-foreground">
-                {format(summitedAt, "dd MMM yyyy")}
-              </ThemedText>
-            </View>
-          </View>
+          <ThemedText className="text-sm text-muted-foreground">
+            {format(summitedAt, "dd MMM yyyy")} • {mountainHeight}m
+          </ThemedText>
         </View>
         <ThemedText
           className={twMerge(

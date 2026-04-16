@@ -339,6 +339,20 @@ const UPDATES: AppUpdate[] = [
 
 const UPDATE_IDS = UPDATES.map((u) => u.id);
 
+const RecommendedMountainSkeleton = () => (
+  <View className="flex-row gap-4">
+    <Skeleton
+      className="rounded"
+      style={{ width: 100, height: 100 }}
+    />
+    <View className="flex-1 justify-center gap-1">
+      <Skeleton className="h-6 w-3/4" />
+      <Skeleton className="h-5 w-1/2" />
+      <Skeleton className="mt-1 h-5 w-1/3" />
+    </View>
+  </View>
+);
+
 export default function IndexScreen() {
   const intl = useIntl();
   const router = useRouter();
@@ -346,10 +360,14 @@ export default function IndexScreen() {
   const recommendedPeaks = useRecommendedPeaks();
   const { refetch: refetchUser } = useUserMe();
   const { refetch: refetchChallengeSummits } = useUserChallengeSummits();
-  const { data: latestSummits, refetch: refetchLatestSummits } = useSummitsGet({
+  const {
+    data: latestSummits,
+    isPending: isPendingLatestSummits,
+    refetch: refetchLatestSummits,
+  } = useSummitsGet({
     limit: 8,
   });
-  const { data: mountains } = useMountains();
+  const { data: mountains, isPending: isPendingMountains } = useMountains();
 
   const isCurrentRoute = useIsCurrentScreen("/");
   const { showBadge, markAsSeen } = useMapNotificationBadge();
@@ -514,7 +532,7 @@ export default function IndexScreen() {
           </View>
           <TopSection />
         </Animated.View>
-        {!!latestSummits?.length && (
+        {(isPendingLatestSummits || !!latestSummits?.length) && (
           <View className="flex-1 gap-4">
             <View className="flex-row items-center justify-between">
               <ThemedText className="text-2xl font-bold">
@@ -529,27 +547,29 @@ export default function IndexScreen() {
                 </View>
               </Link>
             </View>
-            <View className="flex-1 gap-2 flex-row flex-wrap">
-              {latestSummits?.map(({ summitId, summitImageUrl }) => {
-                return (
-                  <Link
-                    href={{
-                      pathname: "/user/summits/[summit]",
-                      params: { summit: summitId },
-                    }}
-                    key={summitId}
-                    className="w-[23%]"
-                  >
-                    <Image
-                      source={{ uri: summitImageUrl }}
-                      className="w-full h-24 rounded bg-neutral-300 dark:bg-neutral-800"
-                      style={{
-                        resizeMode: "center",
+            <View className="flex-1 flex-row flex-wrap gap-2">
+              {isPendingLatestSummits
+                ? Array.from({ length: 8 }).map((_, i) => (
+                    <Skeleton key={i} className="h-24 w-[23%] rounded" />
+                  ))
+                : latestSummits?.map(({ summitId, summitImageUrl }) => (
+                    <Link
+                      href={{
+                        pathname: "/user/summits/[summit]",
+                        params: { summit: summitId },
                       }}
-                    />
-                  </Link>
-                );
-              })}
+                      key={summitId}
+                      className="w-[23%]"
+                    >
+                      <Image
+                        source={{ uri: summitImageUrl }}
+                        className="h-24 w-full rounded bg-neutral-300 dark:bg-neutral-800"
+                        style={{
+                          resizeMode: "center",
+                        }}
+                      />
+                    </Link>
+                  ))}
             </View>
           </View>
         )}
@@ -568,31 +588,35 @@ export default function IndexScreen() {
             </Link>
           </View>
           <View className="gap-2">
-            {recommendedPeaks?.map(
-              ({
-                id,
-                name,
-                height,
-                slug,
-                imageUrl,
-                essential,
-                location,
-                latitude,
-                longitude,
-              }) => (
-                <MountainItemList
-                  key={id}
-                  name={name}
-                  height={height}
-                  slug={slug}
-                  imageUrl={imageUrl}
-                  essential={essential}
-                  location={location}
-                  latitude={latitude}
-                  longitude={longitude}
-                />
-              ),
-            )}
+            {isPendingMountains && !recommendedPeaks?.length
+              ? Array.from({ length: 3 }).map((_, i) => (
+                  <RecommendedMountainSkeleton key={i} />
+                ))
+              : recommendedPeaks?.map(
+                  ({
+                    id,
+                    name,
+                    height,
+                    slug,
+                    imageUrl,
+                    essential,
+                    location,
+                    latitude,
+                    longitude,
+                  }) => (
+                    <MountainItemList
+                      key={id}
+                      name={name}
+                      height={height}
+                      slug={slug}
+                      imageUrl={imageUrl}
+                      essential={essential}
+                      location={location}
+                      latitude={latitude}
+                      longitude={longitude}
+                    />
+                  ),
+                )}
           </View>
         </View>
         <View className="gap-4">

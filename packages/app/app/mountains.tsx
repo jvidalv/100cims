@@ -14,6 +14,7 @@ import {
   type Filter,
   type SettingsGroup,
 } from "@/components/ui/molecules";
+import { Colors } from "@/constants/colors";
 import { MountainsMap } from "@/domains/mountain/components/mountains-map";
 import { useMountains } from "@/domains/mountain/mountain.api";
 import { useUserChallengeSummits } from "@/domains/user/user.api";
@@ -64,7 +65,7 @@ export default function MountainsScreen() {
           {
             type: "summited",
             name: intl.formatMessage({ defaultMessage: "Summited" }),
-            dotColor: "#22c55e",
+            dotColor: Colors.light.success,
           },
           {
             type: "not-summited",

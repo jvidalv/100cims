@@ -18,6 +18,7 @@ import { Skeleton } from "@/components/ui/atoms/skeleton";
 import { ThemedText } from "@/components/ui/atoms/themed-text";
 import { ThemedView } from "@/components/ui/atoms/themed-view";
 import { BottomDrawer } from "@/components/ui/molecules/bottom-drawer";
+import { Colors } from "@/constants/colors";
 import { useIsKeyboardVisible } from "@/hooks/use-is-keyboard-visible";
 import { getInitials } from "@/lib/strings";
 
@@ -188,7 +189,7 @@ export const UserSelectInput = ({
                       initials={getInitials(user?.fullName)}
                       style={{
                         boxShadow: isSelected
-                          ? "0px 0px 0px 2px #22c55e"
+                          ? `0px 0px 0px 2px ${Colors.light.success}`
                           : undefined,
                       }}
                     />
@@ -196,11 +197,11 @@ export const UserSelectInput = ({
                   </View>
                   <View className="ml-auto text-green-500">
                     {isFirstSelectedAndNotRemovable ? (
-                      <LucideIcon icon={Lock} color="#22c55e" />
+                      <LucideIcon icon={Lock} success />
                     ) : (
                       <LucideIcon
                         icon={isSelected ? SquareCheck : Square}
-                        color={isSelected ? "#22c55e" : undefined}
+                        success={isSelected}
                       />
                     )}
                   </View>

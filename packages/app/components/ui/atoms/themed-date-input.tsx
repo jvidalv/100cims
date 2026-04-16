@@ -109,7 +109,7 @@ export const ThemedDateInput = ({
         </View>
         <View className="py-2">
           {parsedDate ? (
-            <ThemedText className="font-medium capitalize">
+            <ThemedText className="font-medium">
               <FormattedDate
                 value={parsedDate}
                 day="numeric"

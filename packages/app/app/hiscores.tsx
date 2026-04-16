@@ -279,12 +279,7 @@ export default function HiscoresScreen() {
                 isMe && "border-primary bg-primary/10",
               )}
             >
-              <ThemedText
-                className={twMerge(
-                  "absolute -left-0.5 -top-1 text-sm font-semibold text-muted-foreground",
-                  isMe && "text-primary",
-                )}
-              >
+              <ThemedText className="absolute -left-0.5 -top-1 text-sm font-semibold text-muted-foreground">
                 {rank}.
               </ThemedText>
               <Avatar
@@ -531,24 +526,56 @@ function PodiumCompactRow({
 
 function HiscoresSkeleton() {
   return (
-    <View className="mt-4 gap-3">
+    <View className="mt-2 gap-2">
+      <View className="overflow-hidden rounded-xl border border-border bg-primary/5">
+        <View className="flex-row items-center gap-4 p-4">
+          <Skeleton className="size-20 rounded-full" />
+          <View className="flex-1 gap-2">
+            <Skeleton className="h-5 w-40" />
+            <Skeleton className="h-7 w-24" />
+            <Skeleton className="h-4 w-24" />
+          </View>
+        </View>
+        <View className="flex-row items-center gap-3 border-t border-border/50 p-3">
+          <Skeleton className="size-12 rounded-full" />
+          <View className="flex-1 gap-2">
+            <Skeleton className="h-5 w-32" />
+            <Skeleton className="h-4 w-20" />
+          </View>
+          <Skeleton className="h-5 w-14" />
+        </View>
+        <View className="flex-row items-center gap-3 border-t border-border/50 p-3">
+          <Skeleton className="size-12 rounded-full" />
+          <View className="flex-1 gap-2">
+            <Skeleton className="h-5 w-28" />
+            <Skeleton className="h-4 w-20" />
+          </View>
+          <Skeleton className="h-5 w-14" />
+        </View>
+      </View>
       <View className="flex-row items-center gap-3 rounded-lg border border-border p-3">
-        <Skeleton className="h-5 w-6" />
         <Skeleton className="size-12 rounded-full" />
         <View className="flex-1 gap-2">
           <Skeleton className="h-5 w-32" />
           <Skeleton className="h-4 w-20" />
         </View>
-        <Skeleton className="h-6 w-16" />
+        <Skeleton className="h-5 w-14" />
       </View>
       <View className="flex-row items-center gap-3 rounded-lg border border-border p-3">
-        <Skeleton className="h-5 w-6" />
         <Skeleton className="size-12 rounded-full" />
         <View className="flex-1 gap-2">
           <Skeleton className="h-5 w-28" />
-          <Skeleton className="h-4 w-16" />
+          <Skeleton className="h-4 w-20" />
         </View>
-        <Skeleton className="h-6 w-14" />
+        <Skeleton className="h-5 w-14" />
+      </View>
+      <View className="flex-row items-center gap-3 rounded-lg border border-border p-3">
+        <Skeleton className="size-12 rounded-full" />
+        <View className="flex-1 gap-2">
+          <Skeleton className="h-5 w-36" />
+          <Skeleton className="h-4 w-20" />
+        </View>
+        <Skeleton className="h-5 w-14" />
       </View>
     </View>
   );

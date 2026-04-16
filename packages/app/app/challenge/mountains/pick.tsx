@@ -30,7 +30,7 @@ import {
   type MountainPickerMountain,
   toPickerMountain,
 } from "@/domains/mountain/mountain-picker-session";
-import { useMountains } from "@/domains/mountain/mountain.api";
+import { useMountains, useMyMountains } from "@/domains/mountain/mountain.api";
 import { cleanText } from "@/lib";
 
 import type { MountainData, NewMountainData } from "@/types/mountain";
@@ -39,6 +39,7 @@ export default function ChallengeMountainPickerScreen() {
   const router = useRouter();
   const intl = useIntl();
   const { data: catalog } = useMountains();
+  const { data: myAuthored } = useMyMountains();
 
   const [session] = useState(() => readChallengeMountainPickerSession());
   const title = session?.title;
@@ -81,6 +82,11 @@ export default function ChallengeMountainPickerScreen() {
     [selected],
   );
 
+  const myAuthoredIds = useMemo(
+    () => new Set((myAuthored ?? []).map((m) => m.id)),
+    [myAuthored],
+  );
+
   const catalogList: MountainData[] = useMemo(() => {
     if (shouldUseGlobalSearch) {
       const pages = searchData?.pages ?? [];
@@ -97,13 +103,16 @@ export default function ChallengeMountainPickerScreen() {
             .toLowerCase()
             .includes(cleanText(query).toLowerCase()),
         );
-    if (selectedIds.size === 0) return filtered;
-    return [...filtered].sort((a, b) => {
+    // Hide authored mountains from the catalog section — they're surfaced
+    // in the "Your mountains" header section instead.
+    const withoutAuthored = filtered.filter((m) => !myAuthoredIds.has(m.id));
+    if (selectedIds.size === 0) return withoutAuthored;
+    return [...withoutAuthored].sort((a, b) => {
       const aSel = selectedIds.has(a.id) ? 0 : 1;
       const bSel = selectedIds.has(b.id) ? 0 : 1;
       return aSel - bSel;
     });
-  }, [catalogList, query, selectedIds, shouldUseGlobalSearch]);
+  }, [catalogList, myAuthoredIds, query, selectedIds, shouldUseGlobalSearch]);
 
   const toggleCatalog = useCallback(
     (mountain: MountainData) => {
@@ -149,24 +158,42 @@ export default function ChallengeMountainPickerScreen() {
         contentContainerClassName="gap-3 px-6 pb-36"
         ListHeaderComponent={
           <View className="gap-3">
-            {newMountains.length > 0 && (
-              <>
-                <ThemedText className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                  <FormattedMessage defaultMessage="Your mountains" />
-                </ThemedText>
-                {newMountains.map((m) => (
-                  <MountainRow
-                    key={m.tempId}
-                    name={m.name}
-                    height={m.height}
-                    essential={m.essential}
-                    imageUrl={m.imageUri ?? null}
-                    onPress={() => removeNewMountain(m.tempId)}
-                    trailing={<LucideIcon icon={X} size={20} muted />}
-                  />
-                ))}
-              </>
+            {(newMountains.length > 0 || (myAuthored ?? []).length > 0) && (
+              <ThemedText className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                <FormattedMessage defaultMessage="Your mountains" />
+              </ThemedText>
             )}
+            {(myAuthored ?? []).map((m) => {
+              const isSelected = selectedIds.has(m.id);
+              return (
+                <MountainRow
+                  key={m.id}
+                  name={m.name}
+                  height={m.height}
+                  essential={m.essential}
+                  imageUrl={m.imageUrl}
+                  onPress={() => toggleCatalog(m)}
+                  trailing={
+                    <LucideIcon
+                      icon={isSelected ? SquareCheck : Square}
+                      size={20}
+                      success={isSelected}
+                    />
+                  }
+                />
+              );
+            })}
+            {newMountains.map((m) => (
+              <MountainRow
+                key={m.tempId}
+                name={m.name}
+                height={m.height}
+                essential={m.essential}
+                imageUrl={m.imageUri ?? null}
+                onPress={() => removeNewMountain(m.tempId)}
+                trailing={<LucideIcon icon={X} size={20} muted />}
+              />
+            ))}
             <TouchableOpacity
               className="flex-row items-center gap-3"
               onPress={openCreate}
@@ -214,7 +241,7 @@ export default function ChallengeMountainPickerScreen() {
                 <LucideIcon
                   icon={isSelected ? SquareCheck : Square}
                   size={20}
-                  color={isSelected ? "#22c55e" : undefined}
+                  success={isSelected}
                 />
               }
             />
@@ -226,7 +253,7 @@ export default function ChallengeMountainPickerScreen() {
             onPress={() => router.back()}
           >
             <View className="size-12 items-center justify-center rounded-full border-2 border-emerald-500/70">
-              <LucideIcon icon={Check} size={22} color="#22c55e" />
+              <LucideIcon icon={Check} size={22} success />
             </View>
             <ThemedText className="text-lg font-medium text-emerald-500">
               <FormattedMessage defaultMessage="Done" />

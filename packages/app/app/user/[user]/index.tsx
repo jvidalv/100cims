@@ -165,7 +165,7 @@ export default function UserScreen() {
           {!!user.town && <InfoRow icon={House}>{user.town}</InfoRow>}
           <InfoRow icon={Calendar}>
             <FormattedMessage
-              defaultMessage="Member of cims for {duration}"
+              defaultMessage="Member since {duration}"
               values={{
                 duration: formatDistanceToNow(
                   new Date(user.createdAt as string | number),
@@ -253,8 +253,19 @@ export default function UserScreen() {
           )}
         </View>
       ) : (
-        <View className="mx-6 ">
-          <Skeleton className="mb-6 h-24 w-full" />
+        <View className="mx-6 mb-6 gap-2">
+          <View className="flex-row items-center gap-2">
+            <Skeleton className="size-8 rounded-full" />
+            <Skeleton className="h-5 w-24" />
+          </View>
+          <View className="flex-row items-center gap-2">
+            <Skeleton className="size-8 rounded-full" />
+            <Skeleton className="h-5 w-40" />
+          </View>
+          <View className="mt-4 flex-row items-center gap-2">
+            <Skeleton className="size-8 rounded-full" />
+            <Skeleton className="h-5 w-44" />
+          </View>
         </View>
       )}
       {userDetails && !!userDetails.sharedUsers?.length && (

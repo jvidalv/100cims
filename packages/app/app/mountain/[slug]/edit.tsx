@@ -1,5 +1,5 @@
 import { Redirect, useLocalSearchParams, useRouter } from "expo-router";
-import { Camera, Check, X } from "lucide-react-native";
+import { Camera, Check, Trash2, X } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
@@ -22,6 +22,7 @@ import {
 import { ThemedToggleInput } from "@/components/ui/atoms/themed-toggle-input";
 import { ActionRow, ScreenHeader } from "@/components/ui/molecules";
 import {
+  useMountainDelete,
   useMountainUpdate,
   useMyMountains,
 } from "@/domains/mountain/mountain.api";
@@ -36,6 +37,8 @@ export default function MountainEditScreen() {
   const { data: mountains, isLoading } = useMyMountains();
   const { mutateAsync: updateMountain, isPending: isSaving } =
     useMountainUpdate();
+  const { mutateAsync: deleteMountain, isPending: isDeleting } =
+    useMountainDelete();
 
   const mountain = mountains?.find((m) => m.slug === slug);
 
@@ -111,6 +114,38 @@ export default function MountainEditScreen() {
         intl.formatMessage({ defaultMessage: "Failed to update mountain" }),
       );
     }
+  };
+
+  const handleDelete = () => {
+    Alert.alert(
+      intl.formatMessage({ defaultMessage: "Delete mountain" }),
+      intl.formatMessage({
+        defaultMessage:
+          "Are you sure you want to delete this mountain? This action cannot be undone.",
+      }),
+      [
+        {
+          text: intl.formatMessage({ defaultMessage: "Cancel" }),
+          style: "cancel",
+        },
+        {
+          text: intl.formatMessage({ defaultMessage: "Delete" }),
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await deleteMountain({ id: mountain.id });
+              router.back();
+            } catch {
+              Alert.alert(
+                intl.formatMessage({
+                  defaultMessage: "Failed to delete mountain",
+                }),
+              );
+            }
+          },
+        },
+      ],
+    );
   };
 
   return (
@@ -213,7 +248,7 @@ export default function MountainEditScreen() {
             <ActionRow
               icon={Check}
               size="lg"
-              intent="primary"
+              intent="emerald"
               onPress={handleSave}
               disabled={isSaving}
               activeOpacity={0.85}
@@ -228,6 +263,17 @@ export default function MountainEditScreen() {
               activeOpacity={0.85}
             >
               <FormattedMessage defaultMessage="Cancel" />
+            </ActionRow>
+            <ActionRow
+              icon={Trash2}
+              size="lg"
+              intent="danger"
+              onPress={handleDelete}
+              disabled={isDeleting}
+              activeOpacity={0.85}
+              iconOverride={isDeleting ? <ActivityIndicator /> : undefined}
+            >
+              <FormattedMessage defaultMessage="Delete mountain" />
             </ActionRow>
           </View>
         </ScrollView>

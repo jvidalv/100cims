@@ -1,4 +1,4 @@
-import { Mountain, Pencil, Users } from "lucide-react-native";
+import { Mountain, Pencil, Trash2, Users } from "lucide-react-native";
 import { ReactNode } from "react";
 import { FormattedMessage } from "react-intl";
 import { Image, TouchableOpacity, View } from "react-native";
@@ -18,6 +18,7 @@ type ChallengeListItemProps = {
   isSelected?: boolean;
   onPress: () => void;
   onEditPress?: () => void;
+  onDeletePress?: () => void;
   rightElement?: ReactNode;
 };
 
@@ -31,6 +32,7 @@ export function ChallengeListItem({
   isSelected,
   onPress,
   onEditPress,
+  onDeletePress,
   rightElement,
 }: ChallengeListItemProps) {
   const usersCount = totalUsers ? Number(totalUsers) : 0;
@@ -100,18 +102,35 @@ export function ChallengeListItem({
           {rightElement}
         </View>
       </TouchableOpacity>
-      {onEditPress && (
-        <TouchableOpacity
-          onPress={onEditPress}
-          className="flex-row items-center gap-2"
-        >
-          <View className="size-8 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700">
-            <LucideIcon icon={Pencil} size={16} muted />
-          </View>
-          <ThemedText className="text-muted-foreground">
-            <FormattedMessage defaultMessage="Edit" />
-          </ThemedText>
-        </TouchableOpacity>
+      {(onEditPress || onDeletePress) && (
+        <View className="mt-2 flex-row items-center gap-6">
+          {onEditPress && (
+            <TouchableOpacity
+              onPress={onEditPress}
+              className="flex-row items-center gap-2"
+            >
+              <View className="size-8 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700">
+                <LucideIcon icon={Pencil} size={16} muted />
+              </View>
+              <ThemedText className="text-muted-foreground">
+                <FormattedMessage defaultMessage="Edit" />
+              </ThemedText>
+            </TouchableOpacity>
+          )}
+          {onDeletePress && (
+            <TouchableOpacity
+              onPress={onDeletePress}
+              className="flex-row items-center gap-2"
+            >
+              <View className="size-8 items-center justify-center rounded-full bg-red-100 dark:bg-red-950">
+                <LucideIcon icon={Trash2} size={16} color="#ef4444" />
+              </View>
+              <ThemedText className="text-red-500">
+                <FormattedMessage defaultMessage="Delete" />
+              </ThemedText>
+            </TouchableOpacity>
+          )}
+        </View>
       )}
     </View>
   );

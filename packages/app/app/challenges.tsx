@@ -2,18 +2,22 @@ import { Link, useRouter } from "expo-router";
 import { Plus } from "lucide-react-native";
 import { useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { Pressable, ScrollView, TouchableOpacity, View } from "react-native";
+import { Pressable, ScrollView, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
 
 import { useAuth } from "@/components/providers/auth-provider";
 import {
   ActivityIndicator,
-  LucideIcon,
+  Skeleton,
   ThemedText,
   ThemedView,
 } from "@/components/ui/atoms";
-import { ChallengeListItem, ScreenHeader } from "@/components/ui/molecules";
+import {
+  ActionRow,
+  ChallengeListItem,
+  ScreenHeader,
+} from "@/components/ui/molecules";
 import {
   useActiveChallenge,
   useChallengesGet,
@@ -29,8 +33,10 @@ export default function ChallengesScreen() {
   const intl = useIntl();
   const { isAuthenticated } = useAuth();
   const { data: challenge } = useActiveChallenge();
-  const { data: officialChallenges } = useChallengesGet();
-  const { data: communityChallenges } = useCommunityChallengesList();
+  const { data: officialChallenges, isPending: isPendingOfficial } =
+    useChallengesGet();
+  const { data: communityChallenges, isPending: isPendingCommunity } =
+    useCommunityChallengesList();
   const { data: user } = useUserMe();
   const {
     mutateAsync: updateUser,
@@ -122,20 +128,36 @@ export default function ChallengesScreen() {
         })}
       </View>
       {isCommunityTab && (
-        <TouchableOpacity
-          onPress={onCreateChallenge}
-          className="mx-6 mb-4 flex-row items-center gap-2 rounded border-2 border-border p-4"
-        >
-          <LucideIcon icon={Plus} size={20} />
-          <ThemedText className="font-medium">
+        <View className="mx-6 mb-4">
+          <ActionRow
+            icon={Plus}
+            size="lg"
+            intent="primary"
+            onPress={onCreateChallenge}
+          >
             <FormattedMessage defaultMessage="New challenge" />
-          </ThemedText>
-        </TouchableOpacity>
+          </ActionRow>
+        </View>
       )}
       <ScrollView
         contentContainerClassName="gap-2 px-6 pb-40"
         showsVerticalScrollIndicator={false}
       >
+        {((isCommunityTab && isPendingCommunity) ||
+          (!isCommunityTab && isPendingOfficial)) &&
+          !challenges &&
+          [0, 1, 2].map((i) => (
+            <View key={i} className="overflow-hidden rounded border-2 border-border">
+              <Skeleton className="h-40 w-full rounded-none" />
+              <View className="gap-2 p-3">
+                <Skeleton className="h-7 w-40" />
+                <View className="flex-row gap-3">
+                  <Skeleton className="h-5 w-14" />
+                  <Skeleton className="h-5 w-14" />
+                </View>
+              </View>
+            </View>
+          ))}
         {challenges?.map((challenge, index) => {
           // Use custom emoji for community challenges if available, otherwise use country flag
           const displayEmoji =

@@ -6,10 +6,16 @@ export const Colors = {
   light: {
     primary: "#f43f5e",
     accent: "#963ff4",
+    success: "#22c55e",
+    foreground: "black",
+    muted: "#a3a3a3",
   },
   dark: {
     primary: "#f43f5e",
     accent: "#963ff4",
+    success: "#22c55e",
+    foreground: "white",
+    muted: "#737373",
   },
 };
 
