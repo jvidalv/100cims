@@ -159,12 +159,12 @@ export const joinPostRoute = new Elysia().use(JWT()).post(
           { name: "App version", value: appVersion ?? "—", inline: true },
         ],
       });
-      void sendWelcomeEmail({
+      sendWelcomeEmail({
         id: user.id,
         email: user.email,
         firstName: user.firstName,
         locale: user.locale,
-      });
+      }).catch((e) => console.error("[sendWelcomeEmail] unexpected", e));
     } else {
       const updates: Partial<typeof userTable.$inferInsert> = {};
       if (!user.country && country) updates.country = country;
