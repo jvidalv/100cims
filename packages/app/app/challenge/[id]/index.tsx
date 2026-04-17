@@ -7,11 +7,12 @@ import {
   Mountain,
   Share as ShareIcon,
   Target,
+  Trash2,
 } from "lucide-react-native";
 import { useColorScheme } from "nativewind";
 import { useEffect } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { TouchableOpacity, Image, View } from "react-native";
+import { Alert, TouchableOpacity, Image, View } from "react-native";
 
 
 import { useAuth } from "@/components/providers/auth-provider";
@@ -27,10 +28,11 @@ import { ActionRow, MountainItemList } from "@/components/ui/molecules";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
 import {
   useActiveChallenge,
+  useAdminDeleteChallengeMutation,
   useChallengeDetail,
 } from "@/domains/challenge/challenge.api";
 import { countryToEmoji } from "@/domains/challenge/challenge.model";
-import { useUpdateUserMeMutation } from "@/domains/user/user.api";
+import { useIsAdmin, useUpdateUserMeMutation } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
 import { isIOS } from "@/lib/device";
 import { shareDeeplink } from "@/lib/share";
@@ -46,8 +48,34 @@ export default function ChallengeDetailScreen() {
   const { data: activeChallenge } = useActiveChallenge();
   const { mutateAsync: updateUser, isPending: isUpdating } =
     useUpdateUserMeMutation();
+  const isAdmin = useIsAdmin();
+  const { mutateAsync: adminDeleteChallenge } =
+    useAdminDeleteChallengeMutation();
 
   const isActiveChallenge = activeChallenge?.id === id;
+
+  const handleAdminDelete = () => {
+    Alert.alert(
+      intl.formatMessage({ defaultMessage: "Delete as admin" }),
+      intl.formatMessage({
+        defaultMessage: "This removes the challenge for everyone. Continue?",
+      }),
+      [
+        {
+          text: intl.formatMessage({ defaultMessage: "Cancel" }),
+          style: "cancel",
+        },
+        {
+          text: intl.formatMessage({ defaultMessage: "Yes" }),
+          style: "destructive",
+          onPress: async () => {
+            await adminDeleteChallenge({ challengeId: id });
+            router.back();
+          },
+        },
+      ],
+    );
+  };
 
   useEffect(() => {
     if (!isIOS) return;
@@ -232,6 +260,15 @@ export default function ChallengeDetailScreen() {
           <ThemedText className="text-center text-sm text-muted-foreground">
             <FormattedMessage defaultMessage="This challenge is private" />
           </ThemedText>
+        )}
+        {isAdmin && !challenge.isOfficial && (
+          <ActionRow
+            onPress={handleAdminDelete}
+            icon={Trash2}
+            intent="danger"
+          >
+            <FormattedMessage defaultMessage="Delete (admin)" />
+          </ActionRow>
         )}
       </View>
 

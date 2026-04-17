@@ -708,6 +708,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/protected/summit/report": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["postApiProtectedSummitReport"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/protected/donors/all": {
         parameters: {
             query?: never;
@@ -1007,6 +1023,54 @@ export interface paths {
         put?: never;
         post?: never;
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/protected/admin/summits/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["deleteApiProtectedAdminSummitsById"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/protected/admin/plans/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["deleteApiProtectedAdminPlansById"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/protected/admin/challenges/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["deleteApiProtectedAdminChallengesById"];
         options?: never;
         head?: never;
         patch?: never;
@@ -2266,6 +2330,7 @@ export interface operations {
                             town: (string | null) | null;
                             visibleOnHiscores: boolean;
                             visibleOnPeopleSearch: boolean;
+                            admin?: boolean;
                             locale: (string | null) | null;
                             username: (string | null) | null;
                             activeChallengeId: (string | null) | null;
@@ -2284,6 +2349,7 @@ export interface operations {
                             town: (string | null) | null;
                             visibleOnHiscores: boolean;
                             visibleOnPeopleSearch: boolean;
+                            admin?: boolean;
                             locale: (string | null) | null;
                             username: (string | null) | null;
                             activeChallengeId: (string | null) | null;
@@ -2302,6 +2368,7 @@ export interface operations {
                             town: (string | null) | null;
                             visibleOnHiscores: boolean;
                             visibleOnPeopleSearch: boolean;
+                            admin?: boolean;
                             locale: (string | null) | null;
                             username: (string | null) | null;
                             activeChallengeId: (string | null) | null;
@@ -3209,6 +3276,7 @@ export interface operations {
                             town: (string | null) | null;
                             visibleOnHiscores: boolean;
                             visibleOnPeopleSearch: boolean;
+                            admin?: boolean;
                             locale: (string | null) | null;
                             username: (string | null) | null;
                             activeChallengeId: (string | null) | null;
@@ -3227,6 +3295,7 @@ export interface operations {
                             town: (string | null) | null;
                             visibleOnHiscores: boolean;
                             visibleOnPeopleSearch: boolean;
+                            admin?: boolean;
                             locale: (string | null) | null;
                             username: (string | null) | null;
                             activeChallengeId: (string | null) | null;
@@ -3245,6 +3314,7 @@ export interface operations {
                             town: (string | null) | null;
                             visibleOnHiscores: boolean;
                             visibleOnPeopleSearch: boolean;
+                            admin?: boolean;
                             locale: (string | null) | null;
                             username: (string | null) | null;
                             activeChallengeId: (string | null) | null;
@@ -4640,6 +4710,48 @@ export interface operations {
                             }[];
                             userReactions: string[];
                         };
+                    };
+                };
+            };
+        };
+    };
+    postApiProtectedSummitReport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    summitId: string;
+                };
+                "multipart/form-data": {
+                    summitId: string;
+                };
+                "text/plain": {
+                    summitId: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        autoReverted: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        autoReverted: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        autoReverted: boolean;
                     };
                 };
             };
@@ -6120,6 +6232,189 @@ export interface operations {
             };
         };
     };
+    deleteApiProtectedAdminSummitsById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    deleteApiProtectedAdminPlansById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    deleteApiProtectedAdminChallengesById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
     getApiAdminMe: {
         parameters: {
             query?: never;
@@ -6145,6 +6440,7 @@ export interface operations {
                             town: (string | null) | null;
                             visibleOnHiscores: boolean;
                             visibleOnPeopleSearch: boolean;
+                            admin?: boolean;
                             locale: (string | null) | null;
                             username: (string | null) | null;
                             activeChallengeId: (string | null) | null;
@@ -6163,6 +6459,7 @@ export interface operations {
                             town: (string | null) | null;
                             visibleOnHiscores: boolean;
                             visibleOnPeopleSearch: boolean;
+                            admin?: boolean;
                             locale: (string | null) | null;
                             username: (string | null) | null;
                             activeChallengeId: (string | null) | null;
@@ -6181,6 +6478,7 @@ export interface operations {
                             town: (string | null) | null;
                             visibleOnHiscores: boolean;
                             visibleOnPeopleSearch: boolean;
+                            admin?: boolean;
                             locale: (string | null) | null;
                             username: (string | null) | null;
                             activeChallengeId: (string | null) | null;

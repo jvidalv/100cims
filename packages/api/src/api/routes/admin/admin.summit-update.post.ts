@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 
 import { db } from "@/db";
@@ -48,7 +48,12 @@ export const adminSummitUpdatePostRoute = new Elysia().post(
 
       const [row] = await db
         .update(summitTable)
-        .set(patch)
+        .set({
+          ...patch,
+          ...(patch.imageUrl !== undefined
+            ? { photoVersion: sql`${summitTable.photoVersion} + 1` }
+            : {}),
+        })
         .where(eq(summitTable.id, params.id))
         .returning({ id: summitTable.id });
 

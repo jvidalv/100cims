@@ -1,6 +1,8 @@
 import { format } from "date-fns/format";
 import { Link, Redirect, useLocalSearchParams, useRouter } from "expo-router";
 import {
+  Check,
+  Flag,
   Share as ShareIcon,
   SquarePen,
   Trash2,
@@ -37,10 +39,12 @@ import {
   useImagePreview,
 } from "@/components/ui/molecules";
 import {
+  useAdminDeleteSummitMutation,
   useDeleteSummitMutation,
+  useReportSummitMutation,
   useSummitGet,
 } from "@/domains/summit/summit.api";
-import { useUserMe } from "@/domains/user/user.api";
+import { useIsAdmin, useUserMe } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
 import {
   CONFETTI_EXPLOSION_SPEED,
@@ -62,7 +66,11 @@ const Content = () => {
 
   const { data, isPending } = useSummitGet({ summitId: summit });
   const { data: me } = useUserMe();
+  const isAdmin = useIsAdmin();
   const { mutateAsync: deleteSummit } = useDeleteSummitMutation();
+  const { mutateAsync: reportSummit } = useReportSummitMutation();
+  const { mutateAsync: adminDeleteSummit } = useAdminDeleteSummitMutation();
+  const [hasReported, setHasReported] = useState(false);
 
   const { previewImage, isPreviewOpen, openPreview, closePreview } =
     useImagePreview();
@@ -114,6 +122,29 @@ const Content = () => {
           style: "default",
           onPress: async () => {
             await deleteSummit({ summitId: summit });
+            router.back();
+          },
+        },
+      ],
+    );
+  };
+
+  const handleAdminDelete = () => {
+    Alert.alert(
+      intl.formatMessage({ defaultMessage: "Delete as admin" }),
+      intl.formatMessage({
+        defaultMessage: "This removes the summit for everyone. Continue?",
+      }),
+      [
+        {
+          text: intl.formatMessage({ defaultMessage: "Cancel" }),
+          style: "cancel",
+        },
+        {
+          text: intl.formatMessage({ defaultMessage: "Yes" }),
+          style: "destructive",
+          onPress: async () => {
+            await adminDeleteSummit({ summitId: summit });
             router.back();
           },
         },
@@ -252,6 +283,32 @@ const Content = () => {
           {isUserParticipant && (
             <ActionRow onPress={handleDelete} icon={Trash2} intent="danger">
               <FormattedMessage defaultMessage="Delete summit" />
+            </ActionRow>
+          )}
+          {!isUserParticipant && (
+            <ActionRow
+              onPress={async () => {
+                setHasReported(true);
+                await reportSummit({ summitId: summit }).catch(() => {});
+              }}
+              icon={hasReported ? Check : Flag}
+              intent={hasReported ? "emerald" : "danger"}
+              disabled={hasReported}
+            >
+              {hasReported ? (
+                <FormattedMessage defaultMessage="Thanks — we got it" />
+              ) : (
+                <FormattedMessage defaultMessage="Report" />
+              )}
+            </ActionRow>
+          )}
+          {isAdmin && (
+            <ActionRow
+              onPress={handleAdminDelete}
+              icon={Trash2}
+              intent="danger"
+            >
+              <FormattedMessage defaultMessage="Delete (admin)" />
             </ActionRow>
           )}
         </View>

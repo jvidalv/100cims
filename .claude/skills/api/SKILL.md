@@ -49,6 +49,7 @@ Elysia provides excellent TypeScript inference, OpenAPI generation, and performa
 | `src/api/lib/slug.ts` | `generateSlug()` - URL-friendly slug generation |
 | `src/api/lib/images.ts` | `isBase64SizeValid()` - Image size validation |
 | `src/api/lib/sheets.ts` | Google Sheets logging utilities |
+| `src/api/lib/discord.ts` | `sendDiscordEmbed(webhookUrl, embed)` — fire-and-forget POST to a Discord webhook. Fires only in production. Use `DISCORD_COLOR.{RED,YELLOW,BLURPLE}` for the `color` field. Embed supports `image: { url }` to render inline. Three webhook URL env vars: `DISCORD_NEW_USER_WEBHOOK_URL`, `DISCORD_ERRORS_WEBHOOK_URL`, `DISCORD_CONTACT_WEBHOOK_URL` — the contact one is the dumping ground for user-triggered reports/contacts. |
 | `src/lib/format-date.ts` | `formatDate(value)` → `dd/mm/yyyy`, `formatDateTime(value)` → `dd/mm/yyyy HH:mm`. Use these for all admin-page date displays — never raw `toLocaleDateString()` (locale-dependent and inconsistent across the panel). |
 
 ## Key Patterns

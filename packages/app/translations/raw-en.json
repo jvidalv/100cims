@@ -200,6 +200,9 @@
   "AUwGVY": {
     "defaultMessage": "Extra info"
   },
+  "AYGQCR": {
+    "defaultMessage": "Delete as admin"
+  },
   "AcTzHz": {
     "defaultMessage": "Height must be between 0 and 10,000 meters"
   },
@@ -289,6 +292,9 @@
   },
   "G5NVqu": {
     "defaultMessage": "This can't be undone."
+  },
+  "G7O3x8": {
+    "defaultMessage": "This removes the plan for everyone. Continue?"
   },
   "GQNYob": {
     "defaultMessage": "Share link"
@@ -391,6 +397,9 @@
   },
   "MmuKRi": {
     "defaultMessage": "Cims costs around 50€ a month to run. Pick up some merch to help keep it free."
+  },
+  "N4mgpU": {
+    "defaultMessage": "Delete (admin)"
   },
   "NDV5Mq": {
     "defaultMessage": "Options"
@@ -614,9 +623,6 @@
   "bBdCTh": {
     "defaultMessage": "Add new mountain"
   },
-  "bW7B87": {
-    "defaultMessage": "New"
-  },
   "bWST2F": {
     "defaultMessage": "Add to your people"
   },
@@ -718,6 +724,9 @@
   },
   "hx5eQE": {
     "defaultMessage": "Edit mountain"
+  },
+  "i3sykp": {
+    "defaultMessage": "This removes the summit for everyone. Continue?"
   },
   "iH0rqF": {
     "defaultMessage": "Order sent!"
@@ -970,6 +979,9 @@
   },
   "y5oyGg": {
     "defaultMessage": "View on maps"
+  },
+  "yEc3Wd": {
+    "defaultMessage": "This removes the challenge for everyone. Continue?"
   },
   "yG2DG5": {
     "defaultMessage": "We'll reach you at {email}."

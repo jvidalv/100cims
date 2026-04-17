@@ -1,5 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
+import { queryClient } from "@/components/providers/query-client-provider";
 import apiClient from "@/lib/api-client";
 import { challengeKeys } from "@/lib/query-keys";
 
@@ -38,6 +39,26 @@ export const useChallengeDetail = ({ id }: { id: string }) => {
       );
       if (error) throw error;
       return data?.message;
+    },
+  });
+};
+
+export const useAdminDeleteChallengeMutation = () => {
+  return useMutation({
+    mutationKey: ["challenge", "admin-delete"],
+    mutationFn: async ({ challengeId }: { challengeId: string }) => {
+      const { data, error } = await apiClient.DELETE(
+        "/api/protected/admin/challenges/{id}",
+        { params: { path: { id: challengeId } } },
+      );
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (_, { challengeId }) => {
+      void queryClient.invalidateQueries({ queryKey: challengeKeys.list() });
+      void queryClient.removeQueries({
+        queryKey: challengeKeys.detail(challengeId),
+      });
     },
   });
 };
