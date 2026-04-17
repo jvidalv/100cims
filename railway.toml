@@ -2,6 +2,9 @@
 builder = "DOCKERFILE"
 dockerfilePath = "packages/api/Dockerfile"
 
+[build.args]
+DATABASE_URL = "$DATABASE_URL"
+
 [deploy]
 startCommand = "cd packages/api && npx drizzle-kit migrate && cd /app && node packages/api/server.js"
 healthcheckPath = "/api/health"
