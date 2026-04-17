@@ -6,6 +6,9 @@ dockerfilePath = "packages/api/Dockerfile"
 # Dockerfile swaps this into DATABASE_URL only for the build stage —
 # runtime keeps the private URL Railway injects as DATABASE_URL.
 DATABASE_PUBLIC_URL = "${{Postgres.DATABASE_PUBLIC_URL}}"
+# next build imports the Elysia API route module, which throws if
+# AUTH_SECRET is missing. Pass it through for prerender.
+AUTH_SECRET = "${{AUTH_SECRET}}"
 
 [deploy]
 startCommand = "cd packages/api && npx drizzle-kit migrate && cd /app && node packages/api/server.js"
