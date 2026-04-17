@@ -22,6 +22,7 @@ export interface MerchRow {
   imageUrls: string[];
   hasSize: boolean;
   price: number;
+  discountedPrice: number | null;
   featured: number | null;
   createdAt: Date;
   variants: MerchVariant[];
@@ -40,6 +41,7 @@ const SELECT = {
   imageUrls: merchTable.imageUrls,
   hasSize: merchTable.hasSize,
   price: merchTable.price,
+  discountedPrice: merchTable.discountedPrice,
   featured: merchTable.featured,
   createdAt: merchTable.createdAt,
 };

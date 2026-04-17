@@ -3,12 +3,32 @@ import { Heart, ShoppingBag } from "lucide-react-native";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Image, TouchableOpacity, View } from "react-native";
 
-
 import { useAuth } from "@/components/providers/auth-provider";
 import { LucideIcon, ThemedText } from "@/components/ui/atoms";
+import { ProductPrice } from "@/components/ui/molecules";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
 import { Colors } from "@/constants/colors";
 import { useMerch } from "@/domains/merch/merch.api";
+
+const COLOR_HEX: Record<string, string> = {
+  black: "#000000",
+  white: "#FFFFFF",
+  gray: "#9CA3AF",
+  grey: "#9CA3AF",
+  red: "#DC2626",
+  blue: "#2563EB",
+  navy: "#1E3A8A",
+  green: "#16A34A",
+  yellow: "#EAB308",
+  orange: "#EA580C",
+  pink: "#EC4899",
+  purple: "#9333EA",
+  brown: "#78350F",
+  beige: "#E7D8B1",
+};
+
+const resolveSwatchColor = (token: string) =>
+  COLOR_HEX[token.toLowerCase()] ?? token;
 
 export default function ShopScreen() {
   const intl = useIntl();
@@ -48,44 +68,61 @@ export default function ShopScreen() {
         </View>
       </View>
 
-      <View className="gap-4">
-        {products.map((product) => (
-          <Link
+      <View className="flex-row flex-wrap">
+        {products.map((product, index) => (
+          <View
             key={product.slug}
-            href={{
-              pathname: "/shop/[slug]",
-              params: { slug: product.slug },
-            }}
-            asChild
+            className={`w-1/2 pb-6 ${index % 2 === 0 ? "pr-1.5" : "pl-1.5"}`}
           >
-            <TouchableOpacity
-              activeOpacity={0.85}
-              className="flex-row items-center gap-4 rounded border-2 border-border p-3"
+            <Link
+              href={{
+                pathname: "/shop/[slug]",
+                params: { slug: product.slug },
+              }}
+              asChild
             >
-              {product.imageUrls[0] ? (
-                <Image
-                  source={{ uri: product.imageUrls[0], cache: "force-cache" }}
-                  className="size-36 rounded bg-border"
-                  resizeMode="cover"
-                />
-              ) : (
-                <View className="size-36 items-center justify-center rounded bg-border">
-                  <LucideIcon icon={ShoppingBag} size={36} muted />
+              <TouchableOpacity activeOpacity={0.85} className="gap-2">
+                {product.imageUrls[0] ? (
+                  <Image
+                    source={{ uri: product.imageUrls[0], cache: "force-cache" }}
+                    className="aspect-square w-full rounded bg-border"
+                    resizeMode="cover"
+                  />
+                ) : (
+                  <View className="aspect-square w-full items-center justify-center rounded bg-border">
+                    <LucideIcon icon={ShoppingBag} size={36} muted />
+                  </View>
+                )}
+                <View className="gap-1">
+                  <ThemedText
+                    className="text-base font-semibold"
+                    numberOfLines={1}
+                  >
+                    {product.name}
+                  </ThemedText>
+                  {product.variants.length > 1 && (
+                    <View className="mt-0.5 flex-row gap-1.5">
+                      {product.variants.map((v) => (
+                        <View
+                          key={v.color}
+                          className="size-4 rounded-full border border-foreground/40"
+                          style={{
+                            backgroundColor: resolveSwatchColor(v.color),
+                          }}
+                        />
+                      ))}
+                    </View>
+                  )}
+                  <ProductPrice
+                    price={product.price}
+                    discountedPrice={product.discountedPrice}
+                    className="text-base font-medium text-muted-foreground"
+                    strikethroughClassName="text-base"
+                  />
                 </View>
-              )}
-              <View className="flex-1 gap-1">
-                <ThemedText
-                  className="text-lg font-semibold"
-                  numberOfLines={1}
-                >
-                  {product.name}
-                </ThemedText>
-                <ThemedText className="text-lg font-medium text-muted-foreground">
-                  {product.price}€
-                </ThemedText>
-              </View>
-            </TouchableOpacity>
-          </Link>
+              </TouchableOpacity>
+            </Link>
+          </View>
         ))}
       </View>
     </ParallaxScrollView>

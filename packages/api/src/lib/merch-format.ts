@@ -25,3 +25,12 @@ export const formatPrice = (euros: number, locale: AppLocale): string =>
     currency: "EUR",
     minimumFractionDigits: 0,
   }).format(euros);
+
+export const formatMerchPrice = (
+  price: number,
+  discountedPrice: number | null,
+  locale: AppLocale,
+) => ({
+  primary: formatPrice(discountedPrice ?? price, locale),
+  strikethrough: discountedPrice != null ? formatPrice(price, locale) : null,
+});

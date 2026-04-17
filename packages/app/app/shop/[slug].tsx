@@ -1,8 +1,9 @@
 import { Redirect, useLocalSearchParams, useRouter } from "expo-router";
 import { ShoppingBag } from "lucide-react-native";
 import { useEffect, useState } from "react";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import {
+  Alert,
   Image,
   Pressable,
   ScrollView,
@@ -12,9 +13,11 @@ import {
 import { twMerge } from "tailwind-merge";
 
 import { useAuth } from "@/components/providers/auth-provider";
-import { Button, LucideIcon, ThemedText } from "@/components/ui/atoms";
+import { LucideIcon, ThemedText } from "@/components/ui/atoms";
 import {
+  ActionRow,
   ImagePreviewModal,
+  ProductPrice,
   ScreenHeader,
   useImagePreview,
 } from "@/components/ui/molecules";
@@ -28,6 +31,7 @@ const capitalize = (s: string) =>
 
 export default function ShopProductScreen() {
   const router = useRouter();
+  const intl = useIntl();
   const { isAuthenticated } = useAuth();
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const { data: merch } = useMerch();
@@ -71,8 +75,8 @@ export default function ShopProductScreen() {
 
   const needsSize = product.hasSize;
   const needsColor = product.variants.length > 1;
-  const canAdd =
-    (!needsSize || !!selectedSize) && (!needsColor || !!selectedColor);
+  const missingSize = needsSize && !selectedSize;
+  const missingColor = needsColor && !selectedColor;
 
   const activeVariant = selectedColor
     ? (product.variants.find((v) => v.color === selectedColor) ?? null)
@@ -83,6 +87,25 @@ export default function ShopProductScreen() {
       : product.imageUrls;
 
   const onAddToCart = async () => {
+    if (missingSize || missingColor) {
+      const message =
+        missingSize && missingColor
+          ? intl.formatMessage({
+              defaultMessage: "Please pick a color and size before adding to cart.",
+            })
+          : missingSize
+            ? intl.formatMessage({
+                defaultMessage: "Please pick a size before adding to cart.",
+              })
+            : intl.formatMessage({
+                defaultMessage: "Please pick a color before adding to cart.",
+              });
+      Alert.alert(
+        intl.formatMessage({ defaultMessage: "Selection required" }),
+        message,
+      );
+      return;
+    }
     await addToCart({
       slug: product.slug,
       size: selectedSize ?? undefined,
@@ -96,7 +119,7 @@ export default function ShopProductScreen() {
       <ScreenHeader>{product.name}</ScreenHeader>
       <ScrollView
         className="flex-1"
-        contentContainerClassName="pb-48"
+        contentContainerClassName="pb-10"
         showsVerticalScrollIndicator={false}
       >
         {galleryImages.length > 0 ? (
@@ -120,7 +143,7 @@ export default function ShopProductScreen() {
           </View>
         )}
 
-        {galleryImages.length > 1 && (
+        {!needsColor && galleryImages.length > 1 && (
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -133,7 +156,7 @@ export default function ShopProductScreen() {
                 className={twMerge(
                   "size-16 overflow-hidden rounded border-2",
                   idx === activeImageIndex
-                    ? "border-primary"
+                    ? "border-foreground"
                     : "border-border",
                 )}
               >
@@ -159,7 +182,7 @@ export default function ShopProductScreen() {
           )}
 
           {needsColor && (
-            <View className="gap-2">
+            <View className="gap-3">
               <ThemedText className="text-lg font-semibold">
                 <FormattedMessage defaultMessage="Select color" />
               </ThemedText>
@@ -208,6 +231,32 @@ export default function ShopProductScreen() {
                   );
                 })}
               </View>
+              {galleryImages.length > 1 && (
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerClassName="gap-2"
+                >
+                  {galleryImages.map((url, idx) => (
+                    <TouchableOpacity
+                      key={url}
+                      onPress={() => setActiveImageIndex(idx)}
+                      className={twMerge(
+                        "size-16 overflow-hidden rounded border-2",
+                        idx === activeImageIndex
+                          ? "border-foreground"
+                          : "border-border",
+                      )}
+                    >
+                      <Image
+                        source={{ uri: url, cache: "force-cache" }}
+                        className="size-full bg-border"
+                        resizeMode="cover"
+                      />
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+              )}
             </View>
           )}
 
@@ -244,18 +293,24 @@ export default function ShopProductScreen() {
             <ThemedText className="text-lg font-semibold">
               <FormattedMessage defaultMessage="Price" />
             </ThemedText>
-            <ThemedText className="text-3xl font-bold">
-              {product.price}€
-            </ThemedText>
+            <ProductPrice
+              price={product.price}
+              discountedPrice={product.discountedPrice}
+              className="text-3xl font-bold"
+              strikethroughClassName="text-2xl"
+            />
           </View>
+
+          <ActionRow
+            icon={ShoppingBag}
+            intent="emerald"
+            size="lg"
+            onPress={onAddToCart}
+          >
+            <FormattedMessage defaultMessage="Add to cart" />
+          </ActionRow>
         </View>
       </ScrollView>
-
-      <View className="absolute bottom-0 left-0 right-0 border-t border-border bg-background px-6 pb-10 pt-4">
-        <Button onPress={onAddToCart} disabled={!canAdd}>
-          <FormattedMessage defaultMessage="Add to cart" />
-        </Button>
-      </View>
 
       <ImagePreviewModal
         visible={isPreviewOpen}

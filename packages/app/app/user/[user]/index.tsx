@@ -33,7 +33,6 @@ import {
 import { getFullName } from "@/domains/user/user.utils";
 import { logError } from "@/lib/log-error";
 import { captureAndShare, shareDeeplink } from "@/lib/share";
-import { getInitials } from "@/lib/strings";
 
 export default function UserScreen() {
   const intl = useIntl();
@@ -254,6 +253,7 @@ export default function UserScreen() {
         </View>
       ) : (
         <View className="mx-6 mb-6 gap-2">
+          {/* Info rows (Town + Member since) */}
           <View className="flex-row items-center gap-2">
             <Skeleton className="size-8 rounded-full" />
             <Skeleton className="h-5 w-24" />
@@ -262,9 +262,15 @@ export default function UserScreen() {
             <Skeleton className="size-8 rounded-full" />
             <Skeleton className="h-5 w-40" />
           </View>
-          <View className="mt-4 flex-row items-center gap-2">
-            <Skeleton className="size-8 rounded-full" />
-            <Skeleton className="h-5 w-44" />
+          {/* Actions section */}
+          <View className="mt-4 gap-2">
+            <Skeleton className="mb-1 h-8 w-24" />
+            {[0, 1, 2].map((i) => (
+              <View key={i} className="flex-row items-center gap-3">
+                <Skeleton className="size-10 rounded-full" />
+                <Skeleton className="h-5 w-36" />
+              </View>
+            ))}
           </View>
         </View>
       )}
@@ -304,58 +310,15 @@ export default function UserScreen() {
         </ThemedText>
       </View>
       <View className="flex flex-row flex-wrap px-6">
-        {isPendingSummits && (
-          <>
-            <View className="w-1/2">
+        {isPendingSummits &&
+          Array.from({ length: 8 }).map((_, i) => (
+            <View key={i} className={i % 2 === 0 ? "w-1/2" : "w-1/2 pl-1.5"}>
               <Skeleton
-                className="w-full border-background mb-2"
+                className="mb-2 w-full"
                 style={{ height: 243, borderRadius: 6 }}
               />
             </View>
-            <View className="w-1/2 pl-1.5">
-              <Skeleton
-                className="w-full border-background mb-2"
-                style={{ height: 243, borderRadius: 6 }}
-              />
-            </View>
-            <View className="w-1/2">
-              <Skeleton
-                className="w-full border-background mb-2"
-                style={{ height: 243, borderRadius: 6 }}
-              />
-            </View>
-            <View className="w-1/2 pl-1.5">
-              <Skeleton
-                className="w-full border-background mb-2"
-                style={{ height: 243, borderRadius: 6 }}
-              />
-            </View>
-            <View className="w-1/2">
-              <Skeleton
-                className="w-full border-background mb-2"
-                style={{ height: 243, borderRadius: 6 }}
-              />
-            </View>
-            <View className="w-1/2 pl-1.5">
-              <Skeleton
-                className="w-full border-background mb-2"
-                style={{ height: 243, borderRadius: 6 }}
-              />
-            </View>
-            <View className="w-1/2">
-              <Skeleton
-                className="w-full border-background mb-2"
-                style={{ height: 243, borderRadius: 6 }}
-              />
-            </View>
-            <View className="w-1/2 pl-1.5">
-              <Skeleton
-                className="w-full border-background mb-2"
-                style={{ height: 243, borderRadius: 6 }}
-              />
-            </View>
-          </>
-        )}
+          ))}
         {!summits?.length && !isPendingSummits && (
           <ThemedText className="text-muted-foreground">
             <FormattedMessage defaultMessage="No summits yet." />

@@ -125,6 +125,9 @@
   "5lwgvM": {
     "defaultMessage": "Visible on people search?"
   },
+  "6GM4DH": {
+    "defaultMessage": "Fresh new look. You can now edit summits, create community challenges, add your own mountains, and share summits and your profile straight to social."
+  },
   "71GNdG": {
     "defaultMessage": "are worth x2. Summit them!"
   },
@@ -251,9 +254,6 @@
   "E1EEy4": {
     "defaultMessage": "Error, try again or use another image."
   },
-  "E6XymO": {
-    "defaultMessage": "Community challenges"
-  },
   "E92c/O": {
     "defaultMessage": "Last {count}"
   },
@@ -278,11 +278,11 @@
   "Ff9qrH": {
     "defaultMessage": "Can’t find someone? They may have “Visible on people search” turned off in their profile — ask them to enable it."
   },
-  "FgydNe": {
-    "defaultMessage": "View"
-  },
   "G/yZLu": {
     "defaultMessage": "Remove"
+  },
+  "G5/5eb": {
+    "defaultMessage": "What's new"
   },
   "G5NVqu": {
     "defaultMessage": "This can't be undone."
@@ -446,6 +446,9 @@
   "Q8Qw5B": {
     "defaultMessage": "Description"
   },
+  "QJmOKA": {
+    "defaultMessage": "Please pick a color before adding to cart."
+  },
   "QVgzSj": {
     "defaultMessage": "About the app"
   },
@@ -577,6 +580,9 @@
   },
   "aKaNIY": {
     "defaultMessage": "Go to home screen"
+  },
+  "af+8l+": {
+    "defaultMessage": "Please pick a size before adding to cart."
   },
   "afNq31": {
     "defaultMessage": "Icon locked"
@@ -749,9 +755,6 @@
   "l3MiXo": {
     "defaultMessage": "Not mandatory"
   },
-  "l6dkO2": {
-    "defaultMessage": "Patch notes"
-  },
   "l7IOuJ": {
     "defaultMessage": "Challenge not found"
   },
@@ -763,9 +766,6 @@
   },
   "lnUmYp": {
     "defaultMessage": "I'll join later"
-  },
-  "m0DE2D": {
-    "defaultMessage": "Fixed profile image uploads, added Cim de la Dona, new height filters, anonymous photo reactions, and merchandising support!"
   },
   "nEbAUi": {
     "defaultMessage": "This screen does not exist."
@@ -805,6 +805,9 @@
   },
   "pONqz8": {
     "defaultMessage": "First name"
+  },
+  "poRHYt": {
+    "defaultMessage": "Please pick a color and size before adding to cart."
   },
   "pqUy68": {
     "defaultMessage": "register your summits"
@@ -868,6 +871,9 @@
   },
   "tOdNiY": {
     "defaultMessage": "Dark"
+  },
+  "tvAdCU": {
+    "defaultMessage": "Selection required"
   },
   "txUL0F": {
     "defaultMessage": "Last name"

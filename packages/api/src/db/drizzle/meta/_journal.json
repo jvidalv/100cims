@@ -190,6 +190,13 @@
       "when": 1776335781330,
       "tag": "0026_backfill_summit_unlockables",
       "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1776422899291,
+      "tag": "0027_add-merch-discounted-price",
+      "breakpoints": true
     }
   ]
 }

@@ -15,7 +15,8 @@ import {
   getMerchBySlug,
   type MerchRow,
 } from "@/lib/merch-helpers";
-import { formatPrice, localizeMerch } from "@/lib/merch-format";
+import { localizeMerch } from "@/lib/merch-format";
+import { MerchPrice } from "@/components/merch-price";
 import { routing } from "@/i18n/routing";
 
 export const dynamicParams = false;
@@ -126,9 +127,14 @@ export default async function MerchDetailPage({ params }: Props) {
                     <h1 className="text-3xl sm:text-5xl font-black mb-2">
                       {name}
                     </h1>
-                    <p className="text-2xl text-primary font-bold">
-                      {formatPrice(row.price, locale)}
-                    </p>
+                    <MerchPrice
+                      price={row.price}
+                      discountedPrice={row.discountedPrice}
+                      locale={locale}
+                      className="text-2xl font-bold gap-3"
+                      primaryClassName="text-primary"
+                      strikethroughClassName="text-lg font-medium text-muted-foreground"
+                    />
                   </div>
                   {description ? (
                     <p className="text-lg text-muted-foreground leading-relaxed whitespace-pre-line">

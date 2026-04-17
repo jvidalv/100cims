@@ -9,7 +9,8 @@ import { SiteFooter } from "@/components/site-footer";
 import { routing } from "@/i18n/routing";
 import { getLocalizedAlternates } from "@/lib/hreflang";
 import { getActiveMerch } from "@/lib/merch-helpers";
-import { formatPrice, localizeMerch } from "@/lib/merch-format";
+import { localizeMerch } from "@/lib/merch-format";
+import { MerchPrice } from "@/components/merch-price";
 
 const HERO_IMAGE = CHALLENGE_CONTENT["100-cims"]?.heroImageUrl ?? null;
 
@@ -119,9 +120,14 @@ export default async function ShopPage({ params }: Props) {
                         ) : (
                           <div className="w-full aspect-square bg-muted" />
                         )}
-                        <div className="absolute bottom-3 left-3 px-3 py-1 rounded-full bg-background/90 backdrop-blur text-sm font-bold">
-                          {formatPrice(m.price, locale)}
-                        </div>
+                        <MerchPrice
+                          as="div"
+                          price={m.price}
+                          discountedPrice={m.discountedPrice}
+                          locale={locale}
+                          className="absolute bottom-3 left-3 px-3 py-1 rounded-full bg-background/90 backdrop-blur text-sm font-bold"
+                          strikethroughClassName="text-xs font-medium text-muted-foreground"
+                        />
                         {m.shopUrl ? (
                           <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-background/90 backdrop-blur text-xs text-muted-foreground">
                             {t("external-badge")}

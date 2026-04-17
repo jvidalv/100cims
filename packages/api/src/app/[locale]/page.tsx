@@ -19,7 +19,8 @@ import { routing } from "@/i18n/routing";
 import { ANDROID_APP_URL, IOS_APP_URL } from "@/lib/app-links";
 import { getLocalizedAlternates } from "@/lib/hreflang";
 import { getActiveMerch } from "@/lib/merch-helpers";
-import { formatPrice, localizeMerch } from "@/lib/merch-format";
+import { localizeMerch } from "@/lib/merch-format";
+import { MerchPrice } from "@/components/merch-price";
 
 const FEATURED_SLUG = "100-cims";
 const SHOP_PREVIEW_LIMIT = 4;
@@ -283,9 +284,12 @@ export default async function Home({ params }: Props) {
                         <h3 className="font-bold text-sm mb-1 line-clamp-1">
                           {name}
                         </h3>
-                        <p className="text-sm text-muted-foreground">
-                          {formatPrice(m.price, locale)}
-                        </p>
+                        <MerchPrice
+                          price={m.price}
+                          discountedPrice={m.discountedPrice}
+                          locale={locale}
+                          className="text-sm text-muted-foreground"
+                        />
                       </div>
                     </a>
                   );

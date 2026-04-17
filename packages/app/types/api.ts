@@ -3021,6 +3021,7 @@ export interface operations {
                             imageUrls: string[];
                             hasSize: boolean;
                             price: number;
+                            discountedPrice: (number | null) | null;
                             featured: (number | null) | null;
                             createdAt: Record<string, never> | string | number;
                             variants: {
@@ -3040,6 +3041,7 @@ export interface operations {
                             imageUrls: string[];
                             hasSize: boolean;
                             price: number;
+                            discountedPrice: (number | null) | null;
                             featured: (number | null) | null;
                             createdAt: Record<string, never> | string | number;
                             variants: {
@@ -3059,6 +3061,7 @@ export interface operations {
                             imageUrls: string[];
                             hasSize: boolean;
                             price: number;
+                            discountedPrice: (number | null) | null;
                             featured: (number | null) | null;
                             createdAt: Record<string, never> | string | number;
                             variants: {
@@ -8391,6 +8394,7 @@ export interface operations {
                                 imageUrls: string[];
                                 hasSize: boolean;
                                 price: number;
+                                discountedPrice: (number | null) | null;
                                 featured: (number | null) | null;
                                 active: boolean;
                                 createdAt: Record<string, never> | string | number;
@@ -8418,6 +8422,7 @@ export interface operations {
                                 imageUrls: string[];
                                 hasSize: boolean;
                                 price: number;
+                                discountedPrice: (number | null) | null;
                                 featured: (number | null) | null;
                                 active: boolean;
                                 createdAt: Record<string, never> | string | number;
@@ -8445,6 +8450,7 @@ export interface operations {
                                 imageUrls: string[];
                                 hasSize: boolean;
                                 price: number;
+                                discountedPrice: (number | null) | null;
                                 featured: (number | null) | null;
                                 active: boolean;
                                 createdAt: Record<string, never> | string | number;
@@ -8479,6 +8485,7 @@ export interface operations {
                     descriptionEs?: (string | null) | null;
                     shopUrl?: (string | null) | null;
                     price: number;
+                    discountedPrice?: (number | null) | null;
                     imageUrls?: string[];
                     hasSize?: boolean;
                     featured?: (number | null) | null;
@@ -8498,6 +8505,7 @@ export interface operations {
                     descriptionEs?: (string | null) | null;
                     shopUrl?: (string | null) | null;
                     price: number;
+                    discountedPrice?: (number | null) | null;
                     imageUrls?: string[];
                     hasSize?: boolean;
                     featured?: (number | null) | null;
@@ -8517,6 +8525,7 @@ export interface operations {
                     descriptionEs?: (string | null) | null;
                     shopUrl?: (string | null) | null;
                     price: number;
+                    discountedPrice?: (number | null) | null;
                     imageUrls?: string[];
                     hasSize?: boolean;
                     featured?: (number | null) | null;
@@ -8635,6 +8644,7 @@ export interface operations {
                             imageUrls: string[];
                             hasSize: boolean;
                             price: number;
+                            discountedPrice: (number | null) | null;
                             featured: (number | null) | null;
                             active: boolean;
                             createdAt: Record<string, never> | string | number;
@@ -8660,6 +8670,7 @@ export interface operations {
                             imageUrls: string[];
                             hasSize: boolean;
                             price: number;
+                            discountedPrice: (number | null) | null;
                             featured: (number | null) | null;
                             active: boolean;
                             createdAt: Record<string, never> | string | number;
@@ -8685,6 +8696,7 @@ export interface operations {
                             imageUrls: string[];
                             hasSize: boolean;
                             price: number;
+                            discountedPrice: (number | null) | null;
                             featured: (number | null) | null;
                             active: boolean;
                             createdAt: Record<string, never> | string | number;
@@ -8736,6 +8748,7 @@ export interface operations {
                     descriptionEs?: (string | null) | null;
                     shopUrl?: (string | null) | null;
                     price?: number;
+                    discountedPrice?: (number | null) | null;
                     imageUrls?: string[];
                     hasSize?: boolean;
                     featured?: (number | null) | null;
@@ -8755,6 +8768,7 @@ export interface operations {
                     descriptionEs?: (string | null) | null;
                     shopUrl?: (string | null) | null;
                     price?: number;
+                    discountedPrice?: (number | null) | null;
                     imageUrls?: string[];
                     hasSize?: boolean;
                     featured?: (number | null) | null;
@@ -8774,6 +8788,7 @@ export interface operations {
                     descriptionEs?: (string | null) | null;
                     shopUrl?: (string | null) | null;
                     price?: number;
+                    discountedPrice?: (number | null) | null;
                     imageUrls?: string[];
                     hasSize?: boolean;
                     featured?: (number | null) | null;

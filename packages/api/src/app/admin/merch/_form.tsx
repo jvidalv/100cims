@@ -31,6 +31,7 @@ export type MerchFormValues = {
   descriptionEs: string;
   shopUrl: string;
   price: number;
+  discountedPrice: number | null;
   hasSize: boolean;
   featured: number | null;
   active: boolean;
@@ -48,6 +49,7 @@ export const emptyMerchForm: MerchFormValues = {
   descriptionEs: "",
   shopUrl: "",
   price: 0,
+  discountedPrice: null,
   hasSize: false,
   featured: null,
   active: true,
@@ -85,6 +87,10 @@ export function MerchForm({
   const [form, setForm] = useState<MerchFormValues>(initial);
   const [uploading, setUploading] = useState(false);
 
+  const discountInvalid =
+    form.discountedPrice != null &&
+    (form.discountedPrice <= 0 || form.discountedPrice >= form.price);
+
   return (
     <div className="space-y-4 max-w-2xl">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -109,6 +115,27 @@ export function MerchForm({
               setForm((f) => ({ ...f, price: Number(e.target.value) }))
             }
           />
+        </div>
+        <div className="space-y-1">
+          <Label>Discounted price (€, optional)</Label>
+          <Input
+            type="number"
+            min={0}
+            value={form.discountedPrice ?? ""}
+            onChange={(e) =>
+              setForm((f) => ({
+                ...f,
+                discountedPrice:
+                  e.target.value === "" ? null : Number(e.target.value),
+              }))
+            }
+            placeholder="Leave empty for no discount"
+          />
+          {discountInvalid && (
+            <p className="text-xs text-red-500">
+              Must be greater than 0 and lower than the regular price.
+            </p>
+          )}
         </div>
         <div className="space-y-1">
           <Label>Featured slot</Label>
@@ -230,8 +257,8 @@ export function MerchForm({
         </div>
         {form.variants.length === 0 && (
           <p className="text-xs text-muted-foreground">
-            Add colors like "black" or "white" with their own images. Hidden when
-            fewer than 2 variants exist.
+            Add colors like "black" or "white" with their own images. Hidden
+            when fewer than 2 variants exist.
           </p>
         )}
         {form.variants.map((v, idx) => (
@@ -291,8 +318,7 @@ export function MerchForm({
 
       {(() => {
         const colors = form.variants.map((v) => v.color);
-        const hasDuplicates =
-          colors.length !== new Set(colors).size;
+        const hasDuplicates = colors.length !== new Set(colors).size;
         const hasEmpty = form.variants.some((v) => !v.color);
         if (hasDuplicates || hasEmpty) {
           return (
@@ -314,6 +340,7 @@ export function MerchForm({
             !form.slug ||
             !form.nameEn ||
             form.price < 0 ||
+            discountInvalid ||
             form.variants.some((v) => !v.color) ||
             form.variants.length !==
               new Set(form.variants.map((v) => v.color)).size

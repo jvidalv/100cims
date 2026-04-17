@@ -441,19 +441,20 @@ export const merchTable = pgTable(
   {
     id: uuid().primaryKey().defaultRandom(),
     slug: text().unique().notNull(),
-    nameEn: text("name_en").notNull(),
-    nameCa: text("name_ca"),
-    nameEs: text("name_es"),
-    descriptionEn: text("description_en"),
-    descriptionCa: text("description_ca"),
-    descriptionEs: text("description_es"),
-    shopUrl: text("shop_url"),
+    nameEn: text().notNull(),
+    nameCa: text(),
+    nameEs: text(),
+    descriptionEn: text(),
+    descriptionCa: text(),
+    descriptionEs: text(),
+    shopUrl: text(),
     imageUrls: text()
       .array()
       .notNull()
       .default(sql`ARRAY[]::text[]`),
     hasSize: boolean().notNull().default(false),
     price: integer().notNull(),
+    discountedPrice: integer(),
     featured: integer(),
     active: boolean().notNull().default(true),
     createdAt: timestamp().notNull().defaultNow(),
@@ -486,11 +487,11 @@ export const emailLogTable = pgTable(
   "email_log",
   {
     id: uuid().primaryKey().defaultRandom(),
-    userId: uuid("user_id")
+    userId: uuid()
       .notNull()
       .references(() => userTable.id, { onDelete: "cascade" }),
     slug: text().notNull(),
-    sentAt: timestamp("sent_at").notNull().defaultNow(),
+    sentAt: timestamp().notNull().defaultNow(),
   },
   (table) => [
     index("email_log_user_slug_sent_idx").on(
@@ -506,13 +507,13 @@ export const userPeopleTable = pgTable(
   "user_people",
   {
     id: uuid().primaryKey().defaultRandom(),
-    userAId: uuid("user_a_id")
+    userAId: uuid()
       .notNull()
       .references(() => userTable.id, { onDelete: "cascade" }),
-    userBId: uuid("user_b_id")
+    userBId: uuid()
       .notNull()
       .references(() => userTable.id, { onDelete: "cascade" }),
-    createdAt: timestamp("created_at").notNull().defaultNow(),
+    createdAt: timestamp().notNull().defaultNow(),
   },
   (table) => [
     uniqueIndex("user_people_pair_uniq").on(table.userAId, table.userBId),

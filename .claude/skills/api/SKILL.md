@@ -238,8 +238,8 @@ If you see yourself reaching for `push` — stop. Use `db:generate` + `db:migrat
 
 **CRITICAL — always ask the user before applying a migration.** Prepare the migration file locally and wait for explicit approval before running `db:migrate`. Never run schema-altering commands autonomously.
 
-1. Update `packages/api/src/db/schema.ts`.
-2. Run `yarn api db:generate` to produce a versioned SQL file under `packages/api/src/db/drizzle/NNNN_*.sql`.
+1. Update `packages/api/src/db/schema.ts`. `drizzle.config.ts` sets `casing: "snake_case"`, so columns use the bare form `foo: integer()` / `bar: text()` and the DB column is auto-derived (`foo`, `bar`). Don't pass an explicit snake_case name argument (`integer("foo")`) — it duplicates the default and drifts from convention.
+2. Run `yarn api db:generate --name <slug>` to produce a versioned SQL file under `packages/api/src/db/drizzle/NNNN_*.sql`.
 3. Review and, if needed, append custom SQL (e.g. data backfills) to the generated file — or create a separate `NNNN_custom_*.sql` for data-only migrations (register it in `meta/_journal.json` + copy the previous snapshot).
 4. **Ask the user** before running `yarn api db:migrate`.
 5. Verify in `psql` after the user applies it.
