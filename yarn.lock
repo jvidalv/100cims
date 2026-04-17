@@ -2231,6 +2231,21 @@
     resolve-from "^5.0.0"
     semver "^7.6.0"
 
+"@expo/image-utils@^0.7.0":
+  version "0.7.6"
+  resolved "https://registry.yarnpkg.com/@expo/image-utils/-/image-utils-0.7.6.tgz#b8442bef770e1c7b39997d57f666bffeeced0a7a"
+  integrity sha512-GKnMqC79+mo/1AFrmAcUcGfbsXXTRqOMNS1umebuevl3aaw+ztsYEFEiuNhHZW7PQ3Xs3URNT513ZxKhznDscw==
+  dependencies:
+    "@expo/spawn-async" "^1.7.2"
+    chalk "^4.0.0"
+    getenv "^2.0.0"
+    jimp-compact "0.16.1"
+    parse-png "^2.1.0"
+    resolve-from "^5.0.0"
+    semver "^7.6.0"
+    temp-dir "~2.0.0"
+    unique-string "~2.0.0"
+
 "@expo/image-utils@^0.8.13":
   version "0.8.13"
   resolved "https://registry.yarnpkg.com/@expo/image-utils/-/image-utils-0.8.13.tgz#c7476352af9f576440e5ec8201c2f75f090a4804"
@@ -2616,6 +2631,14 @@
     json-stable-stringify "^1.3.0"
     tslib "^2.8.0"
     typescript "^5.6.0"
+
+"@howincodes/expo-dynamic-app-icon@^3.0.2":
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/@howincodes/expo-dynamic-app-icon/-/expo-dynamic-app-icon-3.0.2.tgz#179bef3067f0105335cfa150add24617c67aadaf"
+  integrity sha512-mOX+UnKeQBDGs8cKVZIr6ssS7dy4q9xUFs5jXsWWoHvS7oRDpje8TuU2nbgdT17U/PFDSK6JkYdd7nEkOr3Jew==
+  dependencies:
+    "@expo/image-utils" "^0.7.0"
+    xcode "^3.0.1"
 
 "@humanfs/core@^0.19.1":
   version "0.19.1"
@@ -6186,6 +6209,11 @@ cross-spawn@^7.0.3, cross-spawn@^7.0.6:
     shebang-command "^2.0.0"
     which "^2.0.1"
 
+crypto-random-string@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/crypto-random-string/-/crypto-random-string-2.0.0.tgz#ef2a7a966ec11083388369baa02ebead229b30d5"
+  integrity sha512-v1plID3y9r/lPhviJ1wrXpLeyUIGAZ2SHNYTEapm7/8A9nLPoyvVp3RK/EPFqn5kEznyWgYZNsRtYYIWbuG8KA==
+
 css-in-js-utils@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/css-in-js-utils/-/css-in-js-utils-3.1.0.tgz#640ae6a33646d401fc720c54fc61c42cd76ae2bb"
@@ -7256,11 +7284,6 @@ exact-mirror@^0.2.7:
   version "0.2.7"
   resolved "https://registry.yarnpkg.com/exact-mirror/-/exact-mirror-0.2.7.tgz#ee8e75c362a67ca0e07cb13fea92b61adaabfa29"
   integrity sha512-+MeEmDcLA4o/vjK2zujgk+1VTxPR4hdp23qLqkWfStbECtAq9gmsvQa3LW6z/0GXZyHJobrCnmy1cdeE7BjsYg==
-
-expo-alternate-app-icons@^8.0.0:
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/expo-alternate-app-icons/-/expo-alternate-app-icons-8.0.0.tgz#c53fa4c2caa5934d7bb0161240de9b73292e8a63"
-  integrity sha512-iqvcxu3fNPtOtZ/y0/VPlxol9WUhkvbj7VI6SMwSAEAgOZ1D5k7KvF54U0oLC/i0k+HL0YOaIuZcLJuLaphIIw==
 
 expo-apple-authentication@~55.0.13:
   version "55.0.13"
@@ -11430,6 +11453,11 @@ tapable@^2.3.0:
   resolved "https://registry.yarnpkg.com/tapable/-/tapable-2.3.2.tgz#86755feabad08d82a26b891db044808c6ad00f15"
   integrity sha512-1MOpMXuhGzGL5TTCZFItxCc0AARf1EZFQkGqMm7ERKj8+Hgr5oLvJOVFcC+lRmR8hCe2S3jC4T5D7Vg/d7/fhA==
 
+temp-dir@~2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/temp-dir/-/temp-dir-2.0.0.tgz#bde92b05bdfeb1516e804c9c00ad45177f31321e"
+  integrity sha512-aoBAniQmmwtcKp/7BzsH8Cxzv8OL736p7v1ihGb5e9DJ9kTwGWHrQrVB5+lfVDzfGrdRzXch+ig7LHaY1JTOrg==
+
 terminal-link@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/terminal-link/-/terminal-link-2.1.1.tgz#14a64a27ab3c0df933ea546fba55f2d078edc994"
@@ -11720,6 +11748,13 @@ unicode-property-aliases-ecmascript@^2.0.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/unicode-property-aliases-ecmascript/-/unicode-property-aliases-ecmascript-2.2.0.tgz#301d4f8a43d2b75c97adfad87c9dd5350c9475d1"
   integrity sha512-hpbDzxUY9BFwX+UeBnxv3Sh1q7HFxj48DTmXchNgRa46lO8uj3/1iEn3MiNUYTg1g9ctIqXCCERn8gYZhHC5lQ==
+
+unique-string@~2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/unique-string/-/unique-string-2.0.0.tgz#39c6451f81afb2749de2b233e3f7c5e8843bd89d"
+  integrity sha512-uNaeirEPvpZWSgzwsPGtU2zVSTrn/8L5q/IexZmH0eH6SA73CmAA5U4GwORTxQAZs95TAXLNqeLoPPNO5gZfWg==
+  dependencies:
+    crypto-random-string "^2.0.0"
 
 unpipe@~1.0.0:
   version "1.0.0"

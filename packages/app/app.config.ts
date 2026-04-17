@@ -35,49 +35,44 @@ const config: ExpoConfig & { newArchEnabled?: boolean } = {
   },
   plugins: [
     [
-      "expo-alternate-app-icons",
-      [
-        {
-          name: "Light",
+      "@howincodes/expo-dynamic-app-icon",
+      {
+        Light: {
           ios: "./assets/images/app-icons/icon-light.png",
           android: {
             foregroundImage: "./assets/images/app-icons/icon-light-fg.png",
             backgroundColor: "#ffffff",
           },
         },
-        {
-          name: "Merch",
+        Merch: {
           ios: "./assets/images/app-icons/icon-merch.png",
           android: {
             foregroundImage: "./assets/images/app-icons/icon-merch-fg.png",
             backgroundColor: "#7B3058",
           },
         },
-        {
-          name: "Share",
+        Share: {
           ios: "./assets/images/app-icons/icon-share.png",
           android: {
             foregroundImage: "./assets/images/app-icons/icon-share-fg.png",
-            backgroundColor: "#ffffff",
+            backgroundColor: "#1A0A2E",
           },
         },
-        {
-          name: "Forcat",
+        Forcat: {
           ios: "./assets/images/app-icons/icon-forcat.png",
           android: {
             foregroundImage: "./assets/images/app-icons/icon-forcat-fg.png",
             backgroundColor: "#000000",
           },
         },
-        {
-          name: "Picat",
+        Picat: {
           ios: "./assets/images/app-icons/icon-picat.png",
           android: {
             foregroundImage: "./assets/images/app-icons/icon-picat-fg.png",
             backgroundColor: "#2D496E",
           },
         },
-      ],
+      },
     ],
     "expo-localization",
     "expo-apple-authentication",

@@ -4,11 +4,12 @@ import { Redirect, useRouter } from "expo-router";
 import { useColorScheme } from "nativewind";
 import { useState } from "react";
 import { FormattedMessage } from "react-intl";
+import { Mountain, Trophy, User } from "lucide-react-native";
 import { TouchableOpacity, View, Text, ScrollView } from "react-native";
 import { twMerge } from "tailwind-merge";
 
 import { useAuth } from "@/components/providers/auth-provider";
-import { ThemedText, ThemedLogo, Button } from "@/components/ui/atoms";
+import { LucideIcon, ThemedText, ThemedLogo, Button } from "@/components/ui/atoms";
 import { AvatarGroup } from "@/components/ui/molecules";
 import { useJoinMutation } from "@/domains/user/user.api";
 import { isAndroid, isIOS } from "@/lib/device";
@@ -202,7 +203,7 @@ export default function JoinScreen() {
 
   const features = [
     {
-      emoji: "📝",
+      icon: Mountain,
       text: (
         <ThemedText>
           <FormattedMessage defaultMessage="The ability to" />{" "}
@@ -214,7 +215,7 @@ export default function JoinScreen() {
       ),
     },
     {
-      emoji: "🏆",
+      icon: Trophy,
       text: (
         <ThemedText>
           <ThemedText className="font-extrabold tracking-tighter">
@@ -225,7 +226,7 @@ export default function JoinScreen() {
       ),
     },
     {
-      emoji: "💪🏼",
+      icon: User,
       text: (
         <ThemedText>
           <ThemedText className="font-extrabold tracking-tighter">
@@ -272,10 +273,10 @@ export default function JoinScreen() {
           <ThemedText className="mb-2 text-left text-lg font-medium text-muted-foreground">
             <FormattedMessage defaultMessage="Also unblock..." />
           </ThemedText>
-          <View className="min-w-full gap-2">
-            {features.map(({ emoji, text }, index) => (
-              <View key={index} className="flex-row items-start gap-2">
-                <ThemedText>{emoji}</ThemedText>
+          <View className="min-w-full gap-3">
+            {features.map(({ icon, text }, index) => (
+              <View key={index} className="flex-row items-start gap-3">
+                <LucideIcon icon={icon} size={20} muted />
                 <ThemedText className="flex-1 text-lg font-medium leading-5">
                   {text}
                 </ThemedText>
