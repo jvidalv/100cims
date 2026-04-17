@@ -344,6 +344,28 @@ npx expo-doctor                 # Diagnose issues
 npx uri-scheme list             # Check deep linking
 ```
 
+## Removing Dependencies
+
+Before removing a package from `packages/app/package.json` because "nothing imports it," verify it isn't a **peer dependency** of something that IS used. Many native / framework packages have no explicit imports in our source but are required transitively.
+
+Check with:
+
+```bash
+node -e "console.log(JSON.stringify(require('./node_modules/PACKAGE/package.json').peerDependencies, null, 2))"
+```
+
+Known peer-dep requirements in this app (do not remove blindly):
+
+| Package | Required by |
+| ---- | ---- |
+| `react-native-css` | `nativewind@5.x` |
+| `react-dom`, `react-native-safe-area-context`, `react-native-screens`, `react-native-web` | `expo-router` |
+| `react-native-worklets` | `react-native-reanimated@4.x` (it's the runtime, not redundant) |
+| `react-native-svg` | `lucide-react-native` (icon rendering) |
+| `react-native-web` | also required by `react-native-maps` |
+
+After editing `package.json`, run `yarn install` and **read the warnings** — unmet peer-dep warnings tell you what you just broke.
+
 ## Build & Deploy
 
 ```bash

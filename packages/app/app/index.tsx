@@ -407,7 +407,7 @@ export default function IndexScreen() {
         title: intl.formatMessage({ defaultMessage: "What's new" }),
         body: intl.formatMessage({
           defaultMessage:
-            "Fresh new look. You can now edit summits, create community challenges, add your own mountains, and share summits and your profile straight to social.",
+            "Fresh new look. You can now edit summits, create community challenges, and add your own mountains. Share summits and your profile straight to social.",
         }),
         actionLabel: intl.formatMessage({ defaultMessage: "Explore" }),
       };

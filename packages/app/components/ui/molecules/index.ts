@@ -1,5 +1,4 @@
 export { AvatarGroup } from "./avatar-group";
-export { ChallengeGroup } from "./challenge-group";
 export { ChallengeListItem } from "./challenge-list-item";
 export {
   MountainItemList,
@@ -16,9 +15,7 @@ export {
   type SettingsOption,
 } from "./filterable-list-header";
 export { UpdatesDialog, type Update } from "./updates-dialog";
-export { EmojiPicker } from "./emoji-picker";
 export { ImagePreviewModal, useImagePreview } from "./image-preview-modal";
-export { MerchUpsellCard } from "./merch-upsell-card";
 export { ActionRow, type ActionRowIntent } from "./action-row";
 export { FloatingCartButton } from "./floating-cart-button";
 export { SharePulseBadge } from "./share-pulse-badge";

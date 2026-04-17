@@ -2,7 +2,7 @@ import { useRouter } from "expo-router";
 import { Check } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
+import { Alert, ScrollView, View } from "react-native";
 
 import {
   ActivityIndicator,

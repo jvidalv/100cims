@@ -72,23 +72,23 @@ const copy = {
     preview: "Els teus cims t'esperen.",
     greeting: (firstName) => `Hola, ${firstName ?? "muntanyenc"},`,
     intro:
-      "Et vas registrar a Cims fa temps i encara no has pujat gaire res — sense pressió, només un recordatori del que hi ha.",
+      "Et vas apuntar a Cims fa temps i no has registrat gaire — sense pressió, només un recordatori del que hi ha.",
     featuresTitle: "Tres coses per provar",
     feat1: {
-      q: "Puja un cim",
-      a: "Obre una muntanya, afegeix una foto i la data. Si va ser fa anys, també pots registrar-lo sense foto.",
+      q: "Registra un cim",
+      a: "Obre la muntanya, posa foto i data. Si va ser fa anys, sense foto també val.",
     },
     feat2: {
-      q: "Escala els rànquings",
-      a: "Cada cim compta en les classificacions per repte. Mira on ets entre tots els que persegueixen els mateixos cims.",
+      q: "Puja al rànquing",
+      a: "Cada cim suma al rànquing del repte. Mira on ets entre els que busquen els mateixos cims.",
     },
     feat3: {
-      q: "Planifica amb amics",
-      a: "Tria muntanyes, posa una data, comparteix l'enllaç. El vostre grup xateja a l'app fins al dia de la sortida.",
+      q: "Organitza una sortida",
+      a: "Tria muntanyes, data, comparteix l'enllaç. Teniu xat a l'app fins al dia.",
     },
-    ctaTitle: "Recupera el ritme",
+    ctaTitle: "Torna-hi",
     ctaIntro:
-      "Obre l'app i mira els cims més propers, o els que estan pujant els teus amics. Les muntanyes no es pugen soles.",
+      "Obre l'app i mira els cims a prop, o els que està fent la gent. Les muntanyes no es pugen soles.",
     cta: "Obre Cims",
     footer:
       "Has rebut aquest correu perquè t'has registrat a Cims. Massa silenci? Fes servir l'enllaç per donar-te de baixa a sota.",
@@ -97,23 +97,23 @@ const copy = {
     preview: "Tus cimas te esperan.",
     greeting: (firstName) => `Hola, ${firstName ?? "montañero"},`,
     intro:
-      "Te registraste en Cims hace un tiempo y aún no has subido mucho — sin presión, solo un recordatorio de lo que hay.",
+      "Te apuntaste a Cims hace tiempo y aún no has registrado mucho — sin presión, solo un recordatorio de lo que hay.",
     featuresTitle: "Tres cosas para probar",
     feat1: {
-      q: "Sube una cima",
-      a: "Abre una montaña, añade una foto y la fecha. Si fue hace años, también puedes registrarla sin foto.",
+      q: "Registra una cima",
+      a: "Abre la montaña, pon foto y fecha. Si fue hace años, sin foto también vale.",
     },
     feat2: {
-      q: "Escala los rankings",
-      a: "Cada cima cuenta en las clasificaciones por reto. Mira dónde estás entre todos los que persiguen las mismas cimas.",
+      q: "Sube en el ranking",
+      a: "Cada cima suma al ranking del reto. Mira dónde estás entre los que buscan las mismas cimas.",
     },
     feat3: {
-      q: "Planifica con amigos",
-      a: "Elige montañas, pon una fecha, comparte el enlace. Vuestro grupo chatea en la app hasta el día de la salida.",
+      q: "Monta una salida",
+      a: "Elige montañas, fecha, comparte el enlace. Tenéis chat en la app hasta el día.",
     },
-    ctaTitle: "Retoma el ritmo",
+    ctaTitle: "Vuelve",
     ctaIntro:
-      "Abre la app y mira las cimas más cercanas, o las que están subiendo tus amigos. Las montañas no se suben solas.",
+      "Abre la app y mira las cimas cerca, o las que está haciendo la gente. Las montañas no se suben solas.",
     cta: "Abrir Cims",
     footer:
       "Recibes este correo porque te registraste en Cims. ¿Demasiado silencio? Usa el enlace para darte de baja abajo.",

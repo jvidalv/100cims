@@ -61,13 +61,6 @@ export const planKeys = {
   countNew: (userId?: string) => ["plan", "count-new", userId] as const,
 };
 
-// Plan chat keys
-export const planChatKeys = {
-  all: ["plan-chat"] as const,
-  unread: () => ["plan-chat", "unread"] as const,
-  messages: (planId: string) => ["plan-chat", "messages", planId] as const,
-};
-
 // Hiscores keys
 export const hiscoresKeys = {
   all: ["hiscores"] as const,

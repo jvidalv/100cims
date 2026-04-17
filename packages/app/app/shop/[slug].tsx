@@ -23,6 +23,8 @@ import {
 } from "@/components/ui/molecules";
 import { addToCart, type CartSize } from "@/domains/merch/cart";
 import { useMerch } from "@/domains/merch/merch.api";
+import { useUserMe } from "@/domains/user/user.api";
+import { reportCartAddToDiscord } from "@/lib/report-cart-add";
 
 const SIZES: CartSize[] = ["S", "M", "L", "XL"];
 
@@ -35,6 +37,7 @@ export default function ShopProductScreen() {
   const { isAuthenticated } = useAuth();
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const { data: merch } = useMerch();
+  const { data: me } = useUserMe();
   const [selectedSize, setSelectedSize] = useState<CartSize | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
@@ -106,10 +109,19 @@ export default function ShopProductScreen() {
       );
       return;
     }
-    await addToCart({
+    const nextCart = await addToCart({
       slug: product.slug,
       size: selectedSize ?? undefined,
       color: selectedColor ?? undefined,
+    });
+    void reportCartAddToDiscord({
+      productName: product.name,
+      price: product.price,
+      discountedPrice: product.discountedPrice,
+      color: selectedColor,
+      size: selectedSize,
+      userEmail: me?.email,
+      cartSize: nextCart.reduce((sum, line) => sum + line.qty, 0),
     });
     router.push("/shop/cart");
   };

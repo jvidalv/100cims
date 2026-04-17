@@ -22,10 +22,10 @@ export interface HealthSnapshot {
 const DB_TIMEOUT_MS = 2000;
 const DB_WARN_MS = 500;
 const DB_CRIT_MS = 2000;
-const HEAP_WARN_MB = 700;
-const HEAP_CRIT_MB = 900;
-const RSS_WARN_MB = 1400;
-const RSS_CRIT_MB = 1800;
+const HEAP_WARN_MB = 1400;
+const HEAP_CRIT_MB = 2000;
+const RSS_WARN_MB = 2400;
+const RSS_CRIT_MB = 3000;
 const LAG_WARN_MS = 100;
 const LAG_CRIT_MS = 500;
 

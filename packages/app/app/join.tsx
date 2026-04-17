@@ -1,10 +1,10 @@
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import * as AppleAuthentication from "expo-apple-authentication";
 import { Redirect, useRouter } from "expo-router";
+import { Mountain, Trophy, User } from "lucide-react-native";
 import { useColorScheme } from "nativewind";
 import { useState } from "react";
 import { FormattedMessage } from "react-intl";
-import { Mountain, Trophy, User } from "lucide-react-native";
 import { TouchableOpacity, View, Text, ScrollView } from "react-native";
 import { twMerge } from "tailwind-merge";
 
