@@ -17,6 +17,7 @@ import { AppleIcon, PlayStoreIcon } from "@/components/store-icons";
 import { Button } from "@/components/ui/button";
 import { routing } from "@/i18n/routing";
 import { ANDROID_APP_URL, IOS_APP_URL, SITE_URL } from "@/lib/app-links";
+import { JsonLd } from "@/components/json-ld";
 import { getLocalizedAlternates } from "@/lib/hreflang";
 import { getActiveMerch } from "@/lib/merch-helpers";
 import { localizeMerch } from "@/lib/merch-format";
@@ -124,14 +125,45 @@ export default async function Home({ params }: Props) {
   const shopPreview = shop.slice(0, SHOP_PREVIEW_LIMIT);
   const shopHref = (slug: string) => `/${locale}/shop/${slug}`;
 
+  const siteName = "Cims, sempre amunt";
+  const ogImage = `${SITE_URL}/assets/logo.png`;
+  const organizationLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: siteName,
+    url: SITE_URL,
+    logo: ogImage,
+    sameAs: [IOS_APP_URL, ANDROID_APP_URL],
+  };
+  const websiteLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: siteName,
+    url: SITE_URL,
+    inLanguage: locale,
+  };
+  const mobileAppLd = {
+    "@context": "https://schema.org",
+    "@type": "MobileApplication",
+    name: siteName,
+    operatingSystem: "iOS, Android",
+    applicationCategory: "SportsApplication",
+    offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
+    downloadUrl: [IOS_APP_URL, ANDROID_APP_URL],
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
+      <JsonLd data={organizationLd} />
+      <JsonLd data={websiteLd} />
+      <JsonLd data={mobileAppLd} />
       <main className="flex-1">
         <section className="flex flex-col items-center justify-center py-8 sm:py-10 px-4">
+          <h1 className="sr-only">{t("title")}</h1>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/assets/logo.png"
-            alt="Join cims"
+            alt={t("title")}
             className="rounded mb-6 shadow-lg h-32"
           />
           <p className="text-lg sm:text-2xl text-center text-muted-foreground mb-8 max-w-2xl">
