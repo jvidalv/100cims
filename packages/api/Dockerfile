@@ -53,8 +53,11 @@ COPY --from=builder /app/packages/api/drizzle.config.ts ./packages/api/drizzle.c
 # doesn't see them, so copy the package into the standalone tree explicitly.
 COPY --from=builder /app/node_modules/geoip-lite ./packages/api/node_modules/geoip-lite
 
-# Install drizzle-kit for runtime migrations
+# Install drizzle-kit for runtime migrations.
+# drizzle.config.ts does `import { defineConfig } from "drizzle-kit"` — Node
+# won't resolve global modules from a user script by default, so set NODE_PATH.
 RUN npm install -g drizzle-kit postgres dotenv
+ENV NODE_PATH=/usr/local/lib/node_modules
 
 USER nextjs
 
