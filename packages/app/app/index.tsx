@@ -38,6 +38,7 @@ import {
 import { ThemedText } from "@/components/ui/atoms/themed-text";
 import { ThemedView } from "@/components/ui/atoms/themed-view";
 import {
+  ErrorState,
   MountainItemList,
   UpdatesDialog,
   type Update,
@@ -58,7 +59,11 @@ import {
   useUnseenUpdates,
   useMarkUpdateSeen,
 } from "@/domains/update/update.api";
-import { useUserMe, useUserChallengeSummits } from "@/domains/user/user.api";
+import {
+  UNAUTHORIZED,
+  useUserMe,
+  useUserChallengeSummits,
+} from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
 import { useIsCurrentScreen } from "@/hooks/use-is-current-screen";
 import { useMapNotificationBadge } from "@/hooks/use-map-notification-badge";
@@ -358,16 +363,34 @@ export default function IndexScreen() {
   const router = useRouter();
   const { isAuthenticated } = useAuth();
   const recommendedPeaks = useRecommendedPeaks();
-  const { refetch: refetchUser } = useUserMe();
+  const {
+    isError: isUserMeError,
+    error: userMeError,
+    refetch: refetchUser,
+  } = useUserMe();
   const { refetch: refetchChallengeSummits } = useUserChallengeSummits();
   const {
     data: latestSummits,
     isPending: isPendingLatestSummits,
+    isError: isSummitsError,
+    error: summitsError,
     refetch: refetchLatestSummits,
   } = useSummitsGet({
     limit: 8,
   });
-  const { data: mountains, isPending: isPendingMountains } = useMountains();
+  const {
+    data: mountains,
+    isPending: isPendingMountains,
+    isError: isMountainsError,
+    error: mountainsError,
+    refetch: refetchMountains,
+  } = useMountains();
+
+  const isUnauthorized = userMeError?.message === UNAUTHORIZED;
+  const hasFatalError =
+    !isUnauthorized &&
+    (isUserMeError || isMountainsError || isSummitsError);
+  const fatalError = userMeError ?? mountainsError ?? summitsError;
 
   const isCurrentRoute = useIsCurrentScreen("/");
   const { showBadge, markAsSeen } = useMapNotificationBadge();
@@ -478,6 +501,23 @@ export default function IndexScreen() {
       opacity: withTiming(1, { duration: 200 }),
     };
   });
+
+  if (hasFatalError) {
+    return (
+      <ThemedView className="flex-1">
+        <ErrorState
+          context="home"
+          error={fatalError}
+          onReload={() => {
+            void refetchUser();
+            void refetchMountains();
+            void refetchLatestSummits();
+            void refetchChallengeSummits();
+          }}
+        />
+      </ThemedView>
+    );
+  }
 
   return (
     <ThemedView className="flex-1">

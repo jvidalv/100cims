@@ -98,7 +98,10 @@ const config: ExpoConfig & { newArchEnabled?: boolean } = {
           backgroundColor: "#000000",
         },
         android: {
-          imageWidth: 192,
+          image: "./assets/images/logo-dark-android.png",
+          dark: {
+            image: "./assets/images/logo-light-android.png",
+          },
           resizeMode: "contain",
         },
       },

@@ -65,6 +65,7 @@ Example: `/domains/user/user.api.ts` exports `useUser()`, `useUpdateUser()`, etc
 | `getImageOptimized` | `lib/images.ts` | Optimize images for upload |
 | `cleanText` | `lib/strings.ts` | Normalize text for search |
 | `getDistanceInKm` | `lib/location.ts` | Calculate distance between coordinates |
+| `reportErrorToDiscord` | `lib/report-error.ts` | Fire-and-forget error report via `EXPO_PUBLIC_DISCORD_ERROR_WEBHOOK` — bypasses `apiClient` on purpose (works when our API is down) |
 
 ## Shared Types
 
@@ -232,6 +233,10 @@ When building an "Actions" section on a detail screen (mountain, plan, user prof
 ### Full-page edit screens
 
 Edits live in dedicated push routes like `/user/summits/[summit]/edit.tsx` rather than bottom drawers. Detail pages trigger them via `<Link asChild>` wrapping an `ActionRow` (e.g. `app/user/summits/[summit].tsx`). The edit form mirrors the create flow's inputs but uses partial-payload mutations: the API body fields are all optional (`t.Optional(...)`) so the client sends only changed values — keeps everything backwards-compatible. See `app/user/summits/[summit]/edit.tsx` + `api/routes/protected/summit/summit.update.post.ts` for the template (photo replace, user add/remove, date edit).
+
+### Fatal error screens
+
+When a screen's "load-bearing" React Query hooks fail (not 401 — that's handled in `useUserMe` via `logout()`), render `<ErrorState context="..." error={...} onReload={...} />` from `@/components/ui/molecules` instead of letting the screen render with `data: undefined`. The molecule ships with Reload + Report buttons; Report POSTs to a Discord webhook via `reportErrorToDiscord` in `lib/report-error.ts` — bypassing `apiClient` on purpose so reporting works when our API is the thing that's down. Requires `EXPO_PUBLIC_DISCORD_ERROR_WEBHOOK` in env. For the 401 guard, compare `error.message === UNAUTHORIZED` (exported from `domains/user/user.api.ts`). Canonical setup: `app/index.tsx` derives `hasFatalError` from three hooks' `isError` + skips the `Unauthorized` message, then early-returns the `<ErrorState>` before the real render.
 
 ### Share helpers
 

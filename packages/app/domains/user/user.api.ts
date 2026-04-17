@@ -6,7 +6,7 @@ import { useAuth } from "@/components/providers/auth-provider";
 import apiClient from "@/lib/api-client";
 import { userKeys, challengeKeys, mountainKeys } from "@/lib/query-keys";
 
-const UNAUTHORIZED = "Unauthorized";
+export const UNAUTHORIZED = "Unauthorized";
 
 export const useUserMe = () => {
   const { isAuthenticated, logout } = useAuth();
