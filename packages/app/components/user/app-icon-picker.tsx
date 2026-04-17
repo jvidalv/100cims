@@ -1,8 +1,4 @@
-import {
-  getAppIconName,
-  setAlternateAppIcon,
-  supportsAlternateIcons,
-} from "expo-alternate-app-icons";
+import { getAppIcon, setAppIcon } from "@howincodes/expo-dynamic-app-icon";
 import { Lock } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
@@ -25,12 +21,14 @@ export const AppIconPicker = () => {
   const [current, setCurrent] = useState<AppIconId>(null);
 
   useEffect(() => {
-    if (!supportsAlternateIcons) return;
-    const active = getAppIconName();
-    if (isAppIconId(active)) setCurrent(active);
+    void (async () => {
+      const active = await getAppIcon();
+      const normalized = active === "DEFAULT" ? null : active;
+      if (isAppIconId(normalized)) setCurrent(normalized);
+    })();
   }, []);
 
-  if (!supportsAlternateIcons) return null;
+  if (Platform.OS === "web") return null;
 
   const unlocked = new Set<Unlockable>(
     (me?.unlockables ?? []).filter((u): u is Unlockable =>
@@ -81,8 +79,8 @@ export const AppIconPicker = () => {
       return;
     }
     if (id === current) return;
-    await setAlternateAppIcon(id);
-    setCurrent(id);
+    const result = await setAppIcon(id);
+    if (result !== false) setCurrent(id);
   };
 
   return (
@@ -110,7 +108,7 @@ export const AppIconPicker = () => {
                   <Image
                     source={icon.preview}
                     className={twMerge(
-                      "size-16 rounded-xl",
+                      "size-16 rounded-xl border border-border",
                       locked && "opacity-40",
                     )}
                   />
