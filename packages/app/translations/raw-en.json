@@ -677,6 +677,9 @@
   "fVJK/6": {
     "defaultMessage": "Sharing plans with others is a great way to meet people with similar interests!"
   },
+  "fdCS5/": {
+    "defaultMessage": "Reload"
+  },
   "fnihsY": {
     "defaultMessage": "Leave"
   },
@@ -857,6 +860,9 @@
   "sY8bMH": {
     "defaultMessage": "Summit again"
   },
+  "sxWhq6": {
+    "defaultMessage": "We couldn't load this screen. Please try again."
+  },
   "sy+pv5": {
     "defaultMessage": "Email"
   },
@@ -932,6 +938,9 @@
   "x4j+4r": {
     "defaultMessage": "Nearby summits"
   },
+  "x5Tz6M": {
+    "defaultMessage": "Report"
+  },
   "xSRKf4": {
     "defaultMessage": "Visible on hiscores?"
   },
@@ -940,6 +949,9 @@
   },
   "xkgeNE": {
     "defaultMessage": "Activity title"
+  },
+  "xz+ZVN": {
+    "defaultMessage": "Thanks — we got it"
   },
   "y1Z3or": {
     "defaultMessage": "Language"

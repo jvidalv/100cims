@@ -1,14 +1,17 @@
-import { CloudOff } from "lucide-react-native";
+import { useNetworkState } from "expo-network";
+import { Check, CloudOff, Flag, RotateCw } from "lucide-react-native";
 import { useState } from "react";
 import { FormattedMessage } from "react-intl";
 import { View } from "react-native";
 
 import {
-  Button,
   LucideIcon,
+  ThemedLogo,
   ThemedText,
   ThemedView,
 } from "@/components/ui/atoms";
+import { ActionRow } from "@/components/ui/molecules/action-row";
+import { useUserMe } from "@/domains/user/user.api";
 import { reportErrorToDiscord } from "@/lib/report-error";
 
 type ErrorStateProps = {
@@ -18,41 +21,63 @@ type ErrorStateProps = {
 };
 
 export const ErrorState = ({ context, error, onReload }: ErrorStateProps) => {
+  const { data: user } = useUserMe();
+  const network = useNetworkState();
+  const isOnline =
+    network.isConnected !== false && network.isInternetReachable !== false;
   const [reportStatus, setReportStatus] = useState<
     "idle" | "reporting" | "reported"
   >("idle");
 
   const handleReport = async () => {
     setReportStatus("reporting");
-    await reportErrorToDiscord({ context, error });
+    await reportErrorToDiscord({ context, error, userId: user?.id });
     setReportStatus("reported");
   };
 
+  const hasReported = reportStatus === "reported";
+
   return (
-    <ThemedView className="flex-1 items-center justify-center gap-4 px-8">
-      <LucideIcon icon={CloudOff} size={48} muted />
-      <ThemedText className="text-center text-2xl font-bold">
-        <FormattedMessage defaultMessage="Something went wrong" />
-      </ThemedText>
-      <ThemedText className="text-center text-muted-foreground">
-        <FormattedMessage defaultMessage="We couldn't load the page. Please try again." />
-      </ThemedText>
-      <View className="mt-2 w-full flex-row gap-2">
-        <Button className="flex-1" onPress={onReload}>
-          <FormattedMessage defaultMessage="Reload" />
-        </Button>
-        <Button
-          className="flex-1"
-          intent="outline"
-          onPress={handleReport}
-          disabled={reportStatus !== "idle"}
-        >
-          {reportStatus === "reported" ? (
-            <FormattedMessage defaultMessage="Thanks — we got it" />
-          ) : (
-            <FormattedMessage defaultMessage="Report" />
+    <ThemedView className="flex-1 px-8">
+      <View className="flex-1 items-center justify-center gap-4">
+        <LucideIcon icon={CloudOff} size={48} muted />
+        <ThemedText className="text-center text-2xl font-bold">
+          <FormattedMessage defaultMessage="Something went wrong" />
+        </ThemedText>
+        <ThemedText className="text-center text-muted-foreground">
+          <FormattedMessage defaultMessage="We couldn't load this screen. Please try again." />
+        </ThemedText>
+        <View className="mt-2 items-center gap-1">
+          <ActionRow
+            icon={RotateCw}
+            intent="primary"
+            size="lg"
+            onPress={onReload}
+          >
+            <FormattedMessage defaultMessage="Reload" />
+          </ActionRow>
+          {isOnline && (
+            <ActionRow
+              icon={hasReported ? Check : Flag}
+              intent={hasReported ? "emerald" : "muted"}
+              size="lg"
+              onPress={handleReport}
+              disabled={reportStatus !== "idle"}
+            >
+              {hasReported ? (
+                <FormattedMessage defaultMessage="Thanks — we got it" />
+              ) : (
+                <FormattedMessage defaultMessage="Report" />
+              )}
+            </ActionRow>
           )}
-        </Button>
+        </View>
+      </View>
+      <View className="items-center pb-8">
+        <ThemedLogo
+          style={{ width: 120, height: 40 }}
+          resizeMode="contain"
+        />
       </View>
     </ThemedView>
   );
