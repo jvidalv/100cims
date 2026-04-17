@@ -4,8 +4,6 @@
 
 # [Cims](https://cims-sempre-amunt.app)
 
-Cims is a mobile mountaineering app with analytics powered by [reactanalytics.app](https://reactanalytics.app).
-
 ## 🏔️ What is Cims?
 
 Cims is a mobile app to track your mountain summits and join hiking challenges. Users can:
