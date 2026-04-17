@@ -33,7 +33,10 @@ const OTHER_CHALLENGES = Object.entries(CHALLENGE_CONTENT).filter(
 const FEATURED_IMAGE_URL = CHALLENGE_CONTENT[FEATURED_SLUG].heroImageUrl;
 
 const SCREENSHOTS = [
-  { src: "/assets/1.png", alt: "Home screen with active challenge and latest summits" },
+  {
+    src: "/assets/1.png",
+    alt: "Home screen with active challenge and latest summits",
+  },
   { src: "/assets/2.png", alt: "Challenge detail with participants" },
   { src: "/assets/3.png", alt: "Map view of all summits" },
   { src: "/assets/4.png", alt: "Mountain detail page" },
@@ -176,7 +179,7 @@ export default async function Home({ params }: Props) {
         </section>
 
         <section className="py-8">
-          <div className="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="overflow-x-auto pb-3 [scrollbar-width:thin] [scrollbar-color:theme(colors.muted.DEFAULT)_transparent] [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-muted [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-muted-foreground/40">
             <div className="flex gap-6 min-w-max pl-4 pr-0">
               {SCREENSHOTS.map((s) => (
                 // eslint-disable-next-line @next/next/no-img-element
