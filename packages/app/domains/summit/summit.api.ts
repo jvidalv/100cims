@@ -89,6 +89,9 @@ export const useDeleteSummitMutation = () => {
           limit: undefined,
         }),
       });
+      void queryClient.invalidateQueries({
+        queryKey: userKeys.summits(),
+      });
     },
   });
 };
