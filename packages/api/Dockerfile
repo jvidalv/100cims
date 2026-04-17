@@ -24,6 +24,8 @@ COPY packages/api ./packages/api
 # DATABASE_URL from the Railway service env (private, internal).
 ARG DATABASE_PUBLIC_URL
 ENV DATABASE_URL=${DATABASE_PUBLIC_URL}
+ARG AUTH_SECRET
+ENV AUTH_SECRET=${AUTH_SECRET}
 
 WORKDIR /app/packages/api
 RUN yarn build
