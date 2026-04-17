@@ -17,7 +17,9 @@ import {
 } from "@/lib/merch-helpers";
 import { localizeMerch } from "@/lib/merch-format";
 import { MerchPrice } from "@/components/merch-price";
+import { JsonLd } from "@/components/json-ld";
 import { routing } from "@/i18n/routing";
+import { SITE_URL } from "@/lib/app-links";
 
 export const dynamicParams = false;
 
@@ -105,8 +107,27 @@ export default async function MerchDetailPage({ params }: Props) {
 
   const { name, description } = localizeMerch(row, locale);
 
+  const productLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name,
+    description: description || undefined,
+    image: row.imageUrls.length ? row.imageUrls : undefined,
+    url: `${SITE_URL}/${locale}/shop/${row.slug}`,
+    sku: row.slug,
+    brand: { "@type": "Brand", name: "Cims, sempre amunt" },
+    offers: {
+      "@type": "Offer",
+      price: row.discountedPrice ?? row.price,
+      priceCurrency: "EUR",
+      availability: "https://schema.org/InStock",
+      url: `${SITE_URL}/${locale}/shop/${row.slug}`,
+    },
+  };
+
   return (
     <div lang={locale} className="min-h-screen flex flex-col">
+      <JsonLd data={productLd} />
       <main className="flex-1">
         <section className="py-12 sm:py-16 px-4">
           <div className="max-w-6xl mx-auto">
