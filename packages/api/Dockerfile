@@ -53,13 +53,11 @@ COPY --from=builder /app/packages/api/drizzle.config.ts ./packages/api/drizzle.c
 # doesn't see them, so copy the package into the standalone tree explicitly.
 COPY --from=builder /app/node_modules/geoip-lite ./packages/api/node_modules/geoip-lite
 
-# drizzle-kit + drizzle-orm for runtime migrations: copy the hoisted
-# install from the builder stage so peer resolution works. (Globals fail
-# because drizzle-kit can't then resolve drizzle-orm as a peer.)
-COPY --from=builder /app/node_modules/drizzle-kit ./node_modules/drizzle-kit
-COPY --from=builder /app/node_modules/drizzle-orm ./node_modules/drizzle-orm
-COPY --from=builder /app/node_modules/dotenv ./node_modules/dotenv
-COPY --from=builder /app/node_modules/postgres ./node_modules/postgres
+# Runtime migrations need drizzle-kit, which compiles drizzle.config.ts
+# via esbuild. esbuild has a platform-specific binary pulled in as an
+# optional dep (@esbuild/linux-x64), plus drizzle-orm as a peer. Cherry-
+# picking them is fragile — ship the full hoisted node_modules instead.
+COPY --from=builder /app/node_modules ./node_modules
 
 USER nextjs
 
