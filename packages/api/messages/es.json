@@ -137,7 +137,7 @@
     "faq-1-q": "¿Qué son exactamente los 100 Cims?",
     "faq-1-a": "Los 100 Cims son una selección de cien montañas representativas de Cataluña. Cubren todas las comarcas, con dificultades variadas, pensados para que cualquiera pueda completarlos a su ritmo.",
     "faq-2-q": "¿Es una app oficial?",
-    "faq-2-a": "No. Cims, sempre amunt es una app independiente hecha por afición. Usamos listas públicas de cumbres como referencia pero no tenemos ningún vínculo institucional. Si quieres una validación oficial, tendrás que gestionarla con la entidad correspondiente.",
+    "faq-2-a": "No. Cims, sempre amunt es una app independiente hecha por afición. No está afiliada a la FEEC ni a ninguna federación. Si quieres una validación oficial (por ejemplo, la diplomatura de la FEEC), tienes que tramitarla con ellos directamente.",
     "faq-3-q": "¿Cuánto cuesta la app?",
     "faq-3-a": "La app es gratis. Sin suscripciones, sin anuncios, sin funciones de pago. Se mantiene con donaciones voluntarias y con la tienda.",
     "faq-4-q": "¿En qué plataformas está disponible?",
@@ -148,6 +148,7 @@
     "faq-6-a": "Sí. Además de los 100 Cims hay Sostres Comarcals, Cumbres Esenciales, Top Spain, Cumbres Astures, Altos Madrileños y otros. Puedes seguir tantos retos como quieras y el mismo ascenso cuenta para todos los que lo contengan.",
     "faq-7-q": "¿Cómo se validan las cumbres?",
     "faq-7-a": "La app funciona por confianza: tú mismo registras los cims con foto y fecha. Sin GPS obligatorio ni validación externa. Es una herramienta personal, no una competición oficial.",
+    "disclaimer": "Cims, sempre amunt no está afiliada ni avalada por la FEEC ni por ninguna federación.",
     "cta-title": "Empieza tu reto hoy",
     "cta-subtitle": "Instala la app, elige tu reto, empieza a registrar. Gratis, sin anuncios, hecha por montañeros.",
     "available-on": "Disponible en iOS y Android"

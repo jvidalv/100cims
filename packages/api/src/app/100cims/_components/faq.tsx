@@ -35,6 +35,9 @@ export const Faq = () => {
             </div>
           ))}
         </div>
+        <p className="mt-8 text-center text-xs text-muted-foreground">
+          {t("disclaimer")}
+        </p>
       </div>
       <script
         type="application/ld+json"

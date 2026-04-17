@@ -137,7 +137,7 @@
     "faq-1-q": "What exactly are the 100 Cims?",
     "faq-1-a": "The 100 Cims are a popular curated list of one hundred representative mountains of Catalonia. They include peaks from every region with varied difficulty, designed so anyone motivated can complete the challenge at their own pace.",
     "faq-2-q": "Is this app officially endorsed?",
-    "faq-2-a": "No. Cims, sempre amunt is an independent app made out of passion. It uses public mountain lists as reference but has no institutional affiliation. For any official validation, you'll need to arrange it with the relevant body.",
+    "faq-2-a": "No. Cims, sempre amunt is an independent passion project. It has no affiliation with FEEC (Federació d'Entitats Excursionistes de Catalunya) or any federation. For official validation such as the FEEC diploma, you need to arrange it with them directly.",
     "faq-3-q": "How much does the app cost?",
     "faq-3-a": "The app is completely free. No subscriptions, no ads, no paywalls. The project is supported by voluntary donations from users who want to help.",
     "faq-4-q": "Which platforms is it available on?",
@@ -148,6 +148,7 @@
     "faq-6-a": "Yes. Beyond the 100 Cims you'll find Sostres Comarcals, Essential Peaks, Top Spain, Cumbres Astures, Altos Madrileños and others. Follow as many as you want — the same ascent counts for every challenge that contains it.",
     "faq-7-q": "How are summits validated?",
     "faq-7-a": "The app runs on trust: you log your own ascents with photo and date. There's no mandatory GPS check or external validation. It's a personal tracking tool, not an official competition.",
+    "disclaimer": "Cims, sempre amunt is not affiliated with or endorsed by FEEC or any federation.",
     "cta-title": "Start your challenge today",
     "cta-subtitle": "Install the app, pick your challenge and start logging your summits. Free, ad-free, made by hikers.",
     "available-on": "Available on iOS and Android"
