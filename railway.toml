@@ -3,8 +3,9 @@ builder = "DOCKERFILE"
 dockerfilePath = "packages/api/Dockerfile"
 
 [build.args]
-# postgres.railway.internal only resolves at runtime; use public URL for build.
-DATABASE_URL = "${{Postgres.DATABASE_PUBLIC_URL}}"
+# Dockerfile swaps this into DATABASE_URL only for the build stage —
+# runtime keeps the private URL Railway injects as DATABASE_URL.
+DATABASE_PUBLIC_URL = "${{Postgres.DATABASE_PUBLIC_URL}}"
 
 [deploy]
 startCommand = "cd packages/api && npx drizzle-kit migrate && cd /app && node packages/api/server.js"

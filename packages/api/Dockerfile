@@ -18,9 +18,12 @@ COPY package.json yarn.lock ./
 COPY packages/api ./packages/api
 
 # Next.js prerenders pages that query the DB (shop list/detail), so the
-# build needs DATABASE_URL. Pass it in from Railway as a build arg.
-ARG DATABASE_URL
-ENV DATABASE_URL=${DATABASE_URL}
+# build needs DATABASE_URL. Railway's private host (postgres.railway.internal)
+# only resolves at runtime, so accept the public URL as a build arg and
+# point DATABASE_URL at it for this stage only. Runtime gets its own
+# DATABASE_URL from the Railway service env (private, internal).
+ARG DATABASE_PUBLIC_URL
+ENV DATABASE_URL=${DATABASE_PUBLIC_URL}
 
 WORKDIR /app/packages/api
 RUN yarn build
