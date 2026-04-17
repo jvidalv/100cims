@@ -11,7 +11,7 @@ DATABASE_PUBLIC_URL = "${{Postgres.DATABASE_PUBLIC_URL}}"
 AUTH_SECRET = "${{AUTH_SECRET}}"
 
 [deploy]
-startCommand = "sh -c 'cd packages/api && npx drizzle-kit migrate && cd /app && node packages/api/server.js'"
+startCommand = "sh -c 'cd /app/packages/api && /app/node_modules/.bin/drizzle-kit migrate && cd /app && node packages/api/server.js'"
 healthcheckPath = "/api/health"
 healthcheckTimeout = 30
 restartPolicyType = "ON_FAILURE"
