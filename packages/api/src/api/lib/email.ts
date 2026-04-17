@@ -95,10 +95,9 @@ export const sendWelcomeEmail = async (user: EmailRecipient): Promise<void> => {
   const resend = getResend();
   if (!resend || !from) return;
 
-  const locale = pickLocale(user.locale);
-  const unsubscribeUrl = await buildUnsubscribeUrl(user.id, locale);
-
   try {
+    const locale = pickLocale(user.locale);
+    const unsubscribeUrl = await buildUnsubscribeUrl(user.id, locale);
     await resend.emails.send({
       from,
       to: user.email,
@@ -131,10 +130,9 @@ const sendCampaignEmail = async (
   const resend = getResend();
   if (!resend || !from) return false;
 
-  const locale = pickLocale(user.locale);
-  const unsubscribeUrl = await buildUnsubscribeUrl(user.id, locale);
-
   try {
+    const locale = pickLocale(user.locale);
+    const unsubscribeUrl = await buildUnsubscribeUrl(user.id, locale);
     await resend.emails.send({
       from,
       to: user.email,
