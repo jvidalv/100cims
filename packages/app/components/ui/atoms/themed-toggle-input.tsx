@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FormattedMessage } from "react-intl";
 import { LayoutChangeEvent, Pressable, View } from "react-native";
 import Animated, {
@@ -35,6 +35,12 @@ export const ThemedToggleInput = ({
 
   const containerWidth = useRef<number>(0);
 
+  const translateX = useSharedValue(0);
+
+  const syncTranslate = (checkedValue: boolean | undefined) => {
+    translateX.value = checkedValue ? 0 : (containerWidth.current - 13) / 2;
+  };
+
   const onLayout = (event: LayoutChangeEvent) => {
     containerWidth.current = event.nativeEvent.layout.width;
     if (!internalChecked) {
@@ -42,7 +48,11 @@ export const ThemedToggleInput = ({
     }
   };
 
-  const translateX = useSharedValue(0);
+  useEffect(() => {
+    if (!isUncontrolled && containerWidth.current > 0) {
+      syncTranslate(checked);
+    }
+  }, [checked, isUncontrolled]);
 
   const animatedStyle = useAnimatedStyle(() => {
     const color = internalChecked
@@ -65,11 +75,12 @@ export const ThemedToggleInput = ({
   });
 
   const toggle = () => {
+    const next = !internalChecked;
     if (isUncontrolled) {
-      setUncontrolledChecked(!internalChecked);
+      setUncontrolledChecked(next);
+      syncTranslate(next);
     }
-    onChecked?.(!internalChecked);
-    translateX.value = internalChecked ? (containerWidth.current - 13) / 2 : 0;
+    onChecked?.(next);
   };
 
   return (

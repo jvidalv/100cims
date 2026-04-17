@@ -14,10 +14,15 @@ import {
 } from "lucide-react-native";
 import { useRef, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { ActivityIndicator, Alert, Image, View } from "react-native";
+import { Alert, Image, View } from "react-native";
 
 import { SummitCard } from "@/components/summit";
-import { LucideIcon, Skeleton, ThemedText } from "@/components/ui/atoms";
+import {
+  ActivityIndicator,
+  LucideIcon,
+  Skeleton,
+  ThemedText,
+} from "@/components/ui/atoms";
 import { ActionRow, PersonRow } from "@/components/ui/molecules";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
 import { UserShareCard } from "@/components/user";

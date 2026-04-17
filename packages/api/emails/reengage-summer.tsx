@@ -74,23 +74,23 @@ const copy = {
     greeting: (firstName) =>
       `${firstName ?? "Muntanyenc"}, ja som a l'estiu.`,
     intro:
-      "Fa temps que no puges cap cim a Cims. Els dies són llargs, els camins són secs, les teves botes deuen estar agafant pols. Va, una empenta.",
+      "Fa temps que no registres cap cim a Cims. Els dies són llargs, els camins secs, les botes agafant pols. Va, una empenta.",
     whyTitle: "Per què ara",
     why1: {
       q: "Els dies són llargs",
-      a: "Més hores de llum, més temps a la carena. Fins i tot mig dia de feina permet un cim sencer.",
+      a: "Més hores de llum, més temps a la carena. Mig dia lliure dona per un cim sencer.",
     },
     why2: {
       q: "Els camins són secs",
-      a: "Pujades més fàcils, menys material, menys sorpreses. L'estiu és la temporada que perdona.",
+      a: "Pujades més fàcils, menys material, menys sorpreses. L'estiu perdona més.",
     },
     why3: {
       q: "Els teus amics ja hi són",
-      a: "Obre la pestanya Plans i mira qui va on. Apuntar-se al pla d'algú altre és la manera més fàcil de tornar-hi.",
+      a: "Obre la pestanya Plans i mira qui va on. Apuntar-te a un pla existent és la manera més fàcil de tornar.",
     },
     ctaTitle: "Tria un pla",
     ctaIntro:
-      "Mira els plans que estan organitzant els teus amics — o engega'n un de teu i mira qui s'hi apunta.",
+      "Mira els plans que està organitzant la gent — o engega'n un i mira qui s'hi apunta.",
     cta: "Veure els plans",
     footer:
       "Has rebut aquest correu perquè t'has registrat a Cims. Si prefereixes no rebre'n, l'enllaç de baixa és a sota.",
@@ -100,23 +100,23 @@ const copy = {
     greeting: (firstName) =>
       `${firstName ?? "Montañero"}, ya es verano.`,
     intro:
-      "Hace tiempo que no subes ninguna cima en Cims. Los días son largos, los caminos están secos, tus botas estarán cogiendo polvo. Venga, un empujón.",
+      "Hace tiempo que no registras ninguna cima en Cims. Los días son largos, los caminos secos, las botas cogiendo polvo. Venga, un empujón.",
     whyTitle: "Por qué ahora",
     why1: {
       q: "Los días son largos",
-      a: "Más horas de luz, más tiempo en la cresta. Incluso medio día libre da para una cima entera.",
+      a: "Más horas de luz, más tiempo en la cresta. Medio día libre da para una cima entera.",
     },
     why2: {
       q: "Los caminos están secos",
-      a: "Subidas más fáciles, menos material, menos sorpresas. El verano es la temporada que perdona.",
+      a: "Subidas más fáciles, menos material, menos sorpresas. El verano perdona más.",
     },
     why3: {
       q: "Tus amigos ya están allí",
-      a: "Abre la pestaña Planes y mira quién va dónde. Apuntarse al plan de otro es la forma más fácil de volver.",
+      a: "Abre la pestaña Planes y mira quién va dónde. Apuntarte a un plan existente es la forma más fácil de volver.",
     },
     ctaTitle: "Elige un plan",
     ctaIntro:
-      "Mira los planes que están organizando tus amigos — o monta uno y mira quién se apunta.",
+      "Mira los planes que está organizando la gente — o monta uno y mira quién se apunta.",
     cta: "Ver los planes",
     footer:
       "Recibes este correo porque te registraste en Cims. Si prefieres no recibirlos, el enlace para darte de baja está abajo.",

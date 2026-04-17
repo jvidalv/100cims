@@ -11,6 +11,9 @@
   "///zLu": {
     "defaultMessage": "Challenges"
   },
+  "/LG2tT": {
+    "defaultMessage": "Latitude must be between -90 and 90"
+  },
   "/V1GsM": {
     "defaultMessage": "Country/Region"
   },
@@ -22,6 +25,9 @@
   },
   "0++ZND": {
     "defaultMessage": "My summits"
+  },
+  "05nKhi": {
+    "defaultMessage": "Location is required"
   },
   "0BUTMv": {
     "defaultMessage": "Search..."
@@ -80,9 +86,6 @@
   "3cc4Ct": {
     "defaultMessage": "Light"
   },
-  "3dqsvA": {
-    "defaultMessage": "Donors"
-  },
   "3f6HhZ": {
     "defaultMessage": "When you summit with other cims users, they'll appear here."
   },
@@ -124,9 +127,6 @@
   },
   "5lwgvM": {
     "defaultMessage": "Visible on people search?"
-  },
-  "6GM4DH": {
-    "defaultMessage": "Fresh new look. You can now edit summits, create community challenges, add your own mountains, and share summits and your profile straight to social."
   },
   "71GNdG": {
     "defaultMessage": "are worth x2. Summit them!"
@@ -200,6 +200,9 @@
   "AUwGVY": {
     "defaultMessage": "Extra info"
   },
+  "AcTzHz": {
+    "defaultMessage": "Height must be between 0 and 10,000 meters"
+  },
   "AouTVa": {
     "defaultMessage": "Failed to update mountain"
   },
@@ -226,9 +229,6 @@
   },
   "CFPRDL": {
     "defaultMessage": "Create plan"
-  },
-  "CqyOwA": {
-    "defaultMessage": "Select emoji"
   },
   "DJbyE/": {
     "defaultMessage": "You summited this mountain"
@@ -266,6 +266,9 @@
   "EPpeif": {
     "defaultMessage": "Share plan"
   },
+  "Ep56/Z": {
+    "defaultMessage": "Longitude must be between -180 and 180"
+  },
   "F4zKkr": {
     "defaultMessage": "Are you sure you want to continue? All the data will be lost."
   },
@@ -301,6 +304,9 @@
   },
   "H5v61s": {
     "defaultMessage": "Set plan date"
+  },
+  "HMQOVv": {
+    "defaultMessage": "Fresh new look. You can now edit summits, create community challenges, and add your own mountains. Share summits and your profile straight to social."
   },
   "HV9rgD": {
     "defaultMessage": "Product not found"
@@ -358,9 +364,6 @@
   },
   "K3r6DQ": {
     "defaultMessage": "Delete"
-  },
-  "KFLI9o": {
-    "defaultMessage": "Get some merch and support the app!"
   },
   "KS+YEv": {
     "defaultMessage": "A profile with your feats"
@@ -590,6 +593,9 @@
   "aiy3+p": {
     "defaultMessage": "Type to search."
   },
+  "ama0om": {
+    "defaultMessage": "Add at least one mountain before making it public"
+  },
   "aq+9m8": {
     "defaultMessage": "No people yet"
   },
@@ -688,9 +694,6 @@
   },
   "fnihsY": {
     "defaultMessage": "Leave"
-  },
-  "fudedk": {
-    "defaultMessage": "Angels that with their contributions help cims stay alive."
   },
   "gbRhVk": {
     "defaultMessage": "*You can decide later"

@@ -8,7 +8,6 @@ import {
 import { useRef, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
-  ActivityIndicator,
   Alert,
   Image,
   Pressable,
@@ -23,6 +22,7 @@ import ConfettiCannon from "react-native-confetti-cannon";
 import { useAuth } from "@/components/providers/auth-provider";
 import { SummitShareCard } from "@/components/summit";
 import {
+  ActivityIndicator,
   Avatar,
   Skeleton,
   ThemedText,

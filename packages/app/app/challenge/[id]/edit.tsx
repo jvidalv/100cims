@@ -1,4 +1,5 @@
 import { useLocalSearchParams, useRouter, Redirect } from "expo-router";
+import { Check, X } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
@@ -17,12 +18,11 @@ import {
 import { useAuth } from "@/components/providers/auth-provider";
 import {
   ActivityIndicator,
-  BlurView,
-  Button,
   ThemedText,
   ThemedView,
 } from "@/components/ui/atoms";
 import {
+  ActionRow,
   ChallengeMountainList,
   ScreenHeader,
 } from "@/components/ui/molecules";
@@ -34,7 +34,6 @@ import {
 import { isCreator } from "@/domains/community-challenge/community-challenge.model";
 import { toPickerMountain } from "@/domains/mountain/mountain-picker-session";
 import { useUserMe } from "@/domains/user/user.api";
-import { useIsKeyboardVisible } from "@/hooks/use-is-keyboard-visible";
 import { useMountainSelection } from "@/hooks/use-mountain-selection";
 import { isAndroid } from "@/lib/device";
 
@@ -44,7 +43,6 @@ export default function CommunityChallengeEditPage() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { isAuthenticated } = useAuth();
   const { data: user } = useUserMe();
-  const isKeyboardVisible = useIsKeyboardVisible();
 
   const { data: challenge, isLoading } = useCommunityChallengeDetail(
     { id: id! },
@@ -160,7 +158,7 @@ export default function CommunityChallengeEditPage() {
         <ScreenHeader />
         <ScrollView
           className="flex-1"
-          contentContainerClassName="pb-40"
+          contentContainerClassName="pb-12"
           keyboardShouldPersistTaps="handled"
         >
           <View className={twMerge("px-6 pt-2 pb-4", isAndroid && "pt-24")}>
@@ -185,25 +183,28 @@ export default function CommunityChallengeEditPage() {
               />
             </View>
           </ChallengeForm>
+          <View className="mt-6 px-6">
+            <ActionRow
+              icon={Check}
+              size="lg"
+              intent="emerald"
+              onPress={handleUpdate}
+              disabled={isPending}
+              activeOpacity={0.85}
+              iconOverride={isPending ? <ActivityIndicator /> : undefined}
+            >
+              <FormattedMessage defaultMessage="Save changes" />
+            </ActionRow>
+            <ActionRow
+              icon={X}
+              size="lg"
+              onPress={() => router.dismiss()}
+              activeOpacity={0.85}
+            >
+              <FormattedMessage defaultMessage="Cancel" />
+            </ActionRow>
+          </View>
         </ScrollView>
-
-        <BlurView
-          className={twMerge(
-            "px-6 pt-1 pb-8",
-            isKeyboardVisible && "opacity-0",
-          )}
-        >
-          <Button isLoading={isPending} onPress={handleUpdate}>
-            <FormattedMessage defaultMessage="Save changes" />
-          </Button>
-          <Button
-            intent="ghost"
-            onPress={() => router.dismiss()}
-            textClassName="text-muted-foreground"
-          >
-            <FormattedMessage defaultMessage="Cancel" />
-          </Button>
-        </BlurView>
       </ThemedView>
     </TouchableWithoutFeedback>
   );

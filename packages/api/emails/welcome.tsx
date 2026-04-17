@@ -77,51 +77,51 @@ const copy = {
     preview: "Benvingut a Cims — aquí tens com començar.",
     greeting: (firstName) => `Benvingut, ${firstName ?? "muntanyenc"}!`,
     intro:
-      "Ja hi ets. Cims t'ajuda a registrar els cims que has fet i a planificar els següents amb amics. Aquí tens els bàsics per començar.",
-    faqTitle: "Els bàsics",
+      "Ja hi ets. Cims t'ajuda a portar un registre dels cims que fas i a planificar les properes sortides. Aquí tens el bàsic per començar.",
+    faqTitle: "Com funciona",
     faq1: {
-      q: "Com pujo un cim?",
-      a: "Obre una muntanya, toca el botó de la càmera, tria una foto i la data en què vas fer el cim. Ja està — queda afegit a la teva llista.",
+      q: "Com registro un cim?",
+      a: "Obre la muntanya, toca la càmera, tria la foto i la data. Llest — queda al teu registre.",
     },
     faq2: {
-      q: "Acabo de baixar l'app i tinc molts cims antics per registrar. Com els afegeixo?",
-      a: "Pots registrar cims antics sense foto — obre una muntanya i afegeix la data. De moment s'ha de fer un a un, però així mantens tot el teu històric.",
+      q: "I si tinc cims antics?",
+      a: "Pots registrar-los sense foto: obre la muntanya i posa la data. De moment s'ha de fer un a un.",
     },
     faq3: {
-      q: "Com planifico una sortida amb amics?",
-      a: "Obre la pestanya Plans i toca Nou pla. Escull muntanyes, posa una data i comparteix l'enllaç. Tothom del pla pot xatejar des de l'app.",
+      q: "Com organitzo una sortida?",
+      a: "Pestanya Plans → Nou pla. Tria muntanyes, data, comparteix l'enllaç. Tothom del pla té xat dins l'app.",
     },
-    supportTitle: "Com es manté Cims?",
+    supportTitle: "Qui paga tot això?",
     supportIntro:
-      "Cims el fan i el paguen persones que estimen la muntanya. Si vols ajudar a mantenir-lo — sense anuncis, sense seguiment — mira el merxandatge. Samarretes, tasses, gorres, buffs. Tot ajuda a cobrir l'hostatge.",
+      "Cims el fem gent que estima la muntanya. Si el vols ajudar a seguir — sense anuncis, sense rastreig — passa't per la botiga. Samarretes, tasses, gorres, buffs. Tot ajuda.",
     supportCta: "Dona suport a Cims",
     footer:
-      "Has rebut aquest correu perquè t'has registrat a Cims. Preguntes o idees? Respon i ens arribarà.",
+      "T'has registrat a Cims, per això rebem aquest correu. Preguntes o idees? Respon i ja ens arriba.",
   },
   es: {
     preview: "Bienvenido a Cims — aquí tienes cómo empezar.",
     greeting: (firstName) => `¡Bienvenido, ${firstName ?? "montañero"}!`,
     intro:
-      "Ya estás dentro. Cims te ayuda a registrar las cimas que haces y a planificar las siguientes con amigos. Aquí tienes los básicos para empezar.",
-    faqTitle: "Lo básico",
+      "Ya estás dentro. Cims te ayuda a llevar registro de las cimas que coronas y planificar las próximas salidas. Aquí tienes lo básico para empezar.",
+    faqTitle: "Cómo va",
     faq1: {
-      q: "¿Cómo subo una cima?",
-      a: "Abre una montaña, toca el botón de la cámara, elige una foto y la fecha en que hiciste cima. Ya está — se añade a tu lista.",
+      q: "¿Cómo registro una cima?",
+      a: "Abre la montaña, toca la cámara, elige la foto y la fecha. Listo — se queda en tu registro.",
     },
     faq2: {
-      q: "Acabo de descargar la app y tengo muchas cimas antiguas por registrar. ¿Cómo las añado?",
-      a: "Puedes registrar cimas antiguas sin foto — abre una montaña y añade la fecha. De momento hay que hacerlo una a una, pero así mantienes todo tu historial.",
+      q: "¿Y si tengo cimas antiguas?",
+      a: "Puedes registrarlas sin foto: abre la montaña y pon la fecha. De momento una a una.",
     },
     faq3: {
-      q: "¿Cómo planifico una salida con amigos?",
-      a: "Abre la pestaña Planes y pulsa Nuevo plan. Escoge montañas, pon una fecha y comparte el enlace. Todos los del plan pueden chatear desde la app.",
+      q: "¿Cómo organizo una salida?",
+      a: "Pestaña Planes → Nuevo plan. Elige montañas, fecha, comparte el enlace. Todos los del plan tenéis chat en la app.",
     },
-    supportTitle: "¿Cómo se mantiene Cims?",
+    supportTitle: "¿Quién paga todo esto?",
     supportIntro:
-      "Cims lo hacen y lo pagan personas que aman la montaña. Si quieres ayudar a mantenerlo — sin anuncios, sin seguimiento — echa un vistazo al merch. Camisetas, tazas, gorras, buffs. Todo ayuda a cubrir el alojamiento.",
-    supportCta: "Apoyar a Cims",
+      "Cims lo hacemos gente que amamos la montaña. Si quieres ayudar a que siga — sin anuncios, sin rastreo — pásate por la tienda. Camisetas, tazas, gorras, buffs. Todo ayuda.",
+    supportCta: "Apoya Cims",
     footer:
-      "Recibiste este correo porque te registraste en Cims. ¿Preguntas o ideas? Responde y nos llegará.",
+      "Te registraste en Cims, por eso recibes este correo. ¿Preguntas o ideas? Responde y nos llega.",
   },
 } satisfies Record<WelcomeEmailLocale, Copy>;
 

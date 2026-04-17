@@ -1,8 +1,9 @@
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { format } from "date-fns/format";
 import { isValid } from "date-fns/isValid";
 import { Calendar } from "lucide-react-native";
 import { useEffect, useMemo, useState } from "react";
-import { FormattedDate, FormattedMessage } from "react-intl";
+import { FormattedMessage } from "react-intl";
 import { Platform, Pressable, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
@@ -10,6 +11,7 @@ import { Button } from "@/components/ui/atoms/button";
 import { LucideIcon } from "@/components/ui/atoms/lucide-icon";
 import { ThemedText } from "@/components/ui/atoms/themed-text";
 import { BottomDrawer } from "@/components/ui/molecules/bottom-drawer";
+import { getDateFnsLocale, getLocale } from "@/lib/locale";
 
 type Props = {
   value?: Date | null | false;
@@ -31,6 +33,7 @@ export const ThemedDateInput = ({
   noPastDates,
 }: Props) => {
   const [showPicker, setShowPicker] = useState(false);
+  const [pickerDraft, setPickerDraft] = useState<Date | null>(null);
   const [day, setDay] = useState("");
   const [month, setMonth] = useState("");
   const [year, setYear] = useState("");
@@ -73,25 +76,40 @@ export const ThemedDateInput = ({
       : null;
   }, [d, isComplete, m, y]);
 
+  const commitDate = (selectedDate: Date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const inputDate = new Date(selectedDate);
+    inputDate.setHours(0, 0, 0, 0);
+
+    let isValid = true;
+    if (noFutureDates && inputDate > today) isValid = false;
+    if (noPastDates && inputDate < today) isValid = false;
+
+    if (isValid) {
+      onDateValid(selectedDate);
+    } else {
+      onDateError?.();
+    }
+  };
+
   const handleDateChange = (event: { type: string }, selectedDate?: Date) => {
     if (event.type === "set" && selectedDate) {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const inputDate = new Date(selectedDate);
-      inputDate.setHours(0, 0, 0, 0);
-
-      let isValid = true;
-      if (noFutureDates && inputDate > today) isValid = false;
-      if (noPastDates && inputDate < today) isValid = false;
-
-      if (isValid) {
-        onDateValid(selectedDate);
+      if (Platform.OS === "ios") {
+        setPickerDraft(selectedDate);
       } else {
-        onDateError?.();
+        commitDate(selectedDate);
       }
     } else if (event.type === "dismissed") {
       setShowPicker(false);
     }
+  };
+
+  const handleIosDone = () => {
+    const selected = pickerDraft ?? (value || new Date());
+    commitDate(selected);
+    setPickerDraft(null);
+    setShowPicker(false);
   };
 
   return (
@@ -110,12 +128,11 @@ export const ThemedDateInput = ({
         <View className="py-2">
           {parsedDate ? (
             <ThemedText className="font-medium">
-              <FormattedDate
-                value={parsedDate}
-                day="numeric"
-                month="long"
-                year="numeric"
-              />
+              {format(
+                parsedDate,
+                getLocale() === "en" ? "d MMMM yyyy" : "d 'de' MMMM yyyy",
+                { locale: getDateFnsLocale() },
+              )}
             </ThemedText>
           ) : (
             <ThemedText
@@ -132,10 +149,13 @@ export const ThemedDateInput = ({
       {Platform.OS === "ios" ? (
         <BottomDrawer
           isOpen={showPicker}
-          onRequestClose={() => setShowPicker(false)}
+          onRequestClose={() => {
+            setPickerDraft(null);
+            setShowPicker(false);
+          }}
         >
           <DateTimePicker
-            value={value || new Date()}
+            value={pickerDraft ?? (value || new Date())}
             mode="date"
             display="spinner"
             onChange={handleDateChange}
@@ -145,7 +165,7 @@ export const ThemedDateInput = ({
           <Button
             intent="success"
             className="mx-4 mb-8"
-            onPress={() => setShowPicker(false)}
+            onPress={handleIosDone}
           >
             <FormattedMessage defaultMessage="Done" />
           </Button>

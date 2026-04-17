@@ -261,7 +261,11 @@ export default function PlanIdPage() {
       0,
     ),
     summitCount: plan.mountains.length,
-    date: plan.startDate ?? plan.updatedAt ?? new Date().toISOString(),
+    date:
+      plan.startDate ??
+      (typeof plan.updatedAt === "string" || typeof plan.updatedAt === "number"
+        ? new Date(plan.updatedAt).toISOString()
+        : new Date().toISOString()),
     images: plan.mountains.slice(0, 4).map((m) =>
       completionImages[m.id]
         ? `data:image/jpeg;base64,${completionImages[m.id]}`
