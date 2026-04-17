@@ -186,9 +186,6 @@ const PlansSection = () => {
   );
 };
 
-const FALLBACK_UPDATE_IMAGE =
-  "https://josepvidal-public-dev-bucket.s3.eu-west-3.amazonaws.com/100cims/mountain/profile/el-tossal-gros.jpg";
-
 const TopSection = () => {
   const { data: challenge } = useActiveChallenge();
 
@@ -326,18 +323,13 @@ const PageHeader = ({
 type AppUpdate = {
   id: string;
   date: string;
-  actionRoute: "/challenges";
+  actionRoute: "/challenges" | "/user/people";
 };
 
 const UPDATES: AppUpdate[] = [
   {
-    id: "update-002",
-    date: "2025-01-20",
-    actionRoute: "/challenges",
-  },
-  {
-    id: "update-003",
-    date: "2025-01-21",
+    id: "update-005",
+    date: "2026-04-17",
     actionRoute: "/challenges",
   },
 ];
@@ -379,7 +371,6 @@ export default function IndexScreen() {
     limit: 8,
   });
   const {
-    data: mountains,
     isPending: isPendingMountains,
     isError: isMountainsError,
     error: mountainsError,
@@ -411,23 +402,12 @@ export default function IndexScreen() {
   // Translated content for the current update
   const currentUpdateContent = useMemo(() => {
     if (!currentUnseenUpdate) return null;
-    // Map update IDs to their translated content
-    if (currentUnseenUpdate.id === "update-003") {
+    if (currentUnseenUpdate.id === "update-005") {
       return {
-        title: intl.formatMessage({ defaultMessage: "Patch notes" }),
+        title: intl.formatMessage({ defaultMessage: "What's new" }),
         body: intl.formatMessage({
           defaultMessage:
-            "Fixed profile image uploads, added Cim de la Dona, new height filters, anonymous photo reactions, and merchandising support!",
-        }),
-        actionLabel: intl.formatMessage({ defaultMessage: "View" }),
-      };
-    }
-    if (currentUnseenUpdate.id === "update-002") {
-      return {
-        title: intl.formatMessage({ defaultMessage: "Community challenges" }),
-        body: intl.formatMessage({
-          defaultMessage:
-            "You can now create your own challenges and also your mountains, other people can join these challenges!",
+            "Fresh new look. You can now edit summits, create community challenges, add your own mountains, and share summits and your profile straight to social.",
         }),
         actionLabel: intl.formatMessage({ defaultMessage: "Explore" }),
       };
@@ -449,25 +429,16 @@ export default function IndexScreen() {
     setIsRefreshing(false);
   }, [refetchUser, refetchLatestSummits, refetchChallengeSummits]);
 
-  // Get a stable image for the updates dialog based on update id
   const updateWithImage = useMemo((): Update | null => {
     if (!currentUnseenUpdate || !currentUpdateContent) return null;
-
-    // Use update id hash to pick a stable image index
-    const imageIndex = mountains?.length
-      ? currentUnseenUpdate.id.charCodeAt(currentUnseenUpdate.id.length - 1) %
-        mountains.length
-      : 0;
-    const stableImage = mountains?.[imageIndex]?.imageUrl;
-
     return {
       id: currentUnseenUpdate.id,
       title: currentUpdateContent.title,
       date: currentUnseenUpdate.date,
       body: currentUpdateContent.body,
-      imageUrl: stableImage || FALLBACK_UPDATE_IMAGE,
+      imageUrl: require("@/assets/images/shop-header.jpg"),
     };
-  }, [currentUnseenUpdate, currentUpdateContent, mountains]);
+  }, [currentUnseenUpdate, currentUpdateContent]);
 
   useOnAppActive(() => {
     void refetchUser();

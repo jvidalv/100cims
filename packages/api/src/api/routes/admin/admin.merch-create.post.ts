@@ -38,6 +38,7 @@ export const adminMerchCreatePostRoute = new Elysia().post(
           descriptionEs: body.descriptionEs ?? null,
           shopUrl: body.shopUrl ?? null,
           price: body.price,
+          discountedPrice: body.discountedPrice ?? null,
           hasSize: body.hasSize ?? false,
           featured: body.featured ?? null,
           active: body.active ?? true,

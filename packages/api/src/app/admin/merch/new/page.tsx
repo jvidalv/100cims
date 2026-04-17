@@ -40,6 +40,7 @@ export default function AdminMerchNewPage() {
               descriptionEs: values.descriptionEs.trim() || null,
               shopUrl: values.shopUrl.trim() || null,
               price: values.price,
+              discountedPrice: values.discountedPrice,
               hasSize: values.hasSize,
               featured: values.featured,
               active: values.active,

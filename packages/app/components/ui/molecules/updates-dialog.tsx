@@ -23,7 +23,7 @@ export interface Update {
   title: string;
   date: string;
   body: string;
-  imageUrl: string;
+  imageUrl: string | number;
 }
 
 interface UpdatesDialogProps {
@@ -69,7 +69,7 @@ export function UpdatesDialog({
 
   const formattedDate = intl.formatDate(new Date(update.date), {
     year: "numeric",
-    month: "long",
+    month: "short",
     day: "numeric",
   });
 
@@ -85,20 +85,34 @@ export function UpdatesDialog({
     >
       <View className="flex-1 items-center justify-center">
         <Animated.View
-          className="absolute size-full bg-black/60"
-          style={animatedOverlayStyle}
+          style={[
+            {
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: "rgba(0,0,0,0.8)",
+              zIndex: 0,
+            },
+            animatedOverlayStyle,
+          ]}
         >
-          <Pressable className="size-full" onPress={onClose} />
+          <Pressable style={{ flex: 1 }} onPress={onClose} />
         </Animated.View>
 
         <Animated.View
-          style={animatedContentStyle}
+          style={[animatedContentStyle, { zIndex: 1 }]}
           className="w-full max-w-md px-4"
         >
           <ThemedView className="overflow-hidden rounded-3xl border border-border">
             {/* Image */}
             <Image
-              source={{ uri: update.imageUrl }}
+              source={
+                typeof update.imageUrl === "number"
+                  ? update.imageUrl
+                  : { uri: update.imageUrl }
+              }
               className="h-48 w-full"
               resizeMode="cover"
             />

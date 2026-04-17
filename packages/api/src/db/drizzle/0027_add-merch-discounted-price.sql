@@ -1,0 +1,1 @@
+ALTER TABLE "merch" ADD COLUMN "discounted_price" integer;

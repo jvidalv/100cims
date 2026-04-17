@@ -125,33 +125,38 @@ const Content = () => {
     return (
       <ThemedView className="flex-1">
         <ScreenHeader />
-        <View className="px-6 pb-2">
-          <Skeleton className="mb-2 h-9 w-64" />
-          <Skeleton className="h-6 w-32" />
+        {/* Header: mountain name + date */}
+        <View className="px-6 pb-2 pt-2">
+          <Skeleton className="mb-2 h-9 w-56" />
+          <Skeleton className="h-6 w-36" />
         </View>
-        <Skeleton className="aspect-square w-full rounded-none" />
-        <View className="mt-6 gap-3 px-6">
-          <Skeleton className="h-7 w-24" />
-          <View className="flex-row items-center gap-2">
-            <Skeleton className="size-8 rounded-full" />
-            <Skeleton className="h-5 w-32" />
-          </View>
-          <View className="flex-row items-center gap-2">
-            <Skeleton className="size-8 rounded-full" />
-            <Skeleton className="h-5 w-28" />
+        {/* Summit photo */}
+        <Skeleton className="aspect-square w-full" />
+        {/* People section */}
+        <View className="mt-6 gap-2 px-6">
+          <Skeleton className="mb-2 h-8 w-20" />
+          <View className="gap-2">
+            {[0, 1].map((i) => (
+              <View key={i} className="flex-row items-center gap-2">
+                <Skeleton className="size-8 rounded-full" />
+                <Skeleton className="h-5 w-32" />
+              </View>
+            ))}
           </View>
         </View>
-        <View className="mt-6 gap-3 px-6">
-          <Skeleton className="h-7 w-20" />
+        {/* Actions section */}
+        <View className="mt-6 gap-2 px-6">
+          <Skeleton className="mb-2 h-8 w-24" />
           {[0, 1, 2].map((i) => (
-            <View key={i} className="flex-row items-center gap-2">
-              <Skeleton className="size-8 rounded-full" />
-              <Skeleton className="h-5 w-40" />
+            <View key={i} className="flex-row items-center gap-3">
+              <Skeleton className="size-10 rounded-full" />
+              <Skeleton className="h-5 w-28" />
             </View>
           ))}
         </View>
-        <View className="mt-6 gap-3 px-6">
-          <Skeleton className="h-7 w-24" />
+        {/* Mountain section */}
+        <View className="mt-6 gap-2 px-6">
+          <Skeleton className="mb-2 h-8 w-28" />
           <View className="flex-row gap-4">
             <Skeleton className="size-[100px] rounded" />
             <View className="flex-1 justify-center gap-2">

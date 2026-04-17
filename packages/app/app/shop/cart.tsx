@@ -19,7 +19,7 @@ import {
   ThemedText,
   ThemedTextInput,
 } from "@/components/ui/atoms";
-import { ScreenHeader } from "@/components/ui/molecules";
+import { ProductPrice, ScreenHeader } from "@/components/ui/molecules";
 import { Colors } from "@/constants/colors";
 import {
   clearCart,
@@ -76,7 +76,8 @@ export default function ShopCartScreen() {
   }, [cart, merch, merchBySlug]);
 
   const total = lines.reduce(
-    (sum, line) => sum + line.product.price * line.qty,
+    (sum, line) =>
+      sum + (line.product.discountedPrice ?? line.product.price) * line.qty,
     0,
   );
 
@@ -109,7 +110,8 @@ export default function ShopCartScreen() {
         const color = l.color ? ` · ${l.color}` : "";
         const size = l.size ? ` · ${l.size}` : "";
         const qty = l.qty > 1 ? ` × ${l.qty}` : "";
-        return `- ${l.product.name}${color}${size}${qty} (${l.product.price}€)`;
+        const unit = l.product.discountedPrice ?? l.product.price;
+        return `- ${l.product.name}${color}${size}${qty} (${unit}€)`;
       })
       .join("\n");
     const trimmedOverride = contactEmailOverride.trim();
@@ -248,9 +250,11 @@ export default function ShopCartScreen() {
                       />
                     </ThemedText>
                   )}
-                  <ThemedText className="text-base font-semibold">
-                    {line.product.price}€
-                  </ThemedText>
+                  <ProductPrice
+                    price={line.product.price}
+                    discountedPrice={line.product.discountedPrice}
+                    className="text-base font-semibold"
+                  />
                 </View>
                 <View className="flex-row items-center gap-2 rounded border border-border">
                   <TouchableOpacity
