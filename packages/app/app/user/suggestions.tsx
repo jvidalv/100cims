@@ -41,6 +41,7 @@ export default function SuggestionsScreen() {
         </ThemedText>
         <ThemedTextInput
           className="mb-6"
+          inputClassName="h-[220px]"
           autoFocus
           multiline
           value={suggestion}

@@ -17,6 +17,12 @@ export const APP_ICONS = [
     requires: null,
   },
   {
+    id: "Vell",
+    labelKey: "vell",
+    preview: require("@/assets/images/app-icons/icon-vell.png"),
+    requires: null,
+  },
+  {
     id: "Merch",
     labelKey: "merch",
     preview: require("@/assets/images/app-icons/icon-merch.png"),

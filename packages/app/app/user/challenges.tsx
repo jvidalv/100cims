@@ -1,4 +1,4 @@
-import { Link, Redirect, useRouter } from "expo-router";
+import { Redirect, useRouter } from "expo-router";
 import { Plus, Star } from "lucide-react-native";
 import { useCallback, useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
@@ -7,7 +7,6 @@ import {
   FlatList,
   Pressable,
   ScrollView,
-  TouchableOpacity,
   View,
 } from "react-native";
 import { twMerge } from "tailwind-merge";
@@ -21,6 +20,7 @@ import {
   ThemedView,
 } from "@/components/ui/atoms";
 import {
+  ActionRow,
   ChallengeListItem,
   MountainItemListAsTouchable,
   ScreenHeader,
@@ -149,7 +149,7 @@ export default function UserChallengesScreen() {
   return (
     <ThemedView className="flex-1">
       <ScreenHeader />
-      <View className="mb-4 flex-row items-end justify-between px-6">
+      <View className="mb-4 px-6">
         <ThemedText className="text-4xl font-bold">
           {isChallengesTab ? (
             <FormattedMessage defaultMessage="My challenges" />
@@ -157,16 +157,6 @@ export default function UserChallengesScreen() {
             <FormattedMessage defaultMessage="My mountains" />
           )}
         </ThemedText>
-        {isChallengesTab && (
-          <Link href="/challenge/create" asChild>
-            <TouchableOpacity className="flex-row items-center gap-1">
-              <ThemedText>
-                <FormattedMessage defaultMessage="New" />
-              </ThemedText>
-              <LucideIcon icon={Plus} size={18} />
-            </TouchableOpacity>
-          </Link>
-        )}
       </View>
       <View className="mb-4 flex-row gap-1 px-6">
         {tabs.map(({ type, name }) => {
@@ -192,6 +182,19 @@ export default function UserChallengesScreen() {
           );
         })}
       </View>
+
+      {isChallengesTab && (
+        <View className="mx-6 mb-4">
+          <ActionRow
+            icon={Plus}
+            size="lg"
+            intent="primary"
+            onPress={() => router.push("/challenge/create")}
+          >
+            <FormattedMessage defaultMessage="New challenge" />
+          </ActionRow>
+        </View>
+      )}
 
       {isChallengesTab ? (
         <ScrollView contentContainerClassName="gap-3 px-6 pb-28">

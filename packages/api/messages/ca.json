@@ -2,6 +2,7 @@
   "shop-page": {
     "list-title": "Botiga",
     "list-subtitle": "Samarretes, gorres i més del projecte Cims, sempre amunt.",
+    "product-meta-fallback": "{name} de la col·lecció Cims, sempre amunt. Dóna suport al projecte.",
     "hero-eyebrow": "Botiga",
     "hero-title": "Vesteix Cims, dona suport a Cims.",
     "hero-body": "Roba i complements de Cims en petites tirades. Cada compra ajuda que l'app segueixi gratuïta, sense anuncis i independent.",
@@ -45,6 +46,7 @@
   },
   "home-page": {
     "title": "Cims, sempre amunt",
+    "meta-title": "Registra els teus cims d'arreu d'Espanya i Europa · Cims, sempre amunt",
     "subtitle": "L'app per registrar els cims que fas. 100 Cims, Sostres Comarcals, Essencials i molts més reptes en una sola app.",
     "download": "Descarrega ara",
     "features-title": "Funcionalitats",
