@@ -17,6 +17,11 @@ COPY --from=deps /app/packages/api/node_modules ./packages/api/node_modules
 COPY package.json yarn.lock ./
 COPY packages/api ./packages/api
 
+# Next.js prerenders pages that query the DB (shop list/detail), so the
+# build needs DATABASE_URL. Pass it in from Railway as a build arg.
+ARG DATABASE_URL
+ENV DATABASE_URL=${DATABASE_URL}
+
 WORKDIR /app/packages/api
 RUN yarn build
 
