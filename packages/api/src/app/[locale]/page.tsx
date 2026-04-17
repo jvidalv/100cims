@@ -33,10 +33,12 @@ const OTHER_CHALLENGES = Object.entries(CHALLENGE_CONTENT).filter(
 const FEATURED_IMAGE_URL = CHALLENGE_CONTENT[FEATURED_SLUG].heroImageUrl;
 
 const SCREENSHOTS = [
-  { src: "/assets/1.png", alt: "App homepage showing challenges" },
-  { src: "/assets/2.png", alt: "User profile with summits" },
-  { src: "/assets/3.png", alt: "Mountain map view" },
+  { src: "/assets/1.png", alt: "Home screen with active challenge and latest summits" },
+  { src: "/assets/2.png", alt: "Challenge detail with participants" },
+  { src: "/assets/3.png", alt: "Map view of all summits" },
   { src: "/assets/4.png", alt: "Mountain detail page" },
+  { src: "/assets/5.png", alt: "Plans list" },
+  { src: "/assets/6.png", alt: "User profile with summits" },
 ];
 
 interface FeatureCard {
@@ -173,9 +175,9 @@ export default async function Home({ params }: Props) {
           <DownloadButton label={t("download")} />
         </section>
 
-        <section className="py-8 px-4">
-          <div className="max-w-7xl mx-auto overflow-x-auto scrollbar-none">
-            <div className="flex gap-6 justify-center min-w-max">
+        <section className="py-8">
+          <div className="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <div className="flex gap-6 min-w-max pl-4 pr-0">
               {SCREENSHOTS.map((s) => (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img

@@ -165,5 +165,16 @@
     "error-title": "Este enlace no funciona",
     "error-body": "Este enlace ha caducado o no es válido. Si sigues recibiendo correos, responde a uno y lo arreglamos.",
     "back-to-app": "Volver a cims-sempre-amunt.app"
+  },
+  "error-page": {
+    "not-found-eyebrow": "404 · Te has desviado",
+    "not-found-title": "Esta cima no está en el mapa",
+    "not-found-body": "La página que buscabas no existe o ha cambiado de sitio. Volvamos a terreno conocido.",
+    "server-eyebrow": "500 · Nos hemos resbalado",
+    "server-title": "Algo ha fallado por nuestro lado",
+    "server-body": "Ha habido un error inesperado. Ya lo hemos registrado y lo miraremos. Mientras tanto, prueba de nuevo o vuelve al inicio.",
+    "retry": "Intentarlo de nuevo",
+    "go-home": "Volver al inicio",
+    "browse-challenges": "Ver los retos"
   }
 }

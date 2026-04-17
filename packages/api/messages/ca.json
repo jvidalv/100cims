@@ -165,5 +165,16 @@
     "error-title": "Aquest enllaç no funciona",
     "error-body": "Aquest enllaç ha caducat o no és vàlid. Si segueixes rebent correus, respon a un i ho arreglem.",
     "back-to-app": "Torna a cims-sempre-amunt.app"
+  },
+  "error-page": {
+    "not-found-eyebrow": "404 · T'has desviat",
+    "not-found-title": "Aquest cim no surt al mapa",
+    "not-found-body": "La pàgina que buscaves no existeix o ha canviat d'adreça. Tornem a terreny conegut.",
+    "server-eyebrow": "500 · Hem relliscat",
+    "server-title": "Alguna cosa ha petat pel nostre costat",
+    "server-body": "Hi ha hagut un error inesperat. Ja ho hem apuntat i ho mirarem. Mentrestant, prova de tornar-ho a intentar o torna a l'inici.",
+    "retry": "Torna-ho a provar",
+    "go-home": "Torna a l'inici",
+    "browse-challenges": "Mira els reptes"
   }
 }

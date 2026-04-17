@@ -331,6 +331,7 @@ Public-facing pages live under `src/app/`. Root layout is English. Canonical sit
 - **Server-side caching**: we default to **fully static** pages for marketing content (no `export const revalidate`). Stats and featured-peaks selection snapshot at build time; redeploy to refresh. Only opt into ISR if a page must change between deploys.
 - **JSON-LD**: inject via `<script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(obj) }} />`. Safe with `JSON.stringify` + trusted data.
 - **Public stats helper**: `src/api/lib/public-stats.ts` returns `{ totalUsers, totalSummits, totalMountains, essentialMountainCount }` via 4 parallel COUNT(*) queries.
+- **Error pages**: with `localePrefix: "always"` we need THREE error files. `src/app/[locale]/not-found.tsx` + `src/app/[locale]/error.tsx` handle anything thrown inside the locale tree (use `next-intl` translations, `error-page` namespace in `messages/*.json`). `src/app/not-found.tsx` is the root fallback for paths that never match the locale prefix — hardcoded EN, no i18n context available. `src/app/global-error.tsx` catches root-layout failures and must render its own `<html><body>` + import `./globals.css`. All three compose `src/components/error-layout.tsx` (CSS gradient only — don't pull remote CDN images, they can be the very thing that's broken).
 
 ### Templated per-challenge pages (`/challenges/[challengeSlug]`)
 
