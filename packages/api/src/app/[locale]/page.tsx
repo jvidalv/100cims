@@ -16,7 +16,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { AppleIcon, PlayStoreIcon } from "@/components/store-icons";
 import { Button } from "@/components/ui/button";
 import { routing } from "@/i18n/routing";
-import { ANDROID_APP_URL, IOS_APP_URL } from "@/lib/app-links";
+import { ANDROID_APP_URL, IOS_APP_URL, SITE_URL } from "@/lib/app-links";
 import { getLocalizedAlternates } from "@/lib/hreflang";
 import { getActiveMerch } from "@/lib/merch-helpers";
 import { localizeMerch } from "@/lib/merch-format";
@@ -88,7 +88,30 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const locale = asAppLocale((await params).locale);
-  return { alternates: getLocalizedAlternates(locale, "") };
+  const t = await getTranslations({ locale, namespace: "home-page" });
+  const alternates = getLocalizedAlternates(locale, "");
+  const title = t("title");
+  const description = t("subtitle");
+  const ogImage = `${SITE_URL}/assets/logo.png`;
+  return {
+    title,
+    description,
+    alternates,
+    openGraph: {
+      type: "website",
+      url: alternates.canonical,
+      siteName: "Cims, sempre amunt",
+      title,
+      description,
+      images: [{ url: ogImage, width: 1024, height: 554, alt: title }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [ogImage],
+    },
+  };
 }
 
 export default async function Home({ params }: Props) {
