@@ -165,5 +165,16 @@
     "error-title": "This link doesn't work",
     "error-body": "It looks like this unsubscribe link has expired or is invalid. If you keep getting emails, just reply to one and we'll sort it out.",
     "back-to-app": "Back to cims-sempre-amunt.app"
+  },
+  "error-page": {
+    "not-found-eyebrow": "404 · Lost up here",
+    "not-found-title": "This peak isn't on our map",
+    "not-found-body": "The page you were looking for doesn't exist or has moved. Let's get you back to solid ground.",
+    "server-eyebrow": "500 · We slipped",
+    "server-title": "Something broke on our side",
+    "server-body": "An unexpected error came up. We've logged it and we'll take a look. In the meantime, try again or head home.",
+    "retry": "Try again",
+    "go-home": "Back to home",
+    "browse-challenges": "Browse challenges"
   }
 }
