@@ -10,7 +10,7 @@ interface Props {
 
 export function ErrorLayout({ eyebrow, title, body, actions, digest }: Props) {
   return (
-    <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-[radial-gradient(ellipse_at_top,theme(colors.primary/0.15),transparent_60%),radial-gradient(ellipse_at_bottom,theme(colors.primary/0.08),transparent_55%)] bg-background px-6 py-16 text-center text-foreground">
+    <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-background px-6 py-16 text-center text-foreground">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src="/assets/logo.png"
