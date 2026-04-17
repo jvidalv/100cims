@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-export default function ContactPage() {
+export function ContactForm() {
   const t = useTranslations("contact-page");
   const footer = useTranslations("footer");
 

@@ -38,6 +38,7 @@ export const SiteFooter = ({ strings: s, locale }: Props) => {
   const year = new Date().getFullYear();
   const homeHref = locale ? `/${locale}` : "/";
   const shopHref = locale ? `/${locale}/shop` : "/shop";
+  const contactHref = locale ? `/${locale}/contact` : "/contact";
 
   return (
     <footer className="border-t border-border/50 py-12 mt-8">
@@ -145,7 +146,7 @@ export const SiteFooter = ({ strings: s, locale }: Props) => {
             <h4 className="mb-3 font-semibold">{s.colContact}</h4>
             <div className="grid gap-2 text-sm">
               <a
-                href="/contact"
+                href={contactHref}
                 className="text-muted-foreground hover:text-foreground"
               >
                 {s.colContactHelp}
