@@ -3,9 +3,7 @@ builder = "DOCKERFILE"
 dockerfilePath = "packages/api/Dockerfile"
 
 [build.args]
-# Private network DNS (postgres.railway.internal) is unreachable from
-# the build environment — only resolves at runtime. Use the public
-# proxy URL for the build-time DB access Next.js does during prerender.
+# postgres.railway.internal only resolves at runtime; use public URL for build.
 DATABASE_URL = "$DATABASE_PUBLIC_URL"
 
 [deploy]
