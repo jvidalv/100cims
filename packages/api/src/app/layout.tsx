@@ -20,6 +20,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
+      <head>
+        <link
+          rel="preconnect"
+          href="https://dg49c3nlr5rbl.cloudfront.net"
+          crossOrigin=""
+        />
+      </head>
       <body
         className={`${bricolageGrotesque.variable} ${geistMono.variable} antialiased`}
       >

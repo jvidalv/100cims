@@ -42,6 +42,7 @@ export const AppIconPicker = () => {
   const labels: Record<(typeof APP_ICONS)[number]["labelKey"], string> = {
     default: intl.formatMessage({ defaultMessage: "Default" }),
     light: intl.formatMessage({ defaultMessage: "Light" }),
+    vell: intl.formatMessage({ defaultMessage: "Vell" }),
     merch: intl.formatMessage({ defaultMessage: "Or" }),
     share: intl.formatMessage({ defaultMessage: "Genteta" }),
     forcat: intl.formatMessage({ defaultMessage: "Forcat" }),

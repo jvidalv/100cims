@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 
 import { db } from "@/db";
-import { summitTable } from "@/db/schema";
+import { mountainTable, summitTable } from "@/db/schema";
 import { AdminSummitUpdateBodySchema } from "@/api/schemas/admin.schema";
 import {
   ErrorFieldResponse,
@@ -13,9 +13,42 @@ export const adminSummitUpdatePostRoute = new Elysia().post(
   "/summits/:id",
   async ({ params, body, set }) => {
     try {
+      const patch = { ...body };
+
+      // Admin cleared the image → fall back to the mountain's own imageUrl
+      // so we never write an empty string (summit.imageUrl is NOT NULL).
+      if (patch.imageUrl !== undefined && patch.imageUrl.trim() === "") {
+        const targetMountainId =
+          patch.mountainId !== undefined
+            ? patch.mountainId
+            : (
+                await db
+                  .select({ mountainId: summitTable.mountainId })
+                  .from(summitTable)
+                  .where(eq(summitTable.id, params.id))
+                  .limit(1)
+              )[0]?.mountainId;
+
+        const fallback = targetMountainId
+          ? (
+              await db
+                .select({ imageUrl: mountainTable.imageUrl })
+                .from(mountainTable)
+                .where(eq(mountainTable.id, targetMountainId))
+                .limit(1)
+            )[0]?.imageUrl
+          : null;
+
+        if (!fallback) {
+          set.status = 400;
+          return { error: "No image available on the linked mountain" };
+        }
+        patch.imageUrl = fallback;
+      }
+
       const [row] = await db
         .update(summitTable)
-        .set(body)
+        .set(patch)
         .where(eq(summitTable.id, params.id))
         .returning({ id: summitTable.id });
 

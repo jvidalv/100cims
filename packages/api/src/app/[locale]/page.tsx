@@ -91,24 +91,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const locale = asAppLocale((await params).locale);
   const t = await getTranslations({ locale, namespace: "home-page" });
   const alternates = getLocalizedAlternates(locale, "");
-  const title = t("title");
+  const metaTitle = t("meta-title");
+  const ogTitle = t("title");
   const description = t("subtitle");
   const ogImage = `${SITE_URL}/assets/logo.png`;
   return {
-    title,
+    title: metaTitle,
     description,
     alternates,
     openGraph: {
       type: "website",
       url: alternates.canonical,
       siteName: "Cims, sempre amunt",
-      title,
+      title: ogTitle,
       description,
-      images: [{ url: ogImage, width: 1024, height: 554, alt: title }],
+      images: [{ url: ogImage, width: 1024, height: 554, alt: ogTitle }],
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: ogTitle,
       description,
       images: [ogImage],
     },

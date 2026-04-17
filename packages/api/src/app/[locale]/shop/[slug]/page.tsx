@@ -47,18 +47,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const row = await getMerchBySlug(slug);
   if (!row) return {};
   const { name, description } = localizeMerch(row, locale);
+  const t = await getTranslations({ locale, namespace: "shop-page" });
+  const metaDescription = description
+    ? truncate(description, 160)
+    : t("product-meta-fallback", { name });
   const image = row.imageUrls[0];
   const alternates = getLocalizedAlternates(locale, `/shop/${slug}`);
   return {
     title: `${name} · Cims, sempre amunt`,
-    description: description ? truncate(description, 160) : undefined,
+    description: metaDescription,
     alternates,
     openGraph: {
       type: "website",
       url: alternates.canonical,
       siteName: "Cims, sempre amunt",
       title: name,
-      description: description ? truncate(description, 160) : undefined,
+      description: metaDescription,
       images: image
         ? [{ url: image, width: 1200, height: 1200, alt: name }]
         : undefined,
@@ -67,7 +71,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       ? {
           card: "summary_large_image",
           title: name,
-          description: description ? truncate(description, 160) : undefined,
+          description: metaDescription,
           images: [image],
         }
       : undefined,
@@ -125,9 +129,35 @@ export default async function MerchDetailPage({ params }: Props) {
     },
   };
 
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Cims, sempre amunt",
+        item: `${SITE_URL}/${locale}`,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: t("list-title"),
+        item: `${SITE_URL}/${locale}/shop`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name,
+        item: `${SITE_URL}/${locale}/shop/${row.slug}`,
+      },
+    ],
+  };
+
   return (
     <div lang={locale} className="min-h-screen flex flex-col">
       <JsonLd data={productLd} />
+      <JsonLd data={breadcrumbLd} />
       <main className="flex-1">
         <section className="py-12 sm:py-16 px-4">
           <div className="max-w-6xl mx-auto">

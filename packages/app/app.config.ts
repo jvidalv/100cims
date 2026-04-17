@@ -44,6 +44,13 @@ const config: ExpoConfig & { newArchEnabled?: boolean } = {
             backgroundColor: "#ffffff",
           },
         },
+        Vell: {
+          ios: "./assets/images/app-icons/icon-vell.png",
+          android: {
+            foregroundImage: "./assets/images/app-icons/icon-vell-fg.png",
+            backgroundColor: "#E1304A",
+          },
+        },
         Merch: {
           ios: "./assets/images/app-icons/icon-merch.png",
           android: {

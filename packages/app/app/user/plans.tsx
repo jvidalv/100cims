@@ -1,12 +1,12 @@
-import { Link } from "expo-router";
+import { useRouter } from "expo-router";
 import { Plus, Star } from "lucide-react-native";
 import { useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { Pressable, ScrollView, TouchableOpacity, View } from "react-native";
+import { Pressable, ScrollView, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
 import { LucideIcon, ThemedText, ThemedView } from "@/components/ui/atoms";
-import { ScreenHeader } from "@/components/ui/molecules";
+import { ActionRow, ScreenHeader } from "@/components/ui/molecules";
 import {
   PlanItemList,
   PlanItemListSkeleton,
@@ -16,6 +16,7 @@ import { useUserMe } from "@/domains/user/user.api";
 
 export default function UserPlansScreen() {
   const intl = useIntl();
+  const router = useRouter();
   const { data: me } = useUserMe();
   const [status, setStatus] = useState<PlanStatus>("open");
   const { data, isPending: isPendingPlans } = usePlans(
@@ -38,18 +39,10 @@ export default function UserPlansScreen() {
   return (
     <ThemedView className="flex-1">
       <ScreenHeader />
-      <View className="mb-3 flex-row items-end justify-between px-6">
+      <View className="mb-3 px-6">
         <ThemedText className="text-4xl font-bold">
           <FormattedMessage defaultMessage="My plans" />
         </ThemedText>
-        <Link href="/plan/create" asChild>
-          <TouchableOpacity className="flex-row items-center gap-1">
-            <ThemedText>
-              <FormattedMessage defaultMessage="New plan" />
-            </ThemedText>
-            <LucideIcon icon={Plus} size={18} />
-          </TouchableOpacity>
-        </Link>
       </View>
       <View className="mb-4 flex-row gap-1 px-6">
         {statuses.map(({ type: pillStatus, name }) => {
@@ -74,6 +67,16 @@ export default function UserPlansScreen() {
             </Pressable>
           );
         })}
+      </View>
+      <View className="mx-6 mb-4">
+        <ActionRow
+          icon={Plus}
+          size="lg"
+          intent="primary"
+          onPress={() => router.push("/plan/create")}
+        >
+          <FormattedMessage defaultMessage="New plan" />
+        </ActionRow>
       </View>
       <ScrollView contentContainerClassName="gap-3 px-6 pb-28">
         {isPendingPlans && (

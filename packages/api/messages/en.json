@@ -2,6 +2,7 @@
   "shop-page": {
     "list-title": "Shop",
     "list-subtitle": "Merch from the Cims, sempre amunt project.",
+    "product-meta-fallback": "{name} from the Cims, sempre amunt collection. Support the project.",
     "hero-eyebrow": "Shop",
     "hero-title": "Wear Cims, support Cims.",
     "hero-body": "Small-batch merch for the Cims app. Every purchase helps keep Cims free, ad-free, and independent.",
@@ -45,6 +46,7 @@
   },
   "home-page": {
     "title": "Cims, sempre amunt",
+    "meta-title": "Track your summits across Spain and Europe · Cims, sempre amunt",
     "subtitle": "The app to track the mountains you climb. 100 Cims, Sostres Comarcals, Essential Peaks and many more challenges in one app.",
     "download": "Download now",
     "features-title": "Features",
