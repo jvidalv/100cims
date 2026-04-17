@@ -91,6 +91,8 @@ export const summitTable = pgTable(
       onDelete: "cascade",
     }),
     imageUrl: text().notNull(),
+    // Bumped every time imageUrl changes so photo reports reset.
+    photoVersion: integer().notNull().default(0),
     validated: boolean().notNull().default(true),
     summitedAt: date().notNull(),
     createdAt: timestamp().notNull().defaultNow(),
@@ -98,6 +100,29 @@ export const summitTable = pgTable(
   (table) => [
     index("summit_user_id_idx").on(table.userId),
     index("summit_mountain_id_idx").on(table.mountainId),
+  ],
+);
+
+export const summitPhotoReportTable = pgTable(
+  "summit_photo_report",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    summitId: uuid()
+      .notNull()
+      .references(() => summitTable.id, { onDelete: "cascade" }),
+    reporterId: uuid()
+      .notNull()
+      .references(() => userTable.id, { onDelete: "cascade" }),
+    photoVersion: integer().notNull(),
+    createdAt: timestamp().notNull().defaultNow(),
+  },
+  (table) => [
+    index("summit_photo_report_summit_idx").on(table.summitId),
+    unique("summit_photo_report_unique_per_version").on(
+      table.summitId,
+      table.reporterId,
+      table.photoVersion,
+    ),
   ],
 );
 
@@ -252,6 +277,7 @@ export const challengeRelation = relations(challengeTable, ({ one, many }) => ({
 export const summitRelations = relations(summitTable, ({ one, many }) => ({
   summitHasUsers: many(summitHasUsersTable),
   reactions: many(summitReactionTable),
+  photoReports: many(summitPhotoReportTable),
   mountain: one(mountainTable, {
     fields: [summitTable.mountainId],
     references: [mountainTable.id],
@@ -261,6 +287,20 @@ export const summitRelations = relations(summitTable, ({ one, many }) => ({
     references: [userTable.id],
   }),
 }));
+
+export const summitPhotoReportRelations = relations(
+  summitPhotoReportTable,
+  ({ one }) => ({
+    summit: one(summitTable, {
+      fields: [summitPhotoReportTable.summitId],
+      references: [summitTable.id],
+    }),
+    reporter: one(userTable, {
+      fields: [summitPhotoReportTable.reporterId],
+      references: [userTable.id],
+    }),
+  }),
+);
 
 export const donorRelations = relations(donorTable, ({ one }) => ({
   user: one(userTable, {

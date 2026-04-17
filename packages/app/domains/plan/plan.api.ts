@@ -213,3 +213,21 @@ export const usePlanLeave = (planId: string) => {
     },
   });
 };
+
+export const useAdminDeletePlanMutation = () => {
+  return useMutation({
+    mutationKey: ["plan", "admin-delete"],
+    mutationFn: async ({ planId }: { planId: string }) => {
+      const { data, error } = await apiClient.DELETE(
+        "/api/protected/admin/plans/{id}",
+        { params: { path: { id: planId } } },
+      );
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (_, { planId }) => {
+      void queryClient.invalidateQueries({ queryKey: planKeys.all });
+      void queryClient.removeQueries({ queryKey: planKeys.one(planId) });
+    },
+  });
+};

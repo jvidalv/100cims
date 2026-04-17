@@ -38,6 +38,11 @@ export const useUserMe = () => {
   return props;
 };
 
+export const useIsAdmin = (): boolean => {
+  const { data } = useUserMe();
+  return data?.admin ?? false;
+};
+
 export const useUsers = ({
   query,
   mode,

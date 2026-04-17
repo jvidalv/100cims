@@ -134,6 +134,47 @@ export const useUpdateSummitMutation = () => {
   });
 };
 
+export const useAdminDeleteSummitMutation = () => {
+  return useMutation({
+    mutationKey: ["summit", "admin-delete"],
+    mutationFn: async ({ summitId }: { summitId: string }) => {
+      const { data, error } = await apiClient.DELETE(
+        "/api/protected/admin/summits/{id}",
+        { params: { path: { id: summitId } } },
+      );
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: SUMMITS_KEY({ mountainId: undefined, limit: undefined }),
+      });
+      void queryClient.invalidateQueries({ queryKey: userKeys.summits() });
+    },
+  });
+};
+
+export const useReportSummitMutation = () => {
+  return useMutation({
+    mutationKey: ["summit", "report"],
+    mutationFn: async ({ summitId }: { summitId: string }) => {
+      const { data, error } = await apiClient.POST(
+        "/api/protected/summit/report",
+        { body: { summitId } },
+      );
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data, { summitId }) => {
+      if (data?.autoReverted) {
+        void queryClient.invalidateQueries({
+          queryKey: summitKeys.one(summitId),
+        });
+      }
+    },
+  });
+};
+
 export const useSummitReactions = ({ summitId }: { summitId: string }) => {
   const { isAuthenticated } = useAuth();
 

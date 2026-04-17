@@ -12,6 +12,7 @@ export const UserSchema = t.Object({
   town: t.Nullable(t.String()),
   visibleOnHiscores: t.Boolean(),
   visibleOnPeopleSearch: t.Boolean(),
+  admin: t.Optional(t.Boolean()),
   locale: t.Nullable(t.String()),
   username: t.Nullable(t.String()),
   activeChallengeId: t.Nullable(t.String()),

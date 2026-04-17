@@ -1,4 +1,4 @@
-import { and, eq, ne } from "drizzle-orm";
+import { and, eq, ne, sql } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 
 import { isBase64SizeValid } from "@/api/lib/images";
@@ -49,7 +49,12 @@ export const summitUpdatePostRoute = new Elysia().post(
       if (Object.keys(updates).length > 0) {
         await tx
           .update(summitTable)
-          .set(updates)
+          .set({
+            ...updates,
+            ...(updates.imageUrl !== undefined
+              ? { photoVersion: sql`${summitTable.photoVersion} + 1` }
+              : {}),
+          })
           .where(eq(summitTable.id, summitId));
       }
 

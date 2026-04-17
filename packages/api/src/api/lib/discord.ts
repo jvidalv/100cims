@@ -9,6 +9,7 @@ interface DiscordEmbed {
   color: number;
   fields: DiscordEmbedField[];
   timestamp?: string;
+  image?: { url: string };
 }
 
 export const DISCORD_NEW_USER_WEBHOOK_URL =

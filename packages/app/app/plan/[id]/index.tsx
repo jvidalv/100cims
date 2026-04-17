@@ -10,6 +10,7 @@ import {
   MessagesSquare,
   Settings,
   Share as ShareIcon,
+  Trash2,
 } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
@@ -44,8 +45,13 @@ import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
 import { getMountainPts } from "@/domains/mountain/mountain.util";
 import { usePlanChatUnread } from "@/domains/plan/plan-chat.api";
 import { consumePlanCompletionImages } from "@/domains/plan/plan-completion-cache";
-import { usePlanJoin, usePlanLeave, usePlanOne } from "@/domains/plan/plan.api";
-import { useUserMe } from "@/domains/user/user.api";
+import {
+  useAdminDeletePlanMutation,
+  usePlanJoin,
+  usePlanLeave,
+  usePlanOne,
+} from "@/domains/plan/plan.api";
+import { useIsAdmin, useUserMe } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
 import {
   CONFETTI_EXPLOSION_SPEED,
@@ -116,10 +122,12 @@ export default function PlanIdPage() {
   const { data: chatsUnread } = usePlanChatUnread();
   const hasUnreadMessages = chatsUnread?.includes(id);
   const { data: user } = useUserMe();
+  const isAdmin = useIsAdmin();
   const { mutateAsync: joinPlan, isPending: isLoadingJoinPlan } =
     usePlanJoin(id);
   const { mutateAsync: leavePlan, isPending: isLoadingLeavePLan } =
     usePlanLeave(id);
+  const { mutateAsync: adminDeletePlan } = useAdminDeletePlanMutation();
   const intl = useIntl();
 
   const plan = data;
@@ -202,6 +210,29 @@ export default function PlanIdPage() {
         },
       ],
       { cancelable: true },
+    );
+  };
+
+  const handleAdminDelete = () => {
+    Alert.alert(
+      intl.formatMessage({ defaultMessage: "Delete as admin" }),
+      intl.formatMessage({
+        defaultMessage: "This removes the plan for everyone. Continue?",
+      }),
+      [
+        {
+          text: intl.formatMessage({ defaultMessage: "Cancel" }),
+          style: "cancel",
+        },
+        {
+          text: intl.formatMessage({ defaultMessage: "Yes" }),
+          style: "destructive",
+          onPress: async () => {
+            await adminDeletePlan({ planId: id });
+            router.back();
+          },
+        },
+      ],
     );
   };
 
@@ -530,6 +561,15 @@ export default function PlanIdPage() {
             className="opacity-80"
           >
             <FormattedMessage defaultMessage="Leave" />
+          </ActionRow>
+        )}
+        {isAdmin && (
+          <ActionRow
+            onPress={handleAdminDelete}
+            icon={Trash2}
+            intent="danger"
+          >
+            <FormattedMessage defaultMessage="Delete (admin)" />
           </ActionRow>
         )}
       </View>

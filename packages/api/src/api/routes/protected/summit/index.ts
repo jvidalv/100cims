@@ -4,6 +4,7 @@ import { summitDeletePostRoute } from "@/api/routes/protected/summit/summit.dele
 import { summitOneGetRoute } from "@/api/routes/protected/summit/summit.one.get";
 import { summitReactionPostRoute } from "@/api/routes/protected/summit/summit.reaction.post";
 import { summitReactionsGetRoute } from "@/api/routes/protected/summit/summit.reactions.get";
+import { summitReportPostRoute } from "@/api/routes/protected/summit/summit.report.post";
 import { summitUpdatePostRoute } from "@/api/routes/protected/summit/summit.update.post";
 
 export const summitRoute = new Elysia({ prefix: "/summit" })
@@ -11,4 +12,5 @@ export const summitRoute = new Elysia({ prefix: "/summit" })
   .use(summitDeletePostRoute)
   .use(summitUpdatePostRoute)
   .use(summitReactionPostRoute)
-  .use(summitReactionsGetRoute);
+  .use(summitReactionsGetRoute)
+  .use(summitReportPostRoute);
