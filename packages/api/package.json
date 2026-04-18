@@ -17,7 +17,6 @@
   "dependencies": {
     "@aws-sdk/client-cloudfront": "^3.1029.0",
     "@aws-sdk/client-s3": "^3.1018.0",
-    "@elysiajs/bearer": "^1.4.3",
     "@elysiajs/cors": "^1.4.1",
     "@elysiajs/cron": "^1.4.1",
     "@elysiajs/eden": "^1.4.9",
