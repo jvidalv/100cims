@@ -126,6 +126,9 @@ const checkRss = (): HealthCheck => {
 const checkEventLoop = (): HealthCheck => {
   const meanMs = loopMonitor.mean / 1e6;
   loopMonitor.reset();
+  if (!Number.isFinite(meanMs)) {
+    return { name: "event-loop", status: "healthy", message: "warming up" };
+  }
   const ms = Math.round(meanMs);
   if (ms > LAG_CRIT_MS) {
     return {
