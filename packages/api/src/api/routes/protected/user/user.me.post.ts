@@ -25,7 +25,7 @@ export const userMePostRoute = new Elysia().post(
     let imageUrl: string | undefined;
     const imageBase64 = body.image || body.imageUrl;
     if (imageBase64) {
-      if (!isBase64SizeValid(imageBase64, 2048)) {
+      if (!isBase64SizeValid(imageBase64)) {
         set.status = 500;
         return { error: IMAGE_TO_BIG };
       }

@@ -3,7 +3,6 @@ import { uuidv7 } from "uuidv7";
 import { getPublicUrl, putImageOnS3 } from "@/api/routes/@shared/s3";
 import { isBase64SizeValid } from "@/api/lib/images";
 
-const MAX_IMAGE_KB = 2048;
 const MAX_IMAGES = 4;
 
 export class MerchImageError extends Error {
@@ -28,7 +27,7 @@ export const resolveMerchImageUrls = async (
   return Promise.all(
     inputs.map(async (value) => {
       if (value.startsWith("http")) return value;
-      if (!isBase64SizeValid(value, MAX_IMAGE_KB)) {
+      if (!isBase64SizeValid(value)) {
         throw new MerchImageError(400, "Image too large");
       }
       const key = `${prefix}/${uuidv7()}.jpeg`;

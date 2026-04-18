@@ -34,7 +34,9 @@ export default function CreateMountainScreen() {
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
   const [essential, setEssential] = useState(false);
-  const { imageUri, imageBase64, pickImage } = useImagePicker();
+  const { imageUri, imageBase64, pickImage } = useImagePicker({
+    aspect: [1, 1],
+  });
 
   const handleSubmit = () => {
     const validation = validateMountainForm(

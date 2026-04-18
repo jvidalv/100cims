@@ -54,7 +54,7 @@ export default function MountainEditScreen() {
     hasChanged: hasImageChanged,
     pickImage,
     reset: resetImage,
-  } = useImagePicker({ initialUri: mountain?.imageUrl });
+  } = useImagePicker({ initialUri: mountain?.imageUrl, aspect: [1, 1] });
 
   useEffect(() => {
     if (!mountain) return;

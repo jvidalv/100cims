@@ -1,5 +1,3 @@
-import * as ImagePicker from "expo-image-picker";
-import { ImagePickerAsset } from "expo-image-picker";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Camera, Check, Clock } from "lucide-react-native";
 import { useState } from "react";
@@ -20,7 +18,7 @@ import { SUMMITS_KEY } from "@/domains/summit/summit.api";
 import { type PeoplePickerUser } from "@/domains/user/people-picker-session";
 import { useUserMe } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
-import { getImageOptimized } from "@/lib/images";
+import { useImagePicker } from "@/hooks/use-image-picker";
 import { logError } from "@/lib/log-error";
 import { userKeys } from "@/lib/query-keys";
 
@@ -32,8 +30,12 @@ export default function SummitMountainScreen() {
   const { data: mountains } = useMountains();
   const { data: user } = useUserMe();
 
-  const [image, setImage] = useState<ImagePickerAsset | null>(null);
-  const [isLoadingImage, setIsLoadingImage] = useState(false);
+  const {
+    imageUri,
+    imageBase64,
+    isLoading: isLoadingImage,
+    pickImage,
+  } = useImagePicker({ logTag: "mountain/summit/image-pick" });
   const [date, setDate] = useState<Date>(new Date());
   const [selectedUsers, setSelectedUsers] = useState<PeoplePickerUser[]>(
     user
@@ -53,33 +55,6 @@ export default function SummitMountainScreen() {
     return null;
   }
 
-  const pickImage = async () => {
-    setIsLoadingImage(true);
-    try {
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ["images"],
-        base64: true,
-        aspect: [4, 3],
-        quality: 0.7,
-      });
-      if (!result.canceled) {
-        const image = result.assets[0];
-
-        const modifiedImage = await getImageOptimized(image);
-        setImage(modifiedImage);
-      }
-    } catch (error) {
-      logError(error, "mountain/summit/image-pick");
-      Alert.alert(
-        intl.formatMessage({
-          defaultMessage: "Error, try again or use another image.",
-        }),
-      );
-    } finally {
-      setIsLoadingImage(false);
-    }
-  };
-
   const submitDisabled = !date || !selectedUsers?.length || !mountain;
 
   const onSubmit = async () => {
@@ -94,7 +69,7 @@ export default function SummitMountainScreen() {
     try {
       const result = await mutateAsync({
         date: date.toISOString(),
-        image: image?.base64 ?? undefined,
+        image: imageBase64 ?? undefined,
         mountainId: mountain?.id,
         usersId: selectedUsers.map((user) => user.id),
       });
@@ -155,11 +130,11 @@ export default function SummitMountainScreen() {
               onPress={pickImage}
               className="h-64 w-full items-center justify-center overflow-hidden rounded border-2 border-border bg-background"
             >
-              {image ? (
+              {imageUri ? (
                 <View className="relative size-full items-center justify-center">
                   <View className="absolute top-0 z-10 size-full">
                     <Image
-                      source={{ uri: image.uri }}
+                      source={{ uri: imageUri }}
                       style={{
                         width: "100%",
                         height: "100%",
@@ -169,7 +144,7 @@ export default function SummitMountainScreen() {
                   </View>
                   <Image
                     blurRadius={12}
-                    source={{ uri: image.uri }}
+                    source={{ uri: imageUri }}
                     style={{
                       width: "100%",
                       height: "100%",

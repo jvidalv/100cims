@@ -29,7 +29,7 @@ export const mountainLegacyPostRoute = new Elysia({ prefix: "/mountain" }).post(
     const id = uuidv7();
     const key = `${process.env.APP_NAME}/mountain/summit/${id}.jpeg`;
 
-    if (!isBase64SizeValid(body.image, 2048)) {
+    if (!isBase64SizeValid(body.image)) {
       set.status = 500;
       return { error: IMAGE_TO_BIG };
     }

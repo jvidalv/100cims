@@ -56,14 +56,14 @@ export const challengeCreatePostRoute = new Elysia().post(
     }
 
     // Validate challenge image size
-    if (body.image && !isBase64SizeValid(body.image, 2048)) {
+    if (body.image && !isBase64SizeValid(body.image)) {
       set.status = 400;
       return { error: IMAGE_TO_BIG };
     }
 
     // Validate all new mountain images
     for (const mountain of newMountains) {
-      if (!isBase64SizeValid(mountain.image, 2048)) {
+      if (!isBase64SizeValid(mountain.image)) {
         set.status = 400;
         return { error: IMAGE_TO_BIG };
       }

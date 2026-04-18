@@ -36,7 +36,7 @@ export const summitUpdatePostRoute = new Elysia().post(
     if (summitedAt) updates.summitedAt = summitedAt;
 
     if (image) {
-      if (!isBase64SizeValid(image, 2048)) {
+      if (!isBase64SizeValid(image)) {
         set.status = 500;
         return { success: false, message: IMAGE_TO_BIG };
       }
