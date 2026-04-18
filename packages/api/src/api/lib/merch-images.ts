@@ -27,6 +27,8 @@ export const resolveMerchImageUrls = async (
   return Promise.all(
     inputs.map(async (value) => {
       if (value.startsWith("http")) return value;
+      // Merch uploads are admin-only via the dashboard; size errors here
+      // are the admin's own concern, not a Discord-worthy signal.
       if (!isBase64SizeValid(value)) {
         throw new MerchImageError(400, "Image too large");
       }

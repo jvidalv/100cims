@@ -1,7 +1,7 @@
 import { and, eq, ne, sql } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 
-import { isBase64SizeValid } from "@/api/lib/images";
+import { isBase64SizeValid, reportImageTooBig } from "@/api/lib/images";
 import { getUserFromRequest } from "@/api/routes/@shared/auth";
 import { IMAGE_TO_BIG } from "@/api/routes/@shared/error-codes";
 import { getPublicUrl, putImageOnS3 } from "@/api/routes/@shared/s3";
@@ -37,6 +37,11 @@ export const summitUpdatePostRoute = new Elysia().post(
 
     if (image) {
       if (!isBase64SizeValid(image)) {
+        reportImageTooBig(request, {
+          route: "summit/update",
+          base64Data: image,
+          userId,
+        });
         set.status = 500;
         return { success: false, message: IMAGE_TO_BIG };
       }

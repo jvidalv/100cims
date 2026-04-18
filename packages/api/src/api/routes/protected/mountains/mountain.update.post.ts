@@ -4,7 +4,7 @@ import { uuidv7 } from "uuidv7";
 
 import { db } from "@/db";
 import { mountainTable } from "@/db/schema";
-import { isBase64SizeValid } from "@/api/lib/images";
+import { isBase64SizeValid, reportImageTooBig } from "@/api/lib/images";
 import { IMAGE_TO_BIG } from "@/api/routes/@shared/error-codes";
 import { getPublicUrl, putImageOnS3 } from "@/api/routes/@shared/s3";
 import { getUserFromRequest } from "@/api/routes/@shared/auth";
@@ -24,6 +24,11 @@ export const mountainUpdatePostRoute = new Elysia().post(
 
     // Validate image size early (before any DB operations)
     if (body.image && !isBase64SizeValid(body.image)) {
+      reportImageTooBig(request, {
+        route: "mountains/update",
+        base64Data: body.image,
+        userId: user.id,
+      });
       set.status = 400;
       return { error: IMAGE_TO_BIG };
     }

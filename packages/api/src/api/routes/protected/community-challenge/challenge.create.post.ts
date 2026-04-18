@@ -8,7 +8,7 @@ import {
   mountainTable,
   challengeHasMountainTable,
 } from "@/db/schema";
-import { isBase64SizeValid } from "@/api/lib/images";
+import { isBase64SizeValid, reportImageTooBig } from "@/api/lib/images";
 import { generateSlug } from "@/api/lib/slug";
 import { IMAGE_TO_BIG } from "@/api/routes/@shared/error-codes";
 import { getPublicUrl, putImageOnS3 } from "@/api/routes/@shared/s3";
@@ -57,6 +57,11 @@ export const challengeCreatePostRoute = new Elysia().post(
 
     // Validate challenge image size
     if (body.image && !isBase64SizeValid(body.image)) {
+      reportImageTooBig(request, {
+        route: "community-challenge/create",
+        base64Data: body.image,
+        userId: user.id,
+      });
       set.status = 400;
       return { error: IMAGE_TO_BIG };
     }
@@ -64,6 +69,11 @@ export const challengeCreatePostRoute = new Elysia().post(
     // Validate all new mountain images
     for (const mountain of newMountains) {
       if (!isBase64SizeValid(mountain.image)) {
+        reportImageTooBig(request, {
+          route: "community-challenge/create#newMountain",
+          base64Data: mountain.image,
+          userId: user.id,
+        });
         set.status = 400;
         return { error: IMAGE_TO_BIG };
       }
