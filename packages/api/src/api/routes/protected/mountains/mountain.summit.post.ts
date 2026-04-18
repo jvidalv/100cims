@@ -5,7 +5,7 @@ import { uuidv7 } from "uuidv7";
 import { db } from "@/db";
 import { mountainTable, summitHasUsersTable, summitTable } from "@/db/schema";
 import { formatDateForPostgresFromISOString } from "@/api/lib/dates";
-import { isBase64SizeValid } from "@/api/lib/images";
+import { isBase64SizeValid, reportImageTooBig } from "@/api/lib/images";
 import { sendPushLocalized } from "@/api/lib/push";
 import {
   pushSummitTaggedBody,
@@ -37,6 +37,11 @@ export const mountainSummitPostRoute = new Elysia().post(
     let imageUrl: string;
     if (body.image) {
       if (!isBase64SizeValid(body.image)) {
+        reportImageTooBig(request, {
+          route: "mountains/summit",
+          base64Data: body.image,
+          userId: actor.id,
+        });
         set.status = 500;
         return { error: IMAGE_TO_BIG };
       }

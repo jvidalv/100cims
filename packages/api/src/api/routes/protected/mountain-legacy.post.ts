@@ -14,7 +14,7 @@ import { uuidv7 } from "uuidv7";
 import { db } from "@/db";
 import { mountainTable, summitHasUsersTable, summitTable } from "@/db/schema";
 import { formatDateForPostgresFromISOString } from "@/api/lib/dates";
-import { isBase64SizeValid } from "@/api/lib/images";
+import { isBase64SizeValid, reportImageTooBig } from "@/api/lib/images";
 import { IMAGE_TO_BIG } from "@/api/routes/@shared/error-codes";
 import { getPublicUrl, putImageOnS3 } from "@/api/routes/@shared/s3";
 import { unlockIcon } from "@/api/routes/@shared/unlockables";
@@ -25,11 +25,15 @@ import {
 
 export const mountainLegacyPostRoute = new Elysia({ prefix: "/mountain" }).post(
   "/summit",
-  async ({ body, set }) => {
+  async ({ body, request, set }) => {
     const id = uuidv7();
     const key = `${process.env.APP_NAME}/mountain/summit/${id}.jpeg`;
 
     if (!isBase64SizeValid(body.image)) {
+      reportImageTooBig(request, {
+        route: "mountain-legacy/summit",
+        base64Data: body.image,
+      });
       set.status = 500;
       return { error: IMAGE_TO_BIG };
     }

@@ -4,7 +4,7 @@ import { uuidv7 } from "uuidv7";
 
 import { db } from "@/db";
 import { userTable } from "@/db/schema";
-import { isBase64SizeValid } from "@/api/lib/images";
+import { isBase64SizeValid, reportImageTooBig } from "@/api/lib/images";
 import {
   IMAGE_TO_BIG,
   IMAGE_UPLOAD_FAILED,
@@ -26,6 +26,11 @@ export const userMePostRoute = new Elysia().post(
     const imageBase64 = body.image || body.imageUrl;
     if (imageBase64) {
       if (!isBase64SizeValid(imageBase64)) {
+        reportImageTooBig(request, {
+          route: "user/me",
+          base64Data: imageBase64,
+          userId: user.id,
+        });
         set.status = 500;
         return { error: IMAGE_TO_BIG };
       }
