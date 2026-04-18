@@ -51,7 +51,7 @@ import { adminUserUpdatePostRoute } from "@/api/routes/admin/admin.user-update.p
 import { adminUsersGetRoute } from "@/api/routes/admin/admin.users.get";
 
 export const adminRoutes = new Elysia({ prefix: "/admin" })
-  .resolve(async ({ request, set }) => {
+  .onBeforeHandle(async ({ request, set }) => {
     const unauthorized = () => {
       set.status = 401;
       return { error: "Unauthorized" };
@@ -64,6 +64,7 @@ export const adminRoutes = new Elysia({ prefix: "/admin" })
     const token = await getToken({
       req: request,
       secret: process.env.AUTH_SECRET,
+      secureCookie: process.env.AUTH_URL?.startsWith("https://"),
     });
     if (!token || typeof token.userId !== "string") return unauthorized();
 
@@ -76,7 +77,6 @@ export const adminRoutes = new Elysia({ prefix: "/admin" })
     if (!row.admin) return forbidden();
 
     setAdminContext(request, { userId: token.userId });
-    return { userId: token.userId };
   })
   .use(adminMeGetRoute)
   .use(adminUsersGetRoute)
