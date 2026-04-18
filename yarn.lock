@@ -1420,11 +1420,6 @@
   dependencies:
     "@types/hammerjs" "^2.0.36"
 
-"@elysiajs/bearer@^1.4.3":
-  version "1.4.3"
-  resolved "https://registry.yarnpkg.com/@elysiajs/bearer/-/bearer-1.4.3.tgz#ff311257cd25b06f1ed1dd0fda50b8e3b03062d5"
-  integrity sha512-UWJ94jGGOzSlD3CCspC11/vFGKwy6RI9QvaZVPzlSu1Wxp/pKmOhKA+R2ppfbluMHXfxcc2xgK3x4+uuCML7GA==
-
 "@elysiajs/cors@^1.4.1":
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/@elysiajs/cors/-/cors-1.4.1.tgz#08150fd9fd6b42773f352609712f7b32e66ca117"

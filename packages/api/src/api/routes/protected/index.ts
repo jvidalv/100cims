@@ -1,4 +1,3 @@
-import { bearer } from "@elysiajs/bearer";
 import { eq } from "drizzle-orm";
 import { Elysia } from "elysia";
 
@@ -18,13 +17,14 @@ import { userRoute } from "@/api/routes/protected/user";
 
 export const protectedRoutes = new Elysia({ prefix: "/protected" })
   .use(JWT())
-  .use(bearer())
-  .resolve(async ({ jwt, bearer, request, set }) => {
+  .resolve(async ({ jwt, request, set }) => {
     const unauthorizedResponse = () => {
       set.status = 401;
       return { error: "Unauthorized" };
     };
 
+    const auth = request.headers.get("authorization");
+    const bearer = auth?.startsWith("Bearer ") ? auth.slice(7) : undefined;
     if (!bearer) {
       return unauthorizedResponse();
     }
