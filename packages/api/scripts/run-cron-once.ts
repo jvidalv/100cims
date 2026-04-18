@@ -5,7 +5,7 @@
  * so it can't accidentally fire while you're running `yarn api dev`. To run one
  * by hand you must opt in by setting NODE_ENV explicitly on the command line:
  *
- *   NODE_ENV=production yarn tsx scripts/run-cron-once.ts <backfill|sync|optimize>
+ *   NODE_ENV=production yarn tsx scripts/run-cron-once.ts <backfill|sync>
  *
  * WARNING: this hits whatever S3 bucket and Postgres DB are configured in the
  * loaded env (.env.local by default — that's your dev resources). Double-check
@@ -14,11 +14,10 @@
 import "dotenv/config";
 
 import { backfillS3CacheHeaders } from "@/api/cron/backfill-s3-cache-headers";
-import { optimizeS3Images } from "@/api/cron/optimize-s3-images";
 import { syncImageUrlsToCdn } from "@/api/cron/sync-image-urls-to-cdn";
 
 const USAGE =
-  "usage: NODE_ENV=production yarn tsx scripts/run-cron-once.ts <backfill|sync|optimize>";
+  "usage: NODE_ENV=production yarn tsx scripts/run-cron-once.ts <backfill|sync>";
 
 if (process.env.NODE_ENV !== "production") {
   console.error(
@@ -38,8 +37,6 @@ const main = async () => {
     await backfillS3CacheHeaders();
   } else if (which === "sync") {
     await syncImageUrlsToCdn();
-  } else if (which === "optimize") {
-    await optimizeS3Images();
   } else {
     console.error(USAGE);
     process.exit(1);

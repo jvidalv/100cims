@@ -3,7 +3,6 @@ import { backfillS3CacheHeaders } from "@/api/cron/backfill-s3-cache-headers";
 import { cancelAbandonedPlans } from "@/api/cron/cancel-abandoned-plans";
 import { cleanupOrphanMountains } from "@/api/cron/cleanup-orphan-mountains";
 import { completeStalePlans } from "@/api/cron/complete-stale-plans";
-import { optimizeS3Images } from "@/api/cron/optimize-s3-images";
 import { syncImageUrlsToCdn } from "@/api/cron/sync-image-urls-to-cdn";
 import { monitorHealth } from "@/api/cron/monitor-health";
 import { recommendWeeklyMountain } from "@/api/cron/recommend-weekly-mountain";
@@ -59,13 +58,6 @@ export const CRON_REGISTRY: CronEntry[] = [
     description:
       "Ping internal health check every 10 minutes and alert via Discord on failure.",
     fn: monitorHealth,
-  },
-  {
-    name: "optimize-s3-images",
-    pattern: "0 0 5 1,15 * *",
-    description:
-      "Re-encode JPEGs > 250 KB at q=80 / max 1600px wide. Marks objects 'optimized: v1' to skip re-runs. Issues one CloudFront invalidation if any object changed. Runs the 1st and 15th of each month at 05:00.",
-    fn: optimizeS3Images,
   },
   {
     name: "cancel-abandoned-plans",
