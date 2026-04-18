@@ -1,5 +1,5 @@
 import { Redirect, useRouter } from "expo-router";
-import { Plus, Star } from "lucide-react-native";
+import { Flag, Plus, Star } from "lucide-react-native";
 import { useCallback, useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
@@ -192,6 +192,13 @@ export default function UserChallengesScreen() {
             onPress={() => router.push("/challenge/create")}
           >
             <FormattedMessage defaultMessage="New challenge" />
+          </ActionRow>
+          <ActionRow
+            icon={Flag}
+            size="lg"
+            onPress={() => router.push("/challenges")}
+          >
+            <FormattedMessage defaultMessage="Official challenges" />
           </ActionRow>
         </View>
       )}

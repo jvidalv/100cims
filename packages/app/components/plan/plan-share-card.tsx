@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 import { LinearGradient } from "expo-linear-gradient";
-import { forwardRef } from "react";
+import { forwardRef, ReactNode } from "react";
+import { FormattedMessage } from "react-intl";
 import { Image, StyleSheet, View } from "react-native";
 
 import { Avatar, ThemedText } from "@/components/ui/atoms";
@@ -84,6 +85,48 @@ const PhotoGrid = ({ images }: { images: (string | null)[] }) => {
   );
 };
 
+const MetaRow = ({ items }: { items: (ReactNode | null)[] }) => {
+  const visible = items.filter((item): item is ReactNode => item != null);
+  return (
+    <View
+      style={{
+        marginTop: 8,
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 10,
+        flexWrap: "wrap",
+      }}
+    >
+      {visible.map((item, i) => (
+        <View
+          key={i}
+          style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
+        >
+          {i > 0 && (
+            <View
+              style={{
+                width: 3,
+                height: 3,
+                borderRadius: 999,
+                backgroundColor: "rgba(255,255,255,0.6)",
+              }}
+            />
+          )}
+          <ThemedText
+            style={{
+              color: "rgba(255,255,255,0.85)",
+              fontSize: 14,
+              fontWeight: "600",
+            }}
+          >
+            {item}
+          </ThemedText>
+        </View>
+      ))}
+    </View>
+  );
+};
+
 // Styles are inline rather than NativeWind classes because react-native-view-shot
 // doesn't reliably serialize className-based styles into the captured image.
 export const PlanShareCard = forwardRef<View, Props>(
@@ -138,81 +181,41 @@ export const PlanShareCard = forwardRef<View, Props>(
             numberOfLines={2}
             style={{
               color: "white",
-              fontSize: 34,
+              fontSize: 28,
               fontWeight: "800",
               letterSpacing: -0.5,
-              lineHeight: 38,
+              lineHeight: 32,
             }}
           >
             {title}
           </ThemedText>
 
-          <View
-            style={{
-              marginTop: 10,
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 10,
-              flexWrap: "wrap",
-            }}
-          >
-            {totalHeight > 0 && (
-              <ThemedText
-                style={{
-                  color: "rgba(255,255,255,0.85)",
-                  fontSize: 14,
-                  fontWeight: "600",
-                }}
-              >
-                {totalHeight}m
-              </ThemedText>
-            )}
-            {totalHeight > 0 && (
-              <View
-                style={{
-                  width: 3,
-                  height: 3,
-                  borderRadius: 999,
-                  backgroundColor: "rgba(255,255,255,0.6)",
-                }}
-              />
-            )}
-            <ThemedText
-              style={{
-                color: "rgba(255,255,255,0.85)",
-                fontSize: 14,
-                fontWeight: "600",
-              }}
-            >
-              {format(new Date(date), "dd MMM yyyy")}
-            </ThemedText>
-            {summitCount > 0 && (
-              <>
-                <View
-                  style={{
-                    width: 3,
-                    height: 3,
-                    borderRadius: 999,
-                    backgroundColor: "rgba(255,255,255,0.6)",
-                  }}
-                />
-                <ThemedText
-                  style={{
-                    color: "white",
-                    fontSize: 14,
-                    fontWeight: "700",
-                  }}
-                >
-                  {summitCount} cims
-                </ThemedText>
-              </>
-            )}
-          </View>
+          <MetaRow
+            items={[
+              totalHeight > 0 ? `${totalHeight}m` : null,
+              format(new Date(date), "dd MMM yyyy"),
+              summitCount > 0 ? (
+                summitCount === 1 ? (
+                  <FormattedMessage
+                    key="summit-count"
+                    defaultMessage="{count} summit"
+                    values={{ count: summitCount }}
+                  />
+                ) : (
+                  <FormattedMessage
+                    key="summit-count"
+                    defaultMessage="{count} summits"
+                    values={{ count: summitCount }}
+                  />
+                )
+              ) : null,
+            ]}
+          />
 
           {users.length > 0 && (
             <View
               style={{
-                marginTop: 18,
+                marginTop: 12,
                 flexDirection: "row",
                 alignItems: "center",
               }}

@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 import { LinearGradient } from "expo-linear-gradient";
 import { forwardRef } from "react";
+import { FormattedMessage } from "react-intl";
 import { Image, StyleSheet, View } from "react-native";
 
 import { Avatar, ThemedText } from "@/components/ui/atoms";
@@ -97,10 +98,10 @@ export const SummitShareCard = forwardRef<View, Props>(
             numberOfLines={2}
             style={{
               color: "white",
-              fontSize: 34,
+              fontSize: 28,
               fontWeight: "800",
               letterSpacing: -0.5,
-              lineHeight: 38,
+              lineHeight: 32,
             }}
           >
             {mountainName}
@@ -108,7 +109,7 @@ export const SummitShareCard = forwardRef<View, Props>(
 
           <View
             style={{
-              marginTop: 10,
+              marginTop: 8,
               flexDirection: "row",
               alignItems: "center",
               gap: 10,
@@ -152,12 +153,12 @@ export const SummitShareCard = forwardRef<View, Props>(
                 />
                 <ThemedText
                   style={{
-                    color: "white",
+                    color: "rgba(255,255,255,0.85)",
                     fontSize: 14,
-                    fontWeight: "700",
+                    fontWeight: "600",
                   }}
                 >
-                  Essential
+                  <FormattedMessage defaultMessage="Essential" />
                 </ThemedText>
               </>
             )}
@@ -166,7 +167,7 @@ export const SummitShareCard = forwardRef<View, Props>(
           {users.length > 0 && (
             <View
               style={{
-                marginTop: 18,
+                marginTop: 12,
                 flexDirection: "row",
                 alignItems: "center",
               }}

@@ -23,7 +23,11 @@ import {
   Skeleton,
   ThemedText,
 } from "@/components/ui/atoms";
-import { ActionRow, PersonRow } from "@/components/ui/molecules";
+import {
+  ActionRow,
+  PersonRow,
+  SharePreviewModal,
+} from "@/components/ui/molecules";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
 import { UserShareCard } from "@/components/user";
 import {
@@ -37,7 +41,7 @@ import {
 } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
 import { logError } from "@/lib/log-error";
-import { captureAndShare, shareDeeplink } from "@/lib/share";
+import { captureShareCard, shareDeeplink } from "@/lib/share";
 
 export default function UserScreen() {
   const intl = useIntl();
@@ -54,6 +58,7 @@ export default function UserScreen() {
 
   const shareCardRef = useRef<View>(null);
   const [isSharing, setIsSharing] = useState(false);
+  const [shareUri, setShareUri] = useState<string | null>(null);
 
   const sharedUsers = userDetails?.sharedUsers ?? [];
   const topSummits = [...(summits ?? [])]
@@ -79,18 +84,21 @@ export default function UserScreen() {
   const handleShareSocial = async () => {
     if (!user || isSharing) return;
     setIsSharing(true);
-    await captureAndShare({
+    const uri = await captureShareCard({
       cardRef: shareCardRef,
       prefetchUrls: [
         user.imageUrl,
         ...topSummits.map((s) => s.imageUrl),
         ...sharedUsers.slice(0, 3).map((u) => u.imageUrl),
       ],
-      dialogTitle: intl.formatMessage({ defaultMessage: "Share profile" }),
-      fallback: handleShareLink,
       logTag: "user/share-card",
     });
     setIsSharing(false);
+    if (uri) {
+      setShareUri(uri);
+    } else {
+      await handleShareLink();
+    }
   };
 
   const { data: myPeople } = useUserPeople();
@@ -360,6 +368,12 @@ export default function UserScreen() {
           />
         </View>
       )}
+      <SharePreviewModal
+        visible={!!shareUri}
+        imageUri={shareUri}
+        dialogTitle={intl.formatMessage({ defaultMessage: "Share profile" })}
+        onClose={() => setShareUri(null)}
+      />
     </>
   );
 }

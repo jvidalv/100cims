@@ -75,17 +75,17 @@ export const UserShareCard = forwardRef<View, Props>(
             numberOfLines={2}
             style={{
               color: "white",
-              fontSize: 34,
+              fontSize: 28,
               fontWeight: "800",
               letterSpacing: -0.5,
-              lineHeight: 38,
+              lineHeight: 32,
             }}
           >
             {fullName}
           </ThemedText>
 
           {hasSummits && (
-            <View style={{ marginTop: 14, gap: 8 }}>
+            <View style={{ marginTop: 10, gap: 8 }}>
               {[0, 1].map((row) => {
                 const rowSlots = Array.from({ length: 5 }, (_, col) => {
                   const slotIndex = row * 5 + col;
