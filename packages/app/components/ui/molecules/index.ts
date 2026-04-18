@@ -16,6 +16,7 @@ export {
 } from "./filterable-list-header";
 export { UpdatesDialog, type Update } from "./updates-dialog";
 export { ImagePreviewModal, useImagePreview } from "./image-preview-modal";
+export { SharePreviewModal } from "./share-preview-modal";
 export { ActionRow, type ActionRowIntent } from "./action-row";
 export { FloatingCartButton } from "./floating-cart-button";
 export { SharePulseBadge } from "./share-pulse-badge";

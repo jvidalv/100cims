@@ -36,6 +36,7 @@ import {
   ImagePreviewModal,
   MountainItemList,
   ScreenHeader,
+  SharePreviewModal,
   SharePulseBadge,
   useImagePreview,
 } from "@/components/ui/molecules";
@@ -53,7 +54,7 @@ import {
   CONFETTI_FALL_SPEED,
   getConfettiOrigin,
 } from "@/lib/confetti";
-import { captureAndShare, shareDeeplink } from "@/lib/share";
+import { captureShareCard, shareDeeplink } from "@/lib/share";
 import { getInitials } from "@/lib/strings";
 
 const Content = () => {
@@ -81,6 +82,7 @@ const Content = () => {
 
   const shareCardRef = useRef<View>(null);
   const [isSharing, setIsSharing] = useState(false);
+  const [shareUri, setShareUri] = useState<string | null>(null);
 
   const isUserParticipant = data?.users.some((user) => user.userId === me?.id);
 
@@ -100,14 +102,17 @@ const Content = () => {
   const handleShare = async () => {
     if (!data || isSharing) return;
     setIsSharing(true);
-    await captureAndShare({
+    const uri = await captureShareCard({
       cardRef: shareCardRef,
       prefetchUrls: [data.summitImageUrl],
-      dialogTitle: intl.formatMessage({ defaultMessage: "Share summit" }),
-      fallback: shareTextFallback,
       logTag: "summit/share-card",
     });
     setIsSharing(false);
+    if (uri) {
+      setShareUri(uri);
+    } else {
+      await shareTextFallback();
+    }
   };
 
   const handleDelete = () => {
@@ -377,6 +382,12 @@ const Content = () => {
         visible={isPreviewOpen}
         imageSource={previewImage}
         onClose={closePreview}
+      />
+      <SharePreviewModal
+        visible={!!shareUri}
+        imageUri={shareUri}
+        dialogTitle={intl.formatMessage({ defaultMessage: "Share summit" })}
+        onClose={() => setShareUri(null)}
       />
       {justCreated && (
         <ConfettiCannon

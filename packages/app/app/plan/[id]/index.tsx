@@ -39,6 +39,7 @@ import {
 import {
   ActionRow,
   MountainItemList,
+  SharePreviewModal,
   SharePulseBadge,
 } from "@/components/ui/molecules";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
@@ -59,7 +60,7 @@ import {
   getConfettiOrigin,
 } from "@/lib/confetti";
 import { formatDayDistance } from "@/lib/dates";
-import { captureAndShare, shareDeeplink } from "@/lib/share";
+import { captureShareCard, shareDeeplink } from "@/lib/share";
 import { getInitials } from "@/lib/strings";
 
 const PlanSummits = ({
@@ -142,6 +143,7 @@ export default function PlanIdPage() {
   }, [id, justCompleted]);
   const shareCardRef = useRef<View>(null);
   const [isSharing, setIsSharing] = useState(false);
+  const [shareUri, setShareUri] = useState<string | null>(null);
   const isCreator = user?.id === plan?.creatorId;
   const hasJoined = plan?.users.some((u) => u.id === user?.id);
 
@@ -171,15 +173,22 @@ export default function PlanIdPage() {
 
   const onShare = async () => {
     if (!plan || isSharing) return;
+    if (!isCompleted) {
+      await shareTextFallback();
+      return;
+    }
     setIsSharing(true);
-    await captureAndShare({
+    const uri = await captureShareCard({
       cardRef: shareCardRef,
       prefetchUrls: plan.mountains.slice(0, 4).map((m) => m.imageUrl),
-      dialogTitle: intl.formatMessage({ defaultMessage: "Share plan" }),
-      fallback: shareTextFallback,
       logTag: "plan/share-card",
     });
     setIsSharing(false);
+    if (uri) {
+      setShareUri(uri);
+    } else {
+      await shareTextFallback();
+    }
   };
 
   const handleJoin = () => {
@@ -575,13 +584,21 @@ export default function PlanIdPage() {
       </View>
       {!!plan.mountains?.length && <PlanSummits mountains={plan.mountains} />}
     </ParallaxScrollView>
-      <View
-        collapsable={false}
-        pointerEvents="none"
-        style={{ position: "absolute", left: -10000, top: 0 }}
-      >
-        <PlanShareCard ref={shareCardRef} {...sharePayload} />
-      </View>
+      {isCompleted && (
+        <View
+          collapsable={false}
+          pointerEvents="none"
+          style={{ position: "absolute", left: -10000, top: 0 }}
+        >
+          <PlanShareCard ref={shareCardRef} {...sharePayload} />
+        </View>
+      )}
+      <SharePreviewModal
+        visible={!!shareUri}
+        imageUri={shareUri}
+        dialogTitle={intl.formatMessage({ defaultMessage: "Share plan" })}
+        onClose={() => setShareUri(null)}
+      />
       {justCompleted && (
         <ConfettiCannon
           count={confettiCount}
