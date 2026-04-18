@@ -17,7 +17,8 @@
     "postinstall": "git config core.hooksPath .githooks || true"
   },
   "devDependencies": {
-    "eslint": "9.39.2"
+    "eslint": "9.39.2",
+    "node-gyp": "^12.2.0"
   },
   "resolutions": {
     "lightningcss": "1.30.1",
