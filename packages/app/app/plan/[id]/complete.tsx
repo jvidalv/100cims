@@ -1,5 +1,4 @@
 import { format } from "date-fns/format";
-import * as ImagePicker from "expo-image-picker";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Camera } from "lucide-react-native";
 import { useState } from "react";
@@ -22,7 +21,7 @@ import { useSummitPost } from "@/domains/mountain/mountain.api";
 import { getMountainPts } from "@/domains/mountain/mountain.util";
 import { stashPlanCompletionImages } from "@/domains/plan/plan-completion-cache";
 import { usePlanOne, usePlanUpdate } from "@/domains/plan/plan.api";
-import { getImageOptimized } from "@/lib/images";
+import { pickAndOptimizeImage } from "@/lib/images";
 import { logError } from "@/lib/log-error";
 
 export default function PlanCompleteScreen() {
@@ -43,19 +42,9 @@ export default function PlanCompleteScreen() {
   const handlePickImage = async (mountainId: string) => {
     try {
       setIsHandlingImages(mountainId);
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ["images"],
-        base64: true,
-        aspect: [4, 3],
-        quality: 0.7,
-      });
-
-      if (!result.canceled && result.assets[0]) {
-        const optimized = await getImageOptimized(result.assets[0]);
-        const base64 = optimized.base64;
-        if (!!base64) {
-          setImages((prev) => ({ ...prev, [mountainId]: base64 }));
-        }
+      const result = await pickAndOptimizeImage();
+      if (result?.optimized.base64) {
+        setImages((prev) => ({ ...prev, [mountainId]: result.optimized.base64! }));
       }
     } catch (error) {
       logError(error, "plan/complete/image");

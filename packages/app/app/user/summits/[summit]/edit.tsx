@@ -1,5 +1,3 @@
-import * as ImagePicker from "expo-image-picker";
-import { ImagePickerAsset } from "expo-image-picker";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Camera, Check, X } from "lucide-react-native";
 import { useState } from "react";
@@ -23,7 +21,7 @@ import {
 import { type PeoplePickerUser } from "@/domains/user/people-picker-session";
 import { useUserMe } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
-import { getImageOptimized } from "@/lib/images";
+import { useImagePicker } from "@/hooks/use-image-picker";
 import { logError } from "@/lib/log-error";
 
 export default function EditSummitScreen() {
@@ -34,8 +32,12 @@ export default function EditSummitScreen() {
   const { data: me } = useUserMe();
   const { mutateAsync, isPending } = useUpdateSummitMutation();
 
-  const [image, setImage] = useState<ImagePickerAsset | null>(null);
-  const [isLoadingImage, setIsLoadingImage] = useState(false);
+  const {
+    imageUri: pickedUri,
+    imageBase64,
+    isLoading: isLoadingImage,
+    pickImage,
+  } = useImagePicker({ logTag: "summit/edit/image-pick" });
   const [date, setDate] = useState<Date | null>(null);
   const [selectedUsers, setSelectedUsers] = useState<
     PeoplePickerUser[] | null
@@ -63,32 +65,6 @@ export default function EditSummitScreen() {
   const effectiveDate = date ?? initialDate;
   const effectiveUsers = selectedUsers ?? initialUsers;
 
-  const pickImage = async () => {
-    setIsLoadingImage(true);
-    try {
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ["images"],
-        base64: true,
-        aspect: [4, 3],
-        quality: 0.7,
-      });
-      if (!result.canceled) {
-        const picked = result.assets[0];
-        const modifiedImage = await getImageOptimized(picked);
-        setImage(modifiedImage);
-      }
-    } catch (error) {
-      logError(error, "summit/edit/image-pick");
-      Alert.alert(
-        intl.formatMessage({
-          defaultMessage: "Error, try again or use another image.",
-        }),
-      );
-    } finally {
-      setIsLoadingImage(false);
-    }
-  };
-
   const onSubmit = async () => {
     const payload: {
       summitId: string;
@@ -100,8 +76,8 @@ export default function EditSummitScreen() {
     if (date && date.toISOString() !== initialDate.toISOString()) {
       payload.summitedAt = date.toISOString();
     }
-    if (image?.base64) {
-      payload.image = image.base64;
+    if (imageBase64) {
+      payload.image = imageBase64;
     }
     if (selectedUsers) {
       const initialIds = initialUsers.map((u) => u.id).sort().join(",");
@@ -122,7 +98,7 @@ export default function EditSummitScreen() {
     }
   };
 
-  const displayImageUri = image?.uri ?? data.summitImageUrl;
+  const displayImageUri = pickedUri ?? data.summitImageUrl;
 
   return (
     <ThemedView className="flex-1">

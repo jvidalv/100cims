@@ -36,7 +36,7 @@ export const mountainSummitPostRoute = new Elysia().post(
 
     let imageUrl: string;
     if (body.image) {
-      if (!isBase64SizeValid(body.image, 2048)) {
+      if (!isBase64SizeValid(body.image)) {
         set.status = 500;
         return { error: IMAGE_TO_BIG };
       }

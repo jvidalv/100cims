@@ -1,4 +1,3 @@
-import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import { Camera } from "lucide-react-native";
 import React, { useEffect, useMemo, useState } from "react";
@@ -35,7 +34,7 @@ import {
 } from "@/domains/user/user.api";
 import { debounce } from "@/lib/debounce";
 import { IMAGE_TO_BIG } from "@/lib/error-codes";
-import { getImageOptimized } from "@/lib/images";
+import { pickAndOptimizeImage } from "@/lib/images";
 import { logError } from "@/lib/log-error";
 import { userKeys } from "@/lib/query-keys";
 
@@ -63,23 +62,15 @@ export default function UserMeScreen() {
 
   const pickImage = async () => {
     try {
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ["images"],
-        base64: true,
-        aspect: [4, 3],
-        quality: 0.7,
-      });
+      const result = await pickAndOptimizeImage({ aspect: [1, 1] });
 
-      if (!result.canceled) {
-        const pickedImage = result.assets[0];
-        setImage(pickedImage.uri);
+      if (result) {
+        setImage(result.picked.uri);
 
-        const imageOptimized = await getImageOptimized(pickedImage);
-
-        if (imageOptimized.base64) {
+        if (result.optimized.base64) {
           try {
             await updateUserMe({
-              imageUrl: imageOptimized.base64,
+              imageUrl: result.optimized.base64,
             });
 
             void refetch();

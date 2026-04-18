@@ -23,7 +23,7 @@ export const mountainUpdatePostRoute = new Elysia().post(
     const user = getUserFromRequest(request);
 
     // Validate image size early (before any DB operations)
-    if (body.image && !isBase64SizeValid(body.image, 2048)) {
+    if (body.image && !isBase64SizeValid(body.image)) {
       set.status = 400;
       return { error: IMAGE_TO_BIG };
     }
