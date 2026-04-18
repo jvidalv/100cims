@@ -154,6 +154,20 @@ export const useAdminDeleteSummitMutation = () => {
   });
 };
 
+export const useAdminResetSummitImageMutation = () => {
+  return useMutation({
+    mutationKey: ["summit", "admin-reset-image"],
+    mutationFn: async ({ summitId }: { summitId: string }) => {
+      const { data, error } = await apiClient.POST(
+        "/api/protected/admin/summits/{id}/reset-image",
+        { params: { path: { id: summitId } } },
+      );
+      if (error) throw error;
+      return data;
+    },
+  });
+};
+
 export const useReportSummitMutation = () => {
   return useMutation({
     mutationKey: ["summit", "report"],

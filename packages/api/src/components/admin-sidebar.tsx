@@ -9,6 +9,7 @@ import {
   Mail,
   Mountain,
   ShoppingBag,
+  Ticket,
   Trophy,
   Users,
 } from "lucide-react";
@@ -45,6 +46,7 @@ const NAV_ITEMS = [
   { href: "/admin/summits", label: "Summits", icon: Camera },
   { href: "/admin/plans", label: "Plans", icon: Compass },
   { href: "/admin/merch", label: "Merch", icon: ShoppingBag },
+  { href: "/admin/coupons", label: "Coupons", icon: Ticket },
   { href: "/admin/emails", label: "Emails", icon: Mail },
   { href: "/admin/crons", label: "Crons", icon: Clock },
 ];

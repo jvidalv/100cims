@@ -3,6 +3,7 @@ import { Link, Redirect, useLocalSearchParams, useRouter } from "expo-router";
 import {
   Check,
   Flag,
+  ImageOff,
   Share as ShareIcon,
   SquarePen,
   Trash2,
@@ -40,6 +41,7 @@ import {
 } from "@/components/ui/molecules";
 import {
   useAdminDeleteSummitMutation,
+  useAdminResetSummitImageMutation,
   useDeleteSummitMutation,
   useReportSummitMutation,
   useSummitGet,
@@ -64,12 +66,14 @@ const Content = () => {
   }>();
   const justCreated = from === "create";
 
-  const { data, isPending } = useSummitGet({ summitId: summit });
+  const { data, isPending, refetch } = useSummitGet({ summitId: summit });
   const { data: me } = useUserMe();
   const isAdmin = useIsAdmin();
   const { mutateAsync: deleteSummit } = useDeleteSummitMutation();
   const { mutateAsync: reportSummit } = useReportSummitMutation();
   const { mutateAsync: adminDeleteSummit } = useAdminDeleteSummitMutation();
+  const { mutateAsync: adminResetImage, isPending: isResettingImage } =
+    useAdminResetSummitImageMutation();
   const [hasReported, setHasReported] = useState(false);
 
   const { previewImage, isPreviewOpen, openPreview, closePreview } =
@@ -300,6 +304,26 @@ const Content = () => {
               ) : (
                 <FormattedMessage defaultMessage="Report" />
               )}
+            </ActionRow>
+          )}
+          {isAdmin && (
+            <ActionRow
+              onPress={async () => {
+                try {
+                  await adminResetImage({ summitId: summit });
+                  void refetch();
+                } catch {
+                  // silently handled — admin action
+                }
+              }}
+              icon={ImageOff}
+              intent="muted"
+              disabled={isResettingImage}
+              iconOverride={
+                isResettingImage ? <ActivityIndicator size="sm" /> : undefined
+              }
+            >
+              <FormattedMessage defaultMessage="Reset image (admin)" />
             </ActionRow>
           )}
           {isAdmin && (

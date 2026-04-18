@@ -523,6 +523,40 @@ export const merchVariantTable = pgTable(
   ],
 );
 
+export const couponTable = pgTable("coupon", {
+  id: uuid().primaryKey().defaultRandom(),
+  // Stored display-cased; case-insensitive uniqueness enforced by a
+  // LOWER(code) unique index appended to the generated migration SQL.
+  code: text().notNull(),
+  discountType: text().notNull().$type<"percentage" | "fixed">(),
+  // Percent 1-99 OR euros >= 1, depending on discountType.
+  discountValue: integer().notNull(),
+  maxUses: integer(),
+  onePerUser: boolean().notNull().default(false),
+  active: boolean().notNull().default(true),
+  createdAt: timestamp().notNull().defaultNow(),
+  updatedAt: timestamp().notNull().defaultNow(),
+});
+
+export const couponRedemptionTable = pgTable(
+  "coupon_redemption",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    couponId: uuid()
+      .references(() => couponTable.id, { onDelete: "cascade" })
+      .notNull(),
+    userId: uuid()
+      .references(() => userTable.id, { onDelete: "cascade" })
+      .notNull(),
+    redeemedAt: timestamp().notNull().defaultNow(),
+    note: text(),
+  },
+  (table) => [
+    index("coupon_redemption_coupon_id_idx").on(table.couponId),
+    index("coupon_redemption_user_id_idx").on(table.userId),
+  ],
+);
+
 export const emailLogTable = pgTable(
   "email_log",
   {

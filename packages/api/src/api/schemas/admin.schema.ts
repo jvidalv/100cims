@@ -361,6 +361,68 @@ export const AdminMerchUpdateBodySchema = t.Object({
   variants: t.Optional(t.Array(MerchVariantSchema)),
 });
 
+const CouponDiscountTypeSchema = t.Union([
+  t.Literal("percentage"),
+  t.Literal("fixed"),
+]);
+
+export const AdminCouponEntrySchema = t.Object({
+  id: t.String(),
+  code: t.String(),
+  discountType: CouponDiscountTypeSchema,
+  discountValue: t.Number(),
+  maxUses: t.Nullable(t.Number()),
+  onePerUser: t.Boolean(),
+  active: t.Boolean(),
+  redemptionCount: t.Number(),
+  createdAt: t.Date(),
+  updatedAt: t.Date(),
+});
+
+export const AdminCouponListResponseSchema = t.Object({
+  items: t.Array(AdminCouponEntrySchema),
+});
+
+export const AdminCouponRedemptionEntrySchema = t.Object({
+  id: t.String(),
+  userId: t.String(),
+  userEmail: t.Nullable(t.String()),
+  userFirstName: t.Nullable(t.String()),
+  userLastName: t.Nullable(t.String()),
+  note: t.Nullable(t.String()),
+  redeemedAt: t.Date(),
+});
+
+export const AdminCouponDetailSchema = t.Intersect([
+  AdminCouponEntrySchema,
+  t.Object({
+    redemptions: t.Array(AdminCouponRedemptionEntrySchema),
+  }),
+]);
+
+export const AdminCouponCreateBodySchema = t.Object({
+  code: t.String({ minLength: 2, maxLength: 40 }),
+  discountType: CouponDiscountTypeSchema,
+  discountValue: t.Number({ minimum: 1 }),
+  maxUses: t.Optional(t.Nullable(t.Number({ minimum: 1 }))),
+  onePerUser: t.Optional(t.Boolean()),
+  active: t.Optional(t.Boolean()),
+});
+
+export const AdminCouponUpdateBodySchema = t.Object({
+  code: t.Optional(t.String({ minLength: 2, maxLength: 40 })),
+  discountType: t.Optional(CouponDiscountTypeSchema),
+  discountValue: t.Optional(t.Number({ minimum: 1 })),
+  maxUses: t.Optional(t.Nullable(t.Number({ minimum: 1 }))),
+  onePerUser: t.Optional(t.Boolean()),
+  active: t.Optional(t.Boolean()),
+});
+
+export const AdminCouponRedeemBodySchema = t.Object({
+  userId: t.String({ format: "uuid" }),
+  note: t.Optional(t.Nullable(t.String({ maxLength: 500 }))),
+});
+
 export const AdminPersonSchema = t.Object({
   userId: t.String(),
   firstName: t.Nullable(t.String()),

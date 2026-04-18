@@ -209,8 +209,14 @@
   "AouTVa": {
     "defaultMessage": "Failed to update mountain"
   },
+  "ArER+u": {
+    "defaultMessage": "Have a coupon code?"
+  },
   "AryDSl": {
     "defaultMessage": "Support the app"
+  },
+  "B7WSNk": {
+    "defaultMessage": "Reset image (admin)"
   },
   "BEbOqj": {
     "defaultMessage": "Oops!"
@@ -268,6 +274,9 @@
   },
   "EPpeif": {
     "defaultMessage": "Share plan"
+  },
+  "EWw/tK": {
+    "defaultMessage": "Apply"
   },
   "Ep56/Z": {
     "defaultMessage": "Longitude must be between -180 and 180"
@@ -488,6 +497,9 @@
   "SEtMn+": {
     "defaultMessage": "At least one mountain is required"
   },
+  "SWMHO+": {
+    "defaultMessage": "Go home"
+  },
   "T9bZ8o": {
     "defaultMessage": "Edit mountains"
   },
@@ -559,6 +571,9 @@
   },
   "Y8lhVt": {
     "defaultMessage": "Add people"
+  },
+  "YDAEYX": {
+    "defaultMessage": "Check for updates"
   },
   "YDCrG0": {
     "defaultMessage": "Your Apple email hides your address. Give us a real one so we can reach you."
@@ -847,6 +862,9 @@
   },
   "r+6lRr": {
     "defaultMessage": "You haven't summited any mountains yet."
+  },
+  "r0u4TP": {
+    "defaultMessage": "Coupon code"
   },
   "rO8WR3": {
     "defaultMessage": "Country/Region is required"
