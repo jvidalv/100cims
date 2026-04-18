@@ -165,47 +165,55 @@ const Content = () => {
     return (
       <ThemedView className="flex-1">
         <ScreenHeader />
-        {/* Header: mountain name + date */}
-        <View className="px-6 pb-2 pt-2">
-          <Skeleton className="mb-2 h-9 w-56" />
-          <Skeleton className="h-6 w-36" />
-        </View>
-        {/* Summit photo */}
-        <Skeleton className="aspect-square w-full" />
-        {/* People section */}
-        <View className="mt-6 gap-2 px-6">
-          <Skeleton className="mb-2 h-8 w-20" />
-          <View className="gap-2">
-            {[0, 1].map((i) => (
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerClassName="pb-24 pt-2"
+        >
+          {/* Header — matches real: mb-4 bg-background px-6 pb-2 */}
+          <View className="mb-4 bg-background px-6 pb-2">
+            <Skeleton className="h-9 w-3/4 rounded-md" />
+            <Skeleton className="mt-1 h-7 w-32 rounded-md" />
+          </View>
+
+          {/* Photo — full-width square, explicit pixel dimensions to avoid any NativeWind ambiguity. */}
+          <Skeleton
+            className="rounded-none"
+            style={{ width: screenW, height: screenW }}
+          />
+
+          {/* People section */}
+          <View className="mt-6 gap-2 px-6">
+            <Skeleton className="mb-2 h-8 w-24 rounded-md" />
+            <View className="flex-row items-center gap-2">
+              <Skeleton className="size-8 rounded-full" />
+              <Skeleton className="h-5 w-32 rounded-md" />
+            </View>
+          </View>
+
+          {/* Actions section */}
+          <View className="mt-6 gap-2 px-6">
+            <Skeleton className="mb-2 h-8 w-24 rounded-md" />
+            {[0, 1, 2, 3].map((i) => (
               <View key={i} className="flex-row items-center gap-2">
                 <Skeleton className="size-8 rounded-full" />
-                <Skeleton className="h-5 w-32" />
+                <Skeleton className="h-5 w-32 rounded-md" />
               </View>
             ))}
           </View>
-        </View>
-        {/* Actions section */}
-        <View className="mt-6 gap-2 px-6">
-          <Skeleton className="mb-2 h-8 w-24" />
-          {[0, 1, 2].map((i) => (
-            <View key={i} className="flex-row items-center gap-3">
-              <Skeleton className="size-10 rounded-full" />
-              <Skeleton className="h-5 w-28" />
-            </View>
-          ))}
-        </View>
-        {/* Mountain section */}
-        <View className="mt-6 gap-2 px-6">
-          <Skeleton className="mb-2 h-8 w-28" />
-          <View className="flex-row gap-4">
-            <Skeleton className="size-[100px] rounded" />
-            <View className="flex-1 justify-center gap-2">
-              <Skeleton className="h-5 w-40" />
-              <Skeleton className="h-4 w-28" />
-              <Skeleton className="h-4 w-20" />
+
+          {/* Mountain section */}
+          <View className="mt-6 gap-2 px-6">
+            <Skeleton className="mb-2 h-8 w-28 rounded-md" />
+            <View className="flex-row gap-4">
+              <Skeleton className="size-[100px] rounded" />
+              <View className="flex-1 justify-center gap-2">
+                <Skeleton className="h-5 w-40 rounded-md" />
+                <Skeleton className="h-4 w-28 rounded-md" />
+                <Skeleton className="h-4 w-20 rounded-md" />
+              </View>
             </View>
           </View>
-        </View>
+        </ScrollView>
       </ThemedView>
     );
   }

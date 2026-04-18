@@ -192,8 +192,8 @@ export default function HiscoresScreen() {
           }, 100);
         }}
         ListHeaderComponent={
-          <ThemedView className="px-6 pb-4">
-            <View className="flex-row items-center justify-between">
+          <ThemedView className="pb-4">
+            <View className="flex-row items-center justify-between px-6">
               <ThemedText className="text-4xl font-bold">
                 <FormattedMessage defaultMessage="Hiscores" />
               </ThemedText>
@@ -227,7 +227,7 @@ export default function HiscoresScreen() {
             {user && !isVisibleOnHiscores && (
               <Link href="/user/me" asChild>
                 <TouchableOpacity
-                  className="mt-4 flex-row items-center justify-between rounded border-2 border-primary p-4"
+                  className="mx-4 mt-4 flex-row items-center justify-between rounded border-2 border-primary p-4"
                 >
                   <ThemedText className="font-medium text-primary">
                     <FormattedMessage defaultMessage="I want to be visible on the hiscores" />
@@ -242,18 +242,20 @@ export default function HiscoresScreen() {
             )}
             {isPendingHiscores && <HiscoresSkeleton />}
             {!isPendingHiscores && !hiscores.length && (
-              <ThemedText className="mt-4 text-muted-foreground">
+              <ThemedText className="mt-4 px-6 text-muted-foreground">
                 <FormattedMessage defaultMessage="No one has yet reached the hiscores." />
               </ThemedText>
             )}
             {podium.length > 0 && (
-              <Podium
-                entries={podium}
-                totalMountains={challenge?.totalMountains}
-                currentUserId={user?.id}
-                formatScore={formatScore}
-                onPressUser={(userId) => router.push(`/user/${userId}`)}
-              />
+              <View className="mx-4">
+                <Podium
+                  entries={podium}
+                  totalMountains={challenge?.totalMountains}
+                  currentUserId={user?.id}
+                  formatScore={formatScore}
+                  onPressUser={(userId) => router.push(`/user/${userId}`)}
+                />
+              </View>
             )}
           </ThemedView>
         }
@@ -275,13 +277,10 @@ export default function HiscoresScreen() {
             <TouchableOpacity
               onPress={() => router.push(`/user/${item.userId}`)}
               className={twMerge(
-                "relative mx-4 mb-2 flex-row items-center gap-3 rounded-lg border border-border p-3",
+                "mx-4 mb-2 flex-row items-center gap-3 rounded-lg border border-border p-3",
                 isMe && "border-primary bg-primary/10",
               )}
             >
-              <ThemedText className="absolute -left-0.5 -top-1 text-sm font-semibold text-muted-foreground">
-                {rank}.
-              </ThemedText>
               <Avatar
                 size="md"
                 initials={getInitials(
@@ -297,6 +296,9 @@ export default function HiscoresScreen() {
                   className={twMerge("font-semibold", isMe && "text-primary")}
                   numberOfLines={1}
                 >
+                  <ThemedText className="font-semibold text-muted-foreground">
+                    {rank}.{" "}
+                  </ThemedText>
                   {getFullName({
                     firstName: item.firstName,
                     lastName: item.lastName,
@@ -378,7 +380,7 @@ function Podium({
 }) {
   const [first, second, third] = entries;
   return (
-    <View className="mt-2 overflow-hidden rounded-xl border border-border bg-primary/5">
+    <View className="mt-2 overflow-hidden rounded-xl bg-neutral-900 dark:border dark:border-border">
       {first && (
         <PodiumHeroRow
           entry={first}
@@ -442,7 +444,10 @@ function PodiumHeroRow({
       />
       <View className="flex-1">
         <ThemedText
-          className={twMerge("text-lg font-bold", isMe && "text-primary")}
+          className={twMerge(
+            "text-lg font-bold text-white",
+            isMe && "text-primary",
+          )}
           numberOfLines={1}
         >
           {fullName}
@@ -451,8 +456,8 @@ function PodiumHeroRow({
           {formatScore(entry.totalScore)}
         </ThemedText>
         <View className="mt-0.5 flex-row items-center gap-1">
-          <LucideIcon icon={Mountain} muted size={14} />
-          <ThemedText className="text-sm text-muted-foreground">
+          <LucideIcon icon={Mountain} color="#a3a3a3" size={14} />
+          <ThemedText className="text-sm text-neutral-400">
             <FormattedMessage
               defaultMessage="{count} of {total}"
               values={{
@@ -489,7 +494,7 @@ function PodiumCompactRow({
   return (
     <TouchableOpacity
       onPress={onPress}
-      className="flex-row items-center gap-3 border-t border-border/50 p-3"
+      className="flex-row items-center gap-3 border-t border-white/10 p-3"
     >
       <Avatar
         size="md"
@@ -499,14 +504,17 @@ function PodiumCompactRow({
       />
       <View className="flex-1">
         <ThemedText
-          className={twMerge("font-semibold", isMe && "text-primary")}
+          className={twMerge(
+            "font-semibold text-white",
+            isMe && "text-primary",
+          )}
           numberOfLines={1}
         >
           {fullName}
         </ThemedText>
         <View className="mt-0.5 flex-row items-center gap-1">
-          <LucideIcon icon={Mountain} muted size={14} />
-          <ThemedText className="text-sm text-muted-foreground">
+          <LucideIcon icon={Mountain} color="#a3a3a3" size={14} />
+          <ThemedText className="text-sm text-neutral-400">
             <FormattedMessage
               defaultMessage="{count} of {total}"
               values={{
@@ -527,30 +535,30 @@ function PodiumCompactRow({
 function HiscoresSkeleton() {
   return (
     <View className="mt-2 gap-2">
-      <View className="overflow-hidden rounded-xl border border-border bg-primary/5">
+      <View className="overflow-hidden rounded-xl bg-neutral-900">
         <View className="flex-row items-center gap-4 p-4">
-          <Skeleton className="size-20 rounded-full" />
+          <Skeleton className="size-20 rounded-full bg-neutral-700" />
           <View className="flex-1 gap-2">
-            <Skeleton className="h-5 w-40" />
-            <Skeleton className="h-7 w-24" />
-            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-5 w-40 bg-neutral-700" />
+            <Skeleton className="h-7 w-24 bg-neutral-700" />
+            <Skeleton className="h-4 w-24 bg-neutral-700" />
           </View>
         </View>
-        <View className="flex-row items-center gap-3 border-t border-border/50 p-3">
-          <Skeleton className="size-12 rounded-full" />
+        <View className="flex-row items-center gap-3 border-t border-white/10 p-3">
+          <Skeleton className="size-12 rounded-full bg-neutral-700" />
           <View className="flex-1 gap-2">
-            <Skeleton className="h-5 w-32" />
-            <Skeleton className="h-4 w-20" />
+            <Skeleton className="h-5 w-32 bg-neutral-700" />
+            <Skeleton className="h-4 w-20 bg-neutral-700" />
           </View>
-          <Skeleton className="h-5 w-14" />
+          <Skeleton className="h-5 w-14 bg-neutral-700" />
         </View>
-        <View className="flex-row items-center gap-3 border-t border-border/50 p-3">
-          <Skeleton className="size-12 rounded-full" />
+        <View className="flex-row items-center gap-3 border-t border-white/10 p-3">
+          <Skeleton className="size-12 rounded-full bg-neutral-700" />
           <View className="flex-1 gap-2">
-            <Skeleton className="h-5 w-28" />
-            <Skeleton className="h-4 w-20" />
+            <Skeleton className="h-5 w-28 bg-neutral-700" />
+            <Skeleton className="h-4 w-20 bg-neutral-700" />
           </View>
-          <Skeleton className="h-5 w-14" />
+          <Skeleton className="h-5 w-14 bg-neutral-700" />
         </View>
       </View>
       <View className="flex-row items-center gap-3 rounded-lg border border-border p-3">
