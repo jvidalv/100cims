@@ -60,26 +60,29 @@ Elysia provides excellent TypeScript inference, OpenAPI generation, and performa
 /api/routes/
 ├── @shared/          # Middleware, JWT, S3, types
 ├── public/           # No auth required
-│   ├── mountains.route.ts
-│   ├── challenge.route.ts
-│   └── hiscores.route.ts
-├── protected/        # JWT required
-│   ├── summit.route.ts
-│   ├── user.route.ts
-│   ├── plan.route.ts
-│   ├── mountains/    # Folder-based organization
-│   │   ├── index.ts
-│   │   ├── my-list.route.ts
-│   │   └── update.route.ts
-│   └── community-challenge/
-│       ├── index.ts
-│       ├── create.route.ts
-│       ├── update.route.ts
-│       └── delete.route.ts
+├── protected/        # JWT bearer auth (mobile app)
+│   ├── user/
+│   ├── mountains/
+│   ├── summit/
+│   ├── plans/
+│   ├── community-challenge/
+│   └── admin/        # JWT + user.admin guard (mobile admin actions)
+├── admin/            # NextAuth session auth (web backoffice only)
 └── index.ts          # Compose all routes
 ```
 
 **Folder-based routes**: Group related endpoints in folders with an `index.ts` that composes them with a prefix. Each endpoint gets its own file.
+
+**🚫 TWO different admin route trees — never confuse them:**
+
+| Path prefix | Auth method | Consumed by |
+|---|---|---|
+| `/api/protected/admin/*` | JWT bearer token (same as all `/protected/*` routes) + `user.admin` check | **Mobile app** — the `apiClient` in `packages/app` sends the JWT bearer |
+| `/api/admin/*` | NextAuth session cookie | **Web admin panel** (`packages/api/src/app/admin/`) — browser-only, uses `fetch` with cookies |
+
+When creating an admin action that the **mobile app** needs to call (e.g. delete summit, reset image), it MUST go under `/api/protected/admin/`. The mobile app has no NextAuth session and cannot call `/api/admin/*` routes — those requests will silently fail with 401.
+
+Never use `/api/admin/*` paths in `packages/app/domains/` hooks. If you see an `apiClient.POST("/api/admin/...")` in mobile code, it's a bug.
 
 ### Creating Routes
 

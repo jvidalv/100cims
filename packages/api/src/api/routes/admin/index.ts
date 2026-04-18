@@ -12,6 +12,12 @@ import { adminChallengeDetailGetRoute } from "@/api/routes/admin/admin.challenge
 import { adminChallengeMountainsGetRoute } from "@/api/routes/admin/admin.challenge-mountains.get";
 import { adminChallengeUpdatePostRoute } from "@/api/routes/admin/admin.challenge-update.post";
 import { adminChallengesGetRoute } from "@/api/routes/admin/admin.challenges.get";
+import { adminCouponCreatePostRoute } from "@/api/routes/admin/admin.coupon-create.post";
+import { adminCouponDeleteDeleteRoute } from "@/api/routes/admin/admin.coupon-delete.delete";
+import { adminCouponDetailGetRoute } from "@/api/routes/admin/admin.coupon-detail.get";
+import { adminCouponRedeemPostRoute } from "@/api/routes/admin/admin.coupon-redeem.post";
+import { adminCouponUpdatePostRoute } from "@/api/routes/admin/admin.coupon-update.post";
+import { adminCouponGetRoute } from "@/api/routes/admin/admin.coupon.get";
 import { adminCronsGetRoute } from "@/api/routes/admin/admin.crons.get";
 import { adminCronsTriggerPostRoute } from "@/api/routes/admin/admin.crons-trigger.post";
 import { adminEmailTestPostRoute } from "@/api/routes/admin/admin.email-test.post";
@@ -104,6 +110,12 @@ export const adminRoutes = new Elysia({ prefix: "/admin" })
   .use(adminMerchCreatePostRoute)
   .use(adminMerchUpdatePostRoute)
   .use(adminMerchDeleteDeleteRoute)
+  .use(adminCouponGetRoute)
+  .use(adminCouponDetailGetRoute)
+  .use(adminCouponCreatePostRoute)
+  .use(adminCouponUpdatePostRoute)
+  .use(adminCouponDeleteDeleteRoute)
+  .use(adminCouponRedeemPostRoute)
   .use(adminStatsTimeseriesGetRoute)
   .use(adminCronsGetRoute)
   .use(adminCronsTriggerPostRoute)

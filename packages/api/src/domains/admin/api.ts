@@ -2,6 +2,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { Static } from "elysia";
 
 import type {
+  AdminCouponCreateBodySchema,
+  AdminCouponRedeemBodySchema,
+  AdminCouponUpdateBodySchema,
   AdminMerchCreateBodySchema,
   AdminMerchUpdateBodySchema,
 } from "@/api/schemas/admin.schema";
@@ -564,6 +567,91 @@ export const useDeleteAdminMerch = (id: string) => {
     onSuccess: () => {
       qc.removeQueries({ queryKey: adminKeys.merchDetail(id) });
       void qc.invalidateQueries({ queryKey: adminKeys.merchList() });
+    },
+  });
+};
+
+export const useAdminCoupons = () =>
+  useQuery({
+    queryKey: adminKeys.couponList(),
+    queryFn: async () => {
+      const { data, error } = await api.api.admin.coupon.get();
+      if (error) throw error;
+      return data.message;
+    },
+  });
+
+export const useAdminCouponDetail = (id: string) =>
+  useQuery({
+    queryKey: adminKeys.couponDetail(id),
+    queryFn: async () => {
+      const { data, error } = await api.api.admin.coupon({ id }).get();
+      if (error) throw error;
+      return data.message;
+    },
+  });
+
+export type AdminCouponCreateBody = Static<typeof AdminCouponCreateBodySchema>;
+export type AdminCouponUpdateBody = Static<typeof AdminCouponUpdateBodySchema>;
+export type AdminCouponRedeemBody = Static<typeof AdminCouponRedeemBodySchema>;
+
+export const useCreateAdminCoupon = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (body: AdminCouponCreateBody) => {
+      const { data, error } = await api.api.admin.coupon.post(body);
+      if (error) throw error;
+      return data.message;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: adminKeys.couponList() });
+    },
+  });
+};
+
+export const useUpdateAdminCoupon = (id: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (body: AdminCouponUpdateBody) => {
+      const { data, error } = await api.api.admin.coupon({ id }).post(body);
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: adminKeys.couponDetail(id) });
+      void qc.invalidateQueries({ queryKey: adminKeys.couponList() });
+    },
+  });
+};
+
+export const useDeleteAdminCoupon = (id: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      const { data, error } = await api.api.admin.coupon({ id }).delete();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      qc.removeQueries({ queryKey: adminKeys.couponDetail(id) });
+      void qc.invalidateQueries({ queryKey: adminKeys.couponList() });
+    },
+  });
+};
+
+export const useRedeemAdminCoupon = (id: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (body: AdminCouponRedeemBody) => {
+      const { data, error } = await api.api.admin
+        .coupon({ id })
+        .redeem.post(body);
+      if (error) throw error;
+      return data.message;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: adminKeys.couponDetail(id) });
+      void qc.invalidateQueries({ queryKey: adminKeys.couponList() });
     },
   });
 };

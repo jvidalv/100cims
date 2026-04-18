@@ -5,11 +5,19 @@ import {
   Plus,
   Send,
   ShoppingBag,
+  Sparkles,
   Store,
+  Tag,
+  X,
 } from "lucide-react-native";
 import { useCallback, useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Alert, Image, ScrollView, TouchableOpacity, View } from "react-native";
+import Animated, {
+  FadeIn,
+  FadeInDown,
+  ZoomIn,
+} from "react-native-reanimated";
 
 import { useAuth } from "@/components/providers/auth-provider";
 import {
@@ -19,7 +27,7 @@ import {
   ThemedText,
   ThemedTextInput,
 } from "@/components/ui/atoms";
-import { ProductPrice, ScreenHeader } from "@/components/ui/molecules";
+import { ActionRow, ProductPrice, ScreenHeader } from "@/components/ui/molecules";
 import { Colors } from "@/constants/colors";
 import {
   clearCart,
@@ -52,6 +60,9 @@ export default function ShopCartScreen() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [contactEmailOverride, setContactEmailOverride] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [couponCode, setCouponCode] = useState("");
+  const [couponOpen, setCouponOpen] = useState(false);
+  const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
 
   useFocusEffect(
     useCallback(() => {
@@ -123,10 +134,12 @@ export default function ShopCartScreen() {
       validOverride && isAppleRelayEmail(me?.email)
         ? `Apple hidden email: ${relayEmail}\n`
         : "";
+    const couponLine = appliedCoupon ? `Coupon: ${appliedCoupon}\n` : "";
     const message =
       `[MERCH ORDER]\n` +
       `From: ${effectiveEmail}\n` +
       hiddenLine +
+      couponLine +
       `Total: ${total}€\n\n` +
       `Items:\n${itemLines}`;
 
@@ -135,6 +148,9 @@ export default function ShopCartScreen() {
       unlock("merch");
       await clearCart();
       setCart([]);
+      setAppliedCoupon(null);
+      setCouponCode("");
+      setCouponOpen(false);
       setIsSubmitted(true);
     } catch {
       Alert.alert(
@@ -150,19 +166,64 @@ export default function ShopCartScreen() {
       </ScreenHeader>
 
       {isSubmitted ? (
-        <View className="flex-1 items-center justify-center gap-4 px-6">
-          <View className="size-16 items-center justify-center rounded-full bg-emerald-500/15">
-            <LucideIcon icon={BadgeCheck} size={32} color="#10b981" />
-          </View>
-          <ThemedText className="text-center text-xl font-semibold">
-            <FormattedMessage defaultMessage="Order sent!" />
-          </ThemedText>
-          <ThemedText className="text-center text-muted-foreground">
-            <FormattedMessage defaultMessage="Thanks for supporting Cims. We will contact you soon." />
-          </ThemedText>
-          <Button onPress={() => router.replace("/shop")}>
-            <FormattedMessage defaultMessage="Back to shop" />
-          </Button>
+        <View className="flex-1 items-center justify-center gap-6 px-8">
+          <Animated.View
+            entering={ZoomIn.springify().damping(12)}
+            className="relative size-32 items-center justify-center"
+          >
+            <Animated.View
+              entering={FadeIn.delay(150).duration(400)}
+              className="absolute inset-0 rounded-full bg-emerald-500/5"
+            />
+            <Animated.View
+              entering={FadeIn.delay(250).duration(400)}
+              className="absolute inset-3 rounded-full bg-emerald-500/10"
+            />
+            <Animated.View
+              entering={FadeIn.delay(350).duration(400)}
+              className="absolute inset-6 rounded-full bg-emerald-500/20"
+            />
+            <LucideIcon icon={BadgeCheck} size={48} color="#10b981" />
+            <Animated.View
+              entering={FadeIn.delay(500).duration(300)}
+              className="absolute -right-1 -top-1"
+            >
+              <LucideIcon icon={Sparkles} size={20} color="#10b981" />
+            </Animated.View>
+          </Animated.View>
+
+          <Animated.View
+            entering={FadeInDown.delay(200).duration(400)}
+            className="gap-2"
+          >
+            <ThemedText className="text-center text-2xl font-bold">
+              <FormattedMessage defaultMessage="Order sent!" />
+            </ThemedText>
+            <ThemedText className="text-center text-muted-foreground">
+              <FormattedMessage defaultMessage="Thanks for supporting Cims. We will contact you soon." />
+            </ThemedText>
+          </Animated.View>
+
+          <Animated.View
+            entering={FadeInDown.delay(400).duration(400)}
+            className="w-full max-w-sm gap-1 rounded border-2 border-border bg-muted/30 p-4"
+          >
+            <ActionRow
+              icon={Store}
+              intent="primary"
+              size="lg"
+              onPress={() => router.replace("/shop")}
+            >
+              <FormattedMessage defaultMessage="Back to shop" />
+            </ActionRow>
+            <ActionRow
+              icon={ShoppingBag}
+              size="lg"
+              onPress={() => router.replace("/")}
+            >
+              <FormattedMessage defaultMessage="Go home" />
+            </ActionRow>
+          </Animated.View>
         </View>
       ) : !merch && cart.length > 0 ? (
         <View className="flex-1 items-center justify-center">
@@ -296,6 +357,60 @@ export default function ShopCartScreen() {
                   maxLength={200}
                 />
               </View>
+            )}
+
+            {appliedCoupon ? (
+              <View className="mt-4 flex-row items-center gap-3 rounded border-2 border-emerald-500/40 bg-emerald-500/10 p-3">
+                <LucideIcon icon={Tag} size={18} color="#10b981" />
+                <ThemedText className="flex-1 font-mono text-sm font-semibold text-emerald-700 dark:text-emerald-400">
+                  {appliedCoupon}
+                </ThemedText>
+                <TouchableOpacity
+                  onPress={() => {
+                    setAppliedCoupon(null);
+                    setCouponCode("");
+                  }}
+                  activeOpacity={0.7}
+                  hitSlop={8}
+                >
+                  <LucideIcon icon={X} size={18} muted />
+                </TouchableOpacity>
+              </View>
+            ) : couponOpen ? (
+              <View className="mt-4 flex-row items-end gap-2">
+                <View className="flex-1">
+                  <ThemedTextInput
+                    label={intl.formatMessage({
+                      defaultMessage: "Coupon code",
+                    })}
+                    value={couponCode}
+                    onChangeText={(v) => setCouponCode(v.toUpperCase())}
+                    autoCapitalize="characters"
+                    placeholder="SUMMER25"
+                    maxLength={40}
+                  />
+                </View>
+                <Button
+                  onPress={() => {
+                    const trimmed = couponCode.trim();
+                    if (trimmed.length >= 2) setAppliedCoupon(trimmed);
+                  }}
+                  disabled={couponCode.trim().length < 2}
+                >
+                  <FormattedMessage defaultMessage="Apply" />
+                </Button>
+              </View>
+            ) : (
+              <TouchableOpacity
+                onPress={() => setCouponOpen(true)}
+                activeOpacity={0.7}
+                className="mt-4 flex-row items-center gap-2"
+              >
+                <LucideIcon icon={Tag} size={16} muted />
+                <ThemedText className="text-sm text-muted-foreground underline">
+                  <FormattedMessage defaultMessage="Have a coupon code?" />
+                </ThemedText>
+              </TouchableOpacity>
             )}
 
             <TouchableOpacity

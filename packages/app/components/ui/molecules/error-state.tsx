@@ -1,5 +1,11 @@
 import { useNetworkState } from "expo-network";
-import { Check, CloudOff, Flag, RotateCw } from "lucide-react-native";
+import {
+  Check,
+  CloudOff,
+  Download,
+  Flag,
+  RotateCw,
+} from "lucide-react-native";
 import { useState } from "react";
 import { FormattedMessage } from "react-intl";
 import { View } from "react-native";
@@ -12,6 +18,7 @@ import {
 } from "@/components/ui/atoms";
 import { ActionRow } from "@/components/ui/molecules/action-row";
 import { useUserMe } from "@/domains/user/user.api";
+import { checkForUpdate } from "@/lib/check-for-update";
 import { reportErrorToDiscord } from "@/lib/report-error";
 
 type ErrorStateProps = {
@@ -71,13 +78,18 @@ export const ErrorState = ({ context, error, onReload }: ErrorStateProps) => {
               )}
             </ActionRow>
           )}
+          <ActionRow
+            icon={Download}
+            intent="muted"
+            size="lg"
+            onPress={() => void checkForUpdate()}
+          >
+            <FormattedMessage defaultMessage="Check for updates" />
+          </ActionRow>
         </View>
       </View>
       <View className="items-center pb-8">
-        <ThemedLogo
-          style={{ width: 120, height: 40 }}
-          resizeMode="contain"
-        />
+        <ThemedLogo style={{ width: 120, height: 40 }} resizeMode="contain" />
       </View>
     </ThemedView>
   );
