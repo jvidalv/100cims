@@ -99,7 +99,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const metaTitle = t("meta-title");
   const ogTitle = t("title");
   const description = t("subtitle");
-  const ogImage = `${SITE_URL}/assets/logo.png`;
+  const ogImage = `${SITE_URL}/assets/og-image.jpg`;
   return {
     title: metaTitle,
     description,
@@ -110,7 +110,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       siteName: "Cims, sempre amunt",
       title: ogTitle,
       description,
-      images: [{ url: ogImage, width: 1024, height: 554, alt: ogTitle }],
+      images: [{ url: ogImage, width: 1200, height: 630, alt: ogTitle }],
     },
     twitter: {
       card: "summary_large_image",
@@ -132,13 +132,13 @@ export default async function Home({ params }: Props) {
   const shopHref = (slug: string) => `/${locale}/shop/${slug}`;
 
   const siteName = "Cims, sempre amunt";
-  const ogImage = `${SITE_URL}/assets/logo.png`;
+  const organizationLogo = `${SITE_URL}/assets/logo.png`;
   const organizationLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: siteName,
     url: SITE_URL,
-    logo: ogImage,
+    logo: organizationLogo,
     sameAs: [IOS_APP_URL, ANDROID_APP_URL],
   };
   const websiteLd = {
