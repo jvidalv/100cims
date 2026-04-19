@@ -164,18 +164,20 @@ export default async function Home({ params }: Props) {
       <JsonLd data={websiteLd} />
       <JsonLd data={mobileAppLd} />
       <main className="flex-1">
-        <section className="flex flex-col items-center justify-center py-8 sm:py-10 px-4">
+        <section className="flex flex-col items-center justify-center pt-24 pb-16 sm:pt-32 sm:pb-20 px-4">
           <h1 className="sr-only">{t("title")}</h1>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/assets/logo.png"
             alt={t("title")}
-            className="rounded mb-6 shadow-lg h-32"
+            className="hero-reveal hero-float rounded mb-10 shadow-lg h-32"
           />
-          <p className="text-lg sm:text-2xl text-center text-muted-foreground mb-8 max-w-2xl">
+          <p className="hero-reveal text-lg sm:text-2xl text-center text-muted-foreground mb-10 max-w-2xl [animation-delay:150ms]">
             {t("subtitle")}
           </p>
-          <DownloadButton label={t("download")} />
+          <div className="hero-reveal [animation-delay:300ms]">
+            <DownloadButton label={t("download")} />
+          </div>
         </section>
 
         <section className="py-8">
