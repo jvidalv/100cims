@@ -4,6 +4,7 @@ import Link from "next/link";
 import { use, useEffect, useState } from "react";
 import { toast } from "sonner";
 
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
@@ -105,6 +106,36 @@ export default function AdminShopRequestDetailPage({
             ` · Updated ${formatDateTime(r.updatedAt)}`}
         </p>
       </div>
+
+      {r.user ? (
+        <Link
+          href={`/admin/users/${r.user.id}`}
+          className="flex items-center gap-3 rounded border bg-muted/40 p-3 hover:bg-muted/60 transition-colors"
+        >
+          <Avatar className="h-10 w-10">
+            {r.user.imageUrl && (
+              <AvatarImage src={r.user.imageUrl} alt={r.userEmail} />
+            )}
+            <AvatarFallback>
+              {(r.user.firstName?.[0] ?? r.userEmail[0] ?? "?").toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex-1 min-w-0">
+            <p className="font-medium truncate">
+              {[r.user.firstName, r.user.lastName].filter(Boolean).join(" ") ||
+                r.userEmail}
+            </p>
+            <p className="text-sm text-muted-foreground truncate">
+              {r.userEmail}
+            </p>
+          </div>
+          <span className="text-sm text-muted-foreground">View profile →</span>
+        </Link>
+      ) : (
+        <div className="rounded border bg-muted/20 p-3 text-sm text-muted-foreground">
+          User account was deleted — only the email remains.
+        </div>
+      )}
 
       <div className="space-y-1">
         <Label>Status</Label>
