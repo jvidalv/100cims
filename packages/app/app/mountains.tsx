@@ -50,7 +50,7 @@ export default function MountainsScreen() {
     return [];
   });
   const { data: userSummits } = useUserChallengeSummits();
-  const { location: userLocation } = useLocation();
+  const { location: userLocation } = useLocation({ prompt: true });
   const [settingsFilters, setSettingsFilters] = useState<SettingsFilter[]>([
     "closest-first",
   ]);

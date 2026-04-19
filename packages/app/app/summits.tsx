@@ -17,9 +17,11 @@ export default function SummitsScreen() {
     <ThemedView className="flex-1">
       <ScreenHeader />
       <ScrollView contentContainerClassName="flex flex-row flex-wrap mx-4">
-        <ThemedText className="mx-1 mb-4 text-4xl font-bold">
-          <FormattedMessage defaultMessage="Latest summits" />
-        </ThemedText>
+        <View className="w-full">
+          <ThemedText className="mx-1 mb-4 text-4xl font-bold">
+            <FormattedMessage defaultMessage="Latest summits" />
+          </ThemedText>
+        </View>
         {isPendingSummits && (
           <>
             <View className="w-1/2">

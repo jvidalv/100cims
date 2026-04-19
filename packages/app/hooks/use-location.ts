@@ -5,7 +5,18 @@ import { Platform } from "react-native";
 
 type LocationPermissionStatus = "pending" | "granted" | "denied" | "error";
 
-export function useLocation() {
+type UseLocationOptions = {
+  /**
+   * When true, fires the OS permission dialog on mount if status is
+   * undetermined. When false, only reads the current permission state and
+   * returns the location iff it was already granted previously. Callers
+   * that render outside a user-initiated "show me nearby peaks" moment
+   * should always pass false so we don't prompt without context.
+   */
+  prompt?: boolean;
+};
+
+export function useLocation({ prompt = false }: UseLocationOptions = {}) {
   const [location, setLocation] = useState<Location.LocationObject | null>(
     null,
   );
@@ -13,7 +24,7 @@ export function useLocation() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function requestLocation() {
+    async function resolveLocation() {
       if (Platform.OS === "android" && !Device.isDevice) {
         setStatus("error");
         setError(
@@ -22,8 +33,9 @@ export function useLocation() {
         return;
       }
 
-      const { status: permissionStatus } =
-        await Location.requestForegroundPermissionsAsync();
+      const { status: permissionStatus } = prompt
+        ? await Location.requestForegroundPermissionsAsync()
+        : await Location.getForegroundPermissionsAsync();
 
       if (permissionStatus !== "granted") {
         setStatus("denied");
@@ -41,8 +53,8 @@ export function useLocation() {
       }
     }
 
-    void requestLocation();
-  }, []);
+    void resolveLocation();
+  }, [prompt]);
 
   return { location, status, error };
 }
