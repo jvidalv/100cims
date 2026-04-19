@@ -7,6 +7,7 @@ import type {
   AdminCouponUpdateBodySchema,
   AdminMerchCreateBodySchema,
   AdminMerchUpdateBodySchema,
+  AdminShopRequestUpdateBodySchema,
 } from "@/api/schemas/admin.schema";
 import { api } from "@/lib/api";
 import { adminKeys } from "@/lib/query-keys";
@@ -652,6 +653,49 @@ export const useRedeemAdminCoupon = (id: string) => {
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: adminKeys.couponDetail(id) });
       void qc.invalidateQueries({ queryKey: adminKeys.couponList() });
+    },
+  });
+};
+
+export type AdminShopRequestUpdateBody = Static<
+  typeof AdminShopRequestUpdateBodySchema
+>;
+
+export const useAdminShopRequests = () =>
+  useQuery({
+    queryKey: adminKeys.shopRequestList(),
+    queryFn: async () => {
+      const { data, error } = await api.api.admin["shop-requests"].get();
+      if (error) throw error;
+      return data.message;
+    },
+  });
+
+export const useAdminShopRequestDetail = (id: string) =>
+  useQuery({
+    queryKey: adminKeys.shopRequestDetail(id),
+    queryFn: async () => {
+      const { data, error } = await api.api.admin["shop-requests"]({
+        id,
+      }).get();
+      if (error) throw error;
+      return data.message;
+    },
+  });
+
+export const useUpdateAdminShopRequest = (id: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (body: AdminShopRequestUpdateBody) => {
+      const { data, error } = await api.api.admin["shop-requests"]({
+        id,
+      }).post(body);
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: adminKeys.shopRequestDetail(id) });
+      void qc.invalidateQueries({ queryKey: adminKeys.shopRequestList() });
     },
   });
 };

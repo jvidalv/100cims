@@ -423,6 +423,33 @@ export const AdminCouponRedeemBodySchema = t.Object({
   note: t.Optional(t.Nullable(t.String({ maxLength: 500 }))),
 });
 
+const ShopRequestStatusSchema = t.Union([
+  t.Literal("requested"),
+  t.Literal("contacted"),
+  t.Literal("done"),
+  t.Literal("cancelled"),
+]);
+
+export const AdminShopRequestEntrySchema = t.Object({
+  id: t.String(),
+  userId: t.Nullable(t.String()),
+  userEmail: t.String(),
+  message: t.String(),
+  status: ShopRequestStatusSchema,
+  comments: t.Nullable(t.String()),
+  createdAt: t.Date(),
+  updatedAt: t.Date(),
+});
+
+export const AdminShopRequestListResponseSchema = t.Object({
+  items: t.Array(AdminShopRequestEntrySchema),
+});
+
+export const AdminShopRequestUpdateBodySchema = t.Object({
+  status: t.Optional(ShopRequestStatusSchema),
+  comments: t.Optional(t.Nullable(t.String({ maxLength: 2000 }))),
+});
+
 export const AdminPersonSchema = t.Object({
   userId: t.String(),
   firstName: t.Nullable(t.String()),
