@@ -46,9 +46,9 @@ const unsubscribeLabel: Record<FooterLocale, string> = {
 };
 
 const visitLabel: Record<FooterLocale, string> = {
-  en: "Visit cims-sempre-amunt.app",
-  ca: "Visita cims-sempre-amunt.app",
-  es: "Visita cims-sempre-amunt.app",
+  en: "Visit fescims.com",
+  ca: "Visita fescims.com",
+  es: "Visita fescims.com",
 };
 
 const appStoreAlt: Record<FooterLocale, string> = {

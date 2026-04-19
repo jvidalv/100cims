@@ -13,6 +13,8 @@ import {
   Text,
 } from "@react-email/components";
 
+import { SITE_URL } from "@/lib/app-links";
+
 import { EmailFooter } from "./_components/footer";
 
 export type WelcomeEmailLocale = "en" | "ca" | "es";
@@ -25,13 +27,12 @@ type Props = {
 
 // Deep link matches packages/app/lib/deeplink.ts at runtime — the app handler
 // lives on the marketing domain and bounces into the custom scheme.
-const SUPPORT_DEEPLINK =
-  "https://cims-sempre-amunt.app/deeplink?link=centcims%3A%2F%2F%2Fsupport";
+const SUPPORT_DEEPLINK = `${SITE_URL}/deeplink?link=centcims%3A%2F%2F%2Fsupport`;
 
 // White logo flattened onto solid black so the asset reads correctly in any
 // email client (transparency is unreliable in mail). Pre-rendered by
 // scripts/build-email-assets.ts; re-run that script if the source changes.
-const LOGO_URL = "https://cims-sempre-amunt.app/emails/logo-on-black.png";
+const LOGO_URL = `${SITE_URL}/emails/logo-on-black.png`;
 
 type Copy = {
   preview: string;

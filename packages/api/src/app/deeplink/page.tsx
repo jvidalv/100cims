@@ -3,8 +3,10 @@
 import { Suspense, useLayoutEffect } from "react";
 import { useSearchParams } from "next/navigation";
 
+import { SITE_URL } from "@/lib/app-links";
+
 const MOBILE_USER_AGENT_REGEX = /Android|iPhone|iPad|iPod/i;
-const FALLBACK_URL = "https://cims-sempre-amunt.app";
+const FALLBACK_URL = SITE_URL;
 
 const Content = () => {
   const searchParams = useSearchParams();

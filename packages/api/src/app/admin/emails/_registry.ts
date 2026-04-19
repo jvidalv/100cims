@@ -6,6 +6,7 @@ import {
 } from "../../../../emails/welcome";
 
 import type { CampaignSlug } from "@/api/lib/campaigns";
+import { SITE_URL } from "@/lib/app-links";
 
 export const EMAIL_LOCALES: WelcomeEmailLocale[] = ["en", "ca", "es"];
 
@@ -31,8 +32,7 @@ export type EmailTemplate = {
 const firstNameOrNull = (raw: string | undefined): string | null =>
   raw?.trim() ? raw : null;
 
-const PREVIEW_UNSUBSCRIBE_URL =
-  "https://cims-sempre-amunt.app/unsubscribe?token=preview";
+const PREVIEW_UNSUBSCRIBE_URL = `${SITE_URL}/unsubscribe?token=preview`;
 
 export const EMAIL_TEMPLATES = {
   welcome: {
