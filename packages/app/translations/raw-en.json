@@ -80,9 +80,6 @@
   "3a5wL8": {
     "defaultMessage": "Active"
   },
-  "3adAry": {
-    "defaultMessage": "Check out Cims! https://cims-sempre-amunt.app/share"
-  },
   "3cc4Ct": {
     "defaultMessage": "Light"
   },
@@ -265,6 +262,9 @@
   },
   "Dxd1uB": {
     "defaultMessage": "Shop"
+  },
+  "E0evBZ": {
+    "defaultMessage": "Check out Cims! {url}"
   },
   "E1EEy4": {
     "defaultMessage": "Error, try again or use another image."
