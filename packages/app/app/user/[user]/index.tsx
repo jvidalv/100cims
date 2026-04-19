@@ -1,5 +1,4 @@
-import { formatDistanceToNow } from "date-fns";
-import { ca, es, enUS } from "date-fns/locale";
+import { format } from "date-fns/format";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import {
   Calendar,
@@ -40,6 +39,7 @@ import {
   useUserProfile,
 } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
+import { getDateFnsLocale, getLocale } from "@/lib/locale";
 import { logError } from "@/lib/log-error";
 import { captureShareCard, shareDeeplink } from "@/lib/share";
 
@@ -177,18 +177,12 @@ export default function UserScreen() {
           {!!user.town && <InfoRow icon={House}>{user.town}</InfoRow>}
           <InfoRow icon={Calendar}>
             <FormattedMessage
-              defaultMessage="Member since {duration}"
+              defaultMessage="Member since {date}"
               values={{
-                duration: formatDistanceToNow(
+                date: format(
                   new Date(user.createdAt as string | number),
-                  {
-                    locale:
-                      intl.locale === "ca"
-                        ? ca
-                        : intl.locale === "es"
-                          ? es
-                          : enUS,
-                  },
+                  getLocale() === "en" ? "MMMM yyyy" : "MMMM 'de' yyyy",
+                  { locale: getDateFnsLocale() },
                 ),
               }}
             />

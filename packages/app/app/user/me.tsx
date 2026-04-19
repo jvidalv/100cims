@@ -22,7 +22,6 @@ import {
   Avatar,
 } from "@/components/ui/atoms";
 import { ScreenHeader } from "@/components/ui/molecules";
-import { AppIconPicker } from "@/components/user/app-icon-picker";
 import { LanguagePicker } from "@/components/user/language-picker";
 import { ThemePicker } from "@/components/user/theme-picker";
 import { useHiscoresGet } from "@/domains/hiscores/hiscores.api";
@@ -301,7 +300,6 @@ export default function UserMeScreen() {
         {tab === "theme" && (
           <View className="gap-6 pb-8">
             <ThemePicker />
-            <AppIconPicker />
           </View>
         )}
 

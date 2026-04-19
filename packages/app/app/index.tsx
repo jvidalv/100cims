@@ -1,4 +1,4 @@
-import { Link, useRouter } from "expo-router";
+import { Link } from "expo-router";
 import {
   ArrowRight,
   Backpack,
@@ -323,14 +323,12 @@ const PageHeader = ({
 type AppUpdate = {
   id: string;
   date: string;
-  actionRoute: "/challenges" | "/user/people";
 };
 
 const UPDATES: AppUpdate[] = [
   {
     id: "update-005",
     date: "2026-04-17",
-    actionRoute: "/challenges",
   },
 ];
 
@@ -352,7 +350,6 @@ const RecommendedMountainSkeleton = () => (
 
 export default function IndexScreen() {
   const intl = useIntl();
-  const router = useRouter();
   const { isAuthenticated } = useAuth();
   const recommendedPeaks = useRecommendedPeaks();
   const {
@@ -506,9 +503,6 @@ export default function IndexScreen() {
           }
           onAction={() => {
             markUpdateSeen(currentUnseenUpdate.id);
-            if (!hasMoreUnseenUpdates) {
-              router.push(currentUnseenUpdate.actionRoute);
-            }
           }}
         />
       )}
