@@ -13,7 +13,7 @@ import {
 import { twMerge } from "tailwind-merge";
 
 import { useAuth } from "@/components/providers/auth-provider";
-import { LucideIcon, ThemedText } from "@/components/ui/atoms";
+import { LucideIcon, Skeleton, ThemedText } from "@/components/ui/atoms";
 import {
   ActionRow,
   ImagePreviewModal,
@@ -36,7 +36,7 @@ export default function ShopProductScreen() {
   const intl = useIntl();
   const { isAuthenticated } = useAuth();
   const { slug } = useLocalSearchParams<{ slug: string }>();
-  const { data: merch } = useMerch();
+  const { data: merch, isPending } = useMerch();
   const { data: me } = useUserMe();
   const [selectedSize, setSelectedSize] = useState<CartSize | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
@@ -62,6 +62,55 @@ export default function ShopProductScreen() {
   }
 
   if (!product) {
+    if (isPending) {
+      return (
+        <View className="flex-1 bg-background">
+          <ScreenHeader />
+          <ScrollView
+            className="flex-1"
+            contentContainerClassName="pb-10"
+            showsVerticalScrollIndicator={false}
+          >
+            <Skeleton
+              className="w-full rounded-none"
+              style={{ aspectRatio: 1, height: undefined }}
+            />
+            <View className="gap-4 px-6 pt-4">
+              <Skeleton className="h-9 w-3/4 rounded-md" />
+              <View className="gap-2">
+                <Skeleton className="h-4 w-full rounded-md" />
+                <Skeleton className="h-4 w-5/6 rounded-md" />
+                <Skeleton className="h-4 w-2/3 rounded-md" />
+              </View>
+              <View className="gap-3">
+                <Skeleton className="h-6 w-32 rounded-md" />
+                <View className="flex-row gap-3">
+                  {[0, 1, 2].map((i) => (
+                    <Skeleton key={i} className="size-16 rounded" />
+                  ))}
+                </View>
+              </View>
+              <View className="gap-2">
+                <Skeleton className="h-6 w-28 rounded-md" />
+                <View className="flex-row gap-2">
+                  {[0, 1, 2, 3].map((i) => (
+                    <Skeleton key={i} className="h-12 flex-1 rounded" />
+                  ))}
+                </View>
+              </View>
+              <View className="gap-2">
+                <Skeleton className="h-6 w-16 rounded-md" />
+                <Skeleton className="h-9 w-32 rounded-md" />
+              </View>
+              <View className="flex-row items-center gap-2">
+                <Skeleton className="size-12 rounded-full" />
+                <Skeleton className="h-6 w-28 rounded-md" />
+              </View>
+            </View>
+          </ScrollView>
+        </View>
+      );
+    }
     return (
       <View className="flex-1 bg-background">
         <ScreenHeader>

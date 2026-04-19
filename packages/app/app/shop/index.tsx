@@ -4,7 +4,7 @@ import { FormattedMessage, useIntl } from "react-intl";
 import { Image, TouchableOpacity, View } from "react-native";
 
 import { useAuth } from "@/components/providers/auth-provider";
-import { LucideIcon, ThemedText } from "@/components/ui/atoms";
+import { LucideIcon, Skeleton, ThemedText } from "@/components/ui/atoms";
 import { ProductPrice } from "@/components/ui/molecules";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
 import { Colors } from "@/constants/colors";
@@ -33,7 +33,7 @@ const resolveSwatchColor = (token: string) =>
 export default function ShopScreen() {
   const intl = useIntl();
   const { isAuthenticated } = useAuth();
-  const { data: merch } = useMerch();
+  const { data: merch, isPending } = useMerch();
 
   if (!isAuthenticated) {
     return <Redirect href="/join" />;
@@ -69,6 +69,22 @@ export default function ShopScreen() {
       </View>
 
       <View className="flex-row flex-wrap">
+        {isPending &&
+          [0, 1, 2, 3].map((i) => (
+            <View
+              key={i}
+              className={`w-1/2 pb-6 ${i % 2 === 0 ? "pr-1.5" : "pl-1.5"}`}
+            >
+              <View className="gap-2">
+                <Skeleton
+                  className="w-full rounded"
+                  style={{ aspectRatio: 1, height: undefined }}
+                />
+                <Skeleton className="h-5 w-3/4 rounded-md" />
+                <Skeleton className="h-5 w-20 rounded-md" />
+              </View>
+            </View>
+          ))}
         {products.map((product, index) => (
           <View
             key={product.slug}
