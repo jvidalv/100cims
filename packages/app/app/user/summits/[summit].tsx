@@ -8,7 +8,7 @@ import {
   SquarePen,
   Trash2,
 } from "lucide-react-native";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
   Alert,
@@ -35,6 +35,7 @@ import {
   ActionRow,
   ImagePreviewModal,
   MountainItemList,
+  PushPermissionDialog,
   ScreenHeader,
   SharePreviewModal,
   SharePulseBadge,
@@ -47,8 +48,13 @@ import {
   useReportSummitMutation,
   useSummitGet,
 } from "@/domains/summit/summit.api";
-import { useIsAdmin, useUserMe } from "@/domains/user/user.api";
+import {
+  useIsAdmin,
+  useUserChallengeSummits,
+  useUserMe,
+} from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
+import { useAskPushPermission } from "@/hooks/use-ask-push-permission";
 import {
   CONFETTI_EXPLOSION_SPEED,
   CONFETTI_FALL_SPEED,
@@ -69,6 +75,7 @@ const Content = () => {
 
   const { data, isPending, refetch } = useSummitGet({ summitId: summit });
   const { data: me } = useUserMe();
+  const { data: userChallengeSummits } = useUserChallengeSummits();
   const isAdmin = useIsAdmin();
   const { mutateAsync: deleteSummit } = useDeleteSummitMutation();
   const { mutateAsync: reportSummit } = useReportSummitMutation();
@@ -76,6 +83,21 @@ const Content = () => {
   const { mutateAsync: adminResetImage, isPending: isResettingImage } =
     useAdminResetSummitImageMutation();
   const [hasReported, setHasReported] = useState(false);
+
+  const {
+    isOpen: isPushPromptOpen,
+    ask: askPushPermission,
+    dismiss: dismissPushPrompt,
+    confirm: confirmPushPrompt,
+  } = useAskPushPermission();
+
+  const userSummitCount = userChallengeSummits?.summits?.length ?? 0;
+
+  useEffect(() => {
+    if (justCreated && userSummitCount === 1) {
+      void askPushPermission();
+    }
+  }, [justCreated, userSummitCount, askPushPermission]);
 
   const { previewImage, isPreviewOpen, openPreview, closePreview } =
     useImagePreview();
@@ -396,6 +418,11 @@ const Content = () => {
         imageUri={shareUri}
         dialogTitle={intl.formatMessage({ defaultMessage: "Share summit" })}
         onClose={() => setShareUri(null)}
+      />
+      <PushPermissionDialog
+        isOpen={isPushPromptOpen}
+        onClose={dismissPushPrompt}
+        onEnable={confirmPushPrompt}
       />
       {justCreated && (
         <ConfettiCannon

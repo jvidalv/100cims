@@ -39,6 +39,7 @@ import {
 import {
   ActionRow,
   MountainItemList,
+  PushPermissionDialog,
   SharePreviewModal,
   SharePulseBadge,
 } from "@/components/ui/molecules";
@@ -54,6 +55,7 @@ import {
 } from "@/domains/plan/plan.api";
 import { useIsAdmin, useUserMe } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
+import { useAskPushPermission } from "@/hooks/use-ask-push-permission";
 import {
   CONFETTI_EXPLOSION_SPEED,
   CONFETTI_FALL_SPEED,
@@ -131,6 +133,13 @@ export default function PlanIdPage() {
   const { mutateAsync: adminDeletePlan } = useAdminDeletePlanMutation();
   const intl = useIntl();
 
+  const {
+    isOpen: isPushPromptOpen,
+    ask: askPushPermission,
+    dismiss: dismissPushPrompt,
+    confirm: confirmPushPrompt,
+  } = useAskPushPermission();
+
   const plan = data;
   const justCompleted = from === "complete";
   const [completionImages, setCompletionImages] = useState<
@@ -191,12 +200,19 @@ export default function PlanIdPage() {
     }
   };
 
-  const handleJoin = () => {
+  const handleJoin = async () => {
     if (!isAuthenticated) {
       return router.push("/join");
     }
 
-    void joinPlan();
+    try {
+      await joinPlan();
+      // High-intent moment — skip the 7-day dismiss cooldown.
+      void askPushPermission({ bypassCooldown: true });
+    } catch {
+      // Mutation errors surface via react-query state; the bypass CTA simply
+      // doesn't fire on failure, which is the right call.
+    }
   };
 
   const handleLeave = () => {
@@ -598,6 +614,11 @@ export default function PlanIdPage() {
         imageUri={shareUri}
         dialogTitle={intl.formatMessage({ defaultMessage: "Share plan" })}
         onClose={() => setShareUri(null)}
+      />
+      <PushPermissionDialog
+        isOpen={isPushPromptOpen}
+        onClose={dismissPushPrompt}
+        onEnable={confirmPushPrompt}
       />
       {justCompleted && (
         <ConfettiCannon
