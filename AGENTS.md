@@ -84,29 +84,27 @@ eas submit --platform ios
 eas submit --platform android
 ```
 
-### API Deployment (Vercel)
+### API Deployment (Railway)
 
-**Tool**: Vercel Platform
-**Configuration**: `/vercel.json`
+**Tool**: Railway
+**Configuration**: `packages/api/Dockerfile`
 
 **Current Setup**:
-- **Framework**: Next.js (auto-detected)
-- **Build directory**: `packages/api`
+- **Build**: Docker image built from `packages/api/Dockerfile`
 - **Triggers**: Automatic on git push to main branch
-- **Environment**: Variables set in Vercel dashboard
+- **Environment**: Variables set in the Railway service dashboard
+- **Domains**: `cims-sempre-amunt.app` and `fescims.com` both point at the same service
 
 **Workflow**:
 1. Push to main branch
-2. Vercel webhook triggers build
-3. Next.js build runs (`yarn build`)
-4. Deployment to production URL
-5. Automatic HTTPS, edge functions
+2. Railway detects the push and builds the Docker image
+3. Image is deployed to the production service
+4. Automatic HTTPS on all attached domains
 
-**Manual Deployments**:
-```bash
-vercel --prod  # Production deployment
-vercel         # Preview deployment
-```
+**Manual operations**:
+- Rollback: Railway dashboard → Deployments → redeploy a previous build
+- Logs: `railway logs` (or the dashboard)
+- Shell: `railway run -- sh`
 
 ## Background Processing
 
@@ -235,7 +233,7 @@ updates:
 ### Potential Webhooks
 - Stripe webhooks (if adding payments)
 - GitHub webhooks (for advanced CI/CD)
-- Vercel deploy webhooks (for notifications)
+- Railway deploy webhooks (for notifications)
 
 ## Manual Processes (Candidates for Automation)
 
@@ -245,7 +243,7 @@ updates:
 2. **Database seeding**: `init-script.sql` run manually
    - Could automate in dev environment setup
 
-3. **Environment variable sync**: Manual across Vercel, EAS
+3. **Environment variable sync**: Manual across Railway, EAS
    - Could use dotenv-vault or similar tool
 
 4. **API documentation**: Swagger accessible only in dev

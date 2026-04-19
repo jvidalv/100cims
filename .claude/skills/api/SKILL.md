@@ -391,7 +391,8 @@ Global error handler in `/routes/index.ts`:
 
 ## Deployment
 
-Vercel (configured in root `vercel.json`):
-- Builds from `packages/api`
-- Environment variables set in Vercel dashboard
-- Automatic deployments on main branch
+Railway (built from `packages/api/Dockerfile`):
+- Docker image built and deployed on every push to `main`
+- Environment variables set in the Railway service dashboard
+- Both `cims-sempre-amunt.app` and `fescims.com` are attached to the same service
+- Rollback via Railway Deployments tab

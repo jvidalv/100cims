@@ -218,14 +218,12 @@ yarn generate-api-types
 
 ## 🚢 Deployment
 
-The API is configured for deployment on **Vercel**.
+The API is deployed on **Railway** from `packages/api/Dockerfile`.
 
-The monorepo root contains `vercel.json` configured to:
-- Build from `packages/api`
-- Use Next.js framework detection
-- Output to `.next` directory
-
-Environment variables must be configured in Vercel dashboard.
+- Railway builds the Docker image on every push to `main`.
+- Two custom domains are attached to the same service: `cims-sempre-amunt.app` (legacy) and `fescims.com` (primary). Both serve the same Next.js app.
+- Environment variables must be configured in the Railway service dashboard.
+- Health checks + logs + rollbacks are managed from the Railway UI; a previous deployment can be restored with one click.
 
 ## 📝 Type Safety
 
