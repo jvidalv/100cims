@@ -225,6 +225,13 @@
       "when": 1776589242079,
       "tag": "0031_backfill-merch-images",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1776591424808,
+      "tag": "0032_move-unaccent-to-public",
+      "breakpoints": true
     }
   ]
 }
