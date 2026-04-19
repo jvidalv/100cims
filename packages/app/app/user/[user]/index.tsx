@@ -1,5 +1,5 @@
 import { format } from "date-fns/format";
-import { Link, useLocalSearchParams, useRouter } from "expo-router";
+import { Link, Redirect, useLocalSearchParams, useRouter } from "expo-router";
 import {
   Calendar,
   House,
@@ -15,6 +15,7 @@ import { useRef, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Alert, Image, View } from "react-native";
 
+import { useAuth } from "@/components/providers/auth-provider";
 import { SummitCard } from "@/components/summit";
 import {
   ActivityIndicator,
@@ -46,6 +47,7 @@ import { captureShareCard, shareDeeplink } from "@/lib/share";
 export default function UserScreen() {
   const intl = useIntl();
   const router = useRouter();
+  const { isAuthenticated } = useAuth();
   const { data: me } = useUserMe();
   const { user: userId } = useLocalSearchParams<{ user: string }>();
   const { data: user } = useUserOneGet({ userId });
@@ -154,6 +156,10 @@ export default function UserScreen() {
       ],
     );
   };
+
+  if (!isAuthenticated) {
+    return <Redirect href="/join" />;
+  }
 
   return (
     <>
