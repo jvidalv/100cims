@@ -1,18 +1,38 @@
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import * as AppleAuthentication from "expo-apple-authentication";
 import { Redirect, useRouter } from "expo-router";
-import { Mountain, Trophy, User } from "lucide-react-native";
 import { useColorScheme } from "nativewind";
 import { useState } from "react";
 import { FormattedMessage } from "react-intl";
-import { TouchableOpacity, View, Text, ScrollView } from "react-native";
-import { twMerge } from "tailwind-merge";
+import { TouchableOpacity, View, ScrollView } from "react-native";
+import Svg, { Path } from "react-native-svg";
 
 import { useAuth } from "@/components/providers/auth-provider";
-import { LucideIcon, ThemedText, ThemedLogo, Button } from "@/components/ui/atoms";
+import { ThemedText, ThemedLogo } from "@/components/ui/atoms";
 import { AvatarGroup } from "@/components/ui/molecules";
+
+const GoogleG = ({ size = 20 }: { size?: number }) => (
+  <Svg width={size} height={size} viewBox="0 0 48 48">
+    <Path
+      fill="#4285F4"
+      d="M45.12 24.5c0-1.56-.14-3.06-.4-4.5H24v8.51h11.84c-.51 2.75-2.06 5.08-4.39 6.64v5.52h7.11c4.16-3.83 6.56-9.47 6.56-16.17z"
+    />
+    <Path
+      fill="#34A853"
+      d="M24 46c5.94 0 10.92-1.97 14.56-5.33l-7.11-5.52c-1.97 1.32-4.49 2.1-7.45 2.1-5.73 0-10.58-3.87-12.31-9.07H4.34v5.7C7.96 41.07 15.4 46 24 46z"
+    />
+    <Path
+      fill="#FBBC05"
+      d="M11.69 28.18c-.44-1.32-.69-2.73-.69-4.18s.25-2.86.69-4.18v-5.7H4.34C2.85 17.09 2 20.45 2 24c0 3.55.85 6.91 2.34 9.88l7.35-5.7z"
+    />
+    <Path
+      fill="#EA4335"
+      d="M24 10.75c3.23 0 6.13 1.11 8.41 3.29l6.31-6.31C34.91 4.18 29.93 2 24 2 15.4 2 7.96 6.93 4.34 14.12l7.35 5.7c1.73-5.2 6.58-9.07 12.31-9.07z"
+    />
+  </Svg>
+);
 import { useJoinMutation } from "@/domains/user/user.api";
-import { isAndroid, isIOS } from "@/lib/device";
+import { isIOS } from "@/lib/device";
 import { getLocale } from "@/lib/locale";
 import { logError } from "@/lib/log-error";
 
@@ -97,7 +117,7 @@ const AppleSignIn = () => {
       }
       cornerRadius={6}
       style={{
-        height: 48,
+        height: 56,
       }}
       onPress={async () => {
         try {
@@ -184,59 +204,24 @@ const GoogleSignIn = () => {
   };
 
   return (
-    <Button
-      intent="outline"
+    <TouchableOpacity
       onPress={handleGoogleSignIn}
       disabled={isAuthenticating}
+      activeOpacity={0.85}
+      className="h-14 flex-row items-center justify-center gap-3 rounded border-2 border-border bg-background"
+      style={{ opacity: isAuthenticating ? 0.7 : 1 }}
     >
-      <Text className="text-blue-500" style={{ fontSize: 18 }}>
-        G{"  "}
-      </Text>
-      <FormattedMessage defaultMessage="Sign in with Google" />
-    </Button>
+      <GoogleG size={20} />
+      <ThemedText className="font-medium" style={{ fontSize: 19 }}>
+        <FormattedMessage defaultMessage="Sign in with Google" />
+      </ThemedText>
+    </TouchableOpacity>
   );
 };
 
 export default function JoinScreen() {
   const { isAuthenticated } = useAuth();
   const router = useRouter();
-
-  const features = [
-    {
-      icon: Mountain,
-      text: (
-        <ThemedText>
-          <FormattedMessage defaultMessage="The ability to" />{" "}
-          <ThemedText className="font-extrabold tracking-tighter">
-            <FormattedMessage defaultMessage="register your summits" />
-          </ThemedText>{" "}
-          <FormattedMessage defaultMessage="and track the ones left." />
-        </ThemedText>
-      ),
-    },
-    {
-      icon: Trophy,
-      text: (
-        <ThemedText>
-          <ThemedText className="font-extrabold tracking-tighter">
-            <FormattedMessage defaultMessage="A community ranking" />
-          </ThemedText>{" "}
-          <FormattedMessage defaultMessage="where you can compete with other mountain lovers." />
-        </ThemedText>
-      ),
-    },
-    {
-      icon: User,
-      text: (
-        <ThemedText>
-          <ThemedText className="font-extrabold tracking-tighter">
-            <FormattedMessage defaultMessage="A profile with your feats" />
-          </ThemedText>{" "}
-          <FormattedMessage defaultMessage="that you can share with the world." />
-        </ThemedText>
-      ),
-    },
-  ];
 
   if (isAuthenticated) {
     return <Redirect href="/" />;
@@ -245,47 +230,27 @@ export default function JoinScreen() {
   return (
     <ScrollView
       className="bg-background"
-      contentContainerClassName={twMerge(
-        "gap-6 px-4 pt-6 pb-32",
-        isAndroid && "pt-24",
-      )}
+      contentContainerClassName="flex-grow justify-center gap-10 px-4 py-12"
     >
       <View className="items-center">
-        <View className="items-center justify-center">
-          <ThemedLogo style={{ width: 200, height: 120 }} />
-        </View>
-      </View>
-      <View className="items-center justify-center">
-        <ThemedText className="items-center justify-center text-center text-4xl font-black">
-          <FormattedMessage defaultMessage="Join" />{" "}
-          <ThemedText className="text-4xl font-black text-primary">
-            Cims{" "}
+        <ThemedLogo style={{ width: 200, height: 120 }} />
+        <View className="mt-10 items-center gap-1">
+          <ThemedText className="text-center text-4xl font-black">
+            <FormattedMessage defaultMessage="Join" />{" "}
+            <ThemedText className="text-4xl font-black text-primary">
+              Cims{" "}
+            </ThemedText>
+            <FormattedMessage defaultMessage="today" />
           </ThemedText>
-          <FormattedMessage defaultMessage="today" />
-        </ThemedText>
-        <ThemedText className="items-center justify-center text-center text-xl font-medium text-muted-foreground">
-          <FormattedMessage defaultMessage="and be part of a thriving community" />
-        </ThemedText>
-        <View className="mb-8 mt-3 flex-row items-center justify-center gap-2">
-          <AvatarGroup items={users} limit={users.length} />
-        </View>
-        <View className="mb-12">
-          <ThemedText className="mb-2 text-left text-lg font-medium text-muted-foreground">
-            <FormattedMessage defaultMessage="Also unblock..." />
+          <ThemedText className="text-center text-xl font-medium text-muted-foreground">
+            <FormattedMessage defaultMessage="and be part of a thriving community" />
           </ThemedText>
-          <View className="min-w-full gap-3">
-            {features.map(({ icon, text }, index) => (
-              <View key={index} className="flex-row items-start gap-3">
-                <LucideIcon icon={icon} size={20} muted />
-                <ThemedText className="flex-1 text-lg font-medium leading-5">
-                  {text}
-                </ThemedText>
-              </View>
-            ))}
+          <View className="mt-2 flex-row items-center justify-center gap-2">
+            <AvatarGroup items={users} limit={users.length} />
           </View>
         </View>
       </View>
-      <View className="mx-auto w-full max-w-lg gap-2">
+      <View className="mx-auto w-full max-w-lg gap-4">
         {isIOS && <AppleSignIn />}
         <GoogleSignIn />
         <TouchableOpacity
@@ -294,7 +259,7 @@ export default function JoinScreen() {
             router.back();
           }}
         >
-          <ThemedText className="text-center text-muted-foreground underline">
+          <ThemedText className="text-center text-muted-foreground">
             <FormattedMessage defaultMessage="I'll join later" />
           </ThemedText>
         </TouchableOpacity>
