@@ -171,3 +171,46 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 }
+
+@keyframes hero-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes hero-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.hero-reveal {
+  animation: hero-reveal 700ms ease-out both;
+}
+
+.hero-reveal.hero-float {
+  animation:
+    hero-reveal 700ms ease-out both,
+    hero-float 6s ease-in-out infinite 700ms;
+}
+
+.hero-float:not(.hero-reveal) {
+  animation: hero-float 6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-reveal,
+  .hero-float,
+  .hero-reveal.hero-float {
+    animation: none;
+  }
+}
