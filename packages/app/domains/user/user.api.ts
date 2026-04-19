@@ -307,6 +307,7 @@ export const useUpdateUserMeMutation = () => {
       imageUrl?: string;
       locale?: string;
       town?: string;
+      phoneNumber?: string;
       visibleOnHiscores?: boolean;
       visibleOnPeopleSearch?: boolean;
       activeChallengeId?: string;

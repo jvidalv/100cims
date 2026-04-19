@@ -5,6 +5,7 @@ export type User = {
   lastName: string | null;
   imageUrl: string | null;
   town: string | null;
+  phoneNumber: string | null;
   visibleOnHiscores: boolean;
   visibleOnPeopleSearch: boolean;
   admin: boolean;

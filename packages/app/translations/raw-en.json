@@ -1,4 +1,7 @@
 {
+  "+QiHz4": {
+    "defaultMessage": "One more thing"
+  },
   "+Z/Wja": {
     "defaultMessage": "I don't know exactly when."
   },
@@ -203,6 +206,9 @@
   "ADKef8": {
     "defaultMessage": "Add to cart"
   },
+  "AELAf8": {
+    "defaultMessage": "Phone number (only visible to you)"
+  },
   "AIUVfa": {
     "defaultMessage": "Enable notifications"
   },
@@ -253,6 +259,9 @@
   },
   "DJbyE/": {
     "defaultMessage": "You summited this mountain"
+  },
+  "DLvL8T": {
+    "defaultMessage": "Leave us a phone number and we'll reach out about your order faster. Only we see it."
   },
   "DR+23P": {
     "defaultMessage": "Contact email"
@@ -398,9 +407,6 @@
   "K3r6DQ": {
     "defaultMessage": "Delete"
   },
-  "KS+YEv": {
-    "defaultMessage": "A profile with your feats"
-  },
   "KTlYr+": {
     "defaultMessage": "Deleting your account is permanent. All your summits and plans will be lost."
   },
@@ -415,9 +421,6 @@
   },
   "Lv0zJu": {
     "defaultMessage": "Details"
-  },
-  "M7VcNh": {
-    "defaultMessage": "where you can compete with other mountain lovers."
   },
   "MJ2jZQ": {
     "defaultMessage": "Total"
@@ -445,9 +448,6 @@
   },
   "NozjOy": {
     "defaultMessage": "Color: {color}"
-  },
-  "NyrFn7": {
-    "defaultMessage": "Also unblock..."
   },
   "OHvDJa": {
     "defaultMessage": "Suggest a new challenge"
@@ -752,9 +752,6 @@
   "grf9Y7": {
     "defaultMessage": "Active challenge"
   },
-  "gzZWtl": {
-    "defaultMessage": "The ability to"
-  },
   "gzhhds": {
     "defaultMessage": "Select color"
   },
@@ -791,11 +788,11 @@
   "jKKg2o": {
     "defaultMessage": "Clear all filters"
   },
+  "jdJhOL": {
+    "defaultMessage": "Phone number"
+  },
   "jvo0vs": {
     "defaultMessage": "Save"
-  },
-  "k0m8DH": {
-    "defaultMessage": "A community ranking"
   },
   "khcfUd": {
     "defaultMessage": "Select size"
@@ -848,9 +845,6 @@
   "oUWADl": {
     "defaultMessage": "No"
   },
-  "om7joI": {
-    "defaultMessage": "that you can share with the world."
-  },
   "p/Xd3M": {
     "defaultMessage": "Share with a friend"
   },
@@ -862,9 +856,6 @@
   },
   "poRHYt": {
     "defaultMessage": "Please pick a color and size before adding to cart."
-  },
-  "pqUy68": {
-    "defaultMessage": "register your summits"
   },
   "q6F4vK": {
     "defaultMessage": "Not authorized"
@@ -1045,9 +1036,6 @@
   },
   "zQvVDJ": {
     "defaultMessage": "All"
-  },
-  "zRI7mV": {
-    "defaultMessage": "and track the ones left."
   },
   "zSOvI0": {
     "defaultMessage": "Filters"

@@ -1,7 +1,9 @@
 import { t } from "elysia";
 
 /**
- * Schema for user object returned from store/auth
+ * Public-facing user shape. Used wherever one user reads another user's
+ * profile (e.g. `/api/public/user/one`). Private fields like phoneNumber
+ * must never be added here — extend `MeSchema` instead.
  */
 export const UserSchema = t.Object({
   id: t.String(),
@@ -19,6 +21,18 @@ export const UserSchema = t.Object({
   unlockables: t.Optional(t.Array(t.String())),
   createdAt: t.Date(),
 });
+
+/**
+ * Owner-only user shape returned by `/me` endpoints (protected + admin).
+ * Superset of `UserSchema` with fields the user can see about themselves
+ * but no one else can see about them.
+ */
+export const MeSchema = t.Intersect([
+  UserSchema,
+  t.Object({
+    phoneNumber: t.Nullable(t.String()),
+  }),
+]);
 
 /**
  * Schema for basic user info (used in search results)

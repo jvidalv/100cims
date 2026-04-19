@@ -11,7 +11,7 @@ import {
 } from "@/api/lib/request-headers";
 import { getUserFromRequest } from "@/api/routes/@shared/auth";
 import { SuccessResponse } from "@/api/schemas/common.schema";
-import { UserSchema } from "@/api/schemas/user.schema";
+import { MeSchema } from "@/api/schemas/user.schema";
 
 export const userMeGetRoute = new Elysia().get(
   "/me",
@@ -44,6 +44,6 @@ export const userMeGetRoute = new Elysia().get(
     return { success: true, message: { ...user, ...updates } };
   },
   {
-    response: SuccessResponse(UserSchema),
+    response: SuccessResponse(MeSchema),
   },
 );

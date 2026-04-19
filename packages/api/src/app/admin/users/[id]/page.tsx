@@ -35,6 +35,7 @@ type Form = {
   lastName: string;
   username: string;
   town: string;
+  phoneNumber: string;
   country: string;
   locale: string;
   visibleOnHiscores: boolean;
@@ -48,6 +49,7 @@ const emptyForm: Form = {
   lastName: "",
   username: "",
   town: "",
+  phoneNumber: "",
   country: "",
   locale: "",
   visibleOnHiscores: false,
@@ -94,6 +96,7 @@ export default function AdminUserDetailPage({
       lastName: detail.data.lastName ?? "",
       username: detail.data.username ?? "",
       town: detail.data.town ?? "",
+      phoneNumber: detail.data.phoneNumber ?? "",
       country: detail.data.country ?? "",
       locale: detail.data.locale ?? "",
       visibleOnHiscores: detail.data.visibleOnHiscores,
@@ -125,6 +128,8 @@ export default function AdminUserDetailPage({
       body.lastName = form.lastName || null;
     if (form.username !== initial.username) body.username = form.username;
     if (form.town !== initial.town) body.town = form.town || null;
+    if (form.phoneNumber !== initial.phoneNumber)
+      body.phoneNumber = form.phoneNumber.trim() || null;
     if (form.country !== initial.country) body.country = form.country || null;
     if (form.locale !== initial.locale) body.locale = form.locale || null;
     if (form.visibleOnHiscores !== initial.visibleOnHiscores)
@@ -214,6 +219,11 @@ export default function AdminUserDetailPage({
             label="Town"
             value={form.town}
             onChange={(v) => setForm((p) => ({ ...p, town: v }))}
+          />
+          <FieldText
+            label="Phone number (private)"
+            value={form.phoneNumber}
+            onChange={(v) => setForm((p) => ({ ...p, phoneNumber: v }))}
           />
           <FieldText
             label="Country (ISO code)"
@@ -333,90 +343,6 @@ export default function AdminUserDetailPage({
             )}
           </dd>
         </dl>
-      </section>
-
-      <section className="space-y-3">
-        <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
-          Summits {summits.data ? `(${summits.data.total})` : ""}
-        </h2>
-
-        {summits.error && (
-          <p className="text-red-600">{summits.error.message}</p>
-        )}
-        {summits.isLoading && !summits.data && (
-          <p className="text-muted-foreground">Loading…</p>
-        )}
-
-        {summits.data && (
-          <>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b text-left">
-                    <th className="py-2 pr-4 font-medium">Mountain</th>
-                    <th className="py-2 pr-4 font-medium">Height</th>
-                    <th className="py-2 pr-4 font-medium">Essential</th>
-                    <th className="py-2 pr-4 font-medium">Validated</th>
-                    <th className="py-2 pr-4 font-medium">Date</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {summits.data.items.map((s) => (
-                    <tr key={s.summitId} className="border-b">
-                      <td className="py-2 pr-4">{s.mountainName}</td>
-                      <td className="py-2 pr-4 text-muted-foreground">
-                        {s.mountainHeight} m
-                      </td>
-                      <td className="py-2 pr-4 text-muted-foreground">
-                        {s.mountainEssential ? "Yes" : "—"}
-                      </td>
-                      <td className="py-2 pr-4 text-muted-foreground">
-                        {s.validated ? "Yes" : "No"}
-                      </td>
-                      <td className="py-2 pr-4 text-muted-foreground">
-                        {formatDate(s.summitedAt)}
-                      </td>
-                    </tr>
-                  ))}
-                  {summits.data.items.length === 0 && (
-                    <tr>
-                      <td
-                        colSpan={5}
-                        className="py-8 text-center text-muted-foreground"
-                      >
-                        No summits yet.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-
-            {summits.data.totalPages > 1 && (
-              <div className="flex items-center gap-4 text-sm">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  disabled={summitsPage <= 1}
-                  onClick={() => setSummitsPage(summitsPage - 1)}
-                >
-                  Previous
-                </Button>
-                <span className="text-muted-foreground">
-                  Page {summits.data.page} of {summits.data.totalPages}
-                </span>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  disabled={summitsPage >= summits.data.totalPages}
-                  onClick={() => setSummitsPage(summitsPage + 1)}
-                >
-                  Next
-                </Button>
-              </div>
-            )}
-          </>
-        )}
       </section>
 
       <section className="space-y-3">
@@ -552,6 +478,90 @@ export default function AdminUserDetailPage({
               </tbody>
             </table>
           </div>
+        )}
+      </section>
+
+      <section className="space-y-3">
+        <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+          Summits {summits.data ? `(${summits.data.total})` : ""}
+        </h2>
+
+        {summits.error && (
+          <p className="text-red-600">{summits.error.message}</p>
+        )}
+        {summits.isLoading && !summits.data && (
+          <p className="text-muted-foreground">Loading…</p>
+        )}
+
+        {summits.data && (
+          <>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b text-left">
+                    <th className="py-2 pr-4 font-medium">Mountain</th>
+                    <th className="py-2 pr-4 font-medium">Height</th>
+                    <th className="py-2 pr-4 font-medium">Essential</th>
+                    <th className="py-2 pr-4 font-medium">Validated</th>
+                    <th className="py-2 pr-4 font-medium">Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {summits.data.items.map((s) => (
+                    <tr key={s.summitId} className="border-b">
+                      <td className="py-2 pr-4">{s.mountainName}</td>
+                      <td className="py-2 pr-4 text-muted-foreground">
+                        {s.mountainHeight} m
+                      </td>
+                      <td className="py-2 pr-4 text-muted-foreground">
+                        {s.mountainEssential ? "Yes" : "—"}
+                      </td>
+                      <td className="py-2 pr-4 text-muted-foreground">
+                        {s.validated ? "Yes" : "No"}
+                      </td>
+                      <td className="py-2 pr-4 text-muted-foreground">
+                        {formatDate(s.summitedAt)}
+                      </td>
+                    </tr>
+                  ))}
+                  {summits.data.items.length === 0 && (
+                    <tr>
+                      <td
+                        colSpan={5}
+                        className="py-8 text-center text-muted-foreground"
+                      >
+                        No summits yet.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {summits.data.totalPages > 1 && (
+              <div className="flex items-center gap-4 text-sm">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={summitsPage <= 1}
+                  onClick={() => setSummitsPage(summitsPage - 1)}
+                >
+                  Previous
+                </Button>
+                <span className="text-muted-foreground">
+                  Page {summits.data.page} of {summits.data.totalPages}
+                </span>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={summitsPage >= summits.data.totalPages}
+                  onClick={() => setSummitsPage(summitsPage + 1)}
+                >
+                  Next
+                </Button>
+              </div>
+            )}
+          </>
         )}
       </section>
     </div>
