@@ -13,6 +13,8 @@ import {
   Text,
 } from "@react-email/components";
 
+import { SITE_URL } from "@/lib/app-links";
+
 import { EmailFooter } from "./_components/footer";
 
 export type ReengageColdLocale = "en" | "ca" | "es";
@@ -23,10 +25,9 @@ type Props = {
   unsubscribeUrl: string;
 };
 
-const MOUNTAINS_DEEPLINK =
-  "https://cims-sempre-amunt.app/deeplink?link=centcims%3A%2F%2F%2Fmountains";
+const MOUNTAINS_DEEPLINK = `${SITE_URL}/deeplink?link=centcims%3A%2F%2F%2Fmountains`;
 
-const LOGO_URL = "https://cims-sempre-amunt.app/emails/logo-on-black.png";
+const LOGO_URL = `${SITE_URL}/emails/logo-on-black.png`;
 
 type Copy = {
   preview: string;

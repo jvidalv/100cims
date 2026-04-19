@@ -1,4 +1,11 @@
-export const SITE_URL = "https://cims-sempre-amunt.app";
+export const SITE_URL = "https://fescims.com";
+
+/**
+ * The legacy domain is still attached to the same service and 301-redirects
+ * everything except `/api/*`, `/_next/*`, and `/.well-known/*` to SITE_URL.
+ * Kept here so we can reference it in redirect rules and docs.
+ */
+export const LEGACY_SITE_URL = "https://cims-sempre-amunt.app";
 
 export const IOS_APP_URL =
   "https://apps.apple.com/app/100cims/id6740161401?platform=iphone";
