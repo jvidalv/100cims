@@ -4,6 +4,7 @@ import { Elysia, t } from "elysia";
 import { db } from "@/db";
 import { merchTable, merchVariantTable } from "@/db/schema";
 import { MerchImageError, resolveMerchImageUrls } from "@/api/lib/merch-images";
+import { MERCH_SIZES } from "@/api/lib/merch-sizes";
 import { AdminMerchUpdateBodySchema } from "@/api/schemas/admin.schema";
 import {
   ErrorFieldResponse,
@@ -37,11 +38,18 @@ export const adminMerchUpdatePostRoute = new Elysia().post(
               })),
             );
 
+      // When sizes is present in the patch, hasSize is derived from it so the
+      // two columns never drift. Old clients that only send hasSize keep
+      // working as before.
+      const derivedHasSize =
+        rest.sizes !== undefined ? { hasSize: rest.sizes.length > 0 } : {};
+
       const updated = await db.transaction(async (tx) => {
         const [row] = await tx
           .update(merchTable)
           .set({
             ...rest,
+            ...derivedHasSize,
             ...(resolvedImageUrls !== undefined && {
               imageUrls: resolvedImageUrls,
             }),
@@ -85,6 +93,12 @@ export const adminMerchUpdatePostRoute = new Elysia().post(
         set.status = 409;
         return {
           error: `Conflict: ${err.constraint ?? "unique constraint"}`,
+        };
+      }
+      if (err.code === "23514" && err.constraint === "merch_sizes_check") {
+        set.status = 400;
+        return {
+          error: `Invalid size — must be one of ${MERCH_SIZES.join(", ")}.`,
         };
       }
       throw e;

@@ -41,7 +41,7 @@ export default function AdminMerchNewPage() {
               shopUrl: values.shopUrl.trim() || null,
               price: values.price,
               discountedPrice: values.discountedPrice,
-              hasSize: values.hasSize,
+              sizes: values.sizes,
               featured: values.featured,
               active: values.active,
               imageUrls: values.imageUrls,

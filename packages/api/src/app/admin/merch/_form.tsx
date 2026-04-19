@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { MERCH_SIZES } from "@/api/lib/merch-sizes";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -32,7 +33,7 @@ export type MerchFormValues = {
   shopUrl: string;
   price: number;
   discountedPrice: number | null;
-  hasSize: boolean;
+  sizes: string[];
   featured: number | null;
   active: boolean;
   imageUrls: string[];
@@ -50,7 +51,7 @@ export const emptyMerchForm: MerchFormValues = {
   shopUrl: "",
   price: 0,
   discountedPrice: null,
-  hasSize: false,
+  sizes: [],
   featured: null,
   active: true,
   imageUrls: [],
@@ -207,17 +208,39 @@ export function MerchForm({
         />
       </div>
 
+      <div className="space-y-2">
+        <Label>Sizes</Label>
+        <div className="flex flex-wrap gap-3">
+          {MERCH_SIZES.map((size) => {
+            const checked = form.sizes.includes(size);
+            return (
+              <label
+                key={size}
+                className="flex items-center gap-1.5 text-sm cursor-pointer select-none rounded border px-2.5 py-1 hover:bg-muted/40"
+              >
+                <input
+                  type="checkbox"
+                  checked={checked}
+                  onChange={(e) =>
+                    setForm((f) => ({
+                      ...f,
+                      sizes: e.target.checked
+                        ? Array.from(new Set([...f.sizes, size]))
+                        : f.sizes.filter((s) => s !== size),
+                    }))
+                  }
+                />
+                <span>{size}</span>
+              </label>
+            );
+          })}
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Leave empty for products without sizes (mugs, stickers, …).
+        </p>
+      </div>
+
       <div className="flex flex-wrap gap-6">
-        <label className="flex items-center gap-2 text-sm cursor-pointer select-none">
-          <input
-            type="checkbox"
-            checked={form.hasSize}
-            onChange={(e) =>
-              setForm((f) => ({ ...f, hasSize: e.target.checked }))
-            }
-          />
-          <span>Has size (S/M/L/XL)</span>
-        </label>
         <label className="flex items-center gap-2 text-sm cursor-pointer select-none">
           <input
             type="checkbox"

@@ -21,6 +21,7 @@ export interface MerchRow {
   shopUrl: string | null;
   imageUrls: string[];
   hasSize: boolean;
+  sizes: string[];
   price: number;
   discountedPrice: number | null;
   featured: number | null;
@@ -40,6 +41,7 @@ const SELECT = {
   shopUrl: merchTable.shopUrl,
   imageUrls: merchTable.imageUrls,
   hasSize: merchTable.hasSize,
+  sizes: merchTable.sizes,
   price: merchTable.price,
   discountedPrice: merchTable.discountedPrice,
   featured: merchTable.featured,
