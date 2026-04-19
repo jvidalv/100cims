@@ -199,6 +199,35 @@ export type AdminMerchUpdateBody = Static<typeof AdminMerchUpdateBodySchema>;
 
 The schema constant must be `import type { ... }` only — that erases at runtime, so TypeBox is not bundled into the Next.js client. Schema files must have no top-level side effects (the existing ones don't).
 
+### User privacy: schema split + explicit SELECT
+
+Two response schemas in `src/api/schemas/user.schema.ts` bound by purpose:
+
+- **`UserSchema`** — public shape. What one user can see about another. No private fields.
+- **`MeSchema = t.Intersect([UserSchema, t.Object({ phoneNumber, ... })])`** — owner-only shape. Used by `GET /api/protected/user/me` and `GET /api/admin/me`. **Never** plug this into a route anyone-can-read.
+
+Private fields (phone, future SMS/address) go on `MeSchema`. Adding one to `UserSchema` leaks it via the public `/api/public/user/one` endpoint.
+
+The **SQL side has to cooperate** — routes that touch the `user` table **must not** use bare `db.select().from(userTable)`. TypeBox strips fields outside the response schema, but that's a defense layer, not a primary one. Enumerate columns at the query site so a future `...user` spread into some response can't leak anything that schema hasn't sanctioned:
+
+```ts
+// ✅ Explicit columns — intent visible, shape can't drift
+const [user] = await db
+  .select({
+    id: userTable.id,
+    email: userTable.email,
+    firstName: userTable.firstName,
+    // ... only what UserSchema / MeSchema declares
+  })
+  .from(userTable)
+  .where(eq(userTable.id, id));
+
+// ❌ Never on user queries — returns phoneNumber, expoPushToken, etc.
+const [user] = await db.select().from(userTable);
+```
+
+This rule applies to the auth middleware too (`src/api/routes/protected/index.ts`) — the request-context `user` is spread into `/me`'s response, so the query feeding the context must declare each column explicitly.
+
 ### Pagination Pattern
 
 The `{items, pagination: {page, pageSize, totalItems, totalPages, hasMore}}` shape is centralized as a schema factory in `packages/api/src/api/schemas/common.schema.ts`:

@@ -72,6 +72,7 @@ export type AdminUserUpdateBody = {
   lastName?: string | null;
   username?: string;
   town?: string | null;
+  phoneNumber?: string | null;
   country?: string | null;
   locale?: string | null;
   visibleOnHiscores?: boolean;

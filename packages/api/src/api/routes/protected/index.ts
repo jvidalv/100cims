@@ -36,8 +36,34 @@ export const protectedRoutes = new Elysia({ prefix: "/protected" })
       return unauthorizedResponse();
     }
 
+    // Explicit column list mirrors the `User` type in @shared/types.ts so
+    // the shape is visible at the query site. Sensitive columns (push
+    // tokens, server-only flags) are intentionally excluded so consumers
+    // can't accidentally leak them via a `...user` spread in a response.
     const users = await db
-      .select()
+      .select({
+        id: userTable.id,
+        email: userTable.email,
+        firstName: userTable.firstName,
+        lastName: userTable.lastName,
+        imageUrl: userTable.imageUrl,
+        town: userTable.town,
+        phoneNumber: userTable.phoneNumber,
+        visibleOnHiscores: userTable.visibleOnHiscores,
+        visibleOnPeopleSearch: userTable.visibleOnPeopleSearch,
+        admin: userTable.admin,
+        country: userTable.country,
+        platform: userTable.platform,
+        appVersion: userTable.appVersion,
+        lastLatitude: userTable.lastLatitude,
+        lastLongitude: userTable.lastLongitude,
+        lastLocationAt: userTable.lastLocationAt,
+        username: userTable.username,
+        locale: userTable.locale,
+        activeChallengeId: userTable.activeChallengeId,
+        unlockables: userTable.unlockables,
+        createdAt: userTable.createdAt,
+      })
       .from(userTable)
       .where(eq(userTable.id, verified.id));
     const user = users?.[0];

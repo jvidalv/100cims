@@ -128,6 +128,14 @@ export default function UserMeScreen() {
     [updateUserMe],
   );
 
+  const onChangePhoneNumber = useMemo(
+    () =>
+      debounce(async (phoneNumber: string) => {
+        await updateUserMe({ phoneNumber });
+      }, 500),
+    [updateUserMe],
+  );
+
   const onVisibleHiscoresChange = async (checked: boolean) => {
     await updateUserMe({
       visibleOnHiscores: checked,
@@ -273,6 +281,14 @@ export default function UserMeScreen() {
               label={intl.formatMessage({ defaultMessage: "Town" })}
               defaultValue={me.town}
               onChangeText={onChangeTown}
+            />
+            <ThemedTextInput
+              label={intl.formatMessage({
+                defaultMessage: "Phone number (only visible to you)",
+              })}
+              defaultValue={me.phoneNumber}
+              onChangeText={onChangePhoneNumber}
+              keyboardType="phone-pad"
             />
             <LanguagePicker />
           </View>

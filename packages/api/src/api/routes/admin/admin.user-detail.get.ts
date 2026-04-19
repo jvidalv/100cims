@@ -21,6 +21,7 @@ export const adminUserDetailGetRoute = new Elysia().get(
         lastName: userTable.lastName,
         imageUrl: userTable.imageUrl,
         town: userTable.town,
+        phoneNumber: userTable.phoneNumber,
         country: userTable.country,
         platform: userTable.platform,
         appVersion: userTable.appVersion,

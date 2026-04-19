@@ -27,7 +27,12 @@ import {
   ThemedText,
   ThemedTextInput,
 } from "@/components/ui/atoms";
-import { ActionRow, ProductPrice, ScreenHeader } from "@/components/ui/molecules";
+import {
+  ActionRow,
+  PhoneNumberPromptDialog,
+  ProductPrice,
+  ScreenHeader,
+} from "@/components/ui/molecules";
 import { Colors } from "@/constants/colors";
 import {
   clearCart,
@@ -39,6 +44,7 @@ import { useMerch } from "@/domains/merch/merch.api";
 import {
   useSubmitSuggestionMutation,
   useUnlockableUnlock,
+  useUpdateUserMeMutation,
   useUserMe,
 } from "@/domains/user/user.api";
 
@@ -57,9 +63,12 @@ export default function ShopCartScreen() {
   const { mutateAsync: submitSuggestion, isPending } =
     useSubmitSuggestionMutation();
   const { mutate: unlock } = useUnlockableUnlock();
+  const { mutateAsync: updateUserMe, isPending: isSavingPhone } =
+    useUpdateUserMeMutation();
   const [cart, setCart] = useState<CartItem[]>([]);
   const [contactEmailOverride, setContactEmailOverride] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isPhonePromptOpen, setIsPhonePromptOpen] = useState(false);
   const [couponCode, setCouponCode] = useState("");
   const [couponOpen, setCouponOpen] = useState(false);
   const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
@@ -152,10 +161,23 @@ export default function ShopCartScreen() {
       setCouponCode("");
       setCouponOpen(false);
       setIsSubmitted(true);
+      // Only ask when we don't already have a phone on file — we re-ask on
+      // every order since having a number attached to a concrete purchase is
+      // high-value for support, unlike push which you only want once.
+      if (!me?.phoneNumber) setIsPhonePromptOpen(true);
     } catch {
       Alert.alert(
         intl.formatMessage({ defaultMessage: "Something went wrong" }),
       );
+    }
+  };
+
+  const handleSavePhone = async (phoneNumber: string) => {
+    try {
+      await updateUserMe({ phoneNumber });
+      setIsPhonePromptOpen(false);
+    } catch {
+      setIsPhonePromptOpen(false);
     }
   };
 
@@ -479,6 +501,12 @@ export default function ShopCartScreen() {
           </View>
         </>
       )}
+      <PhoneNumberPromptDialog
+        isOpen={isPhonePromptOpen}
+        onClose={() => setIsPhonePromptOpen(false)}
+        onSave={handleSavePhone}
+        isSaving={isSavingPhone}
+      />
     </View>
   );
 }

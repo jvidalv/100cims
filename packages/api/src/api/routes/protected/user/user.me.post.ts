@@ -53,6 +53,11 @@ export const userMePostRoute = new Elysia().post(
         visibleOnHiscores: body.visibleOnHiscores,
         visibleOnPeopleSearch: body.visibleOnPeopleSearch,
         town: body.town,
+        // Trim, and collapse empty string to null so clearing the field works.
+        phoneNumber:
+          body.phoneNumber === undefined
+            ? undefined
+            : body.phoneNumber.trim() || null,
         activeChallengeId: body.activeChallengeId,
         emailNotificationsEnabled: body.emailNotificationsEnabled,
       })
@@ -69,6 +74,7 @@ export const userMePostRoute = new Elysia().post(
       image: t.Optional(t.String()),
       imageUrl: t.Optional(t.String()),
       town: t.Optional(t.String()),
+      phoneNumber: t.Optional(t.String()),
       visibleOnHiscores: t.Optional(t.Boolean()),
       visibleOnPeopleSearch: t.Optional(t.Boolean()),
       activeChallengeId: t.Optional(t.String()),
