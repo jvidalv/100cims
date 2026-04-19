@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/atoms";
 import { PersonRow, ScreenHeader } from "@/components/ui/molecules";
 import { useUnlockableUnlock, useUserPeople } from "@/domains/user/user.api";
+import { SITE_URL } from "@/lib/app-links";
 
 export default function UserPeopleScreen() {
   const intl = useIntl();
@@ -19,10 +20,10 @@ export default function UserPeopleScreen() {
 
   const handleShareApp = async () => {
     const result = await Share.share({
-      message: intl.formatMessage({
-        defaultMessage:
-          "Check out Cims! https://cims-sempre-amunt.app/share",
-      }),
+      message: intl.formatMessage(
+        { defaultMessage: "Check out Cims! {url}" },
+        { url: `${SITE_URL}/share` },
+      ),
     });
     if (result.action === "sharedAction") {
       unlock("share");
