@@ -314,12 +314,23 @@ If TS reports `Cannot find module 'expo-modules-core'` or empty types after addi
 
 ## Push Notifications
 
-- Token flow: `lib/push.ts` (`registerForPushNotificationsAsync`) → `domains/user/push.api.ts` (`usePushTokenRegistration`) → `POST /api/protected/user/push-token`.
-- Hook is wired once in `app/_layout.tsx` inside `Content()`; re-runs when `isAuthenticated` flips (handles logout→login).
+- Token flow: `lib/push.ts` (`getPushTokenIfGranted` / `requestPushPermission`) → `domains/user/push.api.ts` (`usePushTokenRegistration` / `usePushTokenMutation`) → `POST /api/protected/user/push-token`.
+- **Never call `requestPushPermission()` directly from a screen.** The native OS dialog is one-shot per install on iOS — a cold denial is permanent. Go through `hooks/use-ask-push-permission.ts` which shows our in-app CTA (`PushPermissionDialog`) first, honors a 7-day dismiss cooldown, and only triggers the OS dialog on user confirm.
+- Triggers are bound to context moments, not app launch: Plans first-visit, first summit created, and join-plan success (the last bypasses the cooldown with `ask({ bypassCooldown: true })`).
+- `usePushTokenRegistration` in `_layout.tsx` re-registers the token on auth change but never prompts — it calls `getPushTokenIfGranted` (no-ops unless permission already granted).
 - Notification **body copy is server-side** (API reads `userTable.locale`) — do not translate push strings in the app.
 - Tap routing uses both `useLastNotificationResponse` (cold-start) and `addNotificationResponseReceivedListener` (warm); dedupe via `notification.request.identifier`.
 - Physical device required — simulators/emulators don't receive tokens.
 - Credentials live in EAS: APNs `.p8` (iOS push), FCM V1 service account JSON (Android push, project `cims-bcc70`), and `GOOGLE_SERVICES_JSON` file secret (used by `app.config.ts` `android.googleServicesFile`). Manage via `eas credentials` / `eas env:list`.
+
+## Location permissions
+
+Same "one-shot-per-install" concern as push. `hooks/use-location.ts` takes a `prompt` option:
+
+- `prompt: false` (default) — reads current permission state with `getForegroundPermissionsAsync`, never opens the OS dialog. Use this in screens that show distance as an enhancement (home recommendations, mountain detail, `_layout.tsx`'s `LocationSync`). Falls back gracefully when permission is absent.
+- `prompt: true` — only set on `app/mountains.tsx`, the single context-bound trigger. The user just opened a list of peaks sorted by distance, so the OS prompt has clear context.
+
+If you add a new screen that needs location, default to `prompt: false` + graceful fallback. Only add `prompt: true` to a screen where distance is the primary purpose and the user's intent is unambiguous.
 
 ## Environment Variables
 

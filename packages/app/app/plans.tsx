@@ -20,7 +20,10 @@ import { twMerge } from "tailwind-merge";
 
 import { useAuth } from "@/components/providers/auth-provider";
 import { LucideIcon, ThemedText, ThemedView } from "@/components/ui/atoms";
-import { ScreenHeader } from "@/components/ui/molecules";
+import {
+  PushPermissionDialog,
+  ScreenHeader,
+} from "@/components/ui/molecules";
 import {
   PlanItemList,
   PlanItemListSkeleton,
@@ -30,6 +33,7 @@ import {
   useMarkPlansAsVisited,
   usePlansInfinite,
 } from "@/domains/plan/plan.api";
+import { useAskPushPermission } from "@/hooks/use-ask-push-permission";
 
 const ALERT_KEY = "plans_alert_shown";
 
@@ -94,6 +98,12 @@ export default function PlansScreen() {
   const [status, setStatus] = useState<PlanStatus>("open");
   const { isAuthenticated } = useAuth();
   const [showAlert, setShowAlert] = useState(false);
+  const {
+    isOpen: isPushPromptOpen,
+    ask: askPushPermission,
+    dismiss: dismissPushPrompt,
+    confirm: confirmPushPrompt,
+  } = useAskPushPermission();
   const { mutate: markAsVisited } = useMarkPlansAsVisited();
   const {
     data,
@@ -114,6 +124,11 @@ export default function PlansScreen() {
 
     void checkAlert();
   }, []);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    void askPushPermission();
+  }, [isAuthenticated, askPushPermission]);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -256,6 +271,11 @@ export default function PlansScreen() {
         )}
       />
       {showAlert && <FloatingAlert onClose={() => setShowAlert(false)} />}
+      <PushPermissionDialog
+        isOpen={isPushPromptOpen}
+        onClose={dismissPushPrompt}
+        onEnable={confirmPushPrompt}
+      />
     </ThemedView>
   );
 }

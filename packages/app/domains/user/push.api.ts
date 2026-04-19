@@ -5,7 +5,31 @@ import { useEffect, useRef } from "react";
 
 import { useAuth } from "@/components/providers/auth-provider";
 import apiClient from "@/lib/api-client";
-import { registerForPushNotificationsAsync } from "@/lib/push";
+import { getPushTokenIfGranted } from "@/lib/push";
+
+type PushTokenInput = {
+  expoPushToken: string | null;
+  pushNotificationsEnabled?: boolean;
+};
+
+const postPushToken = async (input: PushTokenInput) => {
+  const { data, error } = await apiClient.POST(
+    "/api/protected/user/push-token",
+    { body: input },
+  );
+  if (error) throw error;
+  return data;
+};
+
+/**
+ * Shared mutation spec reused by the auth-mount effect and the
+ * post-grant re-registration flow in `useAskPushPermission`.
+ */
+export const usePushTokenMutation = () =>
+  useMutation({
+    mutationKey: ["user", "push-token"],
+    mutationFn: postPushToken,
+  });
 
 const isPlanPushType = (value: unknown) =>
   value === "plan-join" || value === "plan-leave" || value === "plan-chat";
@@ -42,27 +66,16 @@ export const usePushTokenRegistration = () => {
   const lastRoutedIdRef = useRef<string | null>(null);
   const lastResponse = Notifications.useLastNotificationResponse();
 
-  const { mutate } = useMutation({
-    mutationKey: ["user", "push-token"],
-    mutationFn: async (input: {
-      expoPushToken: string | null;
-      pushNotificationsEnabled?: boolean;
-    }) => {
-      const { data, error } = await apiClient.POST(
-        "/api/protected/user/push-token",
-        { body: input },
-      );
-      if (error) throw error;
-      return data;
-    },
-  });
+  const { mutate } = usePushTokenMutation();
 
   useEffect(() => {
     if (!isAuthenticated) return;
     let cancelled = false;
     (async () => {
-      const token = await registerForPushNotificationsAsync();
-      if (cancelled) return;
+      // No-op unless the user has already granted permission on a previous
+      // install or explicitly enabled it via useAskPushPermission.
+      const token = await getPushTokenIfGranted();
+      if (cancelled || !token) return;
       mutate({ expoPushToken: token });
     })();
     return () => {

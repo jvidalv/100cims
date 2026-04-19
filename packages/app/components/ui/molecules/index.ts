@@ -14,6 +14,7 @@ export {
   type SettingsGroup,
   type SettingsOption,
 } from "./filterable-list-header";
+export { PushPermissionDialog } from "./push-permission-dialog";
 export { UpdatesDialog, type Update } from "./updates-dialog";
 export { ImagePreviewModal, useImagePreview } from "./image-preview-modal";
 export { SharePreviewModal } from "./share-preview-modal";
