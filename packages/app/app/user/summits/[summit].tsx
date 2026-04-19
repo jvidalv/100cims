@@ -309,7 +309,7 @@ const Content = () => {
                 await reportSummit({ summitId: summit }).catch(() => {});
               }}
               icon={hasReported ? Check : Flag}
-              intent={hasReported ? "emerald" : "danger"}
+              intent={hasReported ? "emerald" : "muted"}
               disabled={hasReported}
             >
               {hasReported ? (

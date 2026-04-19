@@ -506,6 +506,9 @@
   "RM9rPX": {
     "defaultMessage": "Summit Pedraforca."
   },
+  "RNnNfX": {
+    "defaultMessage": "Member since {date}"
+  },
   "S+o8nA": {
     "defaultMessage": "Delete message?"
   },
@@ -523,9 +526,6 @@
   },
   "T9bZ8o": {
     "defaultMessage": "Edit mountains"
-  },
-  "T9mKls": {
-    "defaultMessage": "Member since {duration}"
   },
   "TV3YdK": {
     "defaultMessage": "Share profile"
