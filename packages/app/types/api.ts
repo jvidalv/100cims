@@ -1028,6 +1028,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/protected/shop/request": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["postApiProtectedShopRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/protected/admin/summits/{id}": {
         parameters: {
             query?: never;
@@ -1391,6 +1407,86 @@ export interface paths {
         put?: never;
         post: operations["postApiAdminMerchById"];
         delete: operations["deleteApiAdminMerchById"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/coupon": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiAdminCoupon"];
+        put?: never;
+        post: operations["postApiAdminCoupon"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/coupon/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiAdminCouponById"];
+        put?: never;
+        post: operations["postApiAdminCouponById"];
+        delete: operations["deleteApiAdminCouponById"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/coupon/{id}/redeem": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["postApiAdminCouponByIdRedeem"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/shop-requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiAdminShop-requests"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/shop-requests/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiAdminShop-requestsById"];
+        put?: never;
+        post: operations["postApiAdminShop-requestsById"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -3103,6 +3199,7 @@ export interface operations {
                             shopUrl: (string | null) | null;
                             imageUrls: string[];
                             hasSize: boolean;
+                            sizes: string[];
                             price: number;
                             discountedPrice: (number | null) | null;
                             featured: (number | null) | null;
@@ -3123,6 +3220,7 @@ export interface operations {
                             shopUrl: (string | null) | null;
                             imageUrls: string[];
                             hasSize: boolean;
+                            sizes: string[];
                             price: number;
                             discountedPrice: (number | null) | null;
                             featured: (number | null) | null;
@@ -3143,6 +3241,7 @@ export interface operations {
                             shopUrl: (string | null) | null;
                             imageUrls: string[];
                             hasSize: boolean;
+                            sizes: string[];
                             price: number;
                             discountedPrice: (number | null) | null;
                             featured: (number | null) | null;
@@ -3298,6 +3397,8 @@ export interface operations {
                             activeChallengeId: (string | null) | null;
                             unlockables?: string[];
                             createdAt: Record<string, never> | string | number;
+                        } & {
+                            phoneNumber: (string | null) | null;
                         };
                     };
                     "multipart/form-data": {
@@ -3317,6 +3418,8 @@ export interface operations {
                             activeChallengeId: (string | null) | null;
                             unlockables?: string[];
                             createdAt: Record<string, never> | string | number;
+                        } & {
+                            phoneNumber: (string | null) | null;
                         };
                     };
                     "text/plain": {
@@ -3336,6 +3439,8 @@ export interface operations {
                             activeChallengeId: (string | null) | null;
                             unlockables?: string[];
                             createdAt: Record<string, never> | string | number;
+                        } & {
+                            phoneNumber: (string | null) | null;
                         };
                     };
                 };
@@ -3357,6 +3462,7 @@ export interface operations {
                     image?: string;
                     imageUrl?: string;
                     town?: string;
+                    phoneNumber?: string;
                     visibleOnHiscores?: boolean;
                     visibleOnPeopleSearch?: boolean;
                     activeChallengeId?: string;
@@ -3368,6 +3474,7 @@ export interface operations {
                     image?: string;
                     imageUrl?: string;
                     town?: string;
+                    phoneNumber?: string;
                     visibleOnHiscores?: boolean;
                     visibleOnPeopleSearch?: boolean;
                     activeChallengeId?: string;
@@ -3379,6 +3486,7 @@ export interface operations {
                     image?: string;
                     imageUrl?: string;
                     town?: string;
+                    phoneNumber?: string;
                     visibleOnHiscores?: boolean;
                     visibleOnPeopleSearch?: boolean;
                     activeChallengeId?: string;
@@ -6248,6 +6356,48 @@ export interface operations {
             };
         };
     };
+    postApiProtectedShopRequest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    message: string;
+                };
+                "multipart/form-data": {
+                    message: string;
+                };
+                "text/plain": {
+                    message: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        id: string;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        id: string;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        id: string;
+                    };
+                };
+            };
+        };
+    };
     deleteApiProtectedAdminSummitsById: {
         parameters: {
             query?: never;
@@ -6523,6 +6673,8 @@ export interface operations {
                             activeChallengeId: (string | null) | null;
                             unlockables?: string[];
                             createdAt: Record<string, never> | string | number;
+                        } & {
+                            phoneNumber: (string | null) | null;
                         };
                     };
                     "multipart/form-data": {
@@ -6542,6 +6694,8 @@ export interface operations {
                             activeChallengeId: (string | null) | null;
                             unlockables?: string[];
                             createdAt: Record<string, never> | string | number;
+                        } & {
+                            phoneNumber: (string | null) | null;
                         };
                     };
                     "text/plain": {
@@ -6561,6 +6715,8 @@ export interface operations {
                             activeChallengeId: (string | null) | null;
                             unlockables?: string[];
                             createdAt: Record<string, never> | string | number;
+                        } & {
+                            phoneNumber: (string | null) | null;
                         };
                     };
                 };
@@ -6715,6 +6871,7 @@ export interface operations {
                             lastName: (string | null) | null;
                             imageUrl: (string | null) | null;
                             town: (string | null) | null;
+                            phoneNumber: (string | null) | null;
                             country: (string | null) | null;
                             platform: (string | null) | null;
                             appVersion: (string | null) | null;
@@ -6743,6 +6900,7 @@ export interface operations {
                             lastName: (string | null) | null;
                             imageUrl: (string | null) | null;
                             town: (string | null) | null;
+                            phoneNumber: (string | null) | null;
                             country: (string | null) | null;
                             platform: (string | null) | null;
                             appVersion: (string | null) | null;
@@ -6771,6 +6929,7 @@ export interface operations {
                             lastName: (string | null) | null;
                             imageUrl: (string | null) | null;
                             town: (string | null) | null;
+                            phoneNumber: (string | null) | null;
                             country: (string | null) | null;
                             platform: (string | null) | null;
                             appVersion: (string | null) | null;
@@ -6825,6 +6984,7 @@ export interface operations {
                     lastName?: (string | null) | null;
                     username?: string;
                     town?: (string | null) | null;
+                    phoneNumber?: (string | null) | null;
                     country?: (string | null) | null;
                     locale?: (string | null) | null;
                     visibleOnHiscores?: boolean;
@@ -6838,6 +6998,7 @@ export interface operations {
                     lastName?: (string | null) | null;
                     username?: string;
                     town?: (string | null) | null;
+                    phoneNumber?: (string | null) | null;
                     country?: (string | null) | null;
                     locale?: (string | null) | null;
                     visibleOnHiscores?: boolean;
@@ -6851,6 +7012,7 @@ export interface operations {
                     lastName?: (string | null) | null;
                     username?: string;
                     town?: (string | null) | null;
+                    phoneNumber?: (string | null) | null;
                     country?: (string | null) | null;
                     locale?: (string | null) | null;
                     visibleOnHiscores?: boolean;
@@ -8768,6 +8930,7 @@ export interface operations {
                                 shopUrl: (string | null) | null;
                                 imageUrls: string[];
                                 hasSize: boolean;
+                                sizes: string[];
                                 price: number;
                                 discountedPrice: (number | null) | null;
                                 featured: (number | null) | null;
@@ -8796,6 +8959,7 @@ export interface operations {
                                 shopUrl: (string | null) | null;
                                 imageUrls: string[];
                                 hasSize: boolean;
+                                sizes: string[];
                                 price: number;
                                 discountedPrice: (number | null) | null;
                                 featured: (number | null) | null;
@@ -8824,6 +8988,7 @@ export interface operations {
                                 shopUrl: (string | null) | null;
                                 imageUrls: string[];
                                 hasSize: boolean;
+                                sizes: string[];
                                 price: number;
                                 discountedPrice: (number | null) | null;
                                 featured: (number | null) | null;
@@ -8863,6 +9028,7 @@ export interface operations {
                     discountedPrice?: (number | null) | null;
                     imageUrls?: string[];
                     hasSize?: boolean;
+                    sizes?: string[];
                     featured?: (number | null) | null;
                     active?: boolean;
                     variants?: {
@@ -8883,6 +9049,7 @@ export interface operations {
                     discountedPrice?: (number | null) | null;
                     imageUrls?: string[];
                     hasSize?: boolean;
+                    sizes?: string[];
                     featured?: (number | null) | null;
                     active?: boolean;
                     variants?: {
@@ -8903,6 +9070,7 @@ export interface operations {
                     discountedPrice?: (number | null) | null;
                     imageUrls?: string[];
                     hasSize?: boolean;
+                    sizes?: string[];
                     featured?: (number | null) | null;
                     active?: boolean;
                     variants?: {
@@ -9018,6 +9186,7 @@ export interface operations {
                             shopUrl: (string | null) | null;
                             imageUrls: string[];
                             hasSize: boolean;
+                            sizes: string[];
                             price: number;
                             discountedPrice: (number | null) | null;
                             featured: (number | null) | null;
@@ -9044,6 +9213,7 @@ export interface operations {
                             shopUrl: (string | null) | null;
                             imageUrls: string[];
                             hasSize: boolean;
+                            sizes: string[];
                             price: number;
                             discountedPrice: (number | null) | null;
                             featured: (number | null) | null;
@@ -9070,6 +9240,7 @@ export interface operations {
                             shopUrl: (string | null) | null;
                             imageUrls: string[];
                             hasSize: boolean;
+                            sizes: string[];
                             price: number;
                             discountedPrice: (number | null) | null;
                             featured: (number | null) | null;
@@ -9126,6 +9297,7 @@ export interface operations {
                     discountedPrice?: (number | null) | null;
                     imageUrls?: string[];
                     hasSize?: boolean;
+                    sizes?: string[];
                     featured?: (number | null) | null;
                     active?: boolean;
                     variants?: {
@@ -9146,6 +9318,7 @@ export interface operations {
                     discountedPrice?: (number | null) | null;
                     imageUrls?: string[];
                     hasSize?: boolean;
+                    sizes?: string[];
                     featured?: (number | null) | null;
                     active?: boolean;
                     variants?: {
@@ -9166,6 +9339,7 @@ export interface operations {
                     discountedPrice?: (number | null) | null;
                     imageUrls?: string[];
                     hasSize?: boolean;
+                    sizes?: string[];
                     featured?: (number | null) | null;
                     active?: boolean;
                     variants?: {
@@ -9268,6 +9442,801 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    getApiAdminCoupon: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                code: string;
+                                discountType: "percentage" | "fixed";
+                                discountValue: number;
+                                maxUses: (number | null) | null;
+                                onePerUser: boolean;
+                                active: boolean;
+                                redemptionCount: number;
+                                createdAt: Record<string, never> | string | number;
+                                updatedAt: Record<string, never> | string | number;
+                            }[];
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                code: string;
+                                discountType: "percentage" | "fixed";
+                                discountValue: number;
+                                maxUses: (number | null) | null;
+                                onePerUser: boolean;
+                                active: boolean;
+                                redemptionCount: number;
+                                createdAt: Record<string, never> | string | number;
+                                updatedAt: Record<string, never> | string | number;
+                            }[];
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                code: string;
+                                discountType: "percentage" | "fixed";
+                                discountValue: number;
+                                maxUses: (number | null) | null;
+                                onePerUser: boolean;
+                                active: boolean;
+                                redemptionCount: number;
+                                createdAt: Record<string, never> | string | number;
+                                updatedAt: Record<string, never> | string | number;
+                            }[];
+                        };
+                    };
+                };
+            };
+        };
+    };
+    postApiAdminCoupon: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    code: string;
+                    discountType: "percentage" | "fixed";
+                    discountValue: number;
+                    maxUses?: (number | null) | null;
+                    onePerUser?: boolean;
+                    active?: boolean;
+                };
+                "multipart/form-data": {
+                    code: string;
+                    discountType: "percentage" | "fixed";
+                    discountValue: number;
+                    maxUses?: (number | null) | null;
+                    onePerUser?: boolean;
+                    active?: boolean;
+                };
+                "text/plain": {
+                    code: string;
+                    discountType: "percentage" | "fixed";
+                    discountValue: number;
+                    maxUses?: (number | null) | null;
+                    onePerUser?: boolean;
+                    active?: boolean;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                        };
+                    };
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    getApiAdminCouponById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            code: string;
+                            discountType: "percentage" | "fixed";
+                            discountValue: number;
+                            maxUses: (number | null) | null;
+                            onePerUser: boolean;
+                            active: boolean;
+                            redemptionCount: number;
+                            createdAt: Record<string, never> | string | number;
+                            updatedAt: Record<string, never> | string | number;
+                        } & {
+                            redemptions: {
+                                id: string;
+                                userId: string;
+                                userEmail: (string | null) | null;
+                                userFirstName: (string | null) | null;
+                                userLastName: (string | null) | null;
+                                note: (string | null) | null;
+                                redeemedAt: Record<string, never> | string | number;
+                            }[];
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            code: string;
+                            discountType: "percentage" | "fixed";
+                            discountValue: number;
+                            maxUses: (number | null) | null;
+                            onePerUser: boolean;
+                            active: boolean;
+                            redemptionCount: number;
+                            createdAt: Record<string, never> | string | number;
+                            updatedAt: Record<string, never> | string | number;
+                        } & {
+                            redemptions: {
+                                id: string;
+                                userId: string;
+                                userEmail: (string | null) | null;
+                                userFirstName: (string | null) | null;
+                                userLastName: (string | null) | null;
+                                note: (string | null) | null;
+                                redeemedAt: Record<string, never> | string | number;
+                            }[];
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            code: string;
+                            discountType: "percentage" | "fixed";
+                            discountValue: number;
+                            maxUses: (number | null) | null;
+                            onePerUser: boolean;
+                            active: boolean;
+                            redemptionCount: number;
+                            createdAt: Record<string, never> | string | number;
+                            updatedAt: Record<string, never> | string | number;
+                        } & {
+                            redemptions: {
+                                id: string;
+                                userId: string;
+                                userEmail: (string | null) | null;
+                                userFirstName: (string | null) | null;
+                                userLastName: (string | null) | null;
+                                note: (string | null) | null;
+                                redeemedAt: Record<string, never> | string | number;
+                            }[];
+                        };
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    postApiAdminCouponById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    code?: string;
+                    discountType?: "percentage" | "fixed";
+                    discountValue?: number;
+                    maxUses?: (number | null) | null;
+                    onePerUser?: boolean;
+                    active?: boolean;
+                };
+                "multipart/form-data": {
+                    code?: string;
+                    discountType?: "percentage" | "fixed";
+                    discountValue?: number;
+                    maxUses?: (number | null) | null;
+                    onePerUser?: boolean;
+                    active?: boolean;
+                };
+                "text/plain": {
+                    code?: string;
+                    discountType?: "percentage" | "fixed";
+                    discountValue?: number;
+                    maxUses?: (number | null) | null;
+                    onePerUser?: boolean;
+                    active?: boolean;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    deleteApiAdminCouponById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    postApiAdminCouponByIdRedeem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** Format: uuid */
+                    userId: string;
+                    note?: (string | null) | null;
+                };
+                "multipart/form-data": {
+                    /** Format: uuid */
+                    userId: string;
+                    note?: (string | null) | null;
+                };
+                "text/plain": {
+                    /** Format: uuid */
+                    userId: string;
+                    note?: (string | null) | null;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                        };
+                    };
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    "getApiAdminShop-requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                userId: (string | null) | null;
+                                userEmail: string;
+                                message: string;
+                                status: "requested" | "contacted" | "done" | "cancelled";
+                                comments: (string | null) | null;
+                                createdAt: Record<string, never> | string | number;
+                                updatedAt: Record<string, never> | string | number;
+                            }[];
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                userId: (string | null) | null;
+                                userEmail: string;
+                                message: string;
+                                status: "requested" | "contacted" | "done" | "cancelled";
+                                comments: (string | null) | null;
+                                createdAt: Record<string, never> | string | number;
+                                updatedAt: Record<string, never> | string | number;
+                            }[];
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                userId: (string | null) | null;
+                                userEmail: string;
+                                message: string;
+                                status: "requested" | "contacted" | "done" | "cancelled";
+                                comments: (string | null) | null;
+                                createdAt: Record<string, never> | string | number;
+                                updatedAt: Record<string, never> | string | number;
+                            }[];
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "getApiAdminShop-requestsById": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            userId: (string | null) | null;
+                            userEmail: string;
+                            message: string;
+                            status: "requested" | "contacted" | "done" | "cancelled";
+                            comments: (string | null) | null;
+                            createdAt: Record<string, never> | string | number;
+                            updatedAt: Record<string, never> | string | number;
+                        } & {
+                            user: ({
+                                id: string;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                            } | null) | null;
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            userId: (string | null) | null;
+                            userEmail: string;
+                            message: string;
+                            status: "requested" | "contacted" | "done" | "cancelled";
+                            comments: (string | null) | null;
+                            createdAt: Record<string, never> | string | number;
+                            updatedAt: Record<string, never> | string | number;
+                        } & {
+                            user: ({
+                                id: string;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                            } | null) | null;
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            userId: (string | null) | null;
+                            userEmail: string;
+                            message: string;
+                            status: "requested" | "contacted" | "done" | "cancelled";
+                            comments: (string | null) | null;
+                            createdAt: Record<string, never> | string | number;
+                            updatedAt: Record<string, never> | string | number;
+                        } & {
+                            user: ({
+                                id: string;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                            } | null) | null;
+                        };
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    "postApiAdminShop-requestsById": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    status?: "requested" | "contacted" | "done" | "cancelled";
+                    comments?: (string | null) | null;
+                };
+                "multipart/form-data": {
+                    status?: "requested" | "contacted" | "done" | "cancelled";
+                    comments?: (string | null) | null;
+                };
+                "text/plain": {
+                    status?: "requested" | "contacted" | "done" | "cancelled";
+                    comments?: (string | null) | null;
+                };
+            };
+        };
         responses: {
             200: {
                 headers: {

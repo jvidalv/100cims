@@ -58,6 +58,7 @@ export const merchAllGetRoute = new Elysia().get(
       shopUrl: r.shopUrl,
       imageUrls: r.imageUrls,
       hasSize: r.hasSize,
+      sizes: r.sizes,
       price: r.price,
       discountedPrice: r.discountedPrice,
       featured: r.featured,

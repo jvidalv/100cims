@@ -4,6 +4,7 @@ import { uuidv7 } from "uuidv7";
 import { db } from "@/db";
 import { merchTable, merchVariantTable } from "@/db/schema";
 import { MerchImageError, resolveMerchImageUrls } from "@/api/lib/merch-images";
+import { MERCH_SIZES } from "@/api/lib/merch-sizes";
 import { AdminMerchCreateBodySchema } from "@/api/schemas/admin.schema";
 import {
   ErrorFieldResponse,
@@ -26,6 +27,13 @@ export const adminMerchCreatePostRoute = new Elysia().post(
         })),
       );
 
+      // hasSize stays authoritative: if the client sent a sizes array, it
+      // supersedes any explicit hasSize they also sent. Old clients that only
+      // send hasSize still work.
+      const sizes = body.sizes ?? [];
+      const hasSize =
+        body.sizes !== undefined ? sizes.length > 0 : (body.hasSize ?? false);
+
       await db.transaction(async (tx) => {
         await tx.insert(merchTable).values({
           id,
@@ -39,7 +47,8 @@ export const adminMerchCreatePostRoute = new Elysia().post(
           shopUrl: body.shopUrl ?? null,
           price: body.price,
           discountedPrice: body.discountedPrice ?? null,
-          hasSize: body.hasSize ?? false,
+          hasSize,
+          sizes,
           featured: body.featured ?? null,
           active: body.active ?? true,
           imageUrls,
@@ -66,6 +75,12 @@ export const adminMerchCreatePostRoute = new Elysia().post(
         set.status = 409;
         return {
           error: `Conflict: ${err.constraint ?? "unique constraint"}`,
+        };
+      }
+      if (err.code === "23514" && err.constraint === "merch_sizes_check") {
+        set.status = 400;
+        return {
+          error: `Invalid size — must be one of ${MERCH_SIZES.join(", ")}.`,
         };
       }
       throw e;

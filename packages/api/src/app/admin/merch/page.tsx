@@ -32,7 +32,7 @@ export default function AdminMerchPage() {
                 <th className="py-2 pr-4 font-medium">Slug</th>
                 <th className="py-2 pr-4 font-medium">Name</th>
                 <th className="py-2 pr-4 font-medium">Price</th>
-                <th className="py-2 pr-4 font-medium">Size</th>
+                <th className="py-2 pr-4 font-medium">Sizes</th>
                 <th className="py-2 pr-4 font-medium">Featured</th>
                 <th className="py-2 pr-4 font-medium">Active</th>
                 <th className="py-2 pr-4 font-medium">Updated</th>
@@ -62,7 +62,7 @@ export default function AdminMerchPage() {
                   <td className="py-2 pr-4 font-medium">{m.nameEn}</td>
                   <td className="py-2 pr-4">{m.price}€</td>
                   <td className="py-2 pr-4 text-muted-foreground">
-                    {m.hasSize ? "Yes" : "—"}
+                    {m.sizes.length > 0 ? m.sizes.join(" · ") : "—"}
                   </td>
                   <td className="py-2 pr-4">
                     {m.featured != null ? (

@@ -26,7 +26,9 @@ import { useMerch } from "@/domains/merch/merch.api";
 import { useUserMe } from "@/domains/user/user.api";
 import { reportCartAddToDiscord } from "@/lib/report-cart-add";
 
-const SIZES: CartSize[] = ["S", "M", "L", "XL"];
+// Fallback list used only when a merch row is flagged `hasSize=true` but the
+// backend hasn't set `sizes` yet — matches the set the app shipped with.
+const FALLBACK_SIZES: CartSize[] = ["S", "M", "L", "XL"];
 
 const capitalize = (s: string) =>
   s.length > 0 ? s[0].toUpperCase() + s.slice(1) : s;
@@ -129,6 +131,8 @@ export default function ShopProductScreen() {
   const needsColor = product.variants.length > 1;
   const missingSize = needsSize && !selectedSize;
   const missingColor = needsColor && !selectedColor;
+  const sizes =
+    product.sizes && product.sizes.length > 0 ? product.sizes : FALLBACK_SIZES;
 
   const activeVariant = selectedColor
     ? (product.variants.find((v) => v.color === selectedColor) ?? null)
@@ -326,13 +330,13 @@ export default function ShopProductScreen() {
               <ThemedText className="text-lg font-semibold">
                 <FormattedMessage defaultMessage="Select size" />
               </ThemedText>
-              <View className="flex-row gap-2">
-                {SIZES.map((size) => (
+              <View className="flex-row flex-wrap gap-2">
+                {sizes.map((size) => (
                   <TouchableOpacity
                     key={size}
                     onPress={() => setSelectedSize(size)}
                     className={twMerge(
-                      "flex-1 items-center rounded border-2 border-border py-3",
+                      "min-w-16 items-center rounded border-2 border-border px-4 py-3",
                       selectedSize === size && "border-primary bg-primary/10",
                     )}
                   >

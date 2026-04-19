@@ -6,7 +6,9 @@ type MerchEntry =
   paths["/api/public/merch/"]["get"]["responses"][200]["content"]["application/json"]["message"][number];
 
 export type MerchSlug = MerchEntry["slug"];
-export type CartSize = "S" | "M" | "L" | "XL";
+// Sizes come from the server now (merch.sizes). Kept as a plain string so
+// new canonical sizes (XS, 2XL, 3XL…) flow through without an app release.
+export type CartSize = string;
 
 export type CartItem = {
   slug: MerchSlug;
