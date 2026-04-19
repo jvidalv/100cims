@@ -59,6 +59,7 @@ export const userTable = pgTable("user", {
   imageUrl: text(),
   locale: text(),
   town: text(),
+  phoneNumber: text(),
   visibleOnHiscores: boolean().notNull().default(false),
   visibleOnPeopleSearch: boolean().notNull().default(true),
   admin: boolean().notNull().default(false),
@@ -493,6 +494,10 @@ export const merchTable = pgTable(
       .notNull()
       .default(sql`ARRAY[]::text[]`),
     hasSize: boolean().notNull().default(false),
+    sizes: text()
+      .array()
+      .notNull()
+      .default(sql`ARRAY[]::text[]`),
     price: integer().notNull(),
     discountedPrice: integer(),
     featured: integer(),
@@ -500,7 +505,13 @@ export const merchTable = pgTable(
     createdAt: timestamp().notNull().defaultNow(),
     updatedAt: timestamp().notNull().defaultNow(),
   },
-  (table) => [uniqueIndex("merch_featured_unique_idx").on(table.featured)],
+  (table) => [
+    uniqueIndex("merch_featured_unique_idx").on(table.featured),
+    check(
+      "merch_sizes_check",
+      sql`${table.sizes} <@ ARRAY['XS','S','M','L','XL','2XL','3XL']::text[]`,
+    ),
+  ],
 );
 
 export const merchVariantTable = pgTable(

@@ -1,0 +1,2 @@
+ALTER TABLE "merch" ADD COLUMN "sizes" text[] DEFAULT ARRAY[]::text[] NOT NULL;--> statement-breakpoint
+ALTER TABLE "merch" ADD CONSTRAINT "merch_sizes_check" CHECK ("merch"."sizes" <@ ARRAY['XS','S','M','L','XL','2XL','3XL']::text[]);
