@@ -104,8 +104,8 @@ See individual package READMEs for detailed commands:
 - **Git** - Version control
 
 ### Mobile App (`packages/app`)
-- **Expo SDK 54** - React Native development platform
-- **React Native 0.81** - Mobile framework (new architecture enabled)
+- **Expo SDK 55** - React Native development platform
+- **React Native 0.83** - Mobile framework (new architecture enabled)
 - **expo-router 6** - File-based navigation
 - **NativeWind 4** - Tailwind CSS for React Native
 - **React Query 5** - Server state management
@@ -150,7 +150,7 @@ Translations are managed with FormatJS. See [app README](./packages/app/README.m
 ## 🚀 Deployment
 
 - **Mobile App**: Deployed via [EAS Build](https://expo.dev/eas) (Expo Application Services)
-- **Backend API**: Deployed on [Vercel](https://vercel.com) (see `vercel.json`)
+- **Backend API**: Deployed on [Railway](https://railway.app) from `packages/api/Dockerfile`
 
 ## 📊 Analytics
 

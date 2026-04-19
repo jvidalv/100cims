@@ -365,7 +365,7 @@ logger.info('Summit created', {
 
 ### Rollback Procedure
 - **Mobile**: Cannot rollback app stores, push hotfix update
-- **API**: Vercel allows instant rollback in dashboard
+- **API**: Railway supports instant rollback via the Deployments tab (redeploy a previous build)
 
 ## Future Enhancements
 
