@@ -232,6 +232,13 @@
       "when": 1776591424808,
       "tag": "0032_move-unaccent-to-public",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1776591583243,
+      "tag": "0033_fix-user-mojibake",
+      "breakpoints": true
     }
   ]
 }
