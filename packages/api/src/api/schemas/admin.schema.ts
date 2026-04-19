@@ -445,6 +445,20 @@ export const AdminShopRequestListResponseSchema = t.Object({
   items: t.Array(AdminShopRequestEntrySchema),
 });
 
+export const AdminShopRequestDetailSchema = t.Intersect([
+  AdminShopRequestEntrySchema,
+  t.Object({
+    user: t.Nullable(
+      t.Object({
+        id: t.String(),
+        firstName: t.Nullable(t.String()),
+        lastName: t.Nullable(t.String()),
+        imageUrl: t.Nullable(t.String()),
+      }),
+    ),
+  }),
+]);
+
 export const AdminShopRequestUpdateBodySchema = t.Object({
   status: t.Optional(ShopRequestStatusSchema),
   comments: t.Optional(t.Nullable(t.String({ maxLength: 2000 }))),

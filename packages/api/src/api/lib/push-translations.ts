@@ -80,3 +80,25 @@ export const pushMountainSuggestionBody = (
     progress.done,
     progress.total,
   );
+
+const shopRequestTitle = {
+  en: "New merch request",
+  ca: "Nova comanda de merch",
+  es: "Nuevo pedido de merch",
+} satisfies Record<AppLocale, string>;
+
+const shopRequestBody = {
+  en: (senderEmail: string, preview: string) =>
+    `From ${senderEmail}: ${preview}`,
+  ca: (senderEmail: string, preview: string) => `De ${senderEmail}: ${preview}`,
+  es: (senderEmail: string, preview: string) => `De ${senderEmail}: ${preview}`,
+} satisfies Record<AppLocale, (senderEmail: string, preview: string) => string>;
+
+export const pushShopRequestTitle = (locale: string | null) =>
+  shopRequestTitle[normalizeAppLocale(locale)];
+
+export const pushShopRequestBody = (
+  locale: string | null,
+  senderEmail: string,
+  preview: string,
+) => shopRequestBody[normalizeAppLocale(locale)](senderEmail, preview);
