@@ -17,7 +17,7 @@ import { userRoute } from "@/api/routes/protected/user";
 
 export const protectedRoutes = new Elysia({ prefix: "/protected" })
   .use(JWT())
-  .resolve(async ({ jwt, request, set }) => {
+  .onBeforeHandle(async ({ jwt, request, set }) => {
     const unauthorizedResponse = () => {
       set.status = 401;
       return { error: "Unauthorized" };
@@ -46,7 +46,6 @@ export const protectedRoutes = new Elysia({ prefix: "/protected" })
     }
 
     setRequestContext(request, { user });
-    return { user };
   })
   .use(userRoute)
   .use(mountainLegacyPostRoute) // LEGACY: /mountain/summit for old app versions
