@@ -18,6 +18,9 @@ import { adminCouponDetailGetRoute } from "@/api/routes/admin/admin.coupon-detai
 import { adminCouponRedeemPostRoute } from "@/api/routes/admin/admin.coupon-redeem.post";
 import { adminCouponUpdatePostRoute } from "@/api/routes/admin/admin.coupon-update.post";
 import { adminCouponGetRoute } from "@/api/routes/admin/admin.coupon.get";
+import { adminShopRequestDetailGetRoute } from "@/api/routes/admin/admin.shop-request-detail.get";
+import { adminShopRequestUpdatePostRoute } from "@/api/routes/admin/admin.shop-request-update.post";
+import { adminShopRequestsGetRoute } from "@/api/routes/admin/admin.shop-requests.get";
 import { adminCronsGetRoute } from "@/api/routes/admin/admin.crons.get";
 import { adminCronsTriggerPostRoute } from "@/api/routes/admin/admin.crons-trigger.post";
 import { adminEmailTestPostRoute } from "@/api/routes/admin/admin.email-test.post";
@@ -116,6 +119,9 @@ export const adminRoutes = new Elysia({ prefix: "/admin" })
   .use(adminCouponUpdatePostRoute)
   .use(adminCouponDeleteDeleteRoute)
   .use(adminCouponRedeemPostRoute)
+  .use(adminShopRequestsGetRoute)
+  .use(adminShopRequestDetailGetRoute)
+  .use(adminShopRequestUpdatePostRoute)
   .use(adminStatsTimeseriesGetRoute)
   .use(adminCronsGetRoute)
   .use(adminCronsTriggerPostRoute)

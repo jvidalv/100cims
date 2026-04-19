@@ -239,6 +239,13 @@
       "when": 1776591583243,
       "tag": "0033_fix-user-mojibake",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1776614831983,
+      "tag": "0034_add-shop-requests",
+      "breakpoints": true
     }
   ]
 }

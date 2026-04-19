@@ -557,6 +557,27 @@ export const couponRedemptionTable = pgTable(
   ],
 );
 
+export const shopRequestTable = pgTable(
+  "shop_request",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    userId: uuid().references(() => userTable.id, { onDelete: "set null" }),
+    userEmail: text().notNull(),
+    message: text().notNull(),
+    status: text()
+      .notNull()
+      .default("requested")
+      .$type<"requested" | "contacted" | "done" | "cancelled">(),
+    comments: text(),
+    createdAt: timestamp().notNull().defaultNow(),
+    updatedAt: timestamp().notNull().defaultNow(),
+  },
+  (table) => [
+    index("shop_request_created_at_idx").on(table.createdAt),
+    index("shop_request_status_idx").on(table.status),
+  ],
+);
+
 export const emailLogTable = pgTable(
   "email_log",
   {
