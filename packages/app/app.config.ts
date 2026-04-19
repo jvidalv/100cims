@@ -2,7 +2,7 @@ import "tsx/cjs"; // Add this to import TypeScript files
 import { ExpoConfig } from "@expo/config-types";
 
 const config: ExpoConfig & { newArchEnabled?: boolean } = {
-  name: "100cims",
+  name: "Cims",
   slug: "100cims",
   version: "3.0.0",
   orientation: "portrait",
