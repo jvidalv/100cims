@@ -218,6 +218,13 @@
       "when": 1776540610329,
       "tag": "0030_add-coupons",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1776589242079,
+      "tag": "0031_backfill-merch-images",
+      "breakpoints": true
     }
   ]
 }
