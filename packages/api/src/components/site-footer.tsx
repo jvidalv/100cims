@@ -49,7 +49,6 @@ export const SiteFooter = ({ strings: s, locale }: Props) => {
               href={homeHref}
               className="flex items-center gap-2 text-xl font-bold"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/assets/logo.png"
                 alt="Cims, sempre amunt"

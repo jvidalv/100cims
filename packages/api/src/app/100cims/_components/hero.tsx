@@ -7,7 +7,6 @@ export const Hero = () => {
   const t = getCaTranslator();
   return (
     <section className="flex flex-col items-center justify-center py-16 sm:py-24 px-4">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src="/assets/logo.png"
         alt="Icona de l'app 100cims"
