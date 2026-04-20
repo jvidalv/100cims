@@ -30,7 +30,6 @@ export const FeaturedPeaks = async () => {
               className="rounded-xl overflow-hidden border bg-background"
             >
               {p.imageUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={p.imageUrl}
                   alt={p.name}

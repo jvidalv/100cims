@@ -50,7 +50,6 @@ export function ProductDetailClient({
     <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
       <div className="flex flex-col gap-4">
         {main ? (
-          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={main}
             alt={name}
@@ -70,7 +69,6 @@ export function ProductDetailClient({
               .map((src) => {
                 const realIndex = images.indexOf(src);
                 return (
-                  // eslint-disable-next-line @next/next/no-img-element
                   <img
                     key={`${src}-${realIndex}`}
                     src={src}
@@ -105,7 +103,6 @@ export function ProductDetailClient({
                     className="flex flex-col items-center gap-1"
                   >
                     {thumb ? (
-                      // eslint-disable-next-line @next/next/no-img-element
                       <img
                         src={thumb}
                         alt={v.color}

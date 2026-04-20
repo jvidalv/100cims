@@ -46,7 +46,6 @@ export default async function ShopPage({ params }: Props) {
         {/* Hero */}
         <section className="relative overflow-hidden border-b border-border/40">
           {HERO_IMAGE ? (
-            // eslint-disable-next-line @next/next/no-img-element
             <img
               src={HERO_IMAGE}
               alt=""
@@ -108,7 +107,6 @@ export default async function ShopPage({ params }: Props) {
                     >
                       <div className="relative">
                         {image ? (
-                          // eslint-disable-next-line @next/next/no-img-element
                           <img
                             src={image}
                             alt={name}

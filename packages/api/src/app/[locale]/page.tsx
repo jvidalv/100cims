@@ -166,7 +166,6 @@ export default async function Home({ params }: Props) {
       <main className="flex-1">
         <section className="flex flex-col items-center justify-center pt-24 pb-16 sm:pt-32 sm:pb-20 px-4">
           <h1 className="sr-only">{t("title")}</h1>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/assets/logo.png"
             alt={t("title")}
@@ -184,7 +183,6 @@ export default async function Home({ params }: Props) {
           <div className="overflow-x-auto pb-3 [scrollbar-width:thin] [scrollbar-color:theme(colors.muted.DEFAULT)_transparent] [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-muted [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-muted-foreground/40">
             <div className="flex gap-6 min-w-max pl-4 pr-0">
               {SCREENSHOTS.map((s) => (
-                // eslint-disable-next-line @next/next/no-img-element
                 <img
                   key={s.src}
                   src={s.src}
@@ -249,7 +247,6 @@ export default async function Home({ params }: Props) {
                     {t("featured-challenge-cta")}
                   </span>
                 </div>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={FEATURED_IMAGE_URL}
                   alt="100 Cims"
@@ -278,7 +275,6 @@ export default async function Home({ params }: Props) {
                   href={`/challenges/${slug}`}
                   className="group rounded-xl overflow-hidden bg-background border hover:border-primary transition-colors"
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={content.heroImageUrl}
                     alt={content.shortName}
@@ -331,7 +327,6 @@ export default async function Home({ params }: Props) {
                       className="group rounded-xl overflow-hidden bg-background border hover:border-primary transition-colors"
                     >
                       {image ? (
-                        // eslint-disable-next-line @next/next/no-img-element
                         <img
                           src={image}
                           alt={name}
