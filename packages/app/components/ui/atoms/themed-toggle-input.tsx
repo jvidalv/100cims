@@ -50,9 +50,9 @@ export const ThemedToggleInput = ({
 
   useEffect(() => {
     if (!isUncontrolled && containerWidth.current > 0) {
-      syncTranslate(checked);
+      translateX.value = checked ? 0 : (containerWidth.current - 13) / 2;
     }
-  }, [checked, isUncontrolled]);
+  }, [checked, isUncontrolled, translateX]);
 
   const animatedStyle = useAnimatedStyle(() => {
     const color = internalChecked
