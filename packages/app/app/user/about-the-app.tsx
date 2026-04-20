@@ -66,7 +66,7 @@ export default function AboutTheAppScreen() {
                 LinkedIn
               </ThemedText>
             </Link>
-            <Link href="mailto:josepvidalvidal@gmail.com">
+            <Link href="mailto:hello@fescims.com">
               <ThemedText className="text-sm font-medium text-blue-500">
                 <FormattedMessage defaultMessage="Email" />
               </ThemedText>
