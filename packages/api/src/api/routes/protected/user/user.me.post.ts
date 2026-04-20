@@ -44,24 +44,25 @@ export const userMePostRoute = new Elysia().post(
       }
     }
 
-    await db
-      .update(userTable)
-      .set({
-        firstName: body.firstName,
-        lastName: body.lastName,
-        imageUrl,
-        visibleOnHiscores: body.visibleOnHiscores,
-        visibleOnPeopleSearch: body.visibleOnPeopleSearch,
-        town: body.town,
-        // Trim, and collapse empty string to null so clearing the field works.
-        phoneNumber:
-          body.phoneNumber === undefined
-            ? undefined
-            : body.phoneNumber.trim() || null,
-        activeChallengeId: body.activeChallengeId,
-        emailNotificationsEnabled: body.emailNotificationsEnabled,
-      })
-      .where(eq(userTable.id, user.id));
+    const updates = {
+      firstName: body.firstName,
+      lastName: body.lastName,
+      imageUrl,
+      visibleOnHiscores: body.visibleOnHiscores,
+      visibleOnPeopleSearch: body.visibleOnPeopleSearch,
+      town: body.town,
+      // Trim, and collapse empty string to null so clearing the field works.
+      phoneNumber:
+        body.phoneNumber === undefined
+          ? undefined
+          : body.phoneNumber.trim() || null,
+      activeChallengeId: body.activeChallengeId,
+      emailNotificationsEnabled: body.emailNotificationsEnabled,
+    };
+
+    if (Object.values(updates).some((v) => v !== undefined)) {
+      await db.update(userTable).set(updates).where(eq(userTable.id, user.id));
+    }
 
     return {
       success: true,

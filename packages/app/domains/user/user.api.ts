@@ -312,6 +312,9 @@ export const useUpdateUserMeMutation = () => {
       visibleOnPeopleSearch?: boolean;
       activeChallengeId?: string;
     }) => {
+      if (Object.values(input).every((v) => v === undefined)) {
+        return { success: true } as const;
+      }
       const { data, error } = await apiClient.POST("/api/protected/user/me", {
         body: input,
       });
