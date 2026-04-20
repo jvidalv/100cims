@@ -30,6 +30,26 @@ yarn translations:generate
 # Manual translation to ca.json, es.json needed
 ```
 
+#### Linting (CRITICAL)
+
+**Always run lint + type-check on any package you touched before declaring a task done, and never commit with lint errors.** This applies even for trivial-looking edits — a typo fix in one file can still sit next to pre-existing lint errors that your diff will appear to own once committed.
+
+```bash
+# packages/app/
+yarn app lint
+./node_modules/.bin/tsc --noEmit -p packages/app/tsconfig.json
+
+# packages/api/
+yarn api lint
+./packages/api/node_modules/.bin/tsc --noEmit -p packages/api/tsconfig.json
+```
+
+Rules:
+- **Zero lint errors in files you touched before commit.** Fix them (don't `--no-verify`, don't suppress with `eslint-disable` unless there's a real reason).
+- **Pre-existing errors in files you did not touch**: leave them alone by default. Parallel agents editing unrelated files create merge conflicts. Only fix if the user explicitly asks, or if the error is in a file your change directly depends on.
+- **Warnings count too** when they're in code you're modifying.
+- If `tsc` passes but `eslint` fails (or vice versa), both still need to be green for your changes.
+
 #### Database Migrations
 
 **CRITICAL**: Always **ask the user before applying a migration**. Never run `drizzle-kit migrate` / `drizzle-kit push` / any schema-change command on your own — prepare the migration file and wait for explicit approval.
