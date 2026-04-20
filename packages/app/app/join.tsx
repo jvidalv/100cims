@@ -10,6 +10,10 @@ import Svg, { Path } from "react-native-svg";
 import { useAuth } from "@/components/providers/auth-provider";
 import { ThemedText, ThemedLogo } from "@/components/ui/atoms";
 import { AvatarGroup } from "@/components/ui/molecules";
+import { useJoinMutation } from "@/domains/user/user.api";
+import { isIOS } from "@/lib/device";
+import { getLocale } from "@/lib/locale";
+import { logError } from "@/lib/log-error";
 
 const GoogleG = ({ size = 20 }: { size?: number }) => (
   <Svg width={size} height={size} viewBox="0 0 48 48">
@@ -31,10 +35,6 @@ const GoogleG = ({ size = 20 }: { size?: number }) => (
     />
   </Svg>
 );
-import { useJoinMutation } from "@/domains/user/user.api";
-import { isIOS } from "@/lib/device";
-import { getLocale } from "@/lib/locale";
-import { logError } from "@/lib/log-error";
 
 // Configure Google Sign-In
 GoogleSignin.configure({
