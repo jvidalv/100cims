@@ -12,7 +12,6 @@ los-campanarios-iv	Los Campanarios IV
 torre-de-labrouche	Torre de Labrouche
 pico-de-boada	Pico de Boada
 torre-de-las-coteras-rojas	Torre de las Coteras Rojas
-aguja-de-los-cabrones-i	Aguja de los Cabrones I
 torre-de-delgado-ubeda	Torre de Delgado Úbeda
 torre-diego-mella	Torre Diego Mella
 torre-del-oso	Torre del Oso
