@@ -9,6 +9,7 @@ export interface SiteFooterStrings {
   colAppHome: string;
   colAppChallenge: string;
   colAppThreePeaks: string;
+  colAppScottishMunros: string;
   colAppShop: string;
   colAppIos: string;
   colAppAndroid: string;
@@ -89,6 +90,12 @@ export const SiteFooter = ({ strings: s, locale }: Props) => {
                 className="text-muted-foreground hover:text-foreground"
               >
                 {s.colAppThreePeaks}
+              </a>
+              <a
+                href="/scottish-munros"
+                className="text-muted-foreground hover:text-foreground"
+              >
+                {s.colAppScottishMunros}
               </a>
               <a
                 href={shopHref}
