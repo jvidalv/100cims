@@ -1,7 +1,0 @@
-# Munros without images (after migration 0041).
-# Only 2 Munros remain — Commons has no correct category for either.
-# Both share a name with unrelated Scottish hills that are NOT the Munro.
-# Format: <slug>\t<name>\t<reason>
-
-beinn-dearg-06a	Beinn Dearg	Atholl summit (Glen Tromie/Glen Tilt) has no Commons category; name collides with a Trossachs Corbett that isn't this Munro.
-stob-daimh	Stob Daimh	On the Ben Cruachan ridge but has no photos specifically of Stob Daimh; re-using Cruachan photos would mislabel the summit.
