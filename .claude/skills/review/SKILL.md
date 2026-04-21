@@ -26,6 +26,10 @@ If `packages/app/types/api.ts` is in the diff, flag it. This file is regenerated
 - Missing loading / error states on screens that fetch data.
 - Inline styles instead of NativeWind classes.
 - Env vars without the `EXPO_PUBLIC_` prefix (those don't reach the client).
+- **Translations not extracted + filled in.** Adding `<FormattedMessage defaultMessage="...">` or `intl.formatMessage({ defaultMessage: "..." })` is only step 1 — you MUST also:
+  1. Run `yarn workspace @100cims/app translations` (extracts new keys into `translations/raw-en.json` and compiles `translations/en.json`).
+  2. Add the new keys to both `packages/app/translations/ca.json` (Catalan) and `packages/app/translations/es.json` (Spanish), inserted in alphabetical order by key hash.
+  3. Verify with `grep` that all three locale files contain the new key(s). Never ship English-only strings — the app runs in Catalan/Spanish for most users.
 
 ### 4. API (`packages/api`)
 

@@ -23,12 +23,24 @@ Configured permissions for Claude Code include:
 yarn generate-api-types
 ```
 
-#### Translation Updates
+#### Translation Updates (CRITICAL)
+
+**Any time you add a `<FormattedMessage defaultMessage="...">` or `intl.formatMessage({ defaultMessage: "..." })` in `packages/app/`, you MUST extract and translate before declaring the task done.** Shipping English-only strings is a regression — most users run the app in Catalan or Spanish.
+
 ```bash
-yarn translations:extract
-yarn translations:generate
-# Manual translation to ca.json, es.json needed
+# 1. Extract new keys into raw-en.json and compile en.json
+yarn workspace @100cims/app translations
+
+# 2. Add the new keys (use the same hash keys from en.json) to:
+#    - packages/app/translations/ca.json  (Catalan)
+#    - packages/app/translations/es.json  (Spanish)
+#    Insert each entry in alphabetical order by key hash.
+
+# 3. Verify all three locales contain the new keys:
+#    grep '"<hash>"' packages/app/translations/*.json
 ```
+
+Commit the updated `raw-en.json`, `en.json`, `ca.json`, and `es.json` together with the component change.
 
 #### Linting (CRITICAL)
 
