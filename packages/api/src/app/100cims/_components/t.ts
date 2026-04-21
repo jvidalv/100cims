@@ -1,12 +1,4 @@
-import { createTranslator } from "next-intl";
-
-import caMessages from "../../../../messages/ca.json";
-
-const CA_LOCALE = "ca";
+import { getLandingPageTranslator } from "@/lib/locale-dictionaries";
 
 export const getCaTranslator = () =>
-  createTranslator({
-    locale: CA_LOCALE,
-    messages: caMessages,
-    namespace: "100cims-page",
-  });
+  getLandingPageTranslator("ca", "100cims-page");

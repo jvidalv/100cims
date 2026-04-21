@@ -26,3 +26,15 @@ export const getFooterTranslator = (locale: ChallengeLocale) =>
     messages: MESSAGES_BY_LOCALE[locale],
     namespace: "footer",
   });
+
+type LandingPageNamespace = "100cims-page" | "three-peaks-page";
+
+export const getLandingPageTranslator = (
+  locale: ChallengeLocale,
+  namespace: LandingPageNamespace,
+) =>
+  createTranslator({
+    locale,
+    messages: MESSAGES_BY_LOCALE[locale],
+    namespace,
+  });
