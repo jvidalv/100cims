@@ -16,7 +16,7 @@ import {
 } from "@/db/schema";
 import { SITE_URL } from "@/lib/app-links";
 
-const REPORT_THRESHOLD = 2;
+const REPORT_THRESHOLD = 4;
 
 export const summitReportPostRoute = new Elysia().post(
   "/report",
