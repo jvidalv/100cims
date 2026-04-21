@@ -11,6 +11,7 @@ export interface SiteFooterStrings {
   colAppThreePeaks: string;
   colAppScottishMunros: string;
   colAppPicosDeEuropa: string;
+  colAppPicosDeAndalucia: string;
   colAppShop: string;
   colAppIos: string;
   colAppAndroid: string;
@@ -103,6 +104,12 @@ export const SiteFooter = ({ strings: s, locale }: Props) => {
                 className="text-muted-foreground hover:text-foreground"
               >
                 {s.colAppPicosDeEuropa}
+              </a>
+              <a
+                href="/picos-de-andalucia"
+                className="text-muted-foreground hover:text-foreground"
+              >
+                {s.colAppPicosDeAndalucia}
               </a>
               <a
                 href={shopHref}
