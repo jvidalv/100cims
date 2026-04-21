@@ -12,6 +12,7 @@ export const buildFooterStrings = (
     colApp: t("col-app"),
     colAppHome: t("col-app-home"),
     colAppChallenge: t("col-app-challenge"),
+    colAppThreePeaks: t("col-app-three-peaks"),
     colAppIos: t("col-app-ios"),
     colAppAndroid: t("col-app-android"),
     colLegal: t("col-legal"),
