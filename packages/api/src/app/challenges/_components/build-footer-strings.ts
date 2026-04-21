@@ -15,6 +15,7 @@ export const buildFooterStrings = (
     colAppThreePeaks: t("col-app-three-peaks"),
     colAppScottishMunros: t("col-app-scottish-munros"),
     colAppPicosDeEuropa: t("col-app-picos-de-europa"),
+    colAppPicosDeAndalucia: t("col-app-picos-de-andalucia"),
     colAppIos: t("col-app-ios"),
     colAppAndroid: t("col-app-android"),
     colLegal: t("col-legal"),
