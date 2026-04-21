@@ -27,7 +27,10 @@ export const getFooterTranslator = (locale: ChallengeLocale) =>
     namespace: "footer",
   });
 
-type LandingPageNamespace = "100cims-page" | "three-peaks-page";
+type LandingPageNamespace =
+  | "100cims-page"
+  | "three-peaks-page"
+  | "scottish-munros-page";
 
 export const getLandingPageTranslator = (
   locale: ChallengeLocale,
