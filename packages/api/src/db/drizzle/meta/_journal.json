@@ -302,6 +302,20 @@
       "when": 1776777890166,
       "tag": "0042_backfill-final-two-munros",
       "breakpoints": true
+    },
+    {
+      "idx": 43,
+      "version": "7",
+      "when": 1776779045171,
+      "tag": "0043_add-picos-de-europa-challenge",
+      "breakpoints": true
+    },
+    {
+      "idx": 44,
+      "version": "7",
+      "when": 1776779614295,
+      "tag": "0044_backfill-picos-images",
+      "breakpoints": true
     }
   ]
 }
