@@ -7,11 +7,6 @@ export interface SiteFooterStrings {
   rights: string;
   colApp: string;
   colAppHome: string;
-  colAppChallenge: string;
-  colAppThreePeaks: string;
-  colAppScottishMunros: string;
-  colAppPicosDeEuropa: string;
-  colAppPicosDeAndalucia: string;
   colAppShop: string;
   colAppIos: string;
   colAppAndroid: string;
@@ -25,8 +20,31 @@ export interface SiteFooterStrings {
   language: { label: string; en: string; ca: string; es: string };
 }
 
-const FEATURED_CHALLENGES: { slug: string; label: string }[] = [
-  { slug: "100-cims", label: "100 Cims" },
+// Bespoke landing pages get their own href; the rest fall through to
+// the generic /challenges/[slug] template.
+const FEATURED_CHALLENGES: { slug: string; label: string; href?: string }[] = [
+  { slug: "100-cims", label: "100 Cims", href: "/100cims" },
+  { slug: "national-three-peaks", label: "Three Peaks", href: "/three-peaks" },
+  {
+    slug: "scottish-munros",
+    label: "Scottish Munros",
+    href: "/scottish-munros",
+  },
+  {
+    slug: "picos-de-europa",
+    label: "Picos de Europa",
+    href: "/picos-de-europa",
+  },
+  {
+    slug: "picos-de-andalucia",
+    label: "Picos de Andalucía",
+    href: "/picos-de-andalucia",
+  },
+  {
+    slug: "cumbres-alicante",
+    label: "Cumbres de Alicante",
+    href: "/cumbres-alicante",
+  },
   { slug: "top-spain", label: "Top Spain" },
   { slug: "cumbres-astures", label: "Cumbres Astures" },
   { slug: "100-cims-usa", label: "100 Cims USA" },
@@ -82,36 +100,6 @@ export const SiteFooter = ({ strings: s, locale }: Props) => {
                 {s.colAppHome}
               </a>
               <a
-                href="/100cims"
-                className="text-muted-foreground hover:text-foreground"
-              >
-                {s.colAppChallenge}
-              </a>
-              <a
-                href="/three-peaks"
-                className="text-muted-foreground hover:text-foreground"
-              >
-                {s.colAppThreePeaks}
-              </a>
-              <a
-                href="/scottish-munros"
-                className="text-muted-foreground hover:text-foreground"
-              >
-                {s.colAppScottishMunros}
-              </a>
-              <a
-                href="/picos-de-europa"
-                className="text-muted-foreground hover:text-foreground"
-              >
-                {s.colAppPicosDeEuropa}
-              </a>
-              <a
-                href="/picos-de-andalucia"
-                className="text-muted-foreground hover:text-foreground"
-              >
-                {s.colAppPicosDeAndalucia}
-              </a>
-              <a
                 href={shopHref}
                 className="text-muted-foreground hover:text-foreground"
               >
@@ -142,7 +130,7 @@ export const SiteFooter = ({ strings: s, locale }: Props) => {
               {FEATURED_CHALLENGES.map((c) => (
                 <a
                   key={c.slug}
-                  href={`/challenges/${c.slug}`}
+                  href={c.href ?? `/challenges/${c.slug}`}
                   className="text-muted-foreground hover:text-foreground"
                 >
                   {c.label}
