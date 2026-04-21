@@ -1,0 +1,35 @@
+-- Picos de Europa image backfill (pass 1): ES Wikipedia + Commons categories.
+-- 32 peaks resolved; 34 minor towers/agujas remain NULL (see .picos-no-image.txt).
+
+UPDATE mountain SET image_url = 'https://josepvidal-public-dev-bucket.s3.eu-west-3.amazonaws.com/100cims/mountain/profile/torre-del-llambrion.jpg' WHERE slug = 'torre-del-llambrion'; -- es-wiki:Torre del Llambrión
+UPDATE mountain SET image_url = 'https://josepvidal-public-dev-bucket.s3.eu-west-3.amazonaws.com/100cims/mountain/profile/torre-del-tiro-tirso.jpg' WHERE slug = 'torre-del-tiro-tirso'; -- es-wiki:Torre del Tiro Tirso
+UPDATE mountain SET image_url = 'https://josepvidal-public-dev-bucket.s3.eu-west-3.amazonaws.com/100cims/mountain/profile/torre-sin-nombre.jpg' WHERE slug = 'torre-sin-nombre'; -- es-wiki:Torre sin Nombre
+UPDATE mountain SET image_url = 'https://josepvidal-public-dev-bucket.s3.eu-west-3.amazonaws.com/100cims/mountain/profile/torre-casiano-de-prado.jpg' WHERE slug = 'torre-casiano-de-prado'; -- es-wiki:Torre Casiano de Prado
+UPDATE mountain SET image_url = 'https://josepvidal-public-dev-bucket.s3.eu-west-3.amazonaws.com/100cims/mountain/profile/pena-vieja.jpg' WHERE slug = 'pena-vieja'; -- es-wiki:Peña Vieja
+UPDATE mountain SET image_url = 'https://josepvidal-public-dev-bucket.s3.eu-west-3.amazonaws.com/100cims/mountain/profile/torre-del-hoyo-grande.jpg' WHERE slug = 'torre-del-hoyo-grande'; -- es-wiki:Torre del Hoyo Grande
+UPDATE mountain SET image_url = 'https://josepvidal-public-dev-bucket.s3.eu-west-3.amazonaws.com/100cims/mountain/profile/torre-del-tiro-navarro-i.jpg' WHERE slug = 'torre-del-tiro-navarro-i'; -- es-wiki:Torre del Tiro Navarro I
+UPDATE mountain SET image_url = 'https://josepvidal-public-dev-bucket.s3.eu-west-3.amazonaws.com/100cims/mountain/profile/pico-de-santa-ana-i.jpg' WHERE slug = 'pico-de-santa-ana-i'; -- es-wiki:Pico de Santa Ana I
+UPDATE mountain SET image_url = 'https://josepvidal-public-dev-bucket.s3.eu-west-3.amazonaws.com/100cims/mountain/profile/pico-de-santa-ana-ii.jpg' WHERE slug = 'pico-de-santa-ana-ii'; -- es-wiki:Pico de Santa Ana II
+UPDATE mountain SET image_url = 'https://josepvidal-public-dev-bucket.s3.eu-west-3.amazonaws.com/100cims/mountain/profile/torre-del-tiro-navarro-ii.jpg' WHERE slug = 'torre-del-tiro-navarro-ii'; -- es-wiki:Torre del Tiro Navarro II
+UPDATE mountain SET image_url = 'https://josepvidal-public-dev-bucket.s3.eu-west-3.amazonaws.com/100cims/mountain/profile/torre-santa.jpg' WHERE slug = 'torre-santa'; -- es-wiki:Peña Santa
+UPDATE mountain SET image_url = 'https://josepvidal-public-dev-bucket.s3.eu-west-3.amazonaws.com/100cims/mountain/profile/torre-del-tiro-del-oso.jpg' WHERE slug = 'torre-del-tiro-del-oso'; -- es-wiki:Torre del Tiro del Oso
+UPDATE mountain SET image_url = 'https://josepvidal-public-dev-bucket.s3.eu-west-3.amazonaws.com/100cims/mountain/profile/torre-del-tiro-llago.jpg' WHERE slug = 'torre-del-tiro-llago'; -- es-wiki:Torre del Tiro Llago
+UPDATE mountain SET image_url = 'https://josepvidal-public-dev-bucket.s3.eu-west-3.amazonaws.com/100cims/mountain/profile/risco-saint-saud.jpg' WHERE slug = 'risco-saint-saud'; -- es-wiki:Risco Saint Saud
+UPDATE mountain SET image_url = 'https://josepvidal-public-dev-bucket.s3.eu-west-3.amazonaws.com/100cims/mountain/profile/neveron-de-urriellu.jpg' WHERE slug = 'neveron-de-urriellu'; -- es-wiki:Neverón de Urriellu
+UPDATE mountain SET image_url = 'https://josepvidal-public-dev-bucket.s3.eu-west-3.amazonaws.com/100cims/mountain/profile/la-morra.jpg' WHERE slug = 'la-morra'; -- commons:Category:La Morra/File:Belvedere di La Morra.jpg
+UPDATE mountain SET image_url = 'https://josepvidal-public-dev-bucket.s3.eu-west-3.amazonaws.com/100cims/mountain/profile/pico-de-los-cabrones.jpg' WHERE slug = 'pico-de-los-cabrones'; -- es-wiki:Pico de los Cabrones
+UPDATE mountain SET image_url = 'https://josepvidal-public-dev-bucket.s3.eu-west-3.amazonaws.com/100cims/mountain/profile/aguja-de-la-canalona.jpg' WHERE slug = 'aguja-de-la-canalona'; -- es-wiki:Aguja de la Canalona
+UPDATE mountain SET image_url = 'https://josepvidal-public-dev-bucket.s3.eu-west-3.amazonaws.com/100cims/mountain/profile/pico-arenizas-ii.jpg' WHERE slug = 'pico-arenizas-ii'; -- es-wiki:Pico Arenizas II
+UPDATE mountain SET image_url = 'https://josepvidal-public-dev-bucket.s3.eu-west-3.amazonaws.com/100cims/mountain/profile/horcados-rojos.jpg' WHERE slug = 'horcados-rojos'; -- es-wiki:Torre de los Horcados Rojos
+UPDATE mountain SET image_url = 'https://josepvidal-public-dev-bucket.s3.eu-west-3.amazonaws.com/100cims/mountain/profile/pico-arenizas-i.jpg' WHERE slug = 'pico-arenizas-i'; -- es-wiki:Pico Arenizas I
+UPDATE mountain SET image_url = 'https://josepvidal-public-dev-bucket.s3.eu-west-3.amazonaws.com/100cims/mountain/profile/pico-arenizas-iii.jpg' WHERE slug = 'pico-arenizas-iii'; -- es-wiki:Pico Arenizas III
+UPDATE mountain SET image_url = 'https://josepvidal-public-dev-bucket.s3.eu-west-3.amazonaws.com/100cims/mountain/profile/torre-del-hoyo-de-liordes.jpg' WHERE slug = 'torre-del-hoyo-de-liordes'; -- es-wiki:Torre del Hoyo de Liordes
+UPDATE mountain SET image_url = 'https://josepvidal-public-dev-bucket.s3.eu-west-3.amazonaws.com/100cims/mountain/profile/torre-de-enmedio.jpg' WHERE slug = 'torre-de-enmedio'; -- commons:Category:Torre de Enmedio/File:Torre de Enmedio 24J 01.jpg
+UPDATE mountain SET image_url = 'https://josepvidal-public-dev-bucket.s3.eu-west-3.amazonaws.com/100cims/mountain/profile/torre-de-penalba.jpg' WHERE slug = 'torre-de-penalba'; -- es-wiki:Torre de Peñalba
+UPDATE mountain SET image_url = 'https://josepvidal-public-dev-bucket.s3.eu-west-3.amazonaws.com/100cims/mountain/profile/torre-de-salinas.jpg' WHERE slug = 'torre-de-salinas'; -- es-wiki:Torre de Salinas
+UPDATE mountain SET image_url = 'https://josepvidal-public-dev-bucket.s3.eu-west-3.amazonaws.com/100cims/mountain/profile/torre-del-friero.jpg' WHERE slug = 'torre-del-friero'; -- es-wiki:Torre del Friero
+UPDATE mountain SET image_url = 'https://josepvidal-public-dev-bucket.s3.eu-west-3.amazonaws.com/100cims/mountain/profile/pena-castil.jpg' WHERE slug = 'pena-castil'; -- commons-opensearch:Category:Peña Castillo/File:Peña Castillo, un gran bastión en Las Loras.jpg
+UPDATE mountain SET image_url = 'https://josepvidal-public-dev-bucket.s3.eu-west-3.amazonaws.com/100cims/mountain/profile/silla-del-caballo-cimero.jpg' WHERE slug = 'silla-del-caballo-cimero'; -- es-wiki:Silla del Caballo Cimero
+UPDATE mountain SET image_url = 'https://josepvidal-public-dev-bucket.s3.eu-west-3.amazonaws.com/100cims/mountain/profile/torre-del-hoyo-oscuro.jpg' WHERE slug = 'torre-del-hoyo-oscuro'; -- es-wiki:Torre del Hoyo Oscuro
+UPDATE mountain SET image_url = 'https://josepvidal-public-dev-bucket.s3.eu-west-3.amazonaws.com/100cims/mountain/profile/pena-olvidada.jpg' WHERE slug = 'pena-olvidada'; -- es-wiki:Peña Olvidada
+UPDATE mountain SET image_url = 'https://josepvidal-public-dev-bucket.s3.eu-west-3.amazonaws.com/100cims/mountain/profile/torre-bermeja-cornion.jpg' WHERE slug = 'torre-bermeja-cornion'; -- es-wiki:Torre Bermeja (monte)
