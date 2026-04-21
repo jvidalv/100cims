@@ -50,6 +50,27 @@ export const FeaturedPeaks = async () => {
             </article>
           ))}
         </div>
+        <p className="mt-8 text-center text-xs text-muted-foreground leading-relaxed">
+          Summit photos from{" "}
+          <a
+            href="https://commons.wikimedia.org/wiki/Category:Munros"
+            target="_blank"
+            rel="noopener"
+            className="underline"
+          >
+            Wikimedia Commons
+          </a>
+          , licensed under{" "}
+          <a
+            href="https://creativecommons.org/licenses/by-sa/4.0"
+            target="_blank"
+            rel="noopener"
+            className="underline"
+          >
+            CC BY-SA
+          </a>
+          .
+        </p>
       </div>
     </section>
   );
