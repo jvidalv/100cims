@@ -358,6 +358,20 @@
       "when": 1776783340337,
       "tag": "0050_add-vallibierna-to-aragon",
       "breakpoints": true
+    },
+    {
+      "idx": 51,
+      "version": "7",
+      "when": 1776784665281,
+      "tag": "0051_add-cumbres-alicante-challenge",
+      "breakpoints": true
+    },
+    {
+      "idx": 52,
+      "version": "7",
+      "when": 1776784815610,
+      "tag": "0052_backfill-cumbres-alicante-images",
+      "breakpoints": true
     }
   ]
 }
