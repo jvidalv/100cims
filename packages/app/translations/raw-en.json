@@ -449,6 +449,9 @@
   "NozjOy": {
     "defaultMessage": "Color: {color}"
   },
+  "O7kE5P": {
+    "defaultMessage": "Report summit photo"
+  },
   "OHvDJa": {
     "defaultMessage": "Suggest a new challenge"
   },
@@ -683,6 +686,9 @@
   "cZ369Z": {
     "defaultMessage": "Thanks for supporting Cims. We will contact you soon."
   },
+  "ca5w/d": {
+    "defaultMessage": "Only report photos that don't match the summit. Are you sure?"
+  },
   "ciVgJV": {
     "defaultMessage": "Received, thanks for your suggestion!"
   },
@@ -784,6 +790,9 @@
   },
   "ihTd0A": {
     "defaultMessage": "No summits match \"{query}\""
+  },
+  "jAkDuA": {
+    "defaultMessage": "Yes, report"
   },
   "jKKg2o": {
     "defaultMessage": "Clear all filters"
