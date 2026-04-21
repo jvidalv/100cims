@@ -160,6 +160,30 @@ const Content = () => {
     );
   };
 
+  const handleReport = () => {
+    Alert.alert(
+      intl.formatMessage({ defaultMessage: "Report summit photo" }),
+      intl.formatMessage({
+        defaultMessage:
+          "Only report photos that don't match the summit. Are you sure?",
+      }),
+      [
+        {
+          text: intl.formatMessage({ defaultMessage: "Cancel" }),
+          style: "cancel",
+        },
+        {
+          text: intl.formatMessage({ defaultMessage: "Yes, report" }),
+          style: "destructive",
+          onPress: async () => {
+            setHasReported(true);
+            await reportSummit({ summitId: summit }).catch(() => {});
+          },
+        },
+      ],
+    );
+  };
+
   const handleAdminDelete = () => {
     Alert.alert(
       intl.formatMessage({ defaultMessage: "Delete as admin" }),
@@ -326,10 +350,7 @@ const Content = () => {
           )}
           {!isUserParticipant && (
             <ActionRow
-              onPress={async () => {
-                setHasReported(true);
-                await reportSummit({ summitId: summit }).catch(() => {});
-              }}
+              onPress={handleReport}
               icon={hasReported ? Check : Flag}
               intent={hasReported ? "emerald" : "muted"}
               disabled={hasReported}
