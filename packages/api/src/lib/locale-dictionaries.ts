@@ -30,7 +30,8 @@ export const getFooterTranslator = (locale: ChallengeLocale) =>
 type LandingPageNamespace =
   | "100cims-page"
   | "three-peaks-page"
-  | "scottish-munros-page";
+  | "scottish-munros-page"
+  | "picos-de-europa-page";
 
 export const getLandingPageTranslator = (
   locale: ChallengeLocale,
