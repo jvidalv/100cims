@@ -112,7 +112,7 @@ export const summitReportPostRoute = new Elysia().post(
       fields: [
         {
           name: "Summit",
-          value: `${SITE_URL}/user/summits/${summitId}`,
+          value: `${SITE_URL}/admin/summits/${summitId}`,
         },
         {
           name: "Reporter",
