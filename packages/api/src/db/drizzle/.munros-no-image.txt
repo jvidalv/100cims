@@ -1,65 +1,40 @@
-# Munros without images (as of migration 0039).
-# Wikipedia had no usable lead image for these — to be filled in later.
+# Munros without images (after migration 0040).
+# These are mostly ambiguously-named Munros (e.g. multiple Beinn Dearg, multiple Meall Garbh)
+# that Commons disambiguates behind parentheticals. To fill these, pick the right
+# Commons category by hand (e.g. 'Category:Beinn Dearg (Ross-shire)') and map slug -> file.
 # Format: <slug>	<name>
 
-ben-more-01c	Ben More (A' Bheinn Mhòr)
 meall-garbh-02b	Meall Garbh
 beinn-a-ghlo-carn-nan-gabhar	Beinn a' Ghló - Càrn nan Gabhar
-beinn-eibhinn	Beinn Eibhinn
 beinn-dearg-15a	Beinn Dearg
 beinn-a-chaorainn-08b	Beinn a' Chaorainn
-an-socach-12b	An Socach
 geal-charn-04b-2	Geal Charn
-sgurr-fhuar-thuill	Sgurr Fhuar-thuill
 beinn-a-chaorainn-09c	Beinn a' Chaorainn
-carn-an-t-sagairt-mor	Càrn an t-Sagairt Mòr
 carn-dearg-04b-1	Càrn Dearg
-carn-an-righ	Càrn an Rìgh
-carn-an-tuirc	Càrn an Tuirc
 beinn-dearg-06a	Beinn Dearg
 beinn-fhionnlaidh-11a	Beinn Fhionnlaidh
-sgurr-an-lochain	Sgurr an Lochain
 sgurr-mor-10b	Sgurr Mor
 stob-ban-04a-1	Stob Bàn
 stob-daimh	Stob Daimh
 sail-chaorainn	Sail Chaorainn
-a-chailleach-14b	A' Chailleach
-sgurr-na-ruaidhe	Sgurr na Ruaidhe
 carn-nan-gobhar-12b	Càrn nan Gobhar (Mullardoch)
 sgurr-ban	Sgurr Bàn
-creag-leacach	Creag Leacach
 ben-vorlich-01b	Ben Vorlich
-druim-shionnach	Druim Shionnach
-mullach-na-dheiragain	Mullach na Dheiragain
-maol-chinn-dearg	Maol Chinn-dearg
 stob-coire-sgriodain	Stob Coire Sgriodain
 stob-ban-04a-2	Stob Bàn
-meall-nan-ceapraichean	Meall nan Ceapraichean
 meall-garbh-02a	Meall Garbh
-ben-more-17e	Ben More
 beinn-fhionnlaidh-03b	Beinn Fhionnlaidh
-tolmount	Tolmount
 tom-buidhe	Tom Buidhe
 sgurr-nan-coireachan-10d	Sgurr nan Coireachan
-carn-ghluasaid	Càrn Ghluasaid
-beinn-liath-mhor-fannaich	Beinn Liath Mhòr Fannaich
 sgurr-nan-coireachan-10b	Sgurr nan Coireachan
-meall-gorm	Meall Gorm
 beinn-bhuidhe	Beinn Bhuidhe
 creag-a-mhaim	Creag a' Mhaim
 carn-dearg-09b	Càrn Dearg
 meall-buidhe-10b	Meall Buidhe
 ben-vorlich-01d	Ben Vorlich
-an-socach-06b	An Socach
 carn-dearg-04b-2	Carn Dearg
 meall-buidhe-02a	Meall Buidhe
-beinn-bhreac	Beinn Bhreac
-a-chailleach-09b	A' Chailleach
-eididh-nan-clach-geala	Eididh nan Clach Geala
 geal-charn-09b	Geal Chàrn
 meall-a-choire-leith	Meall a' Choire Leith
-creag-pitridh	Creag Pitridh
-an-coileachan	An Coileachan
 carn-sgulain	Carn Sgulain
-an-socach-11a	An Socach
 geal-charn-05a	Geal-chàrn
