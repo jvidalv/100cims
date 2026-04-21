@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { parseAsInteger, useQueryState } from "nuqs";
 import { use, useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -64,6 +65,7 @@ export default function AdminUserDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
+  const router = useRouter();
   const detail = useAdminUserDetail(id);
   const update = useUpdateAdminUser(id);
 
@@ -508,7 +510,13 @@ export default function AdminUserDetailPage({
                 </thead>
                 <tbody>
                   {summits.data.items.map((s) => (
-                    <tr key={s.summitId} className="border-b">
+                    <tr
+                      key={s.summitId}
+                      className="border-b hover:bg-muted/40 cursor-pointer"
+                      onClick={() =>
+                        router.push(`/admin/summits/${s.summitId}`)
+                      }
+                    >
                       <td className="py-2 pr-4">{s.mountainName}</td>
                       <td className="py-2 pr-4 text-muted-foreground">
                         {s.mountainHeight} m
