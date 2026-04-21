@@ -351,6 +351,13 @@
       "when": 1776783112271,
       "tag": "0049_shorten-picos-locations",
       "breakpoints": true
+    },
+    {
+      "idx": 50,
+      "version": "7",
+      "when": 1776783340337,
+      "tag": "0050_add-vallibierna-to-aragon",
+      "breakpoints": true
     }
   ]
 }
