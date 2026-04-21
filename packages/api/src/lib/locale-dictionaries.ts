@@ -32,7 +32,8 @@ type LandingPageNamespace =
   | "three-peaks-page"
   | "scottish-munros-page"
   | "picos-de-europa-page"
-  | "picos-de-andalucia-page";
+  | "picos-de-andalucia-page"
+  | "cumbres-alicante-page";
 
 export const getLandingPageTranslator = (
   locale: ChallengeLocale,
