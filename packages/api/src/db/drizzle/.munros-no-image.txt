@@ -1,40 +1,7 @@
-# Munros without images (after migration 0040).
-# These are mostly ambiguously-named Munros (e.g. multiple Beinn Dearg, multiple Meall Garbh)
-# that Commons disambiguates behind parentheticals. To fill these, pick the right
-# Commons category by hand (e.g. 'Category:Beinn Dearg (Ross-shire)') and map slug -> file.
-# Format: <slug>	<name>
+# Munros without images (after migration 0041).
+# Only 2 Munros remain — Commons has no correct category for either.
+# Both share a name with unrelated Scottish hills that are NOT the Munro.
+# Format: <slug>\t<name>\t<reason>
 
-meall-garbh-02b	Meall Garbh
-beinn-a-ghlo-carn-nan-gabhar	Beinn a' Ghló - Càrn nan Gabhar
-beinn-dearg-15a	Beinn Dearg
-beinn-a-chaorainn-08b	Beinn a' Chaorainn
-geal-charn-04b-2	Geal Charn
-beinn-a-chaorainn-09c	Beinn a' Chaorainn
-carn-dearg-04b-1	Càrn Dearg
-beinn-dearg-06a	Beinn Dearg
-beinn-fhionnlaidh-11a	Beinn Fhionnlaidh
-sgurr-mor-10b	Sgurr Mor
-stob-ban-04a-1	Stob Bàn
-stob-daimh	Stob Daimh
-sail-chaorainn	Sail Chaorainn
-carn-nan-gobhar-12b	Càrn nan Gobhar (Mullardoch)
-sgurr-ban	Sgurr Bàn
-ben-vorlich-01b	Ben Vorlich
-stob-coire-sgriodain	Stob Coire Sgriodain
-stob-ban-04a-2	Stob Bàn
-meall-garbh-02a	Meall Garbh
-beinn-fhionnlaidh-03b	Beinn Fhionnlaidh
-tom-buidhe	Tom Buidhe
-sgurr-nan-coireachan-10d	Sgurr nan Coireachan
-sgurr-nan-coireachan-10b	Sgurr nan Coireachan
-beinn-bhuidhe	Beinn Bhuidhe
-creag-a-mhaim	Creag a' Mhaim
-carn-dearg-09b	Càrn Dearg
-meall-buidhe-10b	Meall Buidhe
-ben-vorlich-01d	Ben Vorlich
-carn-dearg-04b-2	Carn Dearg
-meall-buidhe-02a	Meall Buidhe
-geal-charn-09b	Geal Chàrn
-meall-a-choire-leith	Meall a' Choire Leith
-carn-sgulain	Carn Sgulain
-geal-charn-05a	Geal-chàrn
+beinn-dearg-06a	Beinn Dearg	Atholl summit (Glen Tromie/Glen Tilt) has no Commons category; name collides with a Trossachs Corbett that isn't this Munro.
+stob-daimh	Stob Daimh	On the Ben Cruachan ridge but has no photos specifically of Stob Daimh; re-using Cruachan photos would mislabel the summit.
