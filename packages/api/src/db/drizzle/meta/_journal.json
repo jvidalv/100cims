@@ -267,6 +267,13 @@
       "when": 1776769479045,
       "tag": "0037_add-national-three-peaks-challenge",
       "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1776773254459,
+      "tag": "0038_add-scottish-munros-challenge",
+      "breakpoints": true
     }
   ]
 }
