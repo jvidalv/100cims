@@ -127,6 +127,15 @@ export const summitRoute = new Elysia({ prefix: '/summit', tags: ['summits'] })
   });
 ```
 
+### Public routes with optional auth
+
+Public routes that need the viewer's id (e.g. to filter out records the caller can't see) use the `optional-auth` helpers from `@/api/routes/@shared/optional-auth.ts` + `.use(JWT())`. Two variants:
+
+- `getOptionalUser(jwt, token)` — returns `{ id, activeChallengeId }` or `null`. Issues a `SELECT` on the user table. Use only when you need `activeChallengeId` or confirmation the user still exists.
+- `getOptionalUserId(jwt, token)` — returns `string | undefined`. Verifies the JWT only, no DB hit. **Prefer this when all you need is `viewer.id` for authz filters** — e.g. `plan.all.get.ts`, `plan.one.get.ts`. Avoids an extra round-trip on every hit.
+
+Both return the "anonymous" value on missing / invalid tokens so the endpoint stays usable without auth.
+
 ### Database Queries
 
 ```typescript

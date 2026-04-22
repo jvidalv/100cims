@@ -75,6 +75,7 @@ export const adminPlansGetRoute = new Elysia().get(
           startDate: planTable.startDate,
           speed: planTable.speed,
           status: planTable.status,
+          isPrivate: planTable.isPrivate,
           createdAt: planTable.createdAt,
           creatorId: planTable.creatorId,
           creatorUsername: userTable.username,

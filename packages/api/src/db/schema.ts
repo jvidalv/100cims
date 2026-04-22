@@ -183,6 +183,7 @@ export const planTable = pgTable("plan", {
     .notNull()
     .$type<"open" | "completed" | "canceled">(),
   routeUrl: text(),
+  isPrivate: boolean().notNull().default(false),
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp().notNull().defaultNow(),
 });

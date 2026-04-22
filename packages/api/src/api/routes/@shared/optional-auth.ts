@@ -23,6 +23,26 @@ export function getBearerToken(
 }
 
 /**
+ * Verify a token and return the user id without hitting the user table.
+ * Use when the caller only needs `viewer.id` for authz filters — avoids the
+ * extra SELECT that `getOptionalUser` performs.
+ */
+export async function getOptionalUserId(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  jwt: { verify: (token?: string) => Promise<any> },
+  token: string | undefined,
+): Promise<string | undefined> {
+  if (!token) return undefined;
+  try {
+    const verified = await jwt.verify(token);
+    if (!verified || !verified.id) return undefined;
+    return verified.id as string;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
  * Get user from JWT token if present.
  * Returns null if no token or invalid token (endpoint still works).
  */

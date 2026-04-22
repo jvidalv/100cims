@@ -1,6 +1,5 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Link } from "expo-router";
-import { Plus, Star } from "lucide-react-native";
+import { Plus } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
@@ -9,12 +8,7 @@ import {
   Pressable,
   TouchableOpacity,
 } from "react-native";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  runOnJS,
-} from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 import { twMerge } from "tailwind-merge";
 
 
@@ -35,69 +29,10 @@ import {
 } from "@/domains/plan/plan.api";
 import { useAskPushPermission } from "@/hooks/use-ask-push-permission";
 
-const ALERT_KEY = "plans_alert_shown";
-
-const FloatingAlert = ({ onClose }: { onClose: () => void }) => {
-  const opacity = useSharedValue(0);
-  const translateY = useSharedValue(20);
-
-  useEffect(() => {
-    const showTimeout = setTimeout(() => {
-      opacity.value = withTiming(1, { duration: 300 });
-      translateY.value = withTiming(0, { duration: 300 });
-
-      const hideTimeout = setTimeout(() => {
-        opacity.value = withTiming(0, { duration: 300 });
-        translateY.value = withTiming(20, { duration: 300 }, (finished) => {
-          if (finished) runOnJS(onClose)();
-        });
-      }, 7000);
-      return () => clearTimeout(hideTimeout);
-    }, 1500);
-
-    return () => clearTimeout(showTimeout);
-  }, [onClose, opacity, translateY]);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
-    transform: [{ translateY: translateY.value }],
-  }));
-
-  const dismiss = () => {
-    opacity.value = withTiming(0, { duration: 300 });
-    translateY.value = withTiming(20, { duration: 300 }, (finished) => {
-      if (finished) runOnJS(onClose)();
-    });
-  };
-
-  return (
-    <Animated.View
-      style={animatedStyle}
-      className="absolute inset-x-6 bottom-8 z-50"
-    >
-      <Pressable
-        onPress={dismiss}
-        className="relative rounded bg-background p-4 shadow-md"
-      >
-        <View className="absolute right-2 top-2">
-          <LucideIcon icon={Star} color="gold" size={24} />
-        </View>
-        <ThemedText className="mb-1 font-semibold">
-          <FormattedMessage defaultMessage="Do you know?" />
-        </ThemedText>
-        <ThemedText>
-          <FormattedMessage defaultMessage="Sharing plans with others is a great way to meet people with similar interests!" />
-        </ThemedText>
-      </Pressable>
-    </Animated.View>
-  );
-};
-
 export default function PlansScreen() {
   const intl = useIntl();
   const [status, setStatus] = useState<PlanStatus>("open");
   const { isAuthenticated } = useAuth();
-  const [showAlert, setShowAlert] = useState(false);
   const {
     isOpen: isPushPromptOpen,
     ask: askPushPermission,
@@ -112,18 +47,6 @@ export default function PlansScreen() {
     isFetchingNextPage,
     fetchNextPage,
   } = usePlansInfinite({ status });
-
-  useEffect(() => {
-    const checkAlert = async () => {
-      const alreadyShown = await AsyncStorage.getItem(ALERT_KEY);
-      if (!alreadyShown) {
-        setShowAlert(true);
-        await AsyncStorage.setItem(ALERT_KEY, "true");
-      }
-    };
-
-    void checkAlert();
-  }, []);
 
   useEffect(() => {
     if (!isAuthenticated) return;
@@ -265,12 +188,12 @@ export default function PlansScreen() {
             title={item.title}
             status={item.status}
             startDate={item.startDate}
+            isPrivate={item.isPrivate}
             mountains={item.mountains?.map(({ imageUrl }) => ({ imageUrl }))}
             users={item.users}
           />
         )}
       />
-      {showAlert && <FloatingAlert onClose={() => setShowAlert(false)} />}
       <PushPermissionDialog
         isOpen={isPushPromptOpen}
         onClose={dismissPushPrompt}

@@ -58,6 +58,7 @@ export const PlanSchema = t.Object({
   createdAt: t.Date(),
   updatedAt: t.Date(),
   challengeId: t.Nullable(t.String()),
+  isPrivate: t.Boolean(),
   users: t.Array(PlanUserSchema),
   mountains: t.Array(PlanMountainSchema),
 });
@@ -77,6 +78,7 @@ export const PlanDetailSchema = t.Object({
   creatorId: t.String(),
   createdAt: t.Date(),
   updatedAt: t.Date(),
+  isPrivate: t.Boolean(),
   users: t.Array(PlanUserSchema),
   mountains: t.Array(PlanMountainWithEssentialSchema),
 });
@@ -115,4 +117,5 @@ export const BasicPlanSchema = t.Object({
   createdAt: t.Date(),
   updatedAt: t.Date(),
   challengeId: t.Nullable(t.String()),
+  isPrivate: t.Boolean(),
 });

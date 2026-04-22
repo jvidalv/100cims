@@ -32,6 +32,7 @@ export const adminPlanDetailGetRoute = new Elysia().get(
         startDate: planTable.startDate,
         speed: planTable.speed,
         status: planTable.status,
+        isPrivate: planTable.isPrivate,
         creatorId: planTable.creatorId,
         challengeId: challengeTable.id,
         challengeName: challengeTable.name,

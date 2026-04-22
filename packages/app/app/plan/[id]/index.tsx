@@ -7,6 +7,7 @@ import {
   BadgeCheck,
   Calendar,
   Clock,
+  Lock,
   MessagesSquare,
   Settings,
   Share as ShareIcon,
@@ -457,6 +458,14 @@ export default function PlanIdPage() {
               <View className="size-4 rounded bg-neutral-500" />
               <ThemedText className="text-lg font-medium text-neutral-500">
                 <FormattedMessage defaultMessage="Canceled" />
+              </ThemedText>
+            </View>
+          )}
+          {plan.isPrivate && (
+            <View className="flex flex-row items-center gap-2">
+              <LucideIcon icon={Lock} size={16} />
+              <ThemedText className="text-lg font-medium">
+                <FormattedMessage defaultMessage="Private" />
               </ThemedText>
             </View>
           )}

@@ -9,15 +9,23 @@ import {
   planHasMountainsTable,
   mountainTable,
 } from "@/db/schema";
+import { JWT } from "@/api/routes/@shared/jwt";
+import {
+  getBearerToken,
+  getOptionalUserId,
+} from "@/api/routes/@shared/optional-auth";
+import { planVisibilitySql } from "@/api/routes/@shared/plan-access";
 import { SuccessResponse } from "@/api/schemas/common.schema";
 import { PaginatedPlansSchema } from "@/api/schemas/plan.schema";
 
 const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 50;
 
-export const planAllPaginatedGetRoute = new Elysia().get(
+export const planAllPaginatedGetRoute = new Elysia().use(JWT()).get(
   "/all-paginated",
-  async ({ query }) => {
+  async ({ query, jwt, headers }) => {
+    const viewerId = await getOptionalUserId(jwt, getBearerToken(headers));
+
     const page = query?.page ?? 1;
     const pageSize = Math.min(query?.limit ?? DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE);
     const offset = (page - 1) * pageSize;
@@ -29,6 +37,7 @@ export const planAllPaginatedGetRoute = new Elysia().get(
         ? eq(planTable.challengeId, query.challengeId)
         : undefined,
       query?.userId ? eq(planHasUsersTable.userId, query.userId) : undefined,
+      planVisibilitySql(viewerId),
     ].filter(Boolean);
 
     const orderBy =
@@ -49,6 +58,7 @@ export const planAllPaginatedGetRoute = new Elysia().get(
       createdAt: planTable.createdAt,
       updatedAt: planTable.updatedAt,
       challengeId: planTable.challengeId,
+      isPrivate: planTable.isPrivate,
     };
 
     const buildBase = () =>

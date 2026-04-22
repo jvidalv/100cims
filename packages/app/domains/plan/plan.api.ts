@@ -120,6 +120,7 @@ export const usePlanCreate = () => {
       startDate?: string;
       mountainIds?: string[];
       userIds?: string[];
+      isPrivate?: boolean;
     }) => {
       const { data, error } = await apiClient.POST(
         "/api/protected/plans/create",
@@ -145,6 +146,7 @@ export const usePlanUpdate = () => {
       startDate?: string;
       userIds?: string[];
       status?: string;
+      isPrivate?: boolean;
     }) => {
       const { data, error } = await apiClient.POST(
         "/api/protected/plans/update",

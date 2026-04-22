@@ -446,6 +446,9 @@
   "NWHHpt": {
     "defaultMessage": "Chat within plans"
   },
+  "Ndqa+r": {
+    "defaultMessage": "Only you and the people you add can see this plan."
+  },
   "NozjOy": {
     "defaultMessage": "Color: {color}"
   },
@@ -502,6 +505,9 @@
   },
   "QJmOKA": {
     "defaultMessage": "Please pick a color before adding to cart."
+  },
+  "QSnZL6": {
+    "defaultMessage": "Private plan"
   },
   "QVgzSj": {
     "defaultMessage": "About the app"
