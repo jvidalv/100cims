@@ -7,12 +7,7 @@ export interface Release {
 }
 
 export const RELEASES: readonly Release[] = [
-  { version: "0.0.1", releasedAt: "2024-12-11" },
-  { version: "0.0.6", releasedAt: "2025-01-31" },
   { version: "1.0.0", releasedAt: "2025-02-12" },
-  { version: "1.2.0", releasedAt: "2025-03-25" },
-  { version: "2.0.3", releasedAt: "2025-04-14" },
-  { version: "2.1.0", releasedAt: "2025-05-04" },
-  { version: "2.2.1", releasedAt: "2025-11-13" },
-  { version: "2.3.0", releasedAt: "2026-01-24" },
+  { version: "2.0.0", releasedAt: "2025-04-03" },
+  { version: "3.0.0", releasedAt: "2026-04-18" },
 ] as const;
