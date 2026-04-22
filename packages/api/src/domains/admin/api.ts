@@ -9,6 +9,7 @@ import type {
   AdminMerchUpdateBodySchema,
   AdminShopRequestUpdateBodySchema,
 } from "@/api/schemas/admin.schema";
+import type { PlanSpeed, PlanStatus } from "@/db/enums";
 import { api } from "@/lib/api";
 import { adminKeys } from "@/lib/query-keys";
 
@@ -330,8 +331,8 @@ export const useAdminPlanDetail = (id: string) =>
 export type AdminPlanUpdateBody = {
   title?: string;
   description?: string | null;
-  status?: "open" | "completed" | "canceled";
-  speed?: "chill" | "normal" | "fast";
+  status?: PlanStatus;
+  speed?: PlanSpeed;
   startDate?: string | null;
   imageUrl?: string | null;
   routeUrl?: string | null;

@@ -5,6 +5,7 @@ import { cleanupOrphanMountains } from "@/api/cron/cleanup-orphan-mountains";
 import { completeStalePlans } from "@/api/cron/complete-stale-plans";
 import { syncImageUrlsToCdn } from "@/api/cron/sync-image-urls-to-cdn";
 import { monitorHealth } from "@/api/cron/monitor-health";
+import { notifyUpcomingPlans } from "@/api/cron/notify-upcoming-plans";
 import { recommendWeeklyMountain } from "@/api/cron/recommend-weekly-mountain";
 import { dailyRestart } from "@/api/cron/self-restart";
 
@@ -65,6 +66,13 @@ export const CRON_REGISTRY: CronEntry[] = [
     description:
       "Cancel open plans created by non-admin users that have no start date and have been open for more than a month. Runs the 1st of each month at 03:00.",
     fn: cancelAbandonedPlans,
+  },
+  {
+    name: "notify-upcoming-plans",
+    pattern: "0 0 10 * * *",
+    description:
+      "Push a reminder to every roster member of non-canceled plans whose start date is exactly 2 days out. Runs daily at 10:00 UTC (~12:00 Spain).",
+    fn: notifyUpcomingPlans,
   },
   {
     name: "recommend-weekly-mountain",

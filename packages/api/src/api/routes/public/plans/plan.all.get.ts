@@ -22,6 +22,7 @@ import {
 import { planVisibilitySql } from "@/api/routes/@shared/plan-access";
 import { SuccessResponse } from "@/api/schemas/common.schema";
 import { PlansArraySchema } from "@/api/schemas/plan.schema";
+import { PlanStatusSchema } from "@/api/schemas/enums";
 
 export const planAllGetRoute = new Elysia().use(JWT()).get(
   "/all",
@@ -29,12 +30,7 @@ export const planAllGetRoute = new Elysia().use(JWT()).get(
     const viewerId = await getOptionalUserId(jwt, getBearerToken(headers));
 
     const filters = [
-      query?.status
-        ? eq(
-            planTable.status,
-            query.status as unknown as "open" | "canceled" | "completed",
-          )
-        : undefined,
+      query?.status ? eq(planTable.status, query.status) : undefined,
       query?.creatorId ? eq(planTable.creatorId, query.creatorId) : undefined,
       query?.challengeId
         ? eq(planTable.challengeId, query.challengeId)
@@ -149,7 +145,7 @@ export const planAllGetRoute = new Elysia().use(JWT()).get(
   {
     query: t.Optional(
       t.Object({
-        status: t.Optional(t.String()),
+        status: t.Optional(PlanStatusSchema),
         limit: t.Optional(t.Number()),
         creatorId: t.Optional(t.String()),
         userId: t.Optional(t.String()),

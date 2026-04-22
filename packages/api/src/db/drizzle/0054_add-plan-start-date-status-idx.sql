@@ -1,0 +1,1 @@
+CREATE INDEX "plan_start_date_status_idx" ON "plan" USING btree ("start_date","status");

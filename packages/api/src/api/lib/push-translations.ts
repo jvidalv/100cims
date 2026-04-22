@@ -18,6 +18,12 @@ const planChat = {
   es: "Mensaje nuevo",
 } satisfies Record<AppLocale, string>;
 
+const planReminder = {
+  en: "Coming up in 2 days — ready?",
+  ca: "En 2 dies — tot a punt?",
+  es: "En 2 días — ¿todo listo?",
+} satisfies Record<AppLocale, string>;
+
 const mountainSuggestionTitle = {
   en: (km: number) => `${km} km from your next cim`,
   ca: (km: number) => `A ${km} km del teu proper cim`,
@@ -44,6 +50,9 @@ export const pushPlanLeft = (locale: string | null, name: string) =>
 
 export const pushPlanChat = (locale: string | null) =>
   planChat[normalizeAppLocale(locale)];
+
+export const pushPlanReminder = (locale: string | null) =>
+  planReminder[normalizeAppLocale(locale)];
 
 const summitTaggedTitle = {
   en: (mountainName: string) => `New summit of ${mountainName}`,

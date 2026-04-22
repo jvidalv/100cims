@@ -208,6 +208,15 @@ export type AdminMerchUpdateBody = Static<typeof AdminMerchUpdateBodySchema>;
 
 The schema constant must be `import type { ... }` only — that erases at runtime, so TypeBox is not bundled into the Next.js client. Schema files must have no top-level side effects (the existing ones don't).
 
+### Shared enums: two modules
+
+String-enum columns (plan status, coupon discount type, etc.) are declared once, in two layered modules, and reused everywhere:
+
+- `packages/api/src/db/enums.ts` — the const tuple (`PLAN_STATUSES`) and derived type (`PlanStatus = (typeof PLAN_STATUSES)[number]`). **Zero framework imports** so the DB layer stays pure and drizzle-kit's schema parsing never touches Elysia.
+- `packages/api/src/api/schemas/enums.ts` — the TypeBox validator (`PlanStatusSchema = t.Union([t.Literal(...)])`). Imports `t` from Elysia.
+
+Consumers pick the module that matches their layer: `db/schema.ts` uses `$type<PlanStatus>()` from `db/enums`; route bodies/queries/responses compose `PlanStatusSchema` from `api/schemas/enums`; handlers narrow with `PlanStatus`. **Never declare these inline in a route or schema file** — duplicate declarations drift. If you're tightening a previously-loose `t.String()` on a request, also delete any `as unknown as ...` casts downstream; they only existed to paper over the missing validation.
+
 ### User privacy: schema split + explicit SELECT
 
 Two response schemas in `src/api/schemas/user.schema.ts` bound by purpose:
@@ -329,10 +338,20 @@ void sendPushLocalized(
 );
 ```
 
-- `sendPushLocalized` is fire-and-forget: it reads `userTable.locale` per recipient, batches up to 100 per Expo call, posts batches in parallel, and nulls out `expoPushToken` on `DeviceNotRegistered` tickets. Callers prefix with `void` — don't block the response.
-- Add new copy in `api/lib/push-translations.ts` (en/ca/es). New event types go in `PUSH_TYPE` at `api/lib/push-types.ts`; the app's tap-routing whitelist must be kept in sync.
+- `sendPushLocalized` is fire-and-forget: it reads `userTable.locale` per recipient, batches up to 100 per Expo call, posts batches in parallel, and nulls out `expoPushToken` on `DeviceNotRegistered` tickets. **In HTTP handlers, prefix with `void`** so the response isn't blocked. **In a cron**, `await Promise.allSettled([...])` instead — otherwise rejections become unhandled, the cron log fires before pushes actually send, and in-flight batches are dropped if Railway restarts the process.
+- Add new copy in `api/lib/push-translations.ts` (en/ca/es). New event types go in `PUSH_TYPE` at `api/lib/push-types.ts`; the app's tap-routing whitelist (`isPlanPushType` / the other type checks in `packages/app/domains/user/push.api.ts`) must be kept in sync.
 - Users with `pushNotificationsEnabled = false` or null `expoPushToken` are filtered automatically.
 - Set `EXPO_ACCESS_TOKEN` env var to enable Expo's Enhanced Push Security.
+
+### Add New Cron
+
+Crons use Elysia's `@elysiajs/cron` plugin, assembled in `packages/api/src/api/cron/index.ts` and listed in `packages/api/src/api/cron/cron.registry.ts`. To add one:
+
+1. Create `packages/api/src/api/cron/<name>.ts` exporting an `async function`. Log a one-line summary at the end so `/admin/crons` output is legible.
+2. Import it in `cron.registry.ts` and append an entry to `CRON_REGISTRY` with a 6-field cron pattern (`"second minute hour day month weekday"`, UTC) and a one-sentence description.
+3. Restart the API — the admin crons page auto-discovers it and exposes a Trigger button backed by `POST /api/admin/crons/:name/trigger`, which is the fastest way to smoke-test without waiting for the schedule.
+
+Patterns in existing crons worth mirroring: UTC-only schedules (no TZ env var is set), `status` filters against `planTable`/similar to avoid re-acting on rows a sibling cron already processed, and `Promise.allSettled` for fan-out work so one failure doesn't abort the rest.
 
 ### Send Email (Resend + react-email)
 
