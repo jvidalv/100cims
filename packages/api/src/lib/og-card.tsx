@@ -4,6 +4,10 @@ import { ImageResponse } from "next/og";
 export const OG_SIZE = { width: 1200, height: 630 };
 export const OG_CONTENT_TYPE = "image/png";
 
+// logo.png is 1024x554 — preserve that aspect at the display width.
+const LOGO_W = 180;
+const LOGO_H = Math.round((LOGO_W * 554) / 1024); // ≈ 97
+
 interface OgCardInput {
   /** Title shown in big text, bottom-left. Line-break with \n. */
   title: string;
@@ -15,7 +19,7 @@ interface OgCardInput {
   logoUrl: string;
 }
 
-// Dynamic OG card: full-bleed mountain photo + dark gradient + title + logo.
+// Dynamic OG card: full-bleed mountain photo + darker gradient + title + logo.
 // Used by every landing page's opengraph-image.tsx route.
 export const renderOgCard = ({
   title,
@@ -48,38 +52,42 @@ export const renderOgCard = ({
           objectFit: "cover",
         }}
       />
-      {/* Gradient overlay — dark in bottom-left where the title sits */}
+      {/* Dark gradient overlay — heavier in bottom-left where the title sits. */}
       <div
         style={{
           position: "absolute",
           inset: 0,
           background:
-            "linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.6) 45%, rgba(0,0,0,0.2) 100%)",
+            "linear-gradient(135deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.8) 40%, rgba(0,0,0,0.5) 75%, rgba(0,0,0,0.35) 100%)",
         }}
       />
-      {/* Logo + wordmark, top-right */}
-      <div
+      {/* Logo top-left, preserving its native aspect ratio. */}
+      <img
+        src={logoUrl}
+        alt="Cims, sempre amunt"
+        width={LOGO_W}
+        height={LOGO_H}
         style={{
           position: "absolute",
           top: 44,
+          left: 56,
+        }}
+      />
+      {/* Wordmark top-right. */}
+      <div
+        style={{
+          position: "absolute",
+          top: 58,
           right: 56,
-          display: "flex",
-          alignItems: "center",
-          gap: 16,
+          fontSize: 28,
+          fontWeight: 700,
+          letterSpacing: -0.5,
+          opacity: 0.95,
         }}
       >
-        <img
-          src={logoUrl}
-          alt="Cims, sempre amunt"
-          width={72}
-          height={72}
-          style={{ borderRadius: 14 }}
-        />
-        <div style={{ fontSize: 28, fontWeight: 700, letterSpacing: -0.5 }}>
-          fescims.com
-        </div>
+        fescims.com
       </div>
-      {/* Title block, bottom-left */}
+      {/* Title block, bottom-left. */}
       <div
         style={{
           position: "absolute",

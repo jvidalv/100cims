@@ -12,6 +12,6 @@ export default function Image() {
     title: "Picos de Andalucía\nLas 8 cumbres provinciales",
     backgroundUrl:
       "https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/mulhacen.jpeg?date=1761896472107",
-    logoUrl: `${SITE_URL}/assets/icon.png`,
+    logoUrl: `${SITE_URL}/assets/logo.png`,
   });
 }

@@ -12,6 +12,6 @@ export default function Image() {
     title: "Scottish Munros\nTrack all 282",
     backgroundUrl:
       "https://josepvidal-public-dev-bucket.s3.eu-west-3.amazonaws.com/100cims/mountain/profile/liathach-spidean-a-choire-leith.jpg",
-    logoUrl: `${SITE_URL}/assets/icon.png`,
+    logoUrl: `${SITE_URL}/assets/logo.png`,
   });
 }
