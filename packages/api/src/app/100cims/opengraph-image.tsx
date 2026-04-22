@@ -12,6 +12,6 @@ export default function Image() {
     title: "100 Cims\nRepte al mòbil",
     backgroundUrl:
       "https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/pica-destats.jpg?date=1761896472107",
-    logoUrl: `${SITE_URL}/assets/icon.png`,
+    logoUrl: `${SITE_URL}/assets/logo.png`,
   });
 }
