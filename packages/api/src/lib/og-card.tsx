@@ -73,20 +73,6 @@ export const renderOgCard = ({
           left: 56,
         }}
       />
-      {/* Wordmark top-right. */}
-      <div
-        style={{
-          position: "absolute",
-          top: 58,
-          right: 56,
-          fontSize: 28,
-          fontWeight: 700,
-          letterSpacing: -0.5,
-          opacity: 0.95,
-        }}
-      >
-        fescims.com
-      </div>
       {/* Title block, bottom-left. */}
       <div
         style={{
