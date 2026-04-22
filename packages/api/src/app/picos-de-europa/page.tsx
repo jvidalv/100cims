@@ -13,7 +13,6 @@ import { Stats } from "./_components/stats";
 import { WhatIs } from "./_components/what-is";
 
 const CANONICAL = `${SITE_URL}/picos-de-europa`;
-const OG_IMAGE = `${SITE_URL}/assets/1.png`;
 
 export const metadata: Metadata = {
   title:
@@ -28,14 +27,6 @@ export const metadata: Metadata = {
     title: "Picos de Europa · Registra las 71 cumbres sobre 2.400 m",
     description:
       "Sigue tu progreso en las 71 cumbres de los Picos de Europa desde la app. Gratis, iOS y Android.",
-    images: [
-      {
-        url: OG_IMAGE,
-        width: 1200,
-        height: 630,
-        alt: "Cims, sempre amunt app screenshot",
-      },
-    ],
     locale: "es_ES",
   },
   twitter: {
@@ -43,7 +34,6 @@ export const metadata: Metadata = {
     title: "Picos de Europa · 71 cumbres al móvil",
     description:
       "App gratis para registrar todas las cumbres de los Picos de Europa. iOS y Android.",
-    images: [OG_IMAGE],
   },
 };
 

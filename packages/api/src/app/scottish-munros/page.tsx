@@ -13,7 +13,6 @@ import { Stats } from "./_components/stats";
 import { WhatIs } from "./_components/what-is";
 
 const CANONICAL = `${SITE_URL}/scottish-munros`;
-const OG_IMAGE = `${SITE_URL}/assets/1.png`;
 
 export const metadata: Metadata = {
   title:
@@ -28,14 +27,6 @@ export const metadata: Metadata = {
     title: "Scottish Munros · Track all 282 Munros on iOS & Android",
     description:
       "Track your progress on the 282 Scottish Munros from the app. Free, iOS and Android.",
-    images: [
-      {
-        url: OG_IMAGE,
-        width: 1200,
-        height: 630,
-        alt: "Cims, sempre amunt app screenshot",
-      },
-    ],
     locale: "en_GB",
   },
   twitter: {
@@ -43,7 +34,6 @@ export const metadata: Metadata = {
     title: "Scottish Munros · Track all 282 on mobile",
     description:
       "Free app to track every Munro you climb in Scotland. iOS and Android.",
-    images: [OG_IMAGE],
   },
 };
 
