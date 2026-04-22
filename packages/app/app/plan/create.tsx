@@ -27,6 +27,7 @@ import {
   SearchInput,
   ThemedText,
   ThemedTextInput,
+  ThemedToggleInput,
   ThemedView,
 } from "@/components/ui/atoms";
 import { ThemedCheckbox } from "@/components/ui/atoms/themed-checkbox";
@@ -198,11 +199,13 @@ const DetailsStep = ({
     title: string;
     description?: string;
     date?: Date | null;
+    isPrivate: boolean;
   };
   onDetailsChange: (values: {
     title: string;
     description?: string;
     date?: Date | null;
+    isPrivate: boolean;
   }) => void;
 }) => {
   const intl = useIntl();
@@ -256,6 +259,18 @@ const DetailsStep = ({
           defaultMessage: "I don't know exactly when.",
         })}
       />
+      <View className="mt-6">
+        <ThemedToggleInput
+          label={intl.formatMessage({ defaultMessage: "Private plan" })}
+          checked={values.isPrivate}
+          onChecked={(isPrivate) =>
+            onDetailsChange({ ...values, isPrivate })
+          }
+        />
+        <ThemedText className="mt-1 text-xs text-muted-foreground/80">
+          <FormattedMessage defaultMessage="Only you and the people you add can see this plan." />
+        </ThemedText>
+      </View>
     </View>
   );
 };
@@ -307,6 +322,7 @@ export default function PlanCreatePage() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [mountains, setMountains] = useState<string[]>([]);
+  const [isPrivate, setIsPrivate] = useState(false);
 
   const { mutateAsync, isPending } = usePlanCreate();
   const { mutateAsync: markAsVisited } = useMarkPlansAsVisited();
@@ -347,14 +363,17 @@ export default function PlanCreatePage() {
     title,
     description,
     date,
+    isPrivate,
   }: {
     title: string;
     description?: string;
     date?: Date | null;
+    isPrivate: boolean;
   }) => {
     setTitle(title);
     setDescription(description || "");
     setDate(date);
+    setIsPrivate(isPrivate);
   };
 
   const currentStepIndex = stepOrder.indexOf(step);
@@ -374,6 +393,7 @@ export default function PlanCreatePage() {
         description,
         startDate: date ? date.toISOString() : undefined,
         mountainIds: mountains,
+        isPrivate,
       });
 
       void markAsVisited();
@@ -457,6 +477,7 @@ export default function PlanCreatePage() {
                 title,
                 description,
                 date,
+                isPrivate,
               }}
             />
           )}

@@ -17,6 +17,7 @@ import {
   ThemedText,
   ThemedDateInput,
   ThemedTextInput,
+  ThemedToggleInput,
 } from "@/components/ui/atoms";
 import {
   ActionRow,
@@ -60,12 +61,14 @@ export default function PlanEditPage() {
   );
   const [mountains, setMountains] = useState<MountainPickerMountain[]>([]);
   const [users, setUsers] = useState<PeoplePickerUser[]>([]);
+  const [isPrivate, setIsPrivate] = useState(plan?.isPrivate ?? false);
 
   useEffect(() => {
     if (plan) {
       setTitle(plan.title);
       setDescription(plan.description ?? undefined);
       setDate(plan.startDate ? new Date(plan.startDate) : null);
+      setIsPrivate(plan.isPrivate ?? false);
 
       // Ensure the creator is always first. PeopleList locks index 0, and
       // PeopleList's split treats index 0 as "keep in the toggleable bucket
@@ -108,6 +111,7 @@ export default function PlanEditPage() {
       startDate: date ? date.toISOString() : undefined,
       mountainIds: mountains.map((m) => m.id),
       userIds: users.map((u) => u.id),
+      isPrivate,
     });
 
     if (response.success) router.dismiss();
@@ -211,6 +215,16 @@ export default function PlanEditPage() {
                 firstSelectedRemovable={false}
                 splitNonPeople
               />
+            </View>
+            <View className="mb-2 gap-1">
+              <ThemedToggleInput
+                label={intl.formatMessage({ defaultMessage: "Private plan" })}
+                checked={isPrivate}
+                onChecked={setIsPrivate}
+              />
+              <ThemedText className="text-xs text-muted-foreground/80">
+                <FormattedMessage defaultMessage="Only you and the people you add can see this plan." />
+              </ThemedText>
             </View>
             <View className="mt-6">
               <ActionRow

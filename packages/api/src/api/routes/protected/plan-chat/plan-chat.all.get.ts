@@ -2,13 +2,35 @@ import { eq } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 
 import { db } from "@/db";
-import { planMessageTable, userTable } from "@/db/schema";
-import { SuccessResponse } from "@/api/schemas/common.schema";
+import { planMessageTable, planTable, userTable } from "@/db/schema";
+import { getUserFromRequest } from "@/api/routes/@shared/auth";
+import { canReadPlan } from "@/api/routes/@shared/plan-access";
+import {
+  SuccessResponse,
+  ErrorFieldResponse,
+} from "@/api/schemas/common.schema";
 import { PlanMessagesArraySchema } from "@/api/schemas/plan-chat.schema";
 
 export const planChatAllGetRoute = new Elysia().get(
   "/all",
-  async ({ query }) => {
+  async ({ query, request, set }) => {
+    const user = getUserFromRequest(request);
+
+    const [plan] = await db
+      .select({
+        id: planTable.id,
+        creatorId: planTable.creatorId,
+        isPrivate: planTable.isPrivate,
+      })
+      .from(planTable)
+      .where(eq(planTable.id, query.planId))
+      .limit(1);
+
+    if (!plan || !(await canReadPlan({ plan, viewerId: user.id }))) {
+      set.status = 404;
+      return { error: "Plan not found" };
+    }
+
     const messages = await db
       .select({
         id: planMessageTable.id,
@@ -32,6 +54,9 @@ export const planChatAllGetRoute = new Elysia().get(
     query: t.Object({
       planId: t.String(),
     }),
-    response: SuccessResponse(PlanMessagesArraySchema),
+    response: {
+      200: SuccessResponse(PlanMessagesArraySchema),
+      404: ErrorFieldResponse,
+    },
   },
 );

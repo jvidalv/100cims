@@ -31,6 +31,7 @@ export const planCreatePostRoute = new Elysia().post(
           speed: "normal",
           status: "open",
           challengeId,
+          isPrivate: body.isPrivate ?? false,
         })
         .returning();
 
@@ -61,6 +62,7 @@ export const planCreatePostRoute = new Elysia().post(
       startDate: t.Optional(t.String()),
       mountainIds: t.Optional(t.Array(t.String())),
       challengeId: t.Optional(t.String()),
+      isPrivate: t.Optional(t.Boolean()),
     }),
     response: SuccessResponse(BasicPlanSchema),
   },

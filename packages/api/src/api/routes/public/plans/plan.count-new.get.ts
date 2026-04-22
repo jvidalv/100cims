@@ -3,6 +3,7 @@ import { Elysia, t } from "elysia";
 
 import { db } from "@/db";
 import { planTable, userPlanVisitTable } from "@/db/schema";
+import { planVisibilitySql } from "@/api/routes/@shared/plan-access";
 import { CountResponseSchema } from "@/api/schemas/plan.schema";
 
 export const planCountNewGetRoute = new Elysia().get(
@@ -12,7 +13,7 @@ export const planCountNewGetRoute = new Elysia().get(
       const [result] = await db
         .select({ count: count() })
         .from(planTable)
-        .where(eq(planTable.status, "open"));
+        .where(and(eq(planTable.status, "open"), planVisibilitySql(undefined)));
 
       return { success: true, count: result.count };
     }
@@ -30,7 +31,11 @@ export const planCountNewGetRoute = new Elysia().get(
       .select({ count: count() })
       .from(planTable)
       .where(
-        and(eq(planTable.status, "open"), gt(planTable.createdAt, lastVisited)),
+        and(
+          eq(planTable.status, "open"),
+          gt(planTable.createdAt, lastVisited),
+          planVisibilitySql(query.userId),
+        ),
       );
 
     return { success: true, count: result.count };

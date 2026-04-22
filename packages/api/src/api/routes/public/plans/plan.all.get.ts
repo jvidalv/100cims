@@ -14,12 +14,20 @@ import {
   planHasMountainsTable,
   mountainTable,
 } from "@/db/schema";
+import { JWT } from "@/api/routes/@shared/jwt";
+import {
+  getBearerToken,
+  getOptionalUserId,
+} from "@/api/routes/@shared/optional-auth";
+import { planVisibilitySql } from "@/api/routes/@shared/plan-access";
 import { SuccessResponse } from "@/api/schemas/common.schema";
 import { PlansArraySchema } from "@/api/schemas/plan.schema";
 
-export const planAllGetRoute = new Elysia().get(
+export const planAllGetRoute = new Elysia().use(JWT()).get(
   "/all",
-  async ({ query }) => {
+  async ({ query, jwt, headers }) => {
+    const viewerId = await getOptionalUserId(jwt, getBearerToken(headers));
+
     const filters = [
       query?.status
         ? eq(
@@ -32,6 +40,7 @@ export const planAllGetRoute = new Elysia().get(
         ? eq(planTable.challengeId, query.challengeId)
         : undefined,
       query?.userId ? eq(planHasUsersTable.userId, query.userId) : undefined,
+      planVisibilitySql(viewerId),
     ].filter(Boolean);
 
     const orderBy =
@@ -52,6 +61,7 @@ export const planAllGetRoute = new Elysia().get(
       createdAt: planTable.createdAt,
       updatedAt: planTable.updatedAt,
       challengeId: planTable.challengeId,
+      isPrivate: planTable.isPrivate,
     };
 
     const baseQuery = query?.userId

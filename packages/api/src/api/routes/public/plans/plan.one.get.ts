@@ -9,12 +9,20 @@ import {
   planHasMountainsTable,
   mountainTable,
 } from "@/db/schema";
+import { JWT } from "@/api/routes/@shared/jwt";
+import {
+  getBearerToken,
+  getOptionalUserId,
+} from "@/api/routes/@shared/optional-auth";
+import { canReadPlan } from "@/api/routes/@shared/plan-access";
 import { SuccessResponse, ErrorResponse } from "@/api/schemas/common.schema";
 import { PlanDetailSchema } from "@/api/schemas/plan.schema";
 
-export const planOneGetRoute = new Elysia().get(
+export const planOneGetRoute = new Elysia().use(JWT()).get(
   "/one",
-  async ({ query, set }) => {
+  async ({ query, set, jwt, headers }) => {
+    const viewerId = await getOptionalUserId(jwt, getBearerToken(headers));
+
     const plan = await db
       .select({
         id: planTable.id,
@@ -28,6 +36,7 @@ export const planOneGetRoute = new Elysia().get(
         creatorId: planTable.creatorId,
         createdAt: planTable.createdAt,
         updatedAt: planTable.updatedAt,
+        isPrivate: planTable.isPrivate,
       })
       .from(planTable)
       .where(eq(planTable.id, query.id))
@@ -35,6 +44,15 @@ export const planOneGetRoute = new Elysia().get(
       .execute();
 
     if (!plan.length) {
+      set.status = 404;
+      return { success: false, message: "NOT_FOUND" };
+    }
+
+    const allowed = await canReadPlan({
+      plan: plan[0],
+      viewerId,
+    });
+    if (!allowed) {
       set.status = 404;
       return { success: false, message: "NOT_FOUND" };
     }

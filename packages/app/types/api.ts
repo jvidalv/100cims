@@ -2735,6 +2735,7 @@ export interface operations {
                             createdAt: Record<string, never> | string | number;
                             updatedAt: Record<string, never> | string | number;
                             challengeId: (string | null) | null;
+                            isPrivate: boolean;
                             users: {
                                 id: string;
                                 firstName: (string | null) | null;
@@ -2767,6 +2768,7 @@ export interface operations {
                             createdAt: Record<string, never> | string | number;
                             updatedAt: Record<string, never> | string | number;
                             challengeId: (string | null) | null;
+                            isPrivate: boolean;
                             users: {
                                 id: string;
                                 firstName: (string | null) | null;
@@ -2799,6 +2801,7 @@ export interface operations {
                             createdAt: Record<string, never> | string | number;
                             updatedAt: Record<string, never> | string | number;
                             challengeId: (string | null) | null;
+                            isPrivate: boolean;
                             users: {
                                 id: string;
                                 firstName: (string | null) | null;
@@ -2858,6 +2861,7 @@ export interface operations {
                                 createdAt: Record<string, never> | string | number;
                                 updatedAt: Record<string, never> | string | number;
                                 challengeId: (string | null) | null;
+                                isPrivate: boolean;
                                 users: {
                                     id: string;
                                     firstName: (string | null) | null;
@@ -2899,6 +2903,7 @@ export interface operations {
                                 createdAt: Record<string, never> | string | number;
                                 updatedAt: Record<string, never> | string | number;
                                 challengeId: (string | null) | null;
+                                isPrivate: boolean;
                                 users: {
                                     id: string;
                                     firstName: (string | null) | null;
@@ -2940,6 +2945,7 @@ export interface operations {
                                 createdAt: Record<string, never> | string | number;
                                 updatedAt: Record<string, never> | string | number;
                                 challengeId: (string | null) | null;
+                                isPrivate: boolean;
                                 users: {
                                     id: string;
                                     firstName: (string | null) | null;
@@ -2999,6 +3005,7 @@ export interface operations {
                             creatorId: string;
                             createdAt: Record<string, never> | string | number;
                             updatedAt: Record<string, never> | string | number;
+                            isPrivate: boolean;
                             users: {
                                 id: string;
                                 firstName: (string | null) | null;
@@ -3031,6 +3038,7 @@ export interface operations {
                             creatorId: string;
                             createdAt: Record<string, never> | string | number;
                             updatedAt: Record<string, never> | string | number;
+                            isPrivate: boolean;
                             users: {
                                 id: string;
                                 firstName: (string | null) | null;
@@ -3063,6 +3071,7 @@ export interface operations {
                             creatorId: string;
                             createdAt: Record<string, never> | string | number;
                             updatedAt: Record<string, never> | string | number;
+                            isPrivate: boolean;
                             users: {
                                 id: string;
                                 firstName: (string | null) | null;
@@ -5035,6 +5044,7 @@ export interface operations {
                     startDate?: string;
                     mountainIds?: string[];
                     challengeId?: string;
+                    isPrivate?: boolean;
                 };
                 "multipart/form-data": {
                     title: string;
@@ -5042,6 +5052,7 @@ export interface operations {
                     startDate?: string;
                     mountainIds?: string[];
                     challengeId?: string;
+                    isPrivate?: boolean;
                 };
                 "text/plain": {
                     title: string;
@@ -5049,6 +5060,7 @@ export interface operations {
                     startDate?: string;
                     mountainIds?: string[];
                     challengeId?: string;
+                    isPrivate?: boolean;
                 };
             };
         };
@@ -5073,6 +5085,7 @@ export interface operations {
                             createdAt: Record<string, never> | string | number;
                             updatedAt: Record<string, never> | string | number;
                             challengeId: (string | null) | null;
+                            isPrivate: boolean;
                         };
                     };
                     "multipart/form-data": {
@@ -5090,6 +5103,7 @@ export interface operations {
                             createdAt: Record<string, never> | string | number;
                             updatedAt: Record<string, never> | string | number;
                             challengeId: (string | null) | null;
+                            isPrivate: boolean;
                         };
                     };
                     "text/plain": {
@@ -5107,6 +5121,7 @@ export interface operations {
                             createdAt: Record<string, never> | string | number;
                             updatedAt: Record<string, never> | string | number;
                             challengeId: (string | null) | null;
+                            isPrivate: boolean;
                         };
                     };
                 };
@@ -5132,6 +5147,7 @@ export interface operations {
                     startDate?: string;
                     mountainIds?: string[];
                     userIds?: string[];
+                    isPrivate?: boolean;
                 };
                 "multipart/form-data": {
                     id: string;
@@ -5143,6 +5159,7 @@ export interface operations {
                     startDate?: string;
                     mountainIds?: string[];
                     userIds?: string[];
+                    isPrivate?: boolean;
                 };
                 "text/plain": {
                     id: string;
@@ -5154,6 +5171,7 @@ export interface operations {
                     startDate?: string;
                     mountainIds?: string[];
                     userIds?: string[];
+                    isPrivate?: boolean;
                 };
             };
         };
@@ -5178,6 +5196,7 @@ export interface operations {
                             createdAt: Record<string, never> | string | number;
                             updatedAt: Record<string, never> | string | number;
                             challengeId: (string | null) | null;
+                            isPrivate: boolean;
                         };
                     };
                     "multipart/form-data": {
@@ -5195,6 +5214,7 @@ export interface operations {
                             createdAt: Record<string, never> | string | number;
                             updatedAt: Record<string, never> | string | number;
                             challengeId: (string | null) | null;
+                            isPrivate: boolean;
                         };
                     };
                     "text/plain": {
@@ -5212,6 +5232,7 @@ export interface operations {
                             createdAt: Record<string, never> | string | number;
                             updatedAt: Record<string, never> | string | number;
                             challengeId: (string | null) | null;
+                            isPrivate: boolean;
                         };
                     };
                 };
@@ -5548,6 +5569,22 @@ export interface operations {
                     };
                 };
             };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
         };
     };
     getApiProtectedPlansChatAll: {
@@ -5607,6 +5644,22 @@ export interface operations {
                                 imageUrl: (string | null) | null;
                             };
                         }[];
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
                     };
                 };
             };
@@ -8454,6 +8507,7 @@ export interface operations {
                                 startDate: (string | null) | null;
                                 speed: string;
                                 status: "open" | "completed" | "canceled";
+                                isPrivate: boolean;
                                 createdAt: Record<string, never> | string | number;
                                 creatorId: string;
                                 creatorUsername: (string | null) | null;
@@ -8486,6 +8540,7 @@ export interface operations {
                                 startDate: (string | null) | null;
                                 speed: string;
                                 status: "open" | "completed" | "canceled";
+                                isPrivate: boolean;
                                 createdAt: Record<string, never> | string | number;
                                 creatorId: string;
                                 creatorUsername: (string | null) | null;
@@ -8518,6 +8573,7 @@ export interface operations {
                                 startDate: (string | null) | null;
                                 speed: string;
                                 status: "open" | "completed" | "canceled";
+                                isPrivate: boolean;
                                 createdAt: Record<string, never> | string | number;
                                 creatorId: string;
                                 creatorUsername: (string | null) | null;
@@ -8570,6 +8626,7 @@ export interface operations {
                             startDate: (string | null) | null;
                             speed: string;
                             status: "open" | "completed" | "canceled";
+                            isPrivate: boolean;
                             creatorId: string;
                             challengeId: (string | null) | null;
                             challengeName: (string | null) | null;
@@ -8622,6 +8679,7 @@ export interface operations {
                             startDate: (string | null) | null;
                             speed: string;
                             status: "open" | "completed" | "canceled";
+                            isPrivate: boolean;
                             creatorId: string;
                             challengeId: (string | null) | null;
                             challengeName: (string | null) | null;
@@ -8674,6 +8732,7 @@ export interface operations {
                             startDate: (string | null) | null;
                             speed: string;
                             status: "open" | "completed" | "canceled";
+                            isPrivate: boolean;
                             creatorId: string;
                             challengeId: (string | null) | null;
                             challengeName: (string | null) | null;
@@ -8754,6 +8813,7 @@ export interface operations {
                     startDate?: (string | null) | null;
                     imageUrl?: (string | null) | null;
                     routeUrl?: (string | null) | null;
+                    isPrivate?: boolean;
                 };
                 "multipart/form-data": {
                     title?: string;
@@ -8763,6 +8823,7 @@ export interface operations {
                     startDate?: (string | null) | null;
                     imageUrl?: (string | null) | null;
                     routeUrl?: (string | null) | null;
+                    isPrivate?: boolean;
                 };
                 "text/plain": {
                     title?: string;
@@ -8772,6 +8833,7 @@ export interface operations {
                     startDate?: (string | null) | null;
                     imageUrl?: (string | null) | null;
                     routeUrl?: (string | null) | null;
+                    isPrivate?: boolean;
                 };
             };
         };

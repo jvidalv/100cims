@@ -192,6 +192,7 @@ export const AdminPlanEntrySchema = t.Object({
   startDate: t.Nullable(t.String()),
   speed: t.String(),
   status: PlanStatusSchema,
+  isPrivate: t.Boolean(),
   createdAt: t.Date(),
   creatorId: t.String(),
   creatorUsername: t.Nullable(t.String()),
@@ -255,6 +256,7 @@ export const AdminPlanDetailSchema = t.Object({
   startDate: t.Nullable(t.String()),
   speed: t.String(),
   status: PlanStatusSchema,
+  isPrivate: t.Boolean(),
   creatorId: t.String(),
   challengeId: t.Nullable(t.String()),
   challengeName: t.Nullable(t.String()),
@@ -280,6 +282,7 @@ export const AdminPlanUpdateBodySchema = t.Object({
   startDate: t.Optional(t.Nullable(t.String())),
   imageUrl: t.Optional(t.Nullable(t.String())),
   routeUrl: t.Optional(t.Nullable(t.String())),
+  isPrivate: t.Optional(t.Boolean()),
 });
 
 export const MerchVariantSchema = t.Object({

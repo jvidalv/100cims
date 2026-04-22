@@ -44,6 +44,7 @@ export const planUpdatePostRoute = new Elysia().post(
           startDate: body.startDate
             ? formatDateForPostgresFromISOString(body.startDate)
             : undefined,
+          isPrivate: body.isPrivate,
           updatedAt: new Date(),
         })
         .where(eq(planTable.id, body.id))
@@ -133,6 +134,7 @@ export const planUpdatePostRoute = new Elysia().post(
       startDate: t.Optional(t.String()),
       mountainIds: t.Optional(t.Array(t.String())),
       userIds: t.Optional(t.Array(t.String())),
+      isPrivate: t.Optional(t.Boolean()),
     }),
     response: {
       200: SuccessResponse(BasicPlanSchema),
