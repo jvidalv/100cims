@@ -1,6 +1,7 @@
 import { t } from "elysia";
 
 import { PaginatedSchema } from "@/api/schemas/common.schema";
+import { PlanStatusSchema } from "@/api/schemas/enums";
 
 /**
  * Schema for a user participating in a plan
@@ -47,11 +48,7 @@ export const PlanSchema = t.Object({
   description: t.Nullable(t.String()),
   imageUrl: t.Nullable(t.String()),
   speed: t.Nullable(t.String()),
-  status: t.Union([
-    t.Literal("open"),
-    t.Literal("canceled"),
-    t.Literal("completed"),
-  ]),
+  status: PlanStatusSchema,
   routeUrl: t.Nullable(t.String()),
   startDate: t.Nullable(t.String()),
   creatorId: t.String(),

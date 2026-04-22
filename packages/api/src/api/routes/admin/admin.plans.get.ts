@@ -9,14 +9,14 @@ import {
   planTable,
   userTable,
 } from "@/db/schema";
+import { AdminPlansResponseSchema } from "@/api/schemas/admin.schema";
+import { SuccessResponse } from "@/api/schemas/common.schema";
 import {
-  AdminPlansResponseSchema,
   PLAN_SPEEDS,
   PLAN_STATUSES,
   type PlanSpeed,
   type PlanStatus,
-} from "@/api/schemas/admin.schema";
-import { SuccessResponse } from "@/api/schemas/common.schema";
+} from "@/db/enums";
 
 const DEFAULT_PAGE_SIZE = 15;
 const MAX_PAGE_SIZE = 100;

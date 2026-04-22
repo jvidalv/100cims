@@ -2702,7 +2702,7 @@ export interface operations {
     getApiPublicPlansAll: {
         parameters: {
             query?: {
-                status?: string;
+                status?: "open" | "completed" | "canceled";
                 limit?: number;
                 creatorId?: string;
                 userId?: string;
@@ -2728,7 +2728,7 @@ export interface operations {
                             description: (string | null) | null;
                             imageUrl: (string | null) | null;
                             speed: (string | null) | null;
-                            status: "open" | "canceled" | "completed";
+                            status: "open" | "completed" | "canceled";
                             routeUrl: (string | null) | null;
                             startDate: (string | null) | null;
                             creatorId: string;
@@ -2761,7 +2761,7 @@ export interface operations {
                             description: (string | null) | null;
                             imageUrl: (string | null) | null;
                             speed: (string | null) | null;
-                            status: "open" | "canceled" | "completed";
+                            status: "open" | "completed" | "canceled";
                             routeUrl: (string | null) | null;
                             startDate: (string | null) | null;
                             creatorId: string;
@@ -2794,7 +2794,7 @@ export interface operations {
                             description: (string | null) | null;
                             imageUrl: (string | null) | null;
                             speed: (string | null) | null;
-                            status: "open" | "canceled" | "completed";
+                            status: "open" | "completed" | "canceled";
                             routeUrl: (string | null) | null;
                             startDate: (string | null) | null;
                             creatorId: string;
@@ -2854,7 +2854,7 @@ export interface operations {
                                 description: (string | null) | null;
                                 imageUrl: (string | null) | null;
                                 speed: (string | null) | null;
-                                status: "open" | "canceled" | "completed";
+                                status: "open" | "completed" | "canceled";
                                 routeUrl: (string | null) | null;
                                 startDate: (string | null) | null;
                                 creatorId: string;
@@ -2896,7 +2896,7 @@ export interface operations {
                                 description: (string | null) | null;
                                 imageUrl: (string | null) | null;
                                 speed: (string | null) | null;
-                                status: "open" | "canceled" | "completed";
+                                status: "open" | "completed" | "canceled";
                                 routeUrl: (string | null) | null;
                                 startDate: (string | null) | null;
                                 creatorId: string;
@@ -2938,7 +2938,7 @@ export interface operations {
                                 description: (string | null) | null;
                                 imageUrl: (string | null) | null;
                                 speed: (string | null) | null;
-                                status: "open" | "canceled" | "completed";
+                                status: "open" | "completed" | "canceled";
                                 routeUrl: (string | null) | null;
                                 startDate: (string | null) | null;
                                 creatorId: string;
@@ -5142,7 +5142,7 @@ export interface operations {
                     title?: string;
                     description?: string;
                     imageUrl?: string;
-                    status?: string;
+                    status?: "open" | "completed" | "canceled";
                     routeUrl?: string;
                     startDate?: string;
                     mountainIds?: string[];
@@ -5154,7 +5154,7 @@ export interface operations {
                     title?: string;
                     description?: string;
                     imageUrl?: string;
-                    status?: string;
+                    status?: "open" | "completed" | "canceled";
                     routeUrl?: string;
                     startDate?: string;
                     mountainIds?: string[];
@@ -5166,7 +5166,7 @@ export interface operations {
                     title?: string;
                     description?: string;
                     imageUrl?: string;
-                    status?: string;
+                    status?: "open" | "completed" | "canceled";
                     routeUrl?: string;
                     startDate?: string;
                     mountainIds?: string[];

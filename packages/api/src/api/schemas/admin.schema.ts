@@ -1,5 +1,11 @@
 import { t } from "elysia";
 
+import {
+  CouponDiscountTypeSchema,
+  PlanSpeedSchema,
+  PlanStatusSchema,
+  ShopRequestStatusSchema,
+} from "@/api/schemas/enums";
 import { UnlockablesArraySchema } from "@/api/schemas/unlockables";
 
 export const AdminUserEntrySchema = t.Object({
@@ -167,22 +173,6 @@ export const AdminSummitUpdateBodySchema = t.Object({
   mountainId: t.Optional(t.Nullable(t.String())),
   userId: t.Optional(t.Nullable(t.String())),
 });
-
-export const PLAN_STATUSES = ["open", "completed", "canceled"] as const;
-export const PLAN_SPEEDS = ["chill", "normal", "fast"] as const;
-export type PlanStatus = (typeof PLAN_STATUSES)[number];
-export type PlanSpeed = (typeof PLAN_SPEEDS)[number];
-
-const PlanStatusSchema = t.Union([
-  t.Literal("open"),
-  t.Literal("completed"),
-  t.Literal("canceled"),
-]);
-const PlanSpeedSchema = t.Union([
-  t.Literal("chill"),
-  t.Literal("normal"),
-  t.Literal("fast"),
-]);
 
 export const AdminPlanEntrySchema = t.Object({
   id: t.String(),
@@ -370,11 +360,6 @@ export const AdminMerchUpdateBodySchema = t.Object({
   variants: t.Optional(t.Array(MerchVariantSchema)),
 });
 
-const CouponDiscountTypeSchema = t.Union([
-  t.Literal("percentage"),
-  t.Literal("fixed"),
-]);
-
 export const AdminCouponEntrySchema = t.Object({
   id: t.String(),
   code: t.String(),
@@ -431,13 +416,6 @@ export const AdminCouponRedeemBodySchema = t.Object({
   userId: t.String({ format: "uuid" }),
   note: t.Optional(t.Nullable(t.String({ maxLength: 500 }))),
 });
-
-const ShopRequestStatusSchema = t.Union([
-  t.Literal("requested"),
-  t.Literal("contacted"),
-  t.Literal("done"),
-  t.Literal("cancelled"),
-]);
 
 export const AdminShopRequestEntrySchema = t.Object({
   id: t.String(),

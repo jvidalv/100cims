@@ -14,6 +14,13 @@ import {
   index,
 } from "drizzle-orm/pg-core";
 
+import type {
+  CouponDiscountType,
+  PlanSpeed,
+  PlanStatus,
+  ShopRequestStatus,
+} from "@/db/enums";
+
 export const challengeTable = pgTable("challenge", {
   id: uuid().primaryKey().defaultRandom(),
   name: text().notNull(),
@@ -165,28 +172,31 @@ export const donorTable = pgTable("donor", {
   createdAt: timestamp().notNull().defaultNow(),
 });
 
-export const planTable = pgTable("plan", {
-  id: uuid().primaryKey().defaultRandom(),
-  creatorId: uuid()
-    .references(() => userTable.id, { onDelete: "set null" })
-    .notNull(),
-  challengeId: uuid().references(() => challengeTable.id, {
-    onDelete: "set null",
-  }), // ⬅️ New optional relation
-  title: text().notNull(),
-  description: text(),
-  imageUrl: text(),
-  startDate: date(),
-  speed: text().notNull(), // 'chill' | 'normal' | 'fast'
-  status: text()
-    .default("open")
-    .notNull()
-    .$type<"open" | "completed" | "canceled">(),
-  routeUrl: text(),
-  isPrivate: boolean().notNull().default(false),
-  createdAt: timestamp().notNull().defaultNow(),
-  updatedAt: timestamp().notNull().defaultNow(),
-});
+export const planTable = pgTable(
+  "plan",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    creatorId: uuid()
+      .references(() => userTable.id, { onDelete: "set null" })
+      .notNull(),
+    challengeId: uuid().references(() => challengeTable.id, {
+      onDelete: "set null",
+    }), // ⬅️ New optional relation
+    title: text().notNull(),
+    description: text(),
+    imageUrl: text(),
+    startDate: date(),
+    speed: text().notNull().$type<PlanSpeed>(),
+    status: text().default("open").notNull().$type<PlanStatus>(),
+    routeUrl: text(),
+    isPrivate: boolean().notNull().default(false),
+    createdAt: timestamp().notNull().defaultNow(),
+    updatedAt: timestamp().notNull().defaultNow(),
+  },
+  (table) => [
+    index("plan_start_date_status_idx").on(table.startDate, table.status),
+  ],
+);
 
 export const planHasMountainsTable = pgTable(
   "plan_has_mountains",
@@ -540,7 +550,7 @@ export const couponTable = pgTable("coupon", {
   // Stored display-cased; case-insensitive uniqueness enforced by a
   // LOWER(code) unique index appended to the generated migration SQL.
   code: text().notNull(),
-  discountType: text().notNull().$type<"percentage" | "fixed">(),
+  discountType: text().notNull().$type<CouponDiscountType>(),
   // Percent 1-99 OR euros >= 1, depending on discountType.
   discountValue: integer().notNull(),
   maxUses: integer(),
@@ -576,10 +586,7 @@ export const shopRequestTable = pgTable(
     userId: uuid().references(() => userTable.id, { onDelete: "set null" }),
     userEmail: text().notNull(),
     message: text().notNull(),
-    status: text()
-      .notNull()
-      .default("requested")
-      .$type<"requested" | "contacted" | "done" | "cancelled">(),
+    status: text().notNull().default("requested").$type<ShopRequestStatus>(),
     comments: text(),
     createdAt: timestamp().notNull().defaultNow(),
     updatedAt: timestamp().notNull().defaultNow(),

@@ -145,7 +145,7 @@ export const usePlanUpdate = () => {
       mountainIds?: string[];
       startDate?: string;
       userIds?: string[];
-      status?: string;
+      status?: PlanStatus;
       isPrivate?: boolean;
     }) => {
       const { data, error } = await apiClient.POST(

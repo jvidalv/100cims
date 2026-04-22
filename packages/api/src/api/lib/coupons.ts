@@ -1,4 +1,4 @@
-export type CouponDiscountType = "percentage" | "fixed";
+import type { CouponDiscountType } from "@/db/enums";
 
 // Percent coupons cap at 99% (100% would mean "free", which is a different
 // business decision and a footgun for accidental BOGO-style mistakes); fixed-€
