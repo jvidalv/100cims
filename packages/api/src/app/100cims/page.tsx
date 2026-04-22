@@ -13,7 +13,6 @@ import { Stats } from "./_components/stats";
 import { WhatIs } from "./_components/what-is";
 
 const CANONICAL = `${SITE_URL}/100cims`;
-const OG_IMAGE = `${SITE_URL}/assets/1.png`;
 
 export const metadata: Metadata = {
   title: "100 Cims · Registra els teus cims al mòbil | Cims, sempre amunt",
@@ -27,14 +26,6 @@ export const metadata: Metadata = {
     title: "100 Cims · Registra els teus cims al mòbil",
     description:
       "Segueix el teu progrés al repte dels 100 Cims des del mòbil. Gratuïta, iOS i Android.",
-    images: [
-      {
-        url: OG_IMAGE,
-        width: 1200,
-        height: 630,
-        alt: "Captura de l'app 100cims",
-      },
-    ],
     locale: "ca_ES",
   },
   twitter: {
@@ -42,7 +33,6 @@ export const metadata: Metadata = {
     title: "100 Cims · Registra els teus cims",
     description:
       "Segueix el teu progrés al repte dels 100 Cims des del mòbil. Gratuïta.",
-    images: [OG_IMAGE],
   },
 };
 

@@ -13,7 +13,6 @@ import { Stats } from "./_components/stats";
 import { WhatIs } from "./_components/what-is";
 
 const CANONICAL = `${SITE_URL}/three-peaks`;
-const OG_IMAGE = `${SITE_URL}/assets/1.png`;
 
 export const metadata: Metadata = {
   title:
@@ -29,14 +28,6 @@ export const metadata: Metadata = {
       "National Three Peaks Challenge · Track Ben Nevis, Scafell Pike & Snowdon",
     description:
       "Track your progress on the UK's National Three Peaks from the app. Free, iOS and Android.",
-    images: [
-      {
-        url: OG_IMAGE,
-        width: 1200,
-        height: 630,
-        alt: "Cims, sempre amunt app screenshot",
-      },
-    ],
     locale: "en_GB",
   },
   twitter: {
@@ -44,7 +35,6 @@ export const metadata: Metadata = {
     title: "National Three Peaks Challenge · Track on mobile",
     description:
       "Track Ben Nevis, Scafell Pike and Yr Wyddfa (Snowdon) from the app. Free.",
-    images: [OG_IMAGE],
   },
 };
 
