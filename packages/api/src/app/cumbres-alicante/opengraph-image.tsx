@@ -12,6 +12,6 @@ export default function Image() {
     title: "Cumbres de Alicante\n11 cumbres icónicas",
     backgroundUrl:
       "https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/puig-campana.jpeg?date=1761896472107",
-    logoUrl: `${SITE_URL}/assets/logo.png`,
+    logoUrl: `${SITE_URL}/assets/icon.png`,
   });
 }
