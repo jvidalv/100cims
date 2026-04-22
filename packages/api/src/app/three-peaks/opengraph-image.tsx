@@ -12,6 +12,6 @@ export default function Image() {
     title: "National Three Peaks\nBen Nevis · Scafell Pike · Snowdon",
     backgroundUrl:
       "https://josepvidal-public-dev-bucket.s3.eu-west-3.amazonaws.com/100cims/mountain/profile/ben-nevis.jpg",
-    logoUrl: `${SITE_URL}/assets/logo.png`,
+    logoUrl: `${SITE_URL}/assets/icon.png`,
   });
 }

@@ -71,9 +71,9 @@ export const renderOgCard = ({
         <img
           src={logoUrl}
           alt="Cims, sempre amunt"
-          width={64}
-          height={64}
-          style={{ borderRadius: 12 }}
+          width={72}
+          height={72}
+          style={{ borderRadius: 14 }}
         />
         <div style={{ fontSize: 28, fontWeight: 700, letterSpacing: -0.5 }}>
           fescims.com

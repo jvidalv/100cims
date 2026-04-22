@@ -12,6 +12,6 @@ export default function Image() {
     title: "Picos de Europa\n71 cumbres sobre 2.400 m",
     backgroundUrl:
       "https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/naranjo-de-bulnes.jpeg?date=1761896472107",
-    logoUrl: `${SITE_URL}/assets/logo.png`,
+    logoUrl: `${SITE_URL}/assets/icon.png`,
   });
 }
