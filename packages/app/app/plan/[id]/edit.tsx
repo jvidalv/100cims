@@ -178,7 +178,7 @@ export default function PlanEditPage() {
           <ScrollView
             className="p-6"
             keyboardShouldPersistTaps="handled"
-            contentContainerClassName="gap-4 pb-24"
+            contentContainerClassName="gap-6 pb-24"
           >
             <ThemedTextInput
               label={intl.formatMessage({ defaultMessage: "Activity title" })}
@@ -192,20 +192,25 @@ export default function PlanEditPage() {
               onChangeText={setDescription}
               inputClassName="h-[120px]"
             />
+            <ThemedToggleInput
+              label={intl.formatMessage({ defaultMessage: "Private plan" })}
+              checked={isPrivate}
+              onChecked={setIsPrivate}
+            />
             <ThemedDateInput
               value={date}
               onDateValid={(date) => setDate(date)}
               noPastDates
             />
 
-            <View className="mb-2 gap-3">
+            <View className="gap-3">
               <ThemedText className="text-lg font-medium">
                 <FormattedMessage defaultMessage="Mountains" />
               </ThemedText>
               <MountainList selected={mountains} onChange={setMountains} />
             </View>
 
-            <View className="mb-2 gap-3">
+            <View className="gap-3">
               <ThemedText className="text-lg font-medium">
                 <FormattedMessage defaultMessage="Participants" />
               </ThemedText>
@@ -215,16 +220,6 @@ export default function PlanEditPage() {
                 firstSelectedRemovable={false}
                 splitNonPeople
               />
-            </View>
-            <View className="mb-2 gap-1">
-              <ThemedToggleInput
-                label={intl.formatMessage({ defaultMessage: "Private plan" })}
-                checked={isPrivate}
-                onChecked={setIsPrivate}
-              />
-              <ThemedText className="text-xs text-muted-foreground/80">
-                <FormattedMessage defaultMessage="Only you and the people you add can see this plan." />
-              </ThemedText>
             </View>
             <View className="mt-6">
               <ActionRow

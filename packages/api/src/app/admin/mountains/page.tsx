@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAdminMountains } from "@/domains/admin/api";
 import { formatDate } from "@/lib/format-date";
+import { formatRating } from "@/lib/format-rating";
 
 export default function AdminMountainsPage() {
   const router = useRouter();
@@ -53,6 +54,9 @@ export default function AdminMountainsPage() {
                   <th className="py-2 pr-4 font-medium">Location</th>
                   <th className="py-2 pr-4 font-medium">Height</th>
                   <th className="py-2 pr-4 font-medium">Essential</th>
+                  <th className="py-2 pr-4 font-medium">Family</th>
+                  <th className="py-2 pr-4 font-medium">Dog</th>
+                  <th className="py-2 pr-4 font-medium">Difficulty</th>
                   <th className="py-2 pr-4 font-medium">Creator</th>
                   <th className="py-2 pr-4 font-medium">Created</th>
                 </tr>
@@ -86,6 +90,29 @@ export default function AdminMountainsPage() {
                       <td className="py-2 pr-4 text-muted-foreground">
                         {m.essential ? "✓" : "—"}
                       </td>
+                      <td className="py-2 pr-4 text-muted-foreground font-mono">
+                        {formatRating(
+                          m.avgFamilyFriendly,
+                          m.familyRatingCount,
+                          {
+                            withCount: true,
+                          },
+                        )}
+                      </td>
+                      <td className="py-2 pr-4 text-muted-foreground font-mono">
+                        {formatRating(m.avgDogFriendly, m.dogRatingCount, {
+                          withCount: true,
+                        })}
+                      </td>
+                      <td className="py-2 pr-4 text-muted-foreground font-mono">
+                        {formatRating(
+                          m.avgDifficulty,
+                          m.difficultyRatingCount,
+                          {
+                            withCount: true,
+                          },
+                        )}
+                      </td>
                       <td className="py-2 pr-4 text-muted-foreground">
                         {m.isOfficial ? "Official" : (m.creatorName ?? "—")}
                       </td>
@@ -98,7 +125,7 @@ export default function AdminMountainsPage() {
                 {data.items.length === 0 && (
                   <tr>
                     <td
-                      colSpan={6}
+                      colSpan={9}
                       className="py-8 text-center text-muted-foreground"
                     >
                       No mountains match “{q}”.

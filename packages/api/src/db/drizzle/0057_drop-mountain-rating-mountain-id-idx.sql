@@ -1,0 +1,1 @@
+DROP INDEX "mountain_rating_mountain_id_idx";

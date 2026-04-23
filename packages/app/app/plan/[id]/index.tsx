@@ -463,8 +463,8 @@ export default function PlanIdPage() {
           )}
           {plan.isPrivate && (
             <View className="flex flex-row items-center gap-2">
-              <LucideIcon icon={Lock} size={16} />
-              <ThemedText className="text-lg font-medium">
+              <LucideIcon icon={Lock} size={16} primary />
+              <ThemedText className="text-lg font-medium text-primary">
                 <FormattedMessage defaultMessage="Private" />
               </ThemedText>
             </View>

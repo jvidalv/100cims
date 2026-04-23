@@ -12,7 +12,12 @@ import {
   ThemedView,
 } from "@/components/ui/atoms";
 import { ThemedDateInput } from "@/components/ui/atoms/themed-date-input";
-import { ActionRow, PeopleList, ScreenHeader } from "@/components/ui/molecules";
+import {
+  ActionRow,
+  PeopleList,
+  ScreenHeader,
+  SummitRatingFields,
+} from "@/components/ui/molecules";
 import { useMountains, useSummitPost } from "@/domains/mountain/mountain.api";
 import { SUMMITS_KEY } from "@/domains/summit/summit.api";
 import { type PeoplePickerUser } from "@/domains/user/people-picker-session";
@@ -36,7 +41,11 @@ export default function SummitMountainScreen() {
     isLoading: isLoadingImage,
     pickImage,
   } = useImagePicker({ logTag: "mountain/summit/image-pick" });
+
   const [date, setDate] = useState<Date>(new Date());
+  const [familyFriendly, setFamilyFriendly] = useState<number | null>(null);
+  const [dogFriendly, setDogFriendly] = useState<number | null>(null);
+  const [difficulty, setDifficulty] = useState<number | null>(null);
   const [selectedUsers, setSelectedUsers] = useState<PeoplePickerUser[]>(
     user
       ? [
@@ -72,6 +81,9 @@ export default function SummitMountainScreen() {
         image: imageBase64 ?? undefined,
         mountainId: mountain?.id,
         usersId: selectedUsers.map((user) => user.id),
+        familyFriendly,
+        dogFriendly,
+        difficulty,
       });
 
       void queryClient.refetchQueries({
@@ -169,7 +181,7 @@ export default function SummitMountainScreen() {
                     {isLoadingImage ? (
                       <ActivityIndicator className="opacity-50" />
                     ) : (
-                      <LucideIcon icon={Camera} size={32} muted />
+                      <LucideIcon icon={Camera} size={32} />
                     )}
                   </View>
                 </View>
@@ -185,6 +197,14 @@ export default function SummitMountainScreen() {
               onChange={setSelectedUsers}
             />
           </View>
+          <SummitRatingFields
+            familyFriendly={familyFriendly}
+            onFamilyFriendlyChange={setFamilyFriendly}
+            dogFriendly={dogFriendly}
+            onDogFriendlyChange={setDogFriendly}
+            difficulty={difficulty}
+            onDifficultyChange={setDifficulty}
+          />
           <View className="mt-6 pb-4">
             <ActionRow
               icon={Check}

@@ -5,6 +5,7 @@ import { useLocation } from "@/hooks/use-location";
 import apiClient from "@/lib/api-client";
 import { getDistanceInKm } from "@/lib/location";
 import { mountainKeys } from "@/lib/query-keys";
+import type { MountainData } from "@/types/mountain";
 
 export const useMountainOne = ({ mountainSlug }: { mountainSlug: string }) => {
   const props = useQuery({
@@ -24,7 +25,7 @@ export const useMountainOne = ({ mountainSlug }: { mountainSlug: string }) => {
 export const useMountains = () => {
   return useQuery({
     queryKey: mountainKeys.list(),
-    queryFn: async () => {
+    queryFn: async (): Promise<MountainData[]> => {
       const { data, error } = await apiClient.GET("/api/public/mountains/all", {
         params: { query: {} },
       });
@@ -84,6 +85,9 @@ export const useSummitPost = (mountainSlug: string) => {
       usersId: string[];
       date: string;
       image?: string;
+      familyFriendly?: number | null;
+      dogFriendly?: number | null;
+      difficulty?: number | null;
     }) => {
       const { data, error } = await apiClient.POST(
         "/api/protected/mountains/summit",

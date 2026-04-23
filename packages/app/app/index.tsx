@@ -2,6 +2,7 @@ import { Link } from "expo-router";
 import {
   ArrowRight,
   Backpack,
+  CircleDot,
   Map,
   Moon,
   Mountain,
@@ -96,7 +97,7 @@ const MountainsDone = ({
               showAllMountains ? "border-border" : "border-transparent",
             )}
           >
-            <View className="mr-0.5 size-4 rounded-full bg-primary" />
+            <LucideIcon icon={CircleDot} size={20} primary />
             <ThemedText>
               {isAuthenticated ? userSummits?.essentialPeaksCount : 0}
             </ThemedText>
@@ -148,17 +149,20 @@ const PlansSection = () => {
             <PlanItemListSkeleton />
           </>
         )}
-        {plans?.map(({ id, title, status, startDate, mountains, users }) => (
-          <PlanItemList
-            key={id}
-            id={id}
-            title={title}
-            status={status}
-            startDate={startDate}
-            mountains={mountains?.map(({ imageUrl }) => ({ imageUrl }))}
-            users={users}
-          />
-        ))}
+        {plans?.map(
+          ({ id, title, status, startDate, isPrivate, mountains, users }) => (
+            <PlanItemList
+              key={id}
+              id={id}
+              title={title}
+              status={status}
+              startDate={startDate}
+              isPrivate={isPrivate}
+              mountains={mountains?.map(({ imageUrl }) => ({ imageUrl }))}
+              users={users}
+            />
+          ),
+        )}
         {!isPending && !plans?.length && (
           <Link href="/plan/create" asChild>
             <TouchableOpacity className="flex-row gap-4">

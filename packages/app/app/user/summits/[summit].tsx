@@ -1,12 +1,16 @@
 import { format } from "date-fns/format";
 import { Link, Redirect, useLocalSearchParams, useRouter } from "expo-router";
 import {
+  Baby,
   Check,
+  Dog,
   Flag,
   ImageOff,
   Share as ShareIcon,
   SquarePen,
   Trash2,
+  TriangleAlert,
+  type LucideIcon as LucideIconType,
 } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
@@ -27,9 +31,11 @@ import { SummitShareCard } from "@/components/summit";
 import {
   ActivityIndicator,
   Avatar,
+  LucideIcon,
   Skeleton,
   ThemedText,
   ThemedView,
+  tierColor,
 } from "@/components/ui/atoms";
 import {
   ActionRow,
@@ -407,6 +413,41 @@ const Content = () => {
             imageUrl={data.mountainImageUrl ?? null}
           />
         </View>
+        {(data.authorFamilyFriendly !== null ||
+          data.authorDogFriendly !== null ||
+          data.authorDifficulty !== null) && (
+          <View className="mt-6 gap-2 px-6">
+            <ThemedText className="mb-2 text-2xl font-semibold">
+              <FormattedMessage defaultMessage="Ratings" />
+            </ThemedText>
+            <View className="flex-row flex-wrap items-center gap-x-4 gap-y-2">
+              {data.authorDifficulty !== null && (
+                <ViewerRatingTag
+                  icon={TriangleAlert}
+                  label={difficultyLabelFor(data.authorDifficulty, intl)}
+                  color={tierColor(data.authorDifficulty - 1, 5, true)}
+                />
+              )}
+              {data.authorFamilyFriendly !== null && (
+                <ViewerRatingTag
+                  icon={Baby}
+                  label={safetyLabelFor(data.authorFamilyFriendly, intl)}
+                  color={tierColor(
+                    data.authorFamilyFriendly === 5 ? 2 : 0,
+                    3,
+                  )}
+                />
+              )}
+              {data.authorDogFriendly !== null && (
+                <ViewerRatingTag
+                  icon={Dog}
+                  label={safetyLabelFor(data.authorDogFriendly, intl)}
+                  color={tierColor(data.authorDogFriendly === 5 ? 2 : 0, 3)}
+                />
+              )}
+            </View>
+          </View>
+        )}
       </ScrollView>
       {/*
         Off-screen render for view-shot capture:
@@ -475,4 +516,32 @@ export default function SummitsSummitPage() {
   }
 
   return <Content />;
+}
+
+const safetyLabelFor = (value: number, intl: ReturnType<typeof useIntl>) =>
+  value === 5
+    ? intl.formatMessage({ defaultMessage: "Safe" })
+    : intl.formatMessage({ defaultMessage: "Unsafe" });
+
+const difficultyLabelFor = (value: number, intl: ReturnType<typeof useIntl>) => {
+  if (value <= 2) return intl.formatMessage({ defaultMessage: "Easy" });
+  if (value >= 4) return intl.formatMessage({ defaultMessage: "Hard" });
+  return intl.formatMessage({ defaultMessage: "Moderate" });
+};
+
+function ViewerRatingTag({
+  icon,
+  label,
+  color,
+}: {
+  icon: LucideIconType;
+  label: string;
+  color: string;
+}) {
+  return (
+    <View className="flex-row items-center gap-2">
+      <LucideIcon icon={icon} color={color} />
+      <ThemedText className="text-xl font-medium">{label}</ThemedText>
+    </View>
+  );
 }

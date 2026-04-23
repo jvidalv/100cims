@@ -1,5 +1,12 @@
-import { SlidersHorizontal, X, type LucideIcon } from "lucide-react-native";
-import { ReactNode, useState } from "react";
+import {
+  Check,
+  CircleDot,
+  SlidersHorizontal,
+  Trash2,
+  X,
+  type LucideIcon,
+} from "lucide-react-native";
+import { ReactNode, useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import {
   Modal,
@@ -16,6 +23,7 @@ import {
   SearchInput,
   LucideIcon as LucideIconView,
 } from "@/components/ui/atoms";
+import { ActionRow } from "@/components/ui/molecules/action-row";
 
 export interface Filter<T extends string = string> {
   type: T;
@@ -36,6 +44,8 @@ export interface SettingsOption<T extends string = string> {
 export interface SettingsGroup<T extends string = string> {
   title: string;
   options: SettingsOption<T>[];
+  multiSelect?: boolean;
+  icon?: LucideIcon;
 }
 
 interface FilterableListHeaderProps<
@@ -77,30 +87,39 @@ export function FilterableListHeader<
 }: FilterableListHeaderProps<T, S>) {
   const intl = useIntl();
   const [showSettings, setShowSettings] = useState(false);
+  const [pending, setPending] = useState<S[]>(settingsSelected);
+
+  useEffect(() => {
+    if (showSettings) setPending(settingsSelected);
+  }, [showSettings, settingsSelected]);
 
   const handleSettingToggle = (settingType: S) => {
-    if (!onSettingsChange) return;
-
-    const isSelected = settingsSelected.includes(settingType);
+    const isSelected = pending.includes(settingType);
     if (isSelected) {
-      onSettingsChange(settingsSelected.filter((s) => s !== settingType));
-    } else {
-      // Find the group this setting belongs to and deselect others in the same group
-      const group = settingsGroups.find((g) =>
-        g.options.some((o) => o.type === settingType),
-      );
-      if (group) {
-        const otherOptionsInGroup = group.options
-          .map((o) => o.type)
-          .filter((t) => t !== settingType);
-        const newSettings = settingsSelected.filter(
-          (s) => !otherOptionsInGroup.includes(s),
-        );
-        onSettingsChange([...newSettings, settingType]);
-      } else {
-        onSettingsChange([...settingsSelected, settingType]);
-      }
+      setPending(pending.filter((s) => s !== settingType));
+      return;
     }
+    const group = settingsGroups.find((g) =>
+      g.options.some((o) => o.type === settingType),
+    );
+    if (group && !group.multiSelect) {
+      const otherOptionsInGroup = group.options
+        .map((o) => o.type)
+        .filter((t) => t !== settingType);
+      const next = pending.filter((s) => !otherOptionsInGroup.includes(s));
+      setPending([...next, settingType]);
+    } else {
+      setPending([...pending, settingType]);
+    }
+  };
+
+  const handleApply = () => {
+    onSettingsChange?.(pending);
+    setShowSettings(false);
+  };
+
+  const handleClear = () => {
+    setPending([]);
   };
 
   const handleFilterPress = (filterType: T, onSelectDeselect?: T[]) => {
@@ -148,14 +167,14 @@ export function FilterableListHeader<
         animationType="fade"
         onRequestClose={() => setShowSettings(false)}
       >
-        <Pressable
-          className="flex-1 bg-black/50"
-          onPress={() => setShowSettings(false)}
-        >
-          <View className="flex-1 justify-end">
-            <Pressable onPress={(e) => e.stopPropagation()}>
-              <ThemedView className="rounded-t-3xl px-6 pb-10 pt-6">
-                <View className="mb-4 flex-row items-center justify-between">
+        <View className="flex-1 bg-black/50">
+          <Pressable
+            className="flex-1"
+            onPress={() => setShowSettings(false)}
+          />
+          <View className="h-[90%]">
+            <ThemedView className="flex-1 rounded-t-3xl">
+                <View className="flex-row items-center justify-between px-6 pb-4 pt-6">
                   <ThemedText className="text-2xl font-bold">
                     {intl.formatMessage({ defaultMessage: "Filters" })}
                   </ThemedText>
@@ -164,77 +183,93 @@ export function FilterableListHeader<
                   </TouchableOpacity>
                 </View>
 
-                {settingsGroups.map((group) => (
-                  <View key={group.title} className="mb-4">
-                    <ThemedText className="mb-2 text-sm font-semibold text-muted-foreground">
-                      {group.title}
-                    </ThemedText>
-                    <View className="flex-row flex-wrap gap-2">
-                      {group.options.map((option) => {
-                        const isSelected = settingsSelected.includes(
-                          option.type,
-                        );
-                        const isDisabled = option.disabled ?? false;
-                        return (
-                          <Pressable
-                            key={option.type}
-                            disabled={isDisabled}
-                            onPress={() => handleSettingToggle(option.type)}
-                            className={twMerge(
-                              "flex-row items-center gap-1.5 rounded px-3 py-2",
-                              isSelected ? "bg-primary" : "bg-border",
-                              isDisabled && "opacity-50",
-                            )}
-                          >
-                            {option.dotColor && (
-                              <View
-                                className="size-3 rounded-full"
-                                style={{ backgroundColor: option.dotColor }}
-                              />
-                            )}
-                            {option.icon && (
-                              <LucideIconView
-                                icon={option.icon}
-                                size={16}
-                                color={isSelected ? "white" : undefined}
-                              />
-                            )}
-                            <ThemedText
+                <ScrollView
+                  contentContainerClassName="px-6 pb-4"
+                  showsVerticalScrollIndicator={false}
+                >
+                  {settingsGroups.map((group) => (
+                    <View key={group.title} className="mb-4">
+                      <View className="mb-2 flex-row items-center gap-1.5">
+                        {group.icon && (
+                          <LucideIconView
+                            icon={group.icon}
+                            size={14}
+                            muted
+                          />
+                        )}
+                        <ThemedText className="text-sm font-semibold text-muted-foreground">
+                          {group.title}
+                        </ThemedText>
+                      </View>
+                      <View className="flex-row flex-wrap gap-2">
+                        {group.options.map((option) => {
+                          const isSelected = pending.includes(option.type);
+                          const isDisabled = option.disabled ?? false;
+                          return (
+                            <Pressable
+                              key={option.type}
+                              disabled={isDisabled}
+                              onPress={() => handleSettingToggle(option.type)}
                               className={twMerge(
-                                "font-medium",
-                                isSelected && "text-white",
+                                "flex-row items-center gap-1.5 rounded px-3 py-2",
+                                isSelected ? "bg-primary" : "bg-border",
+                                isDisabled && "opacity-50",
                               )}
                             >
-                              {option.name}
-                            </ThemedText>
-                          </Pressable>
-                        );
-                      })}
+                              {option.dotColor && (
+                                <View
+                                  className="size-3 rounded-full"
+                                  style={{ backgroundColor: option.dotColor }}
+                                />
+                              )}
+                              {option.icon && (
+                                <LucideIconView
+                                  icon={option.icon}
+                                  size={16}
+                                  color={isSelected ? "white" : undefined}
+                                />
+                              )}
+                              <ThemedText
+                                className={twMerge(
+                                  "font-medium",
+                                  isSelected && "text-white",
+                                )}
+                              >
+                                {option.name}
+                              </ThemedText>
+                            </Pressable>
+                          );
+                        })}
+                      </View>
                     </View>
-                  </View>
-                ))}
+                  ))}
+                </ScrollView>
 
-                <Pressable
-                  disabled={settingsSelected.length === 0}
-                  onPress={() => {
-                    onSettingsChange?.([]);
-                    setShowSettings(false);
-                  }}
-                  className={twMerge(
-                    "mt-2 items-center rounded bg-border py-3",
-                    settingsSelected.length === 0 && "opacity-50",
-                  )}
-                >
-                  <ThemedText className="font-medium">
-                    {intl.formatMessage({
-                      defaultMessage: "Clear all filters",
-                    })}
-                  </ThemedText>
-                </Pressable>
+                <View className="gap-1 border-t border-border px-6 pb-10 pt-3">
+                  <ActionRow
+                    icon={Check}
+                    intent="emerald"
+                    size="lg"
+                    onPress={handleApply}
+                  >
+                    {intl.formatMessage({ defaultMessage: "Apply filters" })}
+                  </ActionRow>
+                  <ActionRow
+                    icon={Trash2}
+                    intent="danger"
+                    size="lg"
+                    disabled={pending.length === 0}
+                    onPress={handleClear}
+                    className={twMerge(
+                      pending.length === 0 && "opacity-50",
+                    )}
+                  >
+                    {intl.formatMessage({ defaultMessage: "Clear filters" })}
+                  </ActionRow>
+                </View>
               </ThemedView>
-            </Pressable>
           </View>
-        </Pressable>
+        </View>
       </Modal>
 
       {/* Filter Chips */}
@@ -257,11 +292,11 @@ export function FilterableListHeader<
                 key={String(type)}
               >
                 {showDot && (
-                  <View
-                    className={twMerge(
-                      "bg-primary rounded-full size-3",
-                      isSelected && "bg-white",
-                    )}
+                  <LucideIconView
+                    icon={CircleDot}
+                    size={16}
+                    color={isSelected ? "white" : undefined}
+                    primary={!isSelected}
                   />
                 )}
                 {icon && (

@@ -18,6 +18,12 @@ export const mountainOneGetRoute = new Elysia().get(
         latitude: mountainTable.latitude,
         longitude: mountainTable.longitude,
         imageUrl: mountainTable.imageUrl,
+        avgFamilyFriendly: mountainTable.avgFamilyFriendly,
+        familyRatingCount: mountainTable.familyRatingCount,
+        avgDogFriendly: mountainTable.avgDogFriendly,
+        dogRatingCount: mountainTable.dogRatingCount,
+        avgDifficulty: mountainTable.avgDifficulty,
+        difficultyRatingCount: mountainTable.difficultyRatingCount,
       })
       .from(mountainTable)
       .where(eq(mountainTable.slug, query.mountainSlug));
@@ -43,6 +49,12 @@ export const mountainOneGetRoute = new Elysia().get(
         latitude: t.String(),
         longitude: t.String(),
         imageUrl: t.Nullable(t.String()),
+        avgFamilyFriendly: t.Nullable(t.Number()),
+        familyRatingCount: t.Number(),
+        avgDogFriendly: t.Nullable(t.Number()),
+        dogRatingCount: t.Number(),
+        avgDifficulty: t.Nullable(t.Number()),
+        difficultyRatingCount: t.Number(),
       }),
     }),
   },

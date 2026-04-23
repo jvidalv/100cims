@@ -13,6 +13,12 @@ export const MountainSchema = t.Object({
   latitude: t.String(),
   longitude: t.String(),
   imageUrl: t.Nullable(t.String()),
+  avgFamilyFriendly: t.Optional(t.Nullable(t.Number())),
+  familyRatingCount: t.Optional(t.Number()),
+  avgDogFriendly: t.Optional(t.Nullable(t.Number())),
+  dogRatingCount: t.Optional(t.Number()),
+  avgDifficulty: t.Optional(t.Nullable(t.Number())),
+  difficultyRatingCount: t.Optional(t.Number()),
 });
 
 /**

@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import MapView, { Callout, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 
-import { BadgeCheck } from "lucide-react-native";
+import { BadgeCheck, CircleDot } from "lucide-react-native";
 
 import { LucideIcon, ThemedText } from "@/components/ui/atoms";
 import { Colors } from "@/constants/colors";
@@ -83,7 +83,7 @@ function MountainMarker({ marker, onMountainPress }: MountainMarkerProps) {
             </ThemedText>
             {marker.essential && (
               <View className="flex-row items-center gap-2 mt-1 px-4">
-                <View className="size-3 rounded-full bg-primary" />
+                <LucideIcon icon={CircleDot} size={14} primary />
                 <ThemedText className="text-sm font-medium text-primary">
                   <FormattedMessage defaultMessage="Essential" />
                 </ThemedText>

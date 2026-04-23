@@ -13,7 +13,12 @@ import {
   ThemedView,
 } from "@/components/ui/atoms";
 import { ThemedDateInput } from "@/components/ui/atoms/themed-date-input";
-import { ActionRow, PeopleList, ScreenHeader } from "@/components/ui/molecules";
+import {
+  ActionRow,
+  PeopleList,
+  ScreenHeader,
+  SummitRatingFields,
+} from "@/components/ui/molecules";
 import {
   useSummitGet,
   useUpdateSummitMutation,
@@ -42,6 +47,17 @@ export default function EditSummitScreen() {
   const [selectedUsers, setSelectedUsers] = useState<
     PeoplePickerUser[] | null
   >(null);
+  // Rating fields: undefined = untouched (falls back to server value),
+  // null = explicitly cleared, number = new value.
+  const [familyFriendly, setFamilyFriendly] = useState<
+    number | null | undefined
+  >(undefined);
+  const [dogFriendly, setDogFriendly] = useState<number | null | undefined>(
+    undefined,
+  );
+  const [difficulty, setDifficulty] = useState<number | null | undefined>(
+    undefined,
+  );
 
   if (!data || !me) {
     return (
@@ -64,6 +80,12 @@ export default function EditSummitScreen() {
   }));
   const effectiveDate = date ?? initialDate;
   const effectiveUsers = selectedUsers ?? initialUsers;
+  const effectiveFamily =
+    familyFriendly !== undefined ? familyFriendly : data.viewerFamilyFriendly;
+  const effectiveDog =
+    dogFriendly !== undefined ? dogFriendly : data.viewerDogFriendly;
+  const effectiveDifficulty =
+    difficulty !== undefined ? difficulty : data.viewerDifficulty;
 
   const onSubmit = async () => {
     const payload: {
@@ -71,6 +93,9 @@ export default function EditSummitScreen() {
       summitedAt?: string;
       image?: string;
       usersId?: string[];
+      familyFriendly?: number | null;
+      dogFriendly?: number | null;
+      difficulty?: number | null;
     } = { summitId: summit };
 
     if (date && date.toISOString() !== initialDate.toISOString()) {
@@ -86,6 +111,9 @@ export default function EditSummitScreen() {
         payload.usersId = selectedUsers.map((u) => u.id);
       }
     }
+    if (familyFriendly !== undefined) payload.familyFriendly = familyFriendly;
+    if (dogFriendly !== undefined) payload.dogFriendly = dogFriendly;
+    if (difficulty !== undefined) payload.difficulty = difficulty;
 
     try {
       await mutateAsync(payload);
@@ -179,6 +207,14 @@ export default function EditSummitScreen() {
               onChange={setSelectedUsers}
             />
           </View>
+          <SummitRatingFields
+            familyFriendly={effectiveFamily ?? null}
+            onFamilyFriendlyChange={setFamilyFriendly}
+            dogFriendly={effectiveDog ?? null}
+            onDogFriendlyChange={setDogFriendly}
+            difficulty={effectiveDifficulty ?? null}
+            onDifficultyChange={setDifficulty}
+          />
           <View className="mt-6 pb-4">
             <ActionRow
               icon={Check}

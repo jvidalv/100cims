@@ -24,10 +24,14 @@ import {
   type AdminMountainUpdateBody,
   useAdminMountainChallenges,
   useAdminMountainDetail,
+  useAdminMountainRatings,
   useDeleteAdminMountain,
+  useDeleteAdminMountainRating,
   useUpdateAdminMountain,
 } from "@/domains/admin/api";
-import { formatDate } from "@/lib/format-date";
+import { getAdminUserDisplayName } from "@/lib/admin-user-display-name";
+import { formatDate, formatDateTime } from "@/lib/format-date";
+import { formatRating } from "@/lib/format-rating";
 
 type Form = {
   name: string;
@@ -60,8 +64,10 @@ export default function AdminMountainDetailPage({
   const { id } = use(params);
   const detail = useAdminMountainDetail(id);
   const challenges = useAdminMountainChallenges(id);
+  const ratings = useAdminMountainRatings(id);
   const update = useUpdateAdminMountain(id);
   const deleteMountain = useDeleteAdminMountain(id);
+  const deleteRating = useDeleteAdminMountainRating(id);
 
   const onDelete = () =>
     deleteMountain.mutate(undefined, {
@@ -291,6 +297,117 @@ export default function AdminMountainDetailPage({
                     by {c.creatorName}
                   </span>
                 )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section className="space-y-3">
+        <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+          Ratings {ratings.data ? `(${ratings.data.length})` : ""}
+        </h2>
+
+        <div className="flex gap-6 text-sm">
+          <div>
+            <span className="text-muted-foreground">Family </span>
+            <span className="font-medium">
+              {formatRating(m.avgFamilyFriendly, m.familyRatingCount)} / 5
+            </span>
+            <span className="text-muted-foreground">
+              {" "}
+              · {m.familyRatingCount} rating
+              {m.familyRatingCount === 1 ? "" : "s"}
+            </span>
+          </div>
+          <div>
+            <span className="text-muted-foreground">Dog </span>
+            <span className="font-medium">
+              {formatRating(m.avgDogFriendly, m.dogRatingCount)} / 5
+            </span>
+            <span className="text-muted-foreground">
+              {" "}
+              · {m.dogRatingCount} rating
+              {m.dogRatingCount === 1 ? "" : "s"}
+            </span>
+          </div>
+          <div>
+            <span className="text-muted-foreground">Difficulty </span>
+            <span className="font-medium">
+              {formatRating(m.avgDifficulty, m.difficultyRatingCount)} / 5
+            </span>
+            <span className="text-muted-foreground">
+              {" "}
+              · {m.difficultyRatingCount} rating
+              {m.difficultyRatingCount === 1 ? "" : "s"}
+            </span>
+          </div>
+        </div>
+
+        {ratings.error && (
+          <p className="text-red-600">{ratings.error.message}</p>
+        )}
+        {ratings.isLoading && !ratings.data && (
+          <p className="text-muted-foreground">Loading…</p>
+        )}
+
+        {ratings.data && ratings.data.length === 0 && (
+          <p className="text-muted-foreground">No ratings yet.</p>
+        )}
+
+        {ratings.data && ratings.data.length > 0 && (
+          <ul className="divide-y border rounded">
+            {ratings.data.map((r) => (
+              <li
+                key={r.id}
+                className="flex items-center gap-3 px-4 py-3 text-sm"
+              >
+                <Avatar className="size-8">
+                  {r.user.imageUrl && (
+                    <AvatarImage
+                      src={r.user.imageUrl}
+                      alt={r.user.username ?? ""}
+                    />
+                  )}
+                  <AvatarFallback>
+                    {(r.user.username ?? "?").slice(0, 2).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <Link
+                  href={`/admin/users/${r.user.id}`}
+                  className="font-medium hover:underline"
+                >
+                  {getAdminUserDisplayName(r.user)}
+                </Link>
+                <span className="text-muted-foreground">
+                  family{" "}
+                  <span className="font-mono">{r.familyFriendly ?? "—"}</span>
+                </span>
+                <span className="text-muted-foreground">
+                  dog <span className="font-mono">{r.dogFriendly ?? "—"}</span>
+                </span>
+                <span className="text-muted-foreground">
+                  diff <span className="font-mono">{r.difficulty ?? "—"}</span>
+                </span>
+                <span className="text-xs text-muted-foreground ml-auto">
+                  {formatDateTime(r.updatedAt)}
+                </span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  disabled={deleteRating.isPending}
+                  onClick={() =>
+                    deleteRating.mutate(r.id, {
+                      onSuccess: () => toast.success("Rating deleted"),
+                      onError: (e) =>
+                        toast.error(
+                          e instanceof Error ? e.message : "Delete failed",
+                        ),
+                    })
+                  }
+                >
+                  Delete
+                </Button>
               </li>
             ))}
           </ul>
