@@ -39,8 +39,10 @@ export const selfRestart = async (
   const uptimeSec = Math.round(process.uptime());
   const heapMb = Math.round(process.memoryUsage().heapUsed / 1024 / 1024);
   sendDiscordEmbed(DISCORD_ERRORS_WEBHOOK_URL, {
-    title: "Service Restarting",
-    color: DISCORD_COLOR.BLURPLE,
+    title: scheduled
+      ? "🔄 Daily restart"
+      : "🚨 Emergency restart (critical health)",
+    color: scheduled ? DISCORD_COLOR.BLURPLE : DISCORD_COLOR.RED,
     fields: [
       { name: "Reason", value: reason },
       {
