@@ -9,6 +9,9 @@ import { userPeopleAddPostRoute } from "@/api/routes/protected/user/user.people-
 import { userPeopleRemoveDeleteRoute } from "@/api/routes/protected/user/user.people-remove.delete";
 import { userPeopleGetRoute } from "@/api/routes/protected/user/user.people.get";
 import { userPushTokenPostRoute } from "@/api/routes/protected/user/user.push-token.post";
+import { userSavedAddPostRoute } from "@/api/routes/protected/user/user.saved-add.post";
+import { userSavedRemoveDeleteRoute } from "@/api/routes/protected/user/user.saved-remove.delete";
+import { userSavedGetRoute } from "@/api/routes/protected/user/user.saved.get";
 import { userSuggestionPostRoute } from "@/api/routes/protected/user/user.suggestion.post";
 import { userSummitsGetRoute } from "@/api/routes/protected/user/user.summits.get";
 import { userSummitsAllGetRoute } from "@/api/routes/protected/user/user.summits.all.get";
@@ -23,6 +26,9 @@ export const userRoute = new Elysia({ prefix: "/user" })
   .use(userPeopleGetRoute)
   .use(userPeopleAddPostRoute)
   .use(userPeopleRemoveDeleteRoute)
+  .use(userSavedGetRoute)
+  .use(userSavedAddPostRoute)
+  .use(userSavedRemoveDeleteRoute)
   .use(userSummitsAllGetRoute)
   .use(userAllGetRoute)
   .use(userDeleteGetRoute)

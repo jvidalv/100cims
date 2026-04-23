@@ -459,3 +459,13 @@ export const AdminPersonSchema = t.Object({
   imageUrl: t.Nullable(t.String()),
   connectedAt: t.Date(),
 });
+
+export const AdminSavedMountainSchema = t.Object({
+  mountainId: t.String(),
+  slug: t.String(),
+  name: t.String(),
+  location: t.String(),
+  height: t.String(),
+  imageUrl: t.Nullable(t.String()),
+  savedAt: t.Date(),
+});

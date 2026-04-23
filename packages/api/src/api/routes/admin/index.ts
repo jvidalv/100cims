@@ -33,6 +33,8 @@ import { adminMerchGetRoute } from "@/api/routes/admin/admin.merch.get";
 import { adminMountainChallengesGetRoute } from "@/api/routes/admin/admin.mountain-challenges.get";
 import { adminMountainDeleteDeleteRoute } from "@/api/routes/admin/admin.mountain-delete.delete";
 import { adminMountainDetailGetRoute } from "@/api/routes/admin/admin.mountain-detail.get";
+import { adminMountainRatingDeleteDeleteRoute } from "@/api/routes/admin/admin.mountain-rating-delete.delete";
+import { adminMountainRatingsGetRoute } from "@/api/routes/admin/admin.mountain-ratings.get";
 import { adminMountainUpdatePostRoute } from "@/api/routes/admin/admin.mountain-update.post";
 import { adminMountainsGetRoute } from "@/api/routes/admin/admin.mountains.get";
 import { adminPlanDeleteDeleteRoute } from "@/api/routes/admin/admin.plan-delete.delete";
@@ -49,6 +51,7 @@ import { adminUserDetailGetRoute } from "@/api/routes/admin/admin.user-detail.ge
 import { adminUserPeopleGetRoute } from "@/api/routes/admin/admin.user-people.get";
 import { adminUserPersonAddPostRoute } from "@/api/routes/admin/admin.user-person-add.post";
 import { adminUserPersonRemoveDeleteRoute } from "@/api/routes/admin/admin.user-person-remove.delete";
+import { adminUserSavedGetRoute } from "@/api/routes/admin/admin.user-saved.get";
 import { adminUserSummitsGetRoute } from "@/api/routes/admin/admin.user-summits.get";
 import { adminUserUpdatePostRoute } from "@/api/routes/admin/admin.user-update.post";
 import { adminUsersGetRoute } from "@/api/routes/admin/admin.users.get";
@@ -89,11 +92,14 @@ export const adminRoutes = new Elysia({ prefix: "/admin" })
   .use(adminUserPeopleGetRoute)
   .use(adminUserPersonAddPostRoute)
   .use(adminUserPersonRemoveDeleteRoute)
+  .use(adminUserSavedGetRoute)
   .use(adminMountainsGetRoute)
   .use(adminMountainDetailGetRoute)
   .use(adminMountainUpdatePostRoute)
   .use(adminMountainDeleteDeleteRoute)
   .use(adminMountainChallengesGetRoute)
+  .use(adminMountainRatingsGetRoute)
+  .use(adminMountainRatingDeleteDeleteRoute)
   .use(adminChallengesGetRoute)
   .use(adminChallengeDetailGetRoute)
   .use(adminChallengeUpdatePostRoute)
