@@ -239,6 +239,9 @@
   "AKQuur": {
     "defaultMessage": "Any mountains?"
   },
+  "APaMPk": {
+    "defaultMessage": "My position"
+  },
   "AUwGVY": {
     "defaultMessage": "Extra info"
   },
@@ -982,6 +985,9 @@
   },
   "qpsZME": {
     "defaultMessage": "I'm not doing a summit"
+  },
+  "qq3cjt": {
+    "defaultMessage": "You're not ranked yet. Summit a mountain to appear on the hiscores."
   },
   "qvc9uM": {
     "defaultMessage": "This cannot be undone."

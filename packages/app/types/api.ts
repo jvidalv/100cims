@@ -132,6 +132,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/public/hiscores/around-me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiPublicHiscoresAround-me"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/public/challenge/active": {
         parameters: {
             query?: never;
@@ -2219,6 +2235,7 @@ export interface operations {
                                 totalItems: number;
                                 totalPages: number;
                                 hasMore: boolean;
+                                myRank?: (number | null) | null;
                             };
                         };
                     };
@@ -2250,6 +2267,7 @@ export interface operations {
                                 totalItems: number;
                                 totalPages: number;
                                 hasMore: boolean;
+                                myRank?: (number | null) | null;
                             };
                         };
                     };
@@ -2281,8 +2299,100 @@ export interface operations {
                                 totalItems: number;
                                 totalPages: number;
                                 hasMore: boolean;
+                                myRank?: (number | null) | null;
                             };
                         };
+                    };
+                };
+            };
+        };
+    };
+    "getApiPublicHiscoresAround-me": {
+        parameters: {
+            query?: {
+                challengeId?: string;
+                window?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            myRank: (number | null) | null;
+                            totalRanked: number;
+                            items: {
+                                rank: number;
+                                userId: string;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                summitsCount: string;
+                                uniquePeaksCount: string;
+                                essentialPeaksCount: string;
+                                totalScore: number;
+                            }[];
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            myRank: (number | null) | null;
+                            totalRanked: number;
+                            items: {
+                                rank: number;
+                                userId: string;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                summitsCount: string;
+                                uniquePeaksCount: string;
+                                essentialPeaksCount: string;
+                                totalScore: number;
+                            }[];
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            myRank: (number | null) | null;
+                            totalRanked: number;
+                            items: {
+                                rank: number;
+                                userId: string;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                summitsCount: string;
+                                uniquePeaksCount: string;
+                                essentialPeaksCount: string;
+                                totalScore: number;
+                            }[];
+                        };
+                    };
+                };
+            };
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string;
+                    };
+                    "multipart/form-data": {
+                        error: string;
+                    };
+                    "text/plain": {
+                        error: string;
                     };
                 };
             };

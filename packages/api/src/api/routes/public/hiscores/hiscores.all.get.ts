@@ -87,7 +87,39 @@ export const hiscoresAllGetRoute = new Elysia().use(JWT()).get(
 
     // If paginated, run count query in parallel; otherwise just get all results
     if (isPaginated) {
-      const [countResult, results] = await Promise.all([
+      // Compute the authed user's rank alongside the count + page. Uses RANK()
+      // so ties share a rank. Only runs when we have an authed user — otherwise
+      // we don't populate myRank at all (Promise.resolve passthrough).
+      const myRankPromise = optionalUser
+        ? db.execute(sql`
+            SELECT rank FROM (
+              SELECT
+                ${userTable.id} AS user_id,
+                RANK() OVER (
+                  ORDER BY SUM(
+                    (CAST(${mountainTable.height} AS FLOAT) / 10) *
+                    CASE WHEN ${mountainTable.essential} THEN 2 ELSE 1 END
+                  ) DESC
+                ) AS rank
+              FROM ${userTable}
+              LEFT JOIN ${summitHasUsersTable}
+                ON ${userTable.id} = ${summitHasUsersTable.userId}
+              LEFT JOIN ${summitTable}
+                ON ${summitHasUsersTable.summitId} = ${summitTable.id}
+              LEFT JOIN ${mountainTable}
+                ON ${summitTable.mountainId} = ${mountainTable.id}
+              LEFT JOIN ${challengeHasMountainTable}
+                ON ${mountainTable.id} = ${challengeHasMountainTable.mountainId}
+              WHERE ${summitTable.validated} = true
+                AND ${userTable.visibleOnHiscores} = true
+                AND ${challengeHasMountainTable.challengeId} = ${challengeId}
+              GROUP BY ${userTable.id}
+            ) ranked
+            WHERE user_id = ${optionalUser.id}
+          `)
+        : Promise.resolve(null);
+
+      const [countResult, results, myRankResult] = await Promise.all([
         db
           .select({ count: count(sql`DISTINCT ${userTable.id}`) })
           .from(userTable)
@@ -106,10 +138,16 @@ export const hiscoresAllGetRoute = new Elysia().use(JWT()).get(
           )
           .where(whereCondition),
         baseQuery.limit(pageSize).offset(offset),
+        myRankPromise,
       ]);
 
       const totalItems = Number(countResult[0]?.count ?? 0);
       const totalPages = Math.ceil(totalItems / pageSize);
+
+      const myRankRow = Array.isArray(myRankResult)
+        ? (myRankResult[0] as { rank: number | string } | undefined)
+        : undefined;
+      const myRank = myRankRow ? Number(myRankRow.rank) : null;
 
       return {
         success: true,
@@ -121,6 +159,7 @@ export const hiscoresAllGetRoute = new Elysia().use(JWT()).get(
             totalItems,
             totalPages,
             hasMore: page < totalPages,
+            myRank,
           },
         },
       };

@@ -1,11 +1,12 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 
+import { useAuth } from "@/components/providers/auth-provider";
 import apiClient from "@/lib/api-client";
 import { hiscoresKeys } from "@/lib/query-keys";
 
 const PAGE_SIZE = 50;
 
-type HiscoreEntry = {
+export type HiscoreEntry = {
   userId: string;
   firstName: string | null;
   lastName: string | null;
@@ -16,6 +17,8 @@ type HiscoreEntry = {
   totalScore: number;
 };
 
+export type RankedHiscoreEntry = HiscoreEntry & { rank: number };
+
 type PaginatedHiscores = {
   items: HiscoreEntry[];
   pagination: {
@@ -24,7 +27,14 @@ type PaginatedHiscores = {
     totalItems: number;
     totalPages: number;
     hasMore: boolean;
+    myRank?: number | null;
   };
+};
+
+type AroundMeResponse = {
+  myRank: number | null;
+  totalRanked: number;
+  items: RankedHiscoreEntry[];
 };
 
 export const useHiscoresGet = () => {
@@ -44,6 +54,22 @@ export const useHiscoresGet = () => {
         return lastPage.pagination.page + 1;
       }
       return undefined;
+    },
+  });
+};
+
+export const useHiscoresAroundMeGet = () => {
+  const { isAuthenticated } = useAuth();
+  return useQuery({
+    queryKey: hiscoresKeys.aroundMe(),
+    enabled: isAuthenticated,
+    queryFn: async (): Promise<AroundMeResponse> => {
+      const { data, error } = await apiClient.GET(
+        "/api/public/hiscores/around-me",
+        {},
+      );
+      if (error) throw error;
+      return data.message;
     },
   });
 };

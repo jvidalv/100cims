@@ -1,7 +1,7 @@
 {
   "name": "@100cims/app",
   "main": "expo-router/entry",
-  "version": "3.0.027",
+  "version": "3.0.028",
   "private": false,
   "license": "MIT",
   "packageManager": "yarn@1.22.22",
