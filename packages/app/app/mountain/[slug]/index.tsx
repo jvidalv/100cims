@@ -20,7 +20,14 @@ import {
 import { useColorScheme } from "nativewind";
 import { useEffect, useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { TouchableOpacity, Image, Pressable, View, StyleSheet } from "react-native";
+import {
+  Alert,
+  Image,
+  Pressable,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 
 import { useAuth } from "@/components/providers/auth-provider";
@@ -38,6 +45,7 @@ import {
 } from "@/components/ui/molecules";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
 import { useMountainOne, useMountains } from "@/domains/mountain/mountain.api";
+import { difficultyTier, safetyTier } from "@/domains/mountain/rating-tiers";
 import {
   useIsMountainSaved,
   useSavedAddMutation,
@@ -76,7 +84,7 @@ export default function MountainScreen() {
 
   const mountain = localMountain || fetchedMountain;
 
-  const { location: userLocation } = useLocation();
+  const { location: userLocation, status: locationStatus } = useLocation();
 
   const distanceFromUser = useMemo(() => {
     if (!userLocation || !mountain) return null;
@@ -133,6 +141,25 @@ export default function MountainScreen() {
       savedRemoveMutation.mutate({ mountainId: mountain.id });
     } else {
       savedAddMutation.mutate({ mountainId: mountain.id });
+      Alert.alert(
+        intl.formatMessage({ defaultMessage: "Saved for later" }),
+        intl.formatMessage(
+          {
+            defaultMessage: "{name} is on your saved mountains list.",
+          },
+          { name: mountain.name },
+        ),
+        [
+          {
+            text: intl.formatMessage({ defaultMessage: "OK" }),
+            style: "cancel",
+          },
+          {
+            text: intl.formatMessage({ defaultMessage: "View saved" }),
+            onPress: () => router.push("/user/saved"),
+          },
+        ],
+      );
     }
   };
 
@@ -212,6 +239,21 @@ export default function MountainScreen() {
             {mountain.location}
           </ThemedText>
         </View>
+        <View className="flex-row items-center gap-2">
+          <LucideIcon icon={MapPin} muted />
+          <ThemedText className="text-xl font-medium">
+            {distanceFromUser != null ? (
+              <FormattedMessage
+                defaultMessage="{distance} km away from you"
+                values={{ distance: distanceFromUser }}
+              />
+            ) : locationStatus === "pending" ? (
+              "…"
+            ) : (
+              <FormattedMessage defaultMessage="Location unavailable" />
+            )}
+          </ThemedText>
+        </View>
         {fetchedMountain &&
           (fetchedMountain.difficultyRatingCount > 0 ||
             fetchedMountain.familyRatingCount > 0 ||
@@ -223,18 +265,19 @@ export default function MountainScreen() {
                     onPress={() => setActiveRating("difficulty")}
                     hitSlop={8}
                   >
-                    <RatingTag
-                      icon={TriangleAlert}
-                      label={difficultyTierLabel(
+                    {(() => {
+                      const tier = difficultyTier(
                         fetchedMountain.avgDifficulty,
                         intl,
-                      )}
-                      color={tierColor(
-                        Math.round(fetchedMountain.avgDifficulty) - 1,
-                        5,
-                        true,
-                      )}
-                    />
+                      );
+                      return (
+                        <RatingTag
+                          icon={TriangleAlert}
+                          label={tier.label}
+                          color={tierColor(tier.position, 5, true)}
+                        />
+                      );
+                    })()}
                   </Pressable>
                 )}
               {fetchedMountain.familyRatingCount > 0 &&
@@ -281,17 +324,6 @@ export default function MountainScreen() {
                 )}
             </View>
           )}
-        {distanceFromUser != null && (
-          <View className="flex-row items-center gap-2">
-            <LucideIcon icon={MapPin} muted />
-            <ThemedText className="text-xl font-medium">
-              <FormattedMessage
-                defaultMessage="{distance} km away from you"
-                values={{ distance: distanceFromUser }}
-              />
-            </ThemedText>
-          </View>
-        )}
       </View>
       <View className="gap-2">
         <ThemedText className="text-2xl font-semibold">
@@ -469,38 +501,6 @@ export default function MountainScreen() {
   );
 }
 
-// Thresholds: users only vote 1 or 5, so the aggregate is 1 + 4·(safe/total).
-// Unsafe: ≤20% of votes say Safe. Safe: ≥80% say Safe. Mixed: the ambiguous
-// middle band, honest about "ratings disagree."
-const safetyTier = (
-  avg: number,
-  intl: ReturnType<typeof useIntl>,
-): { label: string; position: 0 | 1 | 2 } => {
-  if (avg >= 4) {
-    return {
-      label: intl.formatMessage({ defaultMessage: "Safe" }),
-      position: 2,
-    };
-  }
-  if (avg <= 2) {
-    return {
-      label: intl.formatMessage({ defaultMessage: "Unsafe" }),
-      position: 0,
-    };
-  }
-  return {
-    label: intl.formatMessage({ defaultMessage: "Mixed" }),
-    position: 1,
-  };
-};
-
-const difficultyTierLabel = (avg: number, intl: ReturnType<typeof useIntl>) => {
-  const rounded = Math.round(avg);
-  if (rounded <= 2) return intl.formatMessage({ defaultMessage: "Easy" });
-  if (rounded >= 4) return intl.formatMessage({ defaultMessage: "Hard" });
-  return intl.formatMessage({ defaultMessage: "Moderate" });
-};
-
 type FetchedMountain = {
   avgFamilyFriendly: number | null;
   familyRatingCount: number;
@@ -533,9 +533,9 @@ const buildRatingUpdate = (
 
   if (axis === "difficulty") {
     const count = m.difficultyRatingCount;
-    const avg = m.avgDifficulty ?? 0;
-    const label = difficultyTierLabel(avg, intl);
-    const color = tierColor(Math.round(avg) - 1, 5, true);
+    const tier = difficultyTier(m.avgDifficulty ?? 0, intl);
+    const { label } = tier;
+    const color = tierColor(tier.position, 5, true);
     return {
       id: "rating-difficulty",
       title: intl.formatMessage({ defaultMessage: "Difficulty" }),
