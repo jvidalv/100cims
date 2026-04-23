@@ -17,6 +17,9 @@
   "///zLu": {
     "defaultMessage": "Challenges"
   },
+  "/9Fvcu": {
+    "defaultMessage": "Very Hard"
+  },
   "/LG2tT": {
     "defaultMessage": "Latitude must be between -90 and 90"
   },
@@ -31,6 +34,9 @@
   },
   "0++ZND": {
     "defaultMessage": "My summits"
+  },
+  "0/UXHx": {
+    "defaultMessage": "Easiest first"
   },
   "05nKhi": {
     "defaultMessage": "Location is required"
@@ -83,6 +89,9 @@
   "3IlAwo": {
     "defaultMessage": "Something went wrong, try again later!"
   },
+  "3Ykujz": {
+    "defaultMessage": "Safest for kids"
+  },
   "3a5wL8": {
     "defaultMessage": "Active"
   },
@@ -122,11 +131,17 @@
   "53YYSH": {
     "defaultMessage": "Cancel plan"
   },
+  "5I/9L2": {
+    "defaultMessage": "{name} is on your saved mountains list."
+  },
   "5YsvtF": {
     "defaultMessage": "Altitude"
   },
   "5ZZ6NO": {
     "defaultMessage": "Share summit"
+  },
+  "5djesH": {
+    "defaultMessage": "Keep it private if you want"
   },
   "5lwgvM": {
     "defaultMessage": "Visible on people search?"
@@ -200,6 +215,9 @@
   "9cfIxB": {
     "defaultMessage": "My mountains"
   },
+  "9j3stl": {
+    "defaultMessage": "No mountains match these filters."
+  },
   "9yslhD": {
     "defaultMessage": "Yes, I'm sure"
   },
@@ -250,6 +268,9 @@
   },
   "BWpuKl": {
     "defaultMessage": "Update"
+  },
+  "BrWLlb": {
+    "defaultMessage": "Plans can now be private — only the people you invite will see them."
   },
   "C81/uG": {
     "defaultMessage": "Logout"
@@ -314,6 +335,9 @@
   "Ep56/Z": {
     "defaultMessage": "Longitude must be between -180 and 180"
   },
+  "F4gyn3": {
+    "defaultMessage": "Clear filters"
+  },
   "F4zKkr": {
     "defaultMessage": "Are you sure you want to continue? All the data will be lost."
   },
@@ -329,6 +353,9 @@
   "Fr5LyM": {
     "defaultMessage": "Safe"
   },
+  "FrIr1g": {
+    "defaultMessage": "View saved"
+  },
   "G/yZLu": {
     "defaultMessage": "Remove"
   },
@@ -343,6 +370,9 @@
   },
   "GQNYob": {
     "defaultMessage": "Share link"
+  },
+  "GSnXaI": {
+    "defaultMessage": "Safest for dogs"
   },
   "Gg/San": {
     "defaultMessage": "Official challenges"
@@ -470,9 +500,6 @@
   "NWHHpt": {
     "defaultMessage": "Chat within plans"
   },
-  "Ndqa+r": {
-    "defaultMessage": "Only you and the people you add can see this plan."
-  },
   "NozjOy": {
     "defaultMessage": "Color: {color}"
   },
@@ -517,9 +544,6 @@
   },
   "PFtMy9": {
     "defaultMessage": "Canceled"
-  },
-  "PL5jtt": {
-    "defaultMessage": "*Suggested date: {date}"
   },
   "Pe0ogR": {
     "defaultMessage": "Theme"
@@ -728,6 +752,9 @@
   "bhN9Hq": {
     "defaultMessage": "Delete your account"
   },
+  "bjTpk9": {
+    "defaultMessage": "Dog"
+  },
   "c1AKgx": {
     "defaultMessage": "Missing information."
   },
@@ -815,9 +842,6 @@
   "g5pX+a": {
     "defaultMessage": "About"
   },
-  "gbRhVk": {
-    "defaultMessage": "*You can decide later"
-  },
   "grf9Y7": {
     "defaultMessage": "Active challenge"
   },
@@ -857,14 +881,14 @@
   "jAkDuA": {
     "defaultMessage": "Yes, report"
   },
-  "jKKg2o": {
-    "defaultMessage": "Clear all filters"
-  },
   "jdJhOL": {
     "defaultMessage": "Phone number"
   },
   "jvo0vs": {
     "defaultMessage": "Save"
+  },
+  "kAEQyV": {
+    "defaultMessage": "OK"
   },
   "khcfUd": {
     "defaultMessage": "Select size"
@@ -911,11 +935,17 @@
   "nYrKWp": {
     "defaultMessage": "Edit profile"
   },
+  "nZ8dmd": {
+    "defaultMessage": "private"
+  },
   "nfhxxT": {
     "defaultMessage": "Login out"
   },
   "nz6nR4": {
     "defaultMessage": "ratings"
+  },
+  "o1n5pn": {
+    "defaultMessage": "Hardest first"
   },
   "o863Ko": {
     "defaultMessage": "App icon"
@@ -992,6 +1022,9 @@
   "rvirM2": {
     "defaultMessage": "Location"
   },
+  "rzCvRt": {
+    "defaultMessage": "Family"
+  },
   "sY8bMH": {
     "defaultMessage": "Summit again"
   },
@@ -1003,6 +1036,9 @@
   },
   "tOdNiY": {
     "defaultMessage": "Dark"
+  },
+  "tmsPkP": {
+    "defaultMessage": "Saved for later"
   },
   "tvAdCU": {
     "defaultMessage": "Selection required"
@@ -1031,9 +1067,6 @@
   "v0btUQ": {
     "defaultMessage": "No one has yet reached the hiscores."
   },
-  "vZV/fy": {
-    "defaultMessage": "*You can modify this and all the other fields later"
-  },
   "vg1jsx": {
     "defaultMessage": "Summit photo"
   },
@@ -1057,6 +1090,9 @@
   },
   "wL7VAE": {
     "defaultMessage": "Actions"
+  },
+  "wTo1un": {
+    "defaultMessage": "Apply filters"
   },
   "wW8uQD": {
     "defaultMessage": "I'll summit later"
