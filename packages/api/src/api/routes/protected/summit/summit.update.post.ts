@@ -2,16 +2,29 @@ import { and, eq, ne, sql } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 
 import { isBase64SizeValid, reportImageTooBig } from "@/api/lib/images";
+import { recalcMountainRatingAggregates } from "@/api/lib/mountain-ratings";
 import { getUserFromRequest } from "@/api/routes/@shared/auth";
 import { IMAGE_TO_BIG } from "@/api/routes/@shared/error-codes";
 import { getPublicUrl, putImageOnS3 } from "@/api/routes/@shared/s3";
 import { db } from "@/db";
-import { summitHasUsersTable, summitTable } from "@/db/schema";
+import {
+  mountainRatingTable,
+  summitHasUsersTable,
+  summitTable,
+} from "@/db/schema";
 
 export const summitUpdatePostRoute = new Elysia().post(
   "/update",
   async ({ body, request, set }) => {
-    const { summitId, summitedAt, image, usersId } = body;
+    const {
+      summitId,
+      summitedAt,
+      image,
+      usersId,
+      familyFriendly,
+      dogFriendly,
+      difficulty,
+    } = body;
 
     const userId = getUserFromRequest(request).id;
 
@@ -30,6 +43,19 @@ export const summitUpdatePostRoute = new Elysia().post(
         success: false,
         message: "Summit record not found or unauthorized",
       };
+    }
+
+    const ratingTouched =
+      familyFriendly !== undefined ||
+      dogFriendly !== undefined ||
+      difficulty !== undefined;
+    let ratingMountainId: string | null = null;
+    if (ratingTouched) {
+      const [row] = await db
+        .select({ mountainId: summitTable.mountainId })
+        .from(summitTable)
+        .where(eq(summitTable.id, summitId));
+      ratingMountainId = row?.mountainId ?? null;
     }
 
     const updates: { summitedAt?: string; imageUrl?: string } = {};
@@ -80,6 +106,39 @@ export const summitUpdatePostRoute = new Elysia().post(
             .onConflictDoNothing();
         }
       }
+
+      if (ratingTouched && ratingMountainId) {
+        // Build patch: only include keys the caller sent, so absent axes
+        // preserve their existing values on update.
+        const setPatch: {
+          familyFriendly?: number | null;
+          dogFriendly?: number | null;
+          difficulty?: number | null;
+          updatedAt: Date;
+        } = { updatedAt: new Date() };
+        if (familyFriendly !== undefined)
+          setPatch.familyFriendly = familyFriendly;
+        if (dogFriendly !== undefined) setPatch.dogFriendly = dogFriendly;
+        if (difficulty !== undefined) setPatch.difficulty = difficulty;
+
+        await tx
+          .insert(mountainRatingTable)
+          .values({
+            mountainId: ratingMountainId,
+            userId,
+            familyFriendly: familyFriendly ?? null,
+            dogFriendly: dogFriendly ?? null,
+            difficulty: difficulty ?? null,
+          })
+          .onConflictDoUpdate({
+            target: [
+              mountainRatingTable.mountainId,
+              mountainRatingTable.userId,
+            ],
+            set: setPatch,
+          });
+        await recalcMountainRatingAggregates(ratingMountainId, tx);
+      }
     });
 
     return { success: true, message: "Summit updated successfully" };
@@ -90,6 +149,13 @@ export const summitUpdatePostRoute = new Elysia().post(
       summitedAt: t.Optional(t.String()),
       image: t.Optional(t.String()),
       usersId: t.Optional(t.Array(t.String())),
+      familyFriendly: t.Optional(
+        t.Nullable(t.Integer({ minimum: 1, maximum: 5 })),
+      ),
+      dogFriendly: t.Optional(
+        t.Nullable(t.Integer({ minimum: 1, maximum: 5 })),
+      ),
+      difficulty: t.Optional(t.Nullable(t.Integer({ minimum: 1, maximum: 5 }))),
     }),
     response: t.Object({
       success: t.Boolean(),
