@@ -3,7 +3,6 @@ import { Link, useRouter } from "expo-router";
 import {
   ArrowDown,
   ArrowRight,
-  ArrowUp,
   Info,
   Mountain,
 } from "lucide-react-native";
@@ -353,11 +352,16 @@ export default function HiscoresScreen() {
             }}
           />
           <View className="absolute inset-0 items-center justify-center">
-            <LucideIcon
-              icon={isMyRowAboveViewport ? ArrowUp : ArrowDown}
-              size={28}
-              color="#ffffff"
-            />
+            {isMyRowLoaded ? (
+              <ThemedText
+                className="text-white font-semibold"
+                style={{ fontSize: myHiscoreIndex + 1 >= 1000 ? 14 : 18 }}
+              >
+                {myHiscoreIndex + 1}
+              </ThemedText>
+            ) : (
+              <LucideIcon icon={ArrowDown} size={28} color="#ffffff" />
+            )}
           </View>
         </TouchableOpacity>
       )}
