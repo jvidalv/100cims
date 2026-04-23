@@ -321,7 +321,7 @@ export default function MountainScreen() {
           {isSaved ? (
             <FormattedMessage defaultMessage="Saved" />
           ) : (
-            <FormattedMessage defaultMessage="Save" />
+            <FormattedMessage defaultMessage="Save for later" />
           )}
         </ActionRow>
         <ActionRow
