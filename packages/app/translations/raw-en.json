@@ -83,9 +83,6 @@
   "3IlAwo": {
     "defaultMessage": "Something went wrong, try again later!"
   },
-  "3Mg7fL": {
-    "defaultMessage": "My saved"
-  },
   "3a5wL8": {
     "defaultMessage": "Active"
   },
@@ -635,6 +632,12 @@
   "X0ha1a": {
     "defaultMessage": "Save changes"
   },
+  "XPJk0V": {
+    "defaultMessage": "My saved mountains"
+  },
+  "XYovs/": {
+    "defaultMessage": "Ratings"
+  },
   "XYsvl5": {
     "defaultMessage": "Delete message"
   },
@@ -685,6 +688,9 @@
   },
   "aKaNIY": {
     "defaultMessage": "Go to home screen"
+  },
+  "aKkZ55": {
+    "defaultMessage": "Location unavailable"
   },
   "af+8l+": {
     "defaultMessage": "Please pick a size before adding to cart."
@@ -805,9 +811,6 @@
   },
   "fsB/4p": {
     "defaultMessage": "Saved"
-  },
-  "g4KKU9": {
-    "defaultMessage": "Your rating"
   },
   "g5pX+a": {
     "defaultMessage": "About"

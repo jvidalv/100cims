@@ -3926,6 +3926,7 @@ export interface operations {
                             name: string;
                             location: string;
                             height: string;
+                            essential: boolean;
                             imageUrl: (string | null) | null;
                             savedAt: Record<string, never> | string | number;
                         }[];
@@ -3938,6 +3939,7 @@ export interface operations {
                             name: string;
                             location: string;
                             height: string;
+                            essential: boolean;
                             imageUrl: (string | null) | null;
                             savedAt: Record<string, never> | string | number;
                         }[];
@@ -3950,6 +3952,7 @@ export interface operations {
                             name: string;
                             location: string;
                             height: string;
+                            essential: boolean;
                             imageUrl: (string | null) | null;
                             savedAt: Record<string, never> | string | number;
                         }[];
@@ -4854,6 +4857,9 @@ export interface operations {
                             viewerFamilyFriendly: (number | null) | null;
                             viewerDogFriendly: (number | null) | null;
                             viewerDifficulty: (number | null) | null;
+                            authorFamilyFriendly: (number | null) | null;
+                            authorDogFriendly: (number | null) | null;
+                            authorDifficulty: (number | null) | null;
                         };
                     };
                     "multipart/form-data": {
@@ -4881,6 +4887,9 @@ export interface operations {
                             viewerFamilyFriendly: (number | null) | null;
                             viewerDogFriendly: (number | null) | null;
                             viewerDifficulty: (number | null) | null;
+                            authorFamilyFriendly: (number | null) | null;
+                            authorDogFriendly: (number | null) | null;
+                            authorDifficulty: (number | null) | null;
                         };
                     };
                     "text/plain": {
@@ -4908,6 +4917,9 @@ export interface operations {
                             viewerFamilyFriendly: (number | null) | null;
                             viewerDogFriendly: (number | null) | null;
                             viewerDifficulty: (number | null) | null;
+                            authorFamilyFriendly: (number | null) | null;
+                            authorDogFriendly: (number | null) | null;
+                            authorDifficulty: (number | null) | null;
                         };
                     };
                 };
@@ -7653,6 +7665,7 @@ export interface operations {
                             name: string;
                             location: string;
                             height: string;
+                            essential: boolean;
                             imageUrl: (string | null) | null;
                             savedAt: Record<string, never> | string | number;
                         }[];
@@ -7665,6 +7678,7 @@ export interface operations {
                             name: string;
                             location: string;
                             height: string;
+                            essential: boolean;
                             imageUrl: (string | null) | null;
                             savedAt: Record<string, never> | string | number;
                         }[];
@@ -7677,6 +7691,7 @@ export interface operations {
                             name: string;
                             location: string;
                             height: string;
+                            essential: boolean;
                             imageUrl: (string | null) | null;
                             savedAt: Record<string, never> | string | number;
                         }[];

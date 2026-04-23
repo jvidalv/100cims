@@ -11,6 +11,7 @@ export type SavedMountain = {
   name: string;
   location: string;
   height: string;
+  essential: boolean;
   imageUrl: string | null;
   savedAt: string | number | object;
 };

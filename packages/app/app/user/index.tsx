@@ -60,7 +60,7 @@ export default function UserIndexScreen() {
     },
     {
       icon: Bookmark,
-      text: intl.formatMessage({ defaultMessage: "My saved" }),
+      text: intl.formatMessage({ defaultMessage: "My saved mountains" }),
       onPress: () => router.push("/user/saved"),
     },
     {

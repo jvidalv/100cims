@@ -1,8 +1,9 @@
 import { Link, Redirect } from "expo-router";
 import { Bookmark } from "lucide-react-native";
-import { memo, useCallback } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { FormattedMessage } from "react-intl";
 import { FlatList, Image, TouchableOpacity, View } from "react-native";
+import { twMerge } from "tailwind-merge";
 
 import {
   LucideIcon,
@@ -12,17 +13,21 @@ import {
 } from "@/components/ui/atoms";
 import { ScreenHeader } from "@/components/ui/molecules";
 import { useSavedGet, type SavedMountain } from "@/domains/saved/saved.api";
-import { useUserMe } from "@/domains/user/user.api";
+import { useUserChallengeSummits, useUserMe } from "@/domains/user/user.api";
 
 const keyExtractor = ({ mountainId }: { mountainId: string }) => mountainId;
+
+type SavedRowProps = SavedMountain & { isSummited: boolean };
 
 const SavedRow = memo(function SavedRow({
   slug,
   name,
   location,
   height,
+  essential,
   imageUrl,
-}: SavedMountain) {
+  isSummited,
+}: SavedRowProps) {
   return (
     <Link
       href={{
@@ -41,11 +46,27 @@ const SavedRow = memo(function SavedRow({
           <View className="size-10 rounded bg-gray-400 dark:bg-gray-500" />
         )}
         <View className="flex-1">
-          <ThemedText className="font-medium" numberOfLines={1}>
+          <ThemedText
+            className={twMerge(
+              "font-medium",
+              isSummited && "text-emerald-600 dark:text-emerald-400",
+            )}
+            numberOfLines={1}
+          >
             {name}
           </ThemedText>
-          <ThemedText className="text-sm text-muted-foreground" numberOfLines={1}>
-            {location} · {height}m
+          <ThemedText className="text-sm" numberOfLines={1}>
+            <ThemedText className="text-sm text-muted-foreground">
+              {location} ·{" "}
+            </ThemedText>
+            <ThemedText
+              className={twMerge(
+                "text-sm font-medium",
+                essential ? "text-primary" : "text-muted-foreground",
+              )}
+            >
+              {height}m
+            </ThemedText>
           </ThemedText>
         </View>
       </TouchableOpacity>
@@ -56,10 +77,18 @@ const SavedRow = memo(function SavedRow({
 export default function UserSavedScreen() {
   const { data: me } = useUserMe();
   const { data, isPending } = useSavedGet();
+  const { data: userSummits } = useUserChallengeSummits();
+
+  const summitedSlugs = useMemo(
+    () => new Set((userSummits?.summits ?? []).map((s) => s.mountainSlug)),
+    [userSummits],
+  );
 
   const renderItem = useCallback(
-    ({ item }: { item: SavedMountain }) => <SavedRow {...item} />,
-    [],
+    ({ item }: { item: SavedMountain }) => (
+      <SavedRow {...item} isSummited={summitedSlugs.has(item.slug)} />
+    ),
+    [summitedSlugs],
   );
 
   if (!me) {
@@ -77,7 +106,7 @@ export default function UserSavedScreen() {
         ListHeaderComponent={
           <View className="px-6 pb-4">
             <ThemedText className="mb-2 text-4xl font-bold">
-              <FormattedMessage defaultMessage="My saved" />{" "}
+              <FormattedMessage defaultMessage="My saved mountains" />{" "}
               <ThemedText className="text-lg font-semibold text-muted-foreground">
                 {data?.length ?? 0}
               </ThemedText>
