@@ -20,7 +20,7 @@ export interface HealthSnapshot {
 }
 
 const DB_TIMEOUT_MS = 2000;
-const DB_WARN_MS = 500;
+const DB_WARN_MS = 700;
 const DB_CRIT_MS = 2000;
 const HEAP_WARN_MB = 1400;
 const HEAP_CRIT_MB = 2000;

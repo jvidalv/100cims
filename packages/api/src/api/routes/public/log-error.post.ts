@@ -13,9 +13,24 @@ import {
 } from "@/api/lib/request-headers";
 import { SimpleSuccessResponse } from "@/api/schemas/common.schema";
 
+// Patterns we never forward to Discord — pure noise that drowns out real errors.
+// "Network request failed": transient mobile connectivity, nothing we can fix.
+// "user canceled the authorization attempt": user dismissed the Apple/Google Sign-In sheet.
+const IGNORED_MESSAGE_PATTERNS = [
+  /network request failed/i,
+  /user canceled the authorization attempt/i,
+];
+
+const shouldIgnore = (message: string): boolean =>
+  IGNORED_MESSAGE_PATTERNS.some((rx) => rx.test(message));
+
 export const logErrorPostRoute = new Elysia().post(
   "/log-error",
   ({ body, request }) => {
+    if (shouldIgnore(body.message)) {
+      return { success: true };
+    }
+
     const country = resolveCountryFromRequest(request);
     const platform =
       body.platform ?? resolvePlatformFromRequest(request) ?? "—";
