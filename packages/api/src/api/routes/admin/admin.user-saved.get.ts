@@ -16,6 +16,7 @@ export const adminUserSavedGetRoute = new Elysia().get(
         name: mountainTable.name,
         location: mountainTable.location,
         height: mountainTable.height,
+        essential: mountainTable.essential,
         imageUrl: mountainTable.imageUrl,
         savedAt: userSavedMountainTable.createdAt,
       })

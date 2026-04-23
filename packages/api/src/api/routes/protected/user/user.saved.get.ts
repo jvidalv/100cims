@@ -12,6 +12,7 @@ const SavedMountainSchema = t.Object({
   name: t.String(),
   location: t.String(),
   height: t.String(),
+  essential: t.Boolean(),
   imageUrl: t.Nullable(t.String()),
   savedAt: t.Date(),
 });
@@ -28,6 +29,7 @@ export const userSavedGetRoute = new Elysia().get(
         name: mountainTable.name,
         location: mountainTable.location,
         height: mountainTable.height,
+        essential: mountainTable.essential,
         imageUrl: mountainTable.imageUrl,
         savedAt: userSavedMountainTable.createdAt,
       })

@@ -466,6 +466,7 @@ export const AdminSavedMountainSchema = t.Object({
   name: t.String(),
   location: t.String(),
   height: t.String(),
+  essential: t.Boolean(),
   imageUrl: t.Nullable(t.String()),
   savedAt: t.Date(),
 });
