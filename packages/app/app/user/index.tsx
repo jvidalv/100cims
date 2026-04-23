@@ -4,6 +4,7 @@ import { Link, useRouter } from "expo-router";
 import {
   ArrowRight,
   Backpack,
+  Bookmark,
   ChevronRight,
   Flag,
   Heart,
@@ -56,6 +57,11 @@ export default function UserIndexScreen() {
       icon: List,
       text: intl.formatMessage({ defaultMessage: "My summits" }),
       onPress: () => router.push("/user/summits"),
+    },
+    {
+      icon: Bookmark,
+      text: intl.formatMessage({ defaultMessage: "My saved" }),
+      onPress: () => router.push("/user/saved"),
     },
     {
       icon: Backpack,

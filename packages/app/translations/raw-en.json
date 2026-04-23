@@ -83,6 +83,9 @@
   "3IlAwo": {
     "defaultMessage": "Something went wrong, try again later!"
   },
+  "3Mg7fL": {
+    "defaultMessage": "My saved"
+  },
   "3a5wL8": {
     "defaultMessage": "Active"
   },
@@ -131,6 +134,9 @@
   "5lwgvM": {
     "defaultMessage": "Visible on people search?"
   },
+  "6n4LpX": {
+    "defaultMessage": "Easy"
+  },
   "71GNdG": {
     "defaultMessage": "are worth x2. Summit them!"
   },
@@ -139,6 +145,9 @@
   },
   "73aAQF": {
     "defaultMessage": "Browser RPG set in post-cataclysm Catalonia."
+  },
+  "74GMnf": {
+    "defaultMessage": "Summiters consider the safest route up — this is a majority opinion, not a guarantee."
   },
   "7JlauX": {
     "defaultMessage": "Explore"
@@ -257,6 +266,9 @@
   "CFPRDL": {
     "defaultMessage": "Create plan"
   },
+  "D0uMjm": {
+    "defaultMessage": "Difficulty reflects the easiest route up."
+  },
   "DJbyE/": {
     "defaultMessage": "You summited this mountain"
   },
@@ -317,6 +329,9 @@
   "Ff9qrH": {
     "defaultMessage": "Can’t find someone? They may have “Visible on people search” turned off in their profile — ask them to enable it."
   },
+  "Fr5LyM": {
+    "defaultMessage": "Safe"
+  },
   "G/yZLu": {
     "defaultMessage": "Remove"
   },
@@ -343,6 +358,9 @@
   },
   "Gx2Ha6": {
     "defaultMessage": "Back to shop"
+  },
+  "H0uUjC": {
+    "defaultMessage": "Tap the bookmark on any mountain to save it here."
   },
   "H5v61s": {
     "defaultMessage": "Set plan date"
@@ -373,6 +391,9 @@
   },
   "I5NMJ8": {
     "defaultMessage": "More"
+  },
+  "IXIWgD": {
+    "defaultMessage": "How to rate"
   },
   "IkgeEo": {
     "defaultMessage": "No mountains yet. Create mountains when adding them to a challenge."
@@ -437,6 +458,12 @@
   "NDV5Mq": {
     "defaultMessage": "Options"
   },
+  "NE5Nxx": {
+    "defaultMessage": "Tap Safe if you'd bring a child or dog on the safest route up this mountain, Unsafe if you wouldn't. Skip either row if you're not sure."
+  },
+  "NPDdbP": {
+    "defaultMessage": "rating"
+  },
   "NQ4AvE": {
     "defaultMessage": "Other projects"
   },
@@ -472,6 +499,9 @@
   },
   "Oj1HSZ": {
     "defaultMessage": "No extra information added."
+  },
+  "OlIql8": {
+    "defaultMessage": "Moderate"
   },
   "OnO2dU": {
     "defaultMessage": "My information"
@@ -517,6 +547,9 @@
   },
   "Qh4l3L": {
     "defaultMessage": "Other participants"
+  },
+  "QpWAVm": {
+    "defaultMessage": "Based on {count} from summiters, this mountain is rated {label}."
   },
   "RE0010": {
     "defaultMessage": "{count} summits"
@@ -593,6 +626,9 @@
   "WXGcL+": {
     "defaultMessage": "Create challenge"
   },
+  "Ww0lYU": {
+    "defaultMessage": "Unsafe"
+  },
   "X0ha1a": {
     "defaultMessage": "Save changes"
   },
@@ -628,6 +664,9 @@
   },
   "ZPboiN": {
     "defaultMessage": "Chat with others"
+  },
+  "ZQv4i6": {
+    "defaultMessage": "Based on {count} from summiters, this mountain is rated {label} for dogs."
   },
   "ZYxiR7": {
     "defaultMessage": "Remove from your people?"
@@ -698,6 +737,9 @@
   "ciVgJV": {
     "defaultMessage": "Received, thanks for your suggestion!"
   },
+  "cpA/UO": {
+    "defaultMessage": "Based on {count} from summiters, this mountain is rated {label} for children."
+  },
   "cpbQ8s": {
     "defaultMessage": "No community challenges yet. Be the first to create one!"
   },
@@ -746,6 +788,9 @@
   "f3iukN": {
     "defaultMessage": "{distance} km away from you"
   },
+  "fQZLRH": {
+    "defaultMessage": "Mixed"
+  },
   "fVJK/6": {
     "defaultMessage": "Sharing plans with others is a great way to meet people with similar interests!"
   },
@@ -754,6 +799,12 @@
   },
   "fnihsY": {
     "defaultMessage": "Leave"
+  },
+  "fsB/4p": {
+    "defaultMessage": "Saved"
+  },
+  "g4KKU9": {
+    "defaultMessage": "Your rating"
   },
   "g5pX+a": {
     "defaultMessage": "About"
@@ -836,6 +887,12 @@
   "lnUmYp": {
     "defaultMessage": "I'll join later"
   },
+  "n0cU4E": {
+    "defaultMessage": "Recommend"
+  },
+  "n8uxry": {
+    "defaultMessage": "Hard"
+  },
   "nEbAUi": {
     "defaultMessage": "This screen does not exist."
   },
@@ -850,6 +907,9 @@
   },
   "nfhxxT": {
     "defaultMessage": "Login out"
+  },
+  "nz6nR4": {
+    "defaultMessage": "ratings"
   },
   "o863Ko": {
     "defaultMessage": "App icon"
@@ -895,6 +955,9 @@
   },
   "r0u4TP": {
     "defaultMessage": "Coupon code"
+  },
+  "rGmxAI": {
+    "defaultMessage": "Difficulty"
   },
   "rO8WR3": {
     "defaultMessage": "Country/Region is required"
@@ -1010,6 +1073,9 @@
   "x5Tz6M": {
     "defaultMessage": "Report"
   },
+  "xPDts3": {
+    "defaultMessage": "Dog-friendly"
+  },
   "xSRKf4": {
     "defaultMessage": "Visible on hiscores?"
   },
@@ -1048,6 +1114,9 @@
   },
   "z+KriW": {
     "defaultMessage": "Are you sure you want to delete this mountain? This action cannot be undone."
+  },
+  "z1qQ0p": {
+    "defaultMessage": "Family-friendly"
   },
   "zQvVDJ": {
     "defaultMessage": "All"
