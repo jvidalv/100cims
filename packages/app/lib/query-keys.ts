@@ -66,6 +66,7 @@ export const planKeys = {
 export const hiscoresKeys = {
   all: ["hiscores"] as const,
   list: () => ["hiscores", "list"] as const,
+  aroundMe: () => ["hiscores", "around-me"] as const,
 };
 
 // Merch keys

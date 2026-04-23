@@ -2,28 +2,29 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Link, useRouter } from "expo-router";
 import { ArrowRight, Info, Mountain } from "lucide-react-native";
 import { useCallback, useMemo, useRef, useState } from "react";
-import { FormattedMessage, useIntl } from "react-intl";
-import {
-  ActivityIndicator,
-  FlatList,
-  TouchableOpacity,
-  View,
-  ViewToken,
-} from "react-native";
+import { FormattedMessage } from "react-intl";
+import { FlatList, TouchableOpacity, View, ViewToken } from "react-native";
 import { twMerge } from "tailwind-merge";
 
 import {
-  ThemedView,
-  ThemedText,
+  HISCORE_ROW_HEIGHT,
+  HiscoreRow,
+  HiscoreRowSkeleton,
+} from "@/components/hiscores/hiscore-row";
+import {
+  ActivityIndicator,
   Avatar,
   LucideIcon,
   Skeleton,
+  ThemedText,
+  ThemedView,
 } from "@/components/ui/atoms";
 import { BottomDrawer, ScreenHeader } from "@/components/ui/molecules";
 import { useBottomDrawer } from "@/components/ui/molecules/bottom-drawer";
 import { Colors } from "@/constants/colors";
 import { useActiveChallenge } from "@/domains/challenge/challenge.api";
 import { useHiscoresGet } from "@/domains/hiscores/hiscores.api";
+import { useScoreFormatter } from "@/domains/hiscores/use-score-formatter";
 import { useUserMe } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
 import { getInitials } from "@/lib/strings";
@@ -38,11 +39,8 @@ type HiscoreItem = {
 };
 
 const MEDAL_RING_COLORS = ["#FFD700", "#C0C0C0", "#CD7F32"] as const;
-const MAX_PAGE_FETCHES = 10;
-const ROW_HEIGHT = 80;
 
 export default function HiscoresScreen() {
-  const intl = useIntl();
   const router = useRouter();
   const { data: user } = useUserMe();
   const {
@@ -65,6 +63,8 @@ export default function HiscoresScreen() {
     () => (user ? hiscores.findIndex((h) => h.userId === user.id) : -1),
     [hiscores, user],
   );
+
+  const myRank = hiscoresData?.pages?.[0]?.pagination.myRank;
 
   const [isOpen, setIsOpen] = useBottomDrawer();
   const isVisibleOnHiscores = user?.visibleOnHiscores;
@@ -92,65 +92,39 @@ export default function HiscoresScreen() {
     },
   ).current;
 
-  const jumpToMyRow = useCallback(async () => {
-    if (!user) return;
-
-    let currentHiscores =
-      hiscoresData?.pages?.flatMap((p) => p?.items ?? []) ?? [];
-    let currentIndex = currentHiscores.findIndex((h) => h.userId === user.id);
-
-    if (currentIndex >= 0 && currentIndex < 3) {
-      listRef.current?.scrollToOffset({ offset: 0, animated: true });
-      return;
-    }
-
-    let fetches = 0;
-    while (currentIndex < 0 && fetches < MAX_PAGE_FETCHES && hasNextPage) {
-      const result = await fetchNextPage();
-      fetches += 1;
-      currentHiscores =
-        result.data?.pages?.flatMap((p) => p?.items ?? []) ?? currentHiscores;
-      currentIndex = currentHiscores.findIndex((h) => h.userId === user.id);
-    }
-
-    const listIndex = currentIndex - 3;
-    if (listIndex >= 0) {
-      listRef.current?.scrollToIndex({
-        index: listIndex,
-        animated: true,
-        viewPosition: 0.3,
-      });
-    }
-  }, [fetchNextPage, hasNextPage, hiscoresData, user]);
-
   const myListIndex = myHiscoreIndex - 3;
   const isMyRowLoaded = myHiscoreIndex >= 0;
 
-  const isMyRowAboveViewport =
+  const isMyRowInViewport =
     isMyRowLoaded &&
     viewableRange !== null &&
-    (myListIndex < 0
-      ? viewableRange.first > 0
-      : myListIndex < viewableRange.first);
-  const isMyRowBelowViewport =
-    !isMyRowLoaded ||
-    (myListIndex >= 0 &&
-      viewableRange !== null &&
-      myListIndex > viewableRange.last);
+    myListIndex >= viewableRange.first &&
+    myListIndex <= viewableRange.last;
+
+  const jumpToMyRow = useCallback(() => {
+    if (!user) return;
+    if (myHiscoreIndex >= 0 && myHiscoreIndex < 3) {
+      listRef.current?.scrollToOffset({ offset: 0, animated: true });
+      return;
+    }
+    if (myListIndex >= 0) {
+      listRef.current?.scrollToIndex({
+        index: myListIndex,
+        animated: true,
+        viewPosition: 0.3,
+      });
+      return;
+    }
+    router.push("/hiscores/me");
+  }, [myHiscoreIndex, myListIndex, router, user]);
 
   const showFab =
     !!user &&
     !!isVisibleOnHiscores &&
-    (isMyRowBelowViewport || isMyRowAboveViewport);
+    myRank !== null &&
+    !isMyRowInViewport;
 
-  const scoreFormatter = useMemo(
-    () => Intl.NumberFormat(intl.locale, { maximumFractionDigits: 2 }),
-    [intl.locale],
-  );
-  const formatScore = useCallback(
-    (score: number) => scoreFormatter.format(score),
-    [scoreFormatter],
-  );
+  const formatScore = useScoreFormatter();
 
   return (
     <ThemedView className="flex-1">
@@ -168,13 +142,13 @@ export default function HiscoresScreen() {
         onViewableItemsChanged={onViewableItemsChanged}
         viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
         getItemLayout={(_, index) => ({
-          length: ROW_HEIGHT,
-          offset: ROW_HEIGHT * index,
+          length: HISCORE_ROW_HEIGHT,
+          offset: HISCORE_ROW_HEIGHT * index,
           index,
         })}
         onScrollToIndexFailed={({ index, averageItemLength }) => {
           listRef.current?.scrollToOffset({
-            offset: index * (averageItemLength || ROW_HEIGHT),
+            offset: index * (averageItemLength || HISCORE_ROW_HEIGHT),
             animated: true,
           });
           setTimeout(() => {
@@ -220,9 +194,7 @@ export default function HiscoresScreen() {
             </View>
             {user && !isVisibleOnHiscores && (
               <Link href="/user/me" asChild>
-                <TouchableOpacity
-                  className="mx-4 mt-4 flex-row items-center justify-between rounded border-2 border-primary p-4"
-                >
+                <TouchableOpacity className="mx-4 mt-4 flex-row items-center justify-between rounded border-2 border-primary p-4">
                   <ThemedText className="font-medium text-primary">
                     <FormattedMessage defaultMessage="I want to be visible on the hiscores" />
                   </ThemedText>
@@ -264,59 +236,15 @@ export default function HiscoresScreen() {
           </>
         }
         keyExtractor={({ userId }) => userId}
-        renderItem={({ index, item }) => {
-          const rank = index + 4;
-          const isMe = item.userId === user?.id;
-          return (
-            <TouchableOpacity
-              onPress={() => router.push(`/user/${item.userId}`)}
-              className={twMerge(
-                "mx-4 mb-2 flex-row items-center gap-3 rounded-lg border border-border p-3",
-                isMe && "border-primary bg-primary/10",
-              )}
-            >
-              <Avatar
-                size="md"
-                initials={getInitials(
-                  getFullName({
-                    firstName: item.firstName,
-                    lastName: item.lastName,
-                  }),
-                )}
-                imageUrl={item.imageUrl}
-              />
-              <View className="flex-1">
-                <ThemedText
-                  className={twMerge("font-semibold", isMe && "text-primary")}
-                  numberOfLines={1}
-                >
-                  <ThemedText className="font-semibold text-muted-foreground">
-                    {rank}.{" "}
-                  </ThemedText>
-                  {getFullName({
-                    firstName: item.firstName,
-                    lastName: item.lastName,
-                  })}
-                </ThemedText>
-                <View className="mt-0.5 flex-row items-center gap-1">
-                  <LucideIcon icon={Mountain} muted size={14} />
-                  <ThemedText className="text-sm text-muted-foreground">
-                    <FormattedMessage
-                      defaultMessage="{count} of {total}"
-                      values={{
-                        count: item.uniquePeaksCount,
-                        total: challenge?.totalMountains ?? "—",
-                      }}
-                    />
-                  </ThemedText>
-                </View>
-              </View>
-              <ThemedText className="text-lg font-bold text-primary">
-                {formatScore(item.totalScore)}
-              </ThemedText>
-            </TouchableOpacity>
-          );
-        }}
+        renderItem={({ index, item }) => (
+          <HiscoreRow
+            entry={item}
+            rank={index + 4}
+            totalMountains={challenge?.totalMountains ?? null}
+            isMe={item.userId === user?.id}
+            formatScore={formatScore}
+          />
+        )}
       />
       {showFab && user && (
         <TouchableOpacity
@@ -347,15 +275,15 @@ export default function HiscoresScreen() {
             }}
           />
           <View className="absolute inset-0 items-center justify-center">
-            {isMyRowLoaded ? (
+            {typeof myRank === "number" ? (
               <ThemedText
                 className="text-white font-semibold"
-                style={{ fontSize: myHiscoreIndex + 1 >= 1000 ? 14 : 18 }}
+                style={{ fontSize: myRank >= 1000 ? 14 : 18 }}
               >
-                {myHiscoreIndex + 1}
+                {myRank}
               </ThemedText>
             ) : (
-              <ActivityIndicator size="small" color="#a3a3a3" />
+              <ActivityIndicator size="sm" color="#a3a3a3" />
             )}
           </View>
         </TouchableOpacity>
@@ -560,30 +488,9 @@ function HiscoresSkeleton() {
           <Skeleton className="h-5 w-14 bg-neutral-700" />
         </View>
       </View>
-      <View className="flex-row items-center gap-3 rounded-lg border border-border p-3">
-        <Skeleton className="size-12 rounded-full" />
-        <View className="flex-1 gap-2">
-          <Skeleton className="h-5 w-32" />
-          <Skeleton className="h-4 w-20" />
-        </View>
-        <Skeleton className="h-5 w-14" />
-      </View>
-      <View className="flex-row items-center gap-3 rounded-lg border border-border p-3">
-        <Skeleton className="size-12 rounded-full" />
-        <View className="flex-1 gap-2">
-          <Skeleton className="h-5 w-28" />
-          <Skeleton className="h-4 w-20" />
-        </View>
-        <Skeleton className="h-5 w-14" />
-      </View>
-      <View className="flex-row items-center gap-3 rounded-lg border border-border p-3">
-        <Skeleton className="size-12 rounded-full" />
-        <View className="flex-1 gap-2">
-          <Skeleton className="h-5 w-36" />
-          <Skeleton className="h-4 w-20" />
-        </View>
-        <Skeleton className="h-5 w-14" />
-      </View>
+      <HiscoreRowSkeleton />
+      <HiscoreRowSkeleton />
+      <HiscoreRowSkeleton />
     </View>
   );
 }
