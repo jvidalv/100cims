@@ -15,6 +15,7 @@ import {
   useAddAdminUserPerson,
   useAdminUserDetail,
   useAdminUserPeople,
+  useAdminUserSaved,
   useAdminUsers,
   useAdminUserSummits,
   useRemoveAdminUserPerson,
@@ -78,6 +79,7 @@ export default function AdminUserDetailPage({
   const people = useAdminUserPeople(id);
   const addPerson = useAddAdminUserPerson(id);
   const removePerson = useRemoveAdminUserPerson(id);
+  const saved = useAdminUserSaved(id);
   const [personSearch, setPersonSearch] = useState("");
   const personSearchResults = useAdminUsers({
     page: 1,
@@ -477,6 +479,54 @@ export default function AdminUserDetailPage({
                     </td>
                   </tr>
                 )}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
+
+      <section className="space-y-3">
+        <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+          Saved {saved.data ? `(${saved.data.length})` : ""}
+        </h2>
+
+        {saved.error && <p className="text-red-600">{saved.error.message}</p>}
+        {saved.isLoading && !saved.data && (
+          <p className="text-muted-foreground">Loading…</p>
+        )}
+
+        {saved.data && saved.data.length === 0 && (
+          <p className="text-muted-foreground">No saved mountains yet.</p>
+        )}
+
+        {saved.data && saved.data.length > 0 && (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b text-left">
+                  <th className="py-2 pr-4 font-medium">Mountain</th>
+                  <th className="py-2 pr-4 font-medium">Height</th>
+                  <th className="py-2 pr-4 font-medium">Saved at</th>
+                </tr>
+              </thead>
+              <tbody>
+                {saved.data.map((m) => (
+                  <tr
+                    key={m.mountainId}
+                    className="border-b hover:bg-muted/40 cursor-pointer"
+                    onClick={() =>
+                      router.push(`/admin/mountains/${m.mountainId}`)
+                    }
+                  >
+                    <td className="py-2 pr-4">{m.name}</td>
+                    <td className="py-2 pr-4 text-muted-foreground">
+                      {m.height} m
+                    </td>
+                    <td className="py-2 pr-4 text-muted-foreground">
+                      {formatDate(m.savedAt)}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>

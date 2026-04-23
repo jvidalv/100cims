@@ -18,12 +18,15 @@ export const adminKeys = {
   userSummits: (id: string, page: number) =>
     ["admin", "users", id, "summits", page] as const,
   userPeople: (id: string) => ["admin", "users", id, "people"] as const,
+  userSaved: (id: string) => ["admin", "users", id, "saved"] as const,
   mountainsList: () => ["admin", "mountains"] as const,
   mountains: (params: { page: number; q: string }) =>
     ["admin", "mountains", params] as const,
   mountainDetail: (id: string) => ["admin", "mountains", id] as const,
   mountainChallenges: (id: string) =>
     ["admin", "mountains", id, "challenges"] as const,
+  mountainRatings: (id: string) =>
+    ["admin", "mountains", id, "ratings"] as const,
   summitsList: () => ["admin", "summits"] as const,
   summits: (params: { page: number; q: string; validated: string }) =>
     ["admin", "summits", params] as const,

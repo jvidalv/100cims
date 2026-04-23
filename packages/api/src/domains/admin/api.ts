@@ -120,6 +120,16 @@ export const useAdminUserPeople = (id: string) =>
     },
   });
 
+export const useAdminUserSaved = (id: string) =>
+  useQuery({
+    queryKey: adminKeys.userSaved(id),
+    queryFn: async () => {
+      const { data, error } = await api.api.admin.users({ id }).saved.get();
+      if (error) throw error;
+      return data.message;
+    },
+  });
+
 export const useAddAdminUserPerson = (id: string) => {
   const qc = useQueryClient();
   return useMutation({
@@ -187,6 +197,40 @@ export const useAdminMountainChallenges = (id: string) =>
       return data.message;
     },
   });
+
+export const useAdminMountainRatings = (id: string) =>
+  useQuery({
+    queryKey: adminKeys.mountainRatings(id),
+    queryFn: async () => {
+      const { data, error } = await api.api.admin
+        .mountains({ id })
+        .ratings.get();
+      if (error) throw error;
+      return data.message;
+    },
+  });
+
+export const useDeleteAdminMountainRating = (mountainId: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (ratingId: string) => {
+      const { data, error } = await api.api.admin["mountain-ratings"]({
+        id: ratingId,
+      }).delete();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({
+        queryKey: adminKeys.mountainRatings(mountainId),
+      });
+      void qc.invalidateQueries({
+        queryKey: adminKeys.mountainDetail(mountainId),
+      });
+      void qc.invalidateQueries({ queryKey: adminKeys.mountainsList() });
+    },
+  });
+};
 
 export type AdminMountainUpdateBody = {
   name?: string;
