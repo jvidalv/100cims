@@ -16,6 +16,7 @@ export const userKeys = {
   challenges: (userId: string) => ["user", "challenges", userId] as const,
   search: (query: string) => ["user", "search", query] as const,
   people: () => ["user", "people"] as const,
+  saved: () => ["user", "saved"] as const,
 };
 
 // Challenge keys

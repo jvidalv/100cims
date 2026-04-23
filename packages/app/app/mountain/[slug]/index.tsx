@@ -4,24 +4,45 @@ import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { setStatusBarStyle } from "expo-status-bar";
 import {
   ArrowUp,
+  Baby,
   BadgeCheck,
+  Bookmark,
+  BookmarkCheck,
+  CircleDot,
+  Dog,
   Footprints,
   Map,
   MapPin,
   Share as ShareIcon,
+  TriangleAlert,
+  type LucideIcon as LucideIconType,
 } from "lucide-react-native";
 import { useColorScheme } from "nativewind";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { TouchableOpacity, Image, View, StyleSheet } from "react-native";
+import { TouchableOpacity, Image, Pressable, View, StyleSheet } from "react-native";
 
 
 import { useAuth } from "@/components/providers/auth-provider";
 import { SummitCard } from "@/components/summit";
-import { ThemedText, LucideIcon, Skeleton } from "@/components/ui/atoms";
-import { ActionRow, MountainItemList } from "@/components/ui/molecules";
+import {
+  LucideIcon,
+  Skeleton,
+  ThemedText,
+  tierColor,
+} from "@/components/ui/atoms";
+import {
+  ActionRow,
+  MountainItemList,
+  UpdatesDialog,
+} from "@/components/ui/molecules";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
 import { useMountainOne, useMountains } from "@/domains/mountain/mountain.api";
+import {
+  useIsMountainSaved,
+  useSavedAddMutation,
+  useSavedRemoveMutation,
+} from "@/domains/saved/saved.api";
 import { useSummitsGet } from "@/domains/summit/summit.api";
 import { useUserChallengeSummits } from "@/domains/user/user.api";
 import { useLocation } from "@/hooks/use-location";
@@ -38,6 +59,9 @@ export default function MountainScreen() {
   const { isAuthenticated } = useAuth();
   const { data: mountains } = useMountains();
   const { data: fetchedMountain } = useMountainOne({ mountainSlug: slug });
+  const [activeRating, setActiveRating] = useState<
+    null | "difficulty" | "family" | "dog"
+  >(null);
 
   useEffect(() => {
     if (!isIOS) return;
@@ -96,6 +120,22 @@ export default function MountainScreen() {
     ({ mountainSlug }) => slug === mountainSlug,
   );
 
+  const isSaved = useIsMountainSaved(mountain?.id);
+  const savedAddMutation = useSavedAddMutation();
+  const savedRemoveMutation = useSavedRemoveMutation();
+  const handleToggleSaved = () => {
+    if (!isAuthenticated) {
+      router.push("/join");
+      return;
+    }
+    if (!mountain?.id) return;
+    if (isSaved) {
+      savedRemoveMutation.mutate({ mountainId: mountain.id });
+    } else {
+      savedAddMutation.mutate({ mountainId: mountain.id });
+    }
+  };
+
   useEffect(() => {
     if (isSummited) {
       void askForReview();
@@ -118,7 +158,13 @@ export default function MountainScreen() {
     });
   };
 
+  const activeRatingUpdate =
+    activeRating && fetchedMountain
+      ? buildRatingUpdate(activeRating, fetchedMountain, intl)
+      : null;
+
   return (
+    <>
     <ParallaxScrollView
       title={mountain.name}
       headerClassName="flex items-center justify-center bg-primary"
@@ -153,7 +199,7 @@ export default function MountainScreen() {
           </View>
           {mountain.essential && (
             <View className="flex-row items-center gap-2">
-              <View className="size-4 rounded-full bg-primary" />
+              <LucideIcon icon={CircleDot} primary />
               <ThemedText className="text-xl font-medium">
                 <FormattedMessage defaultMessage="Essential" />
               </ThemedText>
@@ -166,6 +212,75 @@ export default function MountainScreen() {
             {mountain.location}
           </ThemedText>
         </View>
+        {fetchedMountain &&
+          (fetchedMountain.difficultyRatingCount > 0 ||
+            fetchedMountain.familyRatingCount > 0 ||
+            fetchedMountain.dogRatingCount > 0) && (
+            <View className="flex-row flex-wrap items-center gap-x-4 gap-y-2">
+              {fetchedMountain.difficultyRatingCount > 0 &&
+                fetchedMountain.avgDifficulty != null && (
+                  <Pressable
+                    onPress={() => setActiveRating("difficulty")}
+                    hitSlop={8}
+                  >
+                    <RatingTag
+                      icon={TriangleAlert}
+                      label={difficultyTierLabel(
+                        fetchedMountain.avgDifficulty,
+                        intl,
+                      )}
+                      color={tierColor(
+                        Math.round(fetchedMountain.avgDifficulty) - 1,
+                        5,
+                        true,
+                      )}
+                    />
+                  </Pressable>
+                )}
+              {fetchedMountain.familyRatingCount > 0 &&
+                fetchedMountain.avgFamilyFriendly != null && (
+                  <Pressable
+                    onPress={() => setActiveRating("family")}
+                    hitSlop={8}
+                  >
+                    {(() => {
+                      const tier = safetyTier(
+                        fetchedMountain.avgFamilyFriendly,
+                        intl,
+                      );
+                      return (
+                        <RatingTag
+                          icon={Baby}
+                          label={tier.label}
+                          color={tierColor(tier.position, 3)}
+                        />
+                      );
+                    })()}
+                  </Pressable>
+                )}
+              {fetchedMountain.dogRatingCount > 0 &&
+                fetchedMountain.avgDogFriendly != null && (
+                  <Pressable
+                    onPress={() => setActiveRating("dog")}
+                    hitSlop={8}
+                  >
+                    {(() => {
+                      const tier = safetyTier(
+                        fetchedMountain.avgDogFriendly,
+                        intl,
+                      );
+                      return (
+                        <RatingTag
+                          icon={Dog}
+                          label={tier.label}
+                          color={tierColor(tier.position, 3)}
+                        />
+                      );
+                    })()}
+                  </Pressable>
+                )}
+            </View>
+          )}
         {distanceFromUser != null && (
           <View className="flex-row items-center gap-2">
             <LucideIcon icon={MapPin} muted />
@@ -198,6 +313,17 @@ export default function MountainScreen() {
             )}
           </ActionRow>
         </Link>
+        <ActionRow
+          onPress={handleToggleSaved}
+          icon={isSaved ? BookmarkCheck : Bookmark}
+          intent={isSaved ? "emerald" : "muted"}
+        >
+          {isSaved ? (
+            <FormattedMessage defaultMessage="Saved" />
+          ) : (
+            <FormattedMessage defaultMessage="Save" />
+          )}
+        </ActionRow>
         <ActionRow
           onPress={handleShareMountain}
           icon={ShareIcon}
@@ -332,5 +458,171 @@ export default function MountainScreen() {
         </View>
       </View>
     </ParallaxScrollView>
+      {activeRatingUpdate && (
+        <UpdatesDialog
+          update={activeRatingUpdate}
+          isOpen={activeRating !== null}
+          onClose={() => setActiveRating(null)}
+        />
+      )}
+    </>
   );
 }
+
+// Thresholds: users only vote 1 or 5, so the aggregate is 1 + 4·(safe/total).
+// Unsafe: ≤20% of votes say Safe. Safe: ≥80% say Safe. Mixed: the ambiguous
+// middle band, honest about "ratings disagree."
+const safetyTier = (
+  avg: number,
+  intl: ReturnType<typeof useIntl>,
+): { label: string; position: 0 | 1 | 2 } => {
+  if (avg >= 4) {
+    return {
+      label: intl.formatMessage({ defaultMessage: "Safe" }),
+      position: 2,
+    };
+  }
+  if (avg <= 2) {
+    return {
+      label: intl.formatMessage({ defaultMessage: "Unsafe" }),
+      position: 0,
+    };
+  }
+  return {
+    label: intl.formatMessage({ defaultMessage: "Mixed" }),
+    position: 1,
+  };
+};
+
+const difficultyTierLabel = (avg: number, intl: ReturnType<typeof useIntl>) => {
+  const rounded = Math.round(avg);
+  if (rounded <= 2) return intl.formatMessage({ defaultMessage: "Easy" });
+  if (rounded >= 4) return intl.formatMessage({ defaultMessage: "Hard" });
+  return intl.formatMessage({ defaultMessage: "Moderate" });
+};
+
+type FetchedMountain = {
+  avgFamilyFriendly: number | null;
+  familyRatingCount: number;
+  avgDogFriendly: number | null;
+  dogRatingCount: number;
+  avgDifficulty: number | null;
+  difficultyRatingCount: number;
+};
+
+const buildRatingUpdate = (
+  axis: "difficulty" | "family" | "dog",
+  m: FetchedMountain,
+  intl: ReturnType<typeof useIntl>,
+) => {
+  const ratingsWord = (count: number) =>
+    count === 1
+      ? intl.formatMessage({ defaultMessage: "rating" })
+      : intl.formatMessage({ defaultMessage: "ratings" });
+
+  const countChunk = (count: number) => (
+    <ThemedText key="count" className="font-semibold text-foreground">
+      {count} {ratingsWord(count)}
+    </ThemedText>
+  );
+  const labelChunk = (label: string, color: string) => (
+    <ThemedText key="label" className="font-semibold" style={{ color }}>
+      {label.toLowerCase()}
+    </ThemedText>
+  );
+
+  if (axis === "difficulty") {
+    const count = m.difficultyRatingCount;
+    const avg = m.avgDifficulty ?? 0;
+    const label = difficultyTierLabel(avg, intl);
+    const color = tierColor(Math.round(avg) - 1, 5, true);
+    return {
+      id: "rating-difficulty",
+      title: intl.formatMessage({ defaultMessage: "Difficulty" }),
+      body: (
+        <View className="gap-2">
+          <ThemedText className="leading-relaxed text-muted-foreground">
+            <FormattedMessage
+              defaultMessage="Based on {count} from summiters, this mountain is rated {label}."
+              values={{
+                count: countChunk(count),
+                label: labelChunk(label, color),
+              }}
+            />
+          </ThemedText>
+          <ThemedText className="leading-relaxed text-muted-foreground">
+            <FormattedMessage defaultMessage="Difficulty reflects the easiest route up." />
+          </ThemedText>
+        </View>
+      ),
+    };
+  }
+  if (axis === "family") {
+    const count = m.familyRatingCount;
+    const tier = safetyTier(m.avgFamilyFriendly ?? 0, intl);
+    const { label } = tier;
+    const color = tierColor(tier.position, 3);
+    return {
+      id: "rating-family",
+      title: intl.formatMessage({ defaultMessage: "Family-friendly" }),
+      body: (
+        <View className="gap-2">
+          <ThemedText className="leading-relaxed text-muted-foreground">
+            <FormattedMessage
+              defaultMessage="Based on {count} from summiters, this mountain is rated {label} for children."
+              values={{
+                count: countChunk(count),
+                label: labelChunk(label, color),
+              }}
+            />
+          </ThemedText>
+          <ThemedText className="leading-relaxed text-muted-foreground">
+            <FormattedMessage defaultMessage="Summiters consider the safest route up — this is a majority opinion, not a guarantee." />
+          </ThemedText>
+        </View>
+      ),
+    };
+  }
+  const count = m.dogRatingCount;
+  const tier = safetyTier(m.avgDogFriendly ?? 0, intl);
+  const { label } = tier;
+  const color = tierColor(tier.position, 3);
+  return {
+    id: "rating-dog",
+    title: intl.formatMessage({ defaultMessage: "Dog-friendly" }),
+    body: (
+      <View className="gap-2">
+        <ThemedText className="leading-relaxed text-muted-foreground">
+          <FormattedMessage
+            defaultMessage="Based on {count} from summiters, this mountain is rated {label} for dogs."
+            values={{
+              count: countChunk(count),
+              label: labelChunk(label, color),
+            }}
+          />
+        </ThemedText>
+        <ThemedText className="leading-relaxed text-muted-foreground">
+          <FormattedMessage defaultMessage="Summiters consider the safest route up — this is a majority opinion, not a guarantee." />
+        </ThemedText>
+      </View>
+    ),
+  };
+};
+
+function RatingTag({
+  icon,
+  label,
+  color,
+}: {
+  icon: LucideIconType;
+  label: string;
+  color: string;
+}) {
+  return (
+    <View className="flex-row items-center gap-2">
+      <LucideIcon icon={icon} color={color} />
+      <ThemedText className="text-xl font-medium">{label}</ThemedText>
+    </View>
+  );
+}
+
