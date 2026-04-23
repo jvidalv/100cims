@@ -226,9 +226,17 @@ router.push({ pathname: '/mountain/[id]', params: { id: '456' } });
 
 All icons use **lucide-react-native**. Import the component by name, pass it to `<LucideIcon icon={Mountain} />` — the wrapper handles theme-aware color (`useColorScheme`) and the `muted` gray treatment. There is no `<Icon name="...">` string-based component any more; don't recreate one. Plumbing components (`Button`, `ActionRow`, `SettingsOption.icon`, `Filter.icon`) take `icon: LucideIcon` (the component by reference) — never a name string. See `packages/app/components/ui/atoms/lucide-icon.tsx` and `app/index.tsx` for the canonical call shape. Don't use `@expo/vector-icons` or `expo-symbols` — both are removed from the app bundle.
 
+For the brand "essential" marker, use `<LucideIcon icon={CircleDot} primary />` rather than hand-rolling a `<View className="size-N rounded-full bg-primary" />`. Raw rounded-full bg dots are still fine for notification/unread badges (absolute-positioned small dots) — the icon convention applies specifically to the essential/marker-with-label pattern next to a "Essential" string.
+
 ### Action sections
 
 When building an "Actions" section on a detail screen (mountain, plan, user profile, etc.), use the `ActionRow` molecule from `@/components/ui/molecules` instead of hand-rolling icon+text rows. Intents map to design tokens (`primary`, `muted`, `blue`, `emerald`, `danger`). Wrap in `<Link asChild>` for navigation rows. Supports `badge` (red dot) and `iconOverride` (e.g. spinner). `icon` is a lucide component: `<ActionRow icon={Trash2} intent="danger">...`. See `app/plan/[id]/index.tsx` and `app/mountain/[slug]/index.tsx` for examples.
+
+### Form inputs
+
+The atoms barrel (`@/components/ui/atoms`) exports the canonical controls: `ThemedTextInput`, `ThemedDateInput`, `ThemedCheckbox`, `ThemedToggleInput` (yes/no with animated thumb), and `ThemedTierPicker` (1..N labeled pills — nullable, tap selected pill to clear). `ThemedTierPicker` takes an optional `labels: readonly string[]` so the same component works for numbered scales (`count: 5`) and named scales (`labels={["Dangerous", "Risky", "Okay", "Safe", "Very safe"]}`). Build label tuples at component-body level via `intl.formatMessage` — matches the existing "options list" pattern used by plan/challenge pickers.
+
+Selected-state styling for selectable chips / pills across the app is `border-primary bg-primary/10 text-primary` (see `app/user/summits/index.tsx`, `app/hiscores.tsx`). The fully-filled `bg-primary text-white` treatment is reserved for primary CTAs (`<Button>`, pulse badges), not selectable list items — don't mix them.
 
 ### Full-page edit screens
 

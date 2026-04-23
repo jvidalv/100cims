@@ -1,4 +1,3 @@
-import { format } from "date-fns/format";
 import { nextSunday } from "date-fns/nextSunday";
 import { useRouter, Redirect } from "expo-router";
 import { Check } from "lucide-react-native";
@@ -39,7 +38,7 @@ import { useMarkPlansAsVisited, usePlanCreate } from "@/domains/plan/plan.api";
 import { useIsKeyboardVisible } from "@/hooks/use-is-keyboard-visible";
 import { cleanText } from "@/lib";
 import { isAndroid } from "@/lib/device";
-import { getDateFnsLocale, getLocale } from "@/lib/locale";
+import { getLocale } from "@/lib/locale";
 
 const StartStep = () => {
   return (
@@ -79,6 +78,17 @@ const StartStep = () => {
           </ThemedText>
           <ThemedText className="text-muted-foreground">
             <FormattedMessage defaultMessage="Plans have an internal chat, but we recommend that you all share your phone number once ready." />
+          </ThemedText>
+        </View>
+        <View className="relative gap-1 rounded border border-border p-4">
+          <View className="absolute -right-3 -top-3">
+            <ThemedText>🔒</ThemedText>
+          </View>
+          <ThemedText className="font-medium">
+            <FormattedMessage defaultMessage="Keep it private if you want" />
+          </ThemedText>
+          <ThemedText className="text-muted-foreground">
+            <FormattedMessage defaultMessage="Plans can now be private — only the people you invite will see them." />
           </ThemedText>
         </View>
       </View>
@@ -185,12 +195,6 @@ MountainsStep.displayName = "MountainsStep";
 
 const nextSundayDate = nextSunday(new Date());
 
-const formatFullDate = (date: Date) => {
-  return format(date, "EEEE d, MMMM yyyy", {
-    locale: getDateFnsLocale(),
-  });
-};
-
 const DetailsStep = ({
   values,
   onDetailsChange,
@@ -216,9 +220,6 @@ const DetailsStep = ({
         value={values.title}
         onChangeText={(title) => onDetailsChange({ ...values, title })}
       />
-      <ThemedText className="mb-4 mt-1 text-xs text-muted-foreground/80">
-        *Required
-      </ThemedText>
       <ThemedTextInput
         label="Extra information about your plan"
         multiline
@@ -227,49 +228,33 @@ const DetailsStep = ({
         onChangeText={(description) =>
           onDetailsChange({ ...values, description })
         }
+        className="mt-4"
       />
-      <ThemedText className="mb-4 mt-1 text-xs text-muted-foreground/80">
-        <FormattedMessage defaultMessage="*You can modify this and all the other fields later" />
-      </ThemedText>
-      <ThemedDateInput
-        value={values.date}
-        onDateValid={(date) => onDetailsChange({ ...values, date })}
-        noPastDates
+      <ThemedToggleInput
+        label={intl.formatMessage({ defaultMessage: "Private plan" })}
+        checked={values.isPrivate}
+        onChecked={(isPrivate) => onDetailsChange({ ...values, isPrivate })}
+        className="mt-6"
       />
-      <ThemedText className="mb-2 mt-1 text-xs text-muted-foreground/80">
-        {values?.date ? (
-          <FormattedMessage
-            defaultMessage="*Suggested date: {date}"
-            values={{ date: formatFullDate(values?.date) }}
-          />
-        ) : (
-          <FormattedMessage defaultMessage="*You can decide later" />
-        )}
-      </ThemedText>
-      <ThemedCheckbox
-        checked={!values.date}
-        onChecked={(checked) => {
-          if (checked) {
-            onDetailsChange({ ...values, date: null });
-          } else {
-            onDetailsChange({ ...values, date: nextSundayDate });
-          }
-        }}
-        label={intl.formatMessage({
-          defaultMessage: "I don't know exactly when.",
-        })}
-      />
-      <View className="mt-6">
-        <ThemedToggleInput
-          label={intl.formatMessage({ defaultMessage: "Private plan" })}
-          checked={values.isPrivate}
-          onChecked={(isPrivate) =>
-            onDetailsChange({ ...values, isPrivate })
-          }
+      <View className="mt-6 gap-4">
+        <ThemedDateInput
+          value={values.date}
+          onDateValid={(date) => onDetailsChange({ ...values, date })}
+          noPastDates
         />
-        <ThemedText className="mt-1 text-xs text-muted-foreground/80">
-          <FormattedMessage defaultMessage="Only you and the people you add can see this plan." />
-        </ThemedText>
+        <ThemedCheckbox
+          checked={!values.date}
+          onChecked={(checked) => {
+            if (checked) {
+              onDetailsChange({ ...values, date: null });
+            } else {
+              onDetailsChange({ ...values, date: nextSundayDate });
+            }
+          }}
+          label={intl.formatMessage({
+            defaultMessage: "I don't know exactly when.",
+          })}
+        />
       </View>
     </View>
   );

@@ -15,6 +15,12 @@ export type MountainData = {
   longitude: string;
   imageUrl: string | null;
   essential: boolean;
+  avgFamilyFriendly?: number | null;
+  familyRatingCount?: number;
+  avgDogFriendly?: number | null;
+  dogRatingCount?: number;
+  avgDifficulty?: number | null;
+  difficultyRatingCount?: number;
 };
 
 /**

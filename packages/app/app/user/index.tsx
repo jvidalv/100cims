@@ -17,7 +17,7 @@ import {
 } from "lucide-react-native";
 import { Fragment } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { TouchableOpacity, View } from "react-native";
+import { ScrollView, TouchableOpacity, View } from "react-native";
 
 
 import {
@@ -89,7 +89,11 @@ export default function UserIndexScreen() {
   return (
     <ThemedView className="flex-1">
       <ScreenHeader />
-      <ThemedView className="flex-1 px-6">
+      <ScrollView
+        className="flex-1"
+        contentContainerClassName="grow px-6"
+        showsVerticalScrollIndicator={false}
+      >
         <View className="mb-4 flex-row items-center justify-between">
           <ThemedText className="text-4xl font-bold">
             {data?.firstName}
@@ -165,7 +169,7 @@ export default function UserIndexScreen() {
             {Application.nativeApplicationVersion}
           </ThemedText>
         </View>
-      </ThemedView>
+      </ScrollView>
     </ThemedView>
   );
 }

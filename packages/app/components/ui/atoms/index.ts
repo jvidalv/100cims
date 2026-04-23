@@ -9,6 +9,7 @@ export { ThemedKeyboardAvoidingView } from "./themed-keyboard-avoiding-view";
 export { LucideIcon } from "./lucide-icon";
 export { SearchInput } from "./search-input";
 export { ActivityIndicator } from "./activity-indicator";
+export { ThemedTierPicker, tierColor } from "./themed-tier-picker";
 export { ThemedToggleInput } from "./themed-toggle-input";
 export { BlurView } from "./blur-view";
 export { EnrichedThemedText } from "./enriched-themed-text";

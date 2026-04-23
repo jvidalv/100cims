@@ -11,6 +11,12 @@ export const AdminMountainEntrySchema = t.Object({
   isOfficial: t.Boolean(),
   creatorName: t.Nullable(t.String()),
   createdAt: t.Date(),
+  avgFamilyFriendly: t.Nullable(t.Number()),
+  familyRatingCount: t.Number(),
+  avgDogFriendly: t.Nullable(t.Number()),
+  dogRatingCount: t.Number(),
+  avgDifficulty: t.Nullable(t.Number()),
+  difficultyRatingCount: t.Number(),
 });
 
 export const AdminMountainsResponseSchema = t.Object({
@@ -35,7 +41,33 @@ export const AdminMountainDetailSchema = t.Object({
   isOfficial: t.Boolean(),
   creatorName: t.Nullable(t.String()),
   createdAt: t.Date(),
+  avgFamilyFriendly: t.Nullable(t.Number()),
+  familyRatingCount: t.Number(),
+  avgDogFriendly: t.Nullable(t.Number()),
+  dogRatingCount: t.Number(),
+  avgDifficulty: t.Nullable(t.Number()),
+  difficultyRatingCount: t.Number(),
 });
+
+export const AdminMountainRatingEntrySchema = t.Object({
+  id: t.String(),
+  familyFriendly: t.Nullable(t.Number()),
+  dogFriendly: t.Nullable(t.Number()),
+  difficulty: t.Nullable(t.Number()),
+  createdAt: t.Date(),
+  updatedAt: t.Date(),
+  user: t.Object({
+    id: t.String(),
+    username: t.Nullable(t.String()),
+    firstName: t.Nullable(t.String()),
+    lastName: t.Nullable(t.String()),
+    imageUrl: t.Nullable(t.String()),
+  }),
+});
+
+export const AdminMountainRatingsResponseSchema = t.Array(
+  AdminMountainRatingEntrySchema,
+);
 
 export const AdminMountainUpdateBodySchema = t.Object({
   name: t.Optional(t.String({ minLength: 1 })),

@@ -28,6 +28,12 @@ export const adminMountainDetailGetRoute = new Elysia().get(
         creatorId: mountainTable.creatorId,
         creatorName: creatorNameConcat(),
         createdAt: mountainTable.createdAt,
+        avgFamilyFriendly: mountainTable.avgFamilyFriendly,
+        familyRatingCount: mountainTable.familyRatingCount,
+        avgDogFriendly: mountainTable.avgDogFriendly,
+        dogRatingCount: mountainTable.dogRatingCount,
+        avgDifficulty: mountainTable.avgDifficulty,
+        difficultyRatingCount: mountainTable.difficultyRatingCount,
       })
       .from(mountainTable)
       .leftJoin(userTable, eq(mountainTable.creatorId, userTable.id))

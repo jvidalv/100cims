@@ -102,16 +102,18 @@ export default function UserPlansScreen() {
             </ThemedText>
           </View>
         )}
-        {data?.map(({ id, title, status, startDate, mountains, users }) => (
-          <PlanItemList
-            key={id}
-            id={id}
-            title={title}
-            status={status}
-            startDate={startDate}
-            mountains={mountains?.map(({ imageUrl }) => ({ imageUrl }))}
-            users={users}
-          />
+        {data?.map(
+          ({ id, title, status, startDate, isPrivate, mountains, users }) => (
+            <PlanItemList
+              key={id}
+              id={id}
+              title={title}
+              status={status}
+              startDate={startDate}
+              isPrivate={isPrivate}
+              mountains={mountains?.map(({ imageUrl }) => ({ imageUrl }))}
+              users={users}
+            />
         ))}
       </ScrollView>
     </ThemedView>

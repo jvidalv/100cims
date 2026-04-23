@@ -1,4 +1,4 @@
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { Plus } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
@@ -13,8 +13,9 @@ import { twMerge } from "tailwind-merge";
 
 
 import { useAuth } from "@/components/providers/auth-provider";
-import { LucideIcon, ThemedText, ThemedView } from "@/components/ui/atoms";
+import { ThemedText, ThemedView } from "@/components/ui/atoms";
 import {
+  ActionRow,
   PushPermissionDialog,
   ScreenHeader,
 } from "@/components/ui/molecules";
@@ -31,6 +32,7 @@ import { useAskPushPermission } from "@/hooks/use-ask-push-permission";
 
 export default function PlansScreen() {
   const intl = useIntl();
+  const router = useRouter();
   const [status, setStatus] = useState<PlanStatus>("open");
   const { isAuthenticated } = useAuth();
   const {
@@ -91,19 +93,9 @@ export default function PlansScreen() {
         onEndReachedThreshold={0.5}
         ListHeaderComponent={
           <View className="pb-3">
-            <View className="flex-row items-center justify-between mb-2">
-              <ThemedText className="text-4xl font-bold">
-                <FormattedMessage defaultMessage="All plans" />
-              </ThemedText>
-              <Link href="/plan/create" asChild>
-                <TouchableOpacity className="flex-row items-center gap-1">
-                  <ThemedText>
-                    <FormattedMessage defaultMessage="New plan" />
-                  </ThemedText>
-                  <LucideIcon icon={Plus} size={18} />
-                </TouchableOpacity>
-              </Link>
-            </View>
+            <ThemedText className="mb-2 text-4xl font-bold">
+              <FormattedMessage defaultMessage="All plans" />
+            </ThemedText>
             <View className="flex-row gap-1">
               {statuses.map(({ type, name }) => {
                 const isSelected = status === type;
@@ -128,6 +120,15 @@ export default function PlansScreen() {
                 );
               })}
             </View>
+            <ActionRow
+              icon={Plus}
+              size="lg"
+              intent="primary"
+              className="mt-3"
+              onPress={() => router.push("/plan/create")}
+            >
+              <FormattedMessage defaultMessage="New plan" />
+            </ActionRow>
           </View>
         }
         ListEmptyComponent={

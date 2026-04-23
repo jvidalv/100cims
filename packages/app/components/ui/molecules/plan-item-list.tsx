@@ -1,11 +1,10 @@
 import { isToday } from "date-fns/isToday";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link } from "expo-router";
-import { Lock } from "lucide-react-native";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 
-import { LucideIcon, Skeleton, ThemedText } from "@/components/ui/atoms";
+import { Skeleton, ThemedText } from "@/components/ui/atoms";
 import { AvatarGroup } from "@/components/ui/molecules/avatar-group";
 import { usePlanChatUnread } from "@/domains/plan/plan-chat.api";
 import { getFullName } from "@/domains/user/user.utils";
@@ -183,31 +182,23 @@ export const PlanItemList = ({
                 </ThemedText>
               )}
             </View>
-            {isPrivate ? (
-              <View className="flex-row items-center gap-1.5">
-                <LucideIcon
-                  icon={Lock}
-                  size={14}
-                  className="text-muted-foreground"
-                />
-                <ThemedText
-                  numberOfLines={2}
-                  className="text-lg font-semibold tracking-tight flex-shrink"
-                >
-                  {title}
-                </ThemedText>
-              </View>
-            ) : (
-              <ThemedText
-                numberOfLines={2}
-                className="text-lg font-semibold tracking-tight"
-              >
-                {title}
-              </ThemedText>
-            )}
+            <ThemedText
+              numberOfLines={2}
+              className="text-lg font-semibold tracking-tight"
+            >
+              {title}
+            </ThemedText>
             {!isCanceled && (
               <ThemedText className="font-medium text-muted-foreground">
                 {when}
+                {isPrivate && (
+                  <>
+                    ,{" "}
+                    <ThemedText className="font-medium text-primary">
+                      <FormattedMessage defaultMessage="private" />
+                    </ThemedText>
+                  </>
+                )}
               </ThemedText>
             )}
           </View>

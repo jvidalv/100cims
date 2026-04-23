@@ -29,3 +29,4 @@ export { MountainRow } from "./mountain-row";
 export { ChallengeMountainList } from "./challenge-mountain-list";
 export { ErrorState } from "./error-state";
 export { ProductPrice } from "./product-price";
+export { SummitRatingFields } from "./summit-rating-fields";

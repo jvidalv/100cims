@@ -177,6 +177,27 @@ const toIsoDate = (value: string | Date): string =>
 
 This bites Recharts users in particular: `<XAxis dataKey="date">` works on Date objects (auto-stringified), but `<ReferenceLine x="2025-04-13">` won't match a Date-typed category. Pre-process the data into string-shaped points before handing it to the chart.
 
+**Transactional helpers take a `DbOrTx` executor.** When a helper may be called standalone *or* inside a caller's `db.transaction(async (tx) => ...)`, accept the executor as a parameter so the work joins the same transaction:
+
+```typescript
+import { db, type DbOrTx } from "@/db";
+
+export const recalcSomething = async (id: string, executor: DbOrTx = db) => {
+  // uses executor like db — queries auto-join the tx when one is passed
+};
+```
+
+The alias is defined once in `src/db/index.ts` (`typeof db | Parameters<Parameters<typeof db.transaction>[0]>[0]`). Don't re-derive it inline.
+
+**Denormalized aggregates on a parent row.** When a child table (e.g. `mountainRatingTable`) has cheap-to-query aggregates that many read paths need (`AVG`, `COUNT`), cache them as columns on the parent (`mountain.avgFamilyFriendly`, `familyRatingCount`, etc.) instead of joining on every read. The pattern:
+
+- Columns on the parent — nullable `avg`, `integer notNull default 0` for `count`.
+- One helper in `api/lib/<parent>-ratings.ts` (or similar) exporting `recalc<Thing>Aggregates(id, executor?)`.
+- Every create / update / delete on the child table calls the helper inside its transaction. Missing one call = silent drift, so route all writes through wrapper helpers if you have more than a handful.
+- The helper issues one `AVG/COUNT` SELECT then one `UPDATE` on the parent; safe to call synchronously.
+
+See `packages/api/src/api/lib/mountain-ratings.ts` for the canonical example.
+
 ### Schema Validation
 
 ```typescript

@@ -1873,6 +1873,12 @@ export interface operations {
                             latitude: string;
                             longitude: string;
                             imageUrl: (string | null) | null;
+                            avgFamilyFriendly?: (number | null) | null;
+                            familyRatingCount?: number;
+                            avgDogFriendly?: (number | null) | null;
+                            dogRatingCount?: number;
+                            avgDifficulty?: (number | null) | null;
+                            difficultyRatingCount?: number;
                         }[];
                     };
                     "multipart/form-data": {
@@ -1887,6 +1893,12 @@ export interface operations {
                             latitude: string;
                             longitude: string;
                             imageUrl: (string | null) | null;
+                            avgFamilyFriendly?: (number | null) | null;
+                            familyRatingCount?: number;
+                            avgDogFriendly?: (number | null) | null;
+                            dogRatingCount?: number;
+                            avgDifficulty?: (number | null) | null;
+                            difficultyRatingCount?: number;
                         }[];
                     };
                     "text/plain": {
@@ -1901,6 +1913,12 @@ export interface operations {
                             latitude: string;
                             longitude: string;
                             imageUrl: (string | null) | null;
+                            avgFamilyFriendly?: (number | null) | null;
+                            familyRatingCount?: number;
+                            avgDogFriendly?: (number | null) | null;
+                            dogRatingCount?: number;
+                            avgDifficulty?: (number | null) | null;
+                            difficultyRatingCount?: number;
                         }[];
                     };
                 };

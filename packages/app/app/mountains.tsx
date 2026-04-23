@@ -1,12 +1,29 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { ChevronUp, Map, MapPin } from "lucide-react-native";
+import {
+  ArrowDownUp,
+  Baby,
+  ChevronUp,
+  CircleDashed,
+  Dog,
+  Map,
+  MapPin,
+  Mountain,
+  SearchX,
+  TrendingDown,
+  TriangleAlert,
+} from "lucide-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { FlatList, View } from "react-native";
+import { FlatList, Pressable, View } from "react-native";
 
 
 import { useAuth } from "@/components/providers/auth-provider";
-import { ThemedView } from "@/components/ui/atoms";
+import {
+  LucideIcon,
+  ThemedText,
+  ThemedView,
+  tierColor,
+} from "@/components/ui/atoms";
 import {
   MountainItemList,
   ScreenHeader,
@@ -17,6 +34,12 @@ import {
 import { Colors } from "@/constants/colors";
 import { MountainsMap } from "@/domains/mountain/components/mountains-map";
 import { useMountains } from "@/domains/mountain/mountain.api";
+import {
+  difficultyTier,
+  safetyTier,
+  type DifficultyTierKey,
+  type SafetyTierKey,
+} from "@/domains/mountain/rating-tiers";
 import { useUserChallengeSummits } from "@/domains/user/user.api";
 import { useLocation } from "@/hooks/use-location";
 import { cleanText } from "@/lib";
@@ -32,7 +55,21 @@ type SettingsFilter =
   | "summited"
   | "not-summited"
   | "higher-first"
-  | "closest-first";
+  | "closest-first"
+  | "easiest-first"
+  | "hardest-first"
+  | "safest-kids"
+  | "safest-dogs"
+  | "diff-easy"
+  | "diff-moderate"
+  | "diff-hard"
+  | "diff-very-hard"
+  | "family-unsafe"
+  | "family-mixed"
+  | "family-safe"
+  | "dog-unsafe"
+  | "dog-mixed"
+  | "dog-safe";
 
 export default function MountainsScreen() {
   const intl = useIntl();
@@ -61,6 +98,7 @@ export default function MountainsScreen() {
     () => [
       {
         title: intl.formatMessage({ defaultMessage: "Status" }),
+        icon: CircleDashed,
         options: [
           {
             type: "summited",
@@ -76,6 +114,7 @@ export default function MountainsScreen() {
       },
       {
         title: intl.formatMessage({ defaultMessage: "Altitude" }),
+        icon: Mountain,
         options: [
           {
             type: "alt-0-1000",
@@ -97,6 +136,7 @@ export default function MountainsScreen() {
       },
       {
         title: intl.formatMessage({ defaultMessage: "Sort" }),
+        icon: ArrowDownUp,
         options: [
           {
             type: "closest-first",
@@ -109,6 +149,101 @@ export default function MountainsScreen() {
             name: intl.formatMessage({ defaultMessage: "Higher first" }),
             icon: ChevronUp,
             disabled: isMapView,
+          },
+          {
+            type: "easiest-first",
+            name: intl.formatMessage({ defaultMessage: "Easiest first" }),
+            icon: TrendingDown,
+            disabled: isMapView,
+          },
+          {
+            type: "hardest-first",
+            name: intl.formatMessage({ defaultMessage: "Hardest first" }),
+            icon: TriangleAlert,
+            disabled: isMapView,
+          },
+          {
+            type: "safest-kids",
+            name: intl.formatMessage({ defaultMessage: "Safest for kids" }),
+            icon: Baby,
+            disabled: isMapView,
+          },
+          {
+            type: "safest-dogs",
+            name: intl.formatMessage({ defaultMessage: "Safest for dogs" }),
+            icon: Dog,
+            disabled: isMapView,
+          },
+        ],
+      },
+      {
+        title: intl.formatMessage({ defaultMessage: "Difficulty" }),
+        icon: TriangleAlert,
+        multiSelect: true,
+        options: [
+          {
+            type: "diff-easy",
+            name: intl.formatMessage({ defaultMessage: "Easy" }),
+            dotColor: tierColor(0, 5, true),
+          },
+          {
+            type: "diff-moderate",
+            name: intl.formatMessage({ defaultMessage: "Moderate" }),
+            dotColor: tierColor(2, 5, true),
+          },
+          {
+            type: "diff-hard",
+            name: intl.formatMessage({ defaultMessage: "Hard" }),
+            dotColor: tierColor(3, 5, true),
+          },
+          {
+            type: "diff-very-hard",
+            name: intl.formatMessage({ defaultMessage: "Very Hard" }),
+            dotColor: tierColor(4, 5, true),
+          },
+        ],
+      },
+      {
+        title: intl.formatMessage({ defaultMessage: "Family" }),
+        icon: Baby,
+        multiSelect: true,
+        options: [
+          {
+            type: "family-unsafe",
+            name: intl.formatMessage({ defaultMessage: "Unsafe" }),
+            dotColor: tierColor(0, 3),
+          },
+          {
+            type: "family-mixed",
+            name: intl.formatMessage({ defaultMessage: "Mixed" }),
+            dotColor: tierColor(1, 3),
+          },
+          {
+            type: "family-safe",
+            name: intl.formatMessage({ defaultMessage: "Safe" }),
+            dotColor: tierColor(2, 3),
+          },
+        ],
+      },
+      {
+        title: intl.formatMessage({ defaultMessage: "Dog" }),
+        icon: Dog,
+        multiSelect: true,
+        options: [
+          {
+            type: "dog-unsafe",
+            name: intl.formatMessage({ defaultMessage: "Unsafe" }),
+            dotColor: tierColor(0, 3),
+          },
+          {
+            type: "dog-mixed",
+            name: intl.formatMessage({ defaultMessage: "Mixed" }),
+            dotColor: tierColor(1, 3),
+          },
+          {
+            type: "dog-safe",
+            name: intl.formatMessage({ defaultMessage: "Safe" }),
+            dotColor: tierColor(2, 3),
           },
         ],
       },
@@ -203,10 +338,40 @@ export default function MountainsScreen() {
       });
     }
 
-    if (settingsFilters.includes("higher-first")) {
-      filtered = filtered.sort(
-        (a, b) => parseInt(b.height) - parseInt(a.height),
-      );
+    const diffTiers = new Set<DifficultyTierKey>(
+      settingsFilters
+        .filter((f) => f.startsWith("diff-"))
+        .map((f) => f.slice("diff-".length) as DifficultyTierKey),
+    );
+    if (diffTiers.size > 0) {
+      filtered = filtered.filter((m) => {
+        if (!m.difficultyRatingCount || m.avgDifficulty == null) return false;
+        return diffTiers.has(difficultyTier(m.avgDifficulty, intl).key);
+      });
+    }
+
+    const familyTiers = new Set<SafetyTierKey>(
+      settingsFilters
+        .filter((f) => f.startsWith("family-"))
+        .map((f) => f.slice("family-".length) as SafetyTierKey),
+    );
+    if (familyTiers.size > 0) {
+      filtered = filtered.filter((m) => {
+        if (!m.familyRatingCount || m.avgFamilyFriendly == null) return false;
+        return familyTiers.has(safetyTier(m.avgFamilyFriendly, intl).key);
+      });
+    }
+
+    const dogTiers = new Set<SafetyTierKey>(
+      settingsFilters
+        .filter((f) => f.startsWith("dog-"))
+        .map((f) => f.slice("dog-".length) as SafetyTierKey),
+    );
+    if (dogTiers.size > 0) {
+      filtered = filtered.filter((m) => {
+        if (!m.dogRatingCount || m.avgDogFriendly == null) return false;
+        return dogTiers.has(safetyTier(m.avgDogFriendly, intl).key);
+      });
     }
 
     if (settingsFilters.includes("closest-first") && userLocation) {
@@ -221,10 +386,38 @@ export default function MountainsScreen() {
         });
         return distA - distB;
       });
+    } else if (settingsFilters.includes("higher-first")) {
+      filtered = filtered.sort(
+        (a, b) => parseInt(b.height) - parseInt(a.height),
+      );
+    } else if (settingsFilters.includes("easiest-first")) {
+      filtered = filtered.sort((a, b) => {
+        const av = a.avgDifficulty ?? Number.POSITIVE_INFINITY;
+        const bv = b.avgDifficulty ?? Number.POSITIVE_INFINITY;
+        return av - bv;
+      });
+    } else if (settingsFilters.includes("hardest-first")) {
+      filtered = filtered.sort((a, b) => {
+        const av = a.avgDifficulty ?? Number.NEGATIVE_INFINITY;
+        const bv = b.avgDifficulty ?? Number.NEGATIVE_INFINITY;
+        return bv - av;
+      });
+    } else if (settingsFilters.includes("safest-kids")) {
+      filtered = filtered.sort((a, b) => {
+        const av = a.avgFamilyFriendly ?? Number.NEGATIVE_INFINITY;
+        const bv = b.avgFamilyFriendly ?? Number.NEGATIVE_INFINITY;
+        return bv - av;
+      });
+    } else if (settingsFilters.includes("safest-dogs")) {
+      filtered = filtered.sort((a, b) => {
+        const av = a.avgDogFriendly ?? Number.NEGATIVE_INFINITY;
+        const bv = b.avgDogFriendly ?? Number.NEGATIVE_INFINITY;
+        return bv - av;
+      });
     }
 
     return filtered;
-  }, [queriedMountains, filtersSelected, userSummits?.summits, userLocation, settingsFilters]);
+  }, [queriedMountains, filtersSelected, userSummits?.summits, userLocation, settingsFilters, intl]);
 
   // Get summited mountain slugs for map
   const summitedSlugs = useMemo(() => {
@@ -259,6 +452,28 @@ export default function MountainsScreen() {
             index,
           })}
           ListFooterComponent={<View className="h-32" />}
+          ListEmptyComponent={
+            isPending || (data?.length ?? 0) === 0 ? null : (
+              <View className="items-center gap-3 px-6 pt-12">
+                <LucideIcon icon={SearchX} size={32} muted />
+                <ThemedText className="text-center text-muted-foreground">
+                  <FormattedMessage defaultMessage="No mountains match these filters." />
+                </ThemedText>
+                <Pressable
+                  onPress={() => {
+                    setSettingsFilters([]);
+                    setFiltersSelected((prev) =>
+                      prev.filter((f) => f === "map"),
+                    );
+                  }}
+                >
+                  <ThemedText className="font-semibold text-primary">
+                    <FormattedMessage defaultMessage="Clear filters" />
+                  </ThemedText>
+                </Pressable>
+              </View>
+            )
+          }
           keyExtractor={({ id }) => id}
           renderItem={({
             item: {

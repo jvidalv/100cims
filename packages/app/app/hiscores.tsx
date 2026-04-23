@@ -1,11 +1,6 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, useRouter } from "expo-router";
-import {
-  ArrowDown,
-  ArrowRight,
-  Info,
-  Mountain,
-} from "lucide-react-native";
+import { ArrowRight, Info, Mountain } from "lucide-react-native";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
@@ -360,7 +355,7 @@ export default function HiscoresScreen() {
                 {myHiscoreIndex + 1}
               </ThemedText>
             ) : (
-              <LucideIcon icon={ArrowDown} size={28} color="#ffffff" />
+              <ActivityIndicator size="small" color="#a3a3a3" />
             )}
           </View>
         </TouchableOpacity>

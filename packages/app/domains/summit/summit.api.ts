@@ -104,16 +104,30 @@ export const useUpdateSummitMutation = () => {
       summitedAt,
       image,
       usersId,
+      familyFriendly,
+      dogFriendly,
+      difficulty,
     }: {
       summitId: string;
       summitedAt?: string;
       image?: string;
       usersId?: string[];
+      familyFriendly?: number | null;
+      dogFriendly?: number | null;
+      difficulty?: number | null;
     }) => {
       const { data, error } = await apiClient.POST(
         "/api/protected/summit/update",
         {
-          body: { summitId, summitedAt, image, usersId },
+          body: {
+            summitId,
+            summitedAt,
+            image,
+            usersId,
+            familyFriendly,
+            dogFriendly,
+            difficulty,
+          },
         },
       );
       if (error) throw error;

@@ -49,7 +49,9 @@ export const MountainList = ({ selected, onChange }: Props) => {
         <ThemedText className="text-lg font-medium">
           {intl.formatMessage({ defaultMessage: "Edit mountains" })}
         </ThemedText>
-        <LucideIcon icon={ChevronRight} size={20} muted className="ml-auto" />
+        <View className="ml-auto">
+          <LucideIcon icon={ChevronRight} size={20} muted />
+        </View>
       </TouchableOpacity>
     </View>
   );

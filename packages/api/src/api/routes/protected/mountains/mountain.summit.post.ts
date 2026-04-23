@@ -3,9 +3,15 @@ import { Elysia, t } from "elysia";
 import { uuidv7 } from "uuidv7";
 
 import { db } from "@/db";
-import { mountainTable, summitHasUsersTable, summitTable } from "@/db/schema";
+import {
+  mountainRatingTable,
+  mountainTable,
+  summitHasUsersTable,
+  summitTable,
+} from "@/db/schema";
 import { formatDateForPostgresFromISOString } from "@/api/lib/dates";
 import { isBase64SizeValid, reportImageTooBig } from "@/api/lib/images";
+import { recalcMountainRatingAggregates } from "@/api/lib/mountain-ratings";
 import { sendPushLocalized } from "@/api/lib/push";
 import {
   pushSummitTaggedBody,
@@ -56,6 +62,12 @@ export const mountainSummitPostRoute = new Elysia().post(
       imageUrl = mountain.imageUrl;
     }
 
+    const familyFriendly = body.familyFriendly ?? null;
+    const dogFriendly = body.dogFriendly ?? null;
+    const difficulty = body.difficulty ?? null;
+    const hasRating =
+      familyFriendly !== null || dogFriendly !== null || difficulty !== null;
+
     await db.transaction(async (tx) => {
       const [summit] = await tx
         .insert(summitTable)
@@ -74,6 +86,31 @@ export const mountainSummitPostRoute = new Elysia().post(
           userId,
         })),
       );
+
+      if (hasRating) {
+        await tx
+          .insert(mountainRatingTable)
+          .values({
+            mountainId: body.mountainId,
+            userId: actor.id,
+            familyFriendly,
+            dogFriendly,
+            difficulty,
+          })
+          .onConflictDoUpdate({
+            target: [
+              mountainRatingTable.mountainId,
+              mountainRatingTable.userId,
+            ],
+            set: {
+              familyFriendly,
+              dogFriendly,
+              difficulty,
+              updatedAt: new Date(),
+            },
+          });
+        await recalcMountainRatingAggregates(body.mountainId, tx);
+      }
     });
 
     if (mountain?.slug) {
@@ -118,6 +155,13 @@ export const mountainSummitPostRoute = new Elysia().post(
       usersId: t.Array(t.String()),
       date: t.String(),
       image: t.Optional(t.String()),
+      familyFriendly: t.Optional(
+        t.Nullable(t.Integer({ minimum: 1, maximum: 5 })),
+      ),
+      dogFriendly: t.Optional(
+        t.Nullable(t.Integer({ minimum: 1, maximum: 5 })),
+      ),
+      difficulty: t.Optional(t.Nullable(t.Integer({ minimum: 1, maximum: 5 }))),
     }),
     response: {
       200: t.Object({
