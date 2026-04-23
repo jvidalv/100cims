@@ -436,6 +436,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/protected/user/saved": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiProtectedUserSaved"];
+        put?: never;
+        post: operations["postApiProtectedUserSaved"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/protected/user/saved/{mountainId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["deleteApiProtectedUserSavedByMountainId"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/protected/user/summits/all": {
         parameters: {
             query?: never;
@@ -1204,6 +1236,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/users/{id}/saved": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiAdminUsersByIdSaved"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/mountains": {
         parameters: {
             query?: never;
@@ -1247,6 +1295,38 @@ export interface paths {
         put?: never;
         post?: never;
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/mountains/{id}/ratings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiAdminMountainsByIdRatings"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/mountain-ratings/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["deleteApiAdminMountain-ratingsById"];
         options?: never;
         head?: never;
         patch?: never;
@@ -1713,6 +1793,12 @@ export interface operations {
                             latitude: string;
                             longitude: string;
                             imageUrl: (string | null) | null;
+                            avgFamilyFriendly: (number | null) | null;
+                            familyRatingCount: number;
+                            avgDogFriendly: (number | null) | null;
+                            dogRatingCount: number;
+                            avgDifficulty: (number | null) | null;
+                            difficultyRatingCount: number;
                         };
                     };
                     "multipart/form-data": {
@@ -1727,6 +1813,12 @@ export interface operations {
                             latitude: string;
                             longitude: string;
                             imageUrl: (string | null) | null;
+                            avgFamilyFriendly: (number | null) | null;
+                            familyRatingCount: number;
+                            avgDogFriendly: (number | null) | null;
+                            dogRatingCount: number;
+                            avgDifficulty: (number | null) | null;
+                            difficultyRatingCount: number;
                         };
                     };
                     "text/plain": {
@@ -1741,6 +1833,12 @@ export interface operations {
                             latitude: string;
                             longitude: string;
                             imageUrl: (string | null) | null;
+                            avgFamilyFriendly: (number | null) | null;
+                            familyRatingCount: number;
+                            avgDogFriendly: (number | null) | null;
+                            dogRatingCount: number;
+                            avgDifficulty: (number | null) | null;
+                            difficultyRatingCount: number;
                         };
                     };
                 };
@@ -3806,6 +3904,144 @@ export interface operations {
             };
         };
     };
+    getApiProtectedUserSaved: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            mountainId: string;
+                            slug: string;
+                            name: string;
+                            location: string;
+                            height: string;
+                            imageUrl: (string | null) | null;
+                            savedAt: Record<string, never> | string | number;
+                        }[];
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            mountainId: string;
+                            slug: string;
+                            name: string;
+                            location: string;
+                            height: string;
+                            imageUrl: (string | null) | null;
+                            savedAt: Record<string, never> | string | number;
+                        }[];
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            mountainId: string;
+                            slug: string;
+                            name: string;
+                            location: string;
+                            height: string;
+                            imageUrl: (string | null) | null;
+                            savedAt: Record<string, never> | string | number;
+                        }[];
+                    };
+                };
+            };
+        };
+    };
+    postApiProtectedUserSaved: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    mountainId: string;
+                };
+                "multipart/form-data": {
+                    mountainId: string;
+                };
+                "text/plain": {
+                    mountainId: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    deleteApiProtectedUserSavedByMountainId: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                mountainId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+        };
+    };
     getApiProtectedUserSummitsAll: {
         parameters: {
             query?: {
@@ -4515,18 +4751,27 @@ export interface operations {
                     usersId: string[];
                     date: string;
                     image?: string;
+                    familyFriendly?: ((string | number) | null) | null;
+                    dogFriendly?: ((string | number) | null) | null;
+                    difficulty?: ((string | number) | null) | null;
                 };
                 "multipart/form-data": {
                     mountainId: string;
                     usersId: string[];
                     date: string;
                     image?: string;
+                    familyFriendly?: ((string | number) | null) | null;
+                    dogFriendly?: ((string | number) | null) | null;
+                    difficulty?: ((string | number) | null) | null;
                 };
                 "text/plain": {
                     mountainId: string;
                     usersId: string[];
                     date: string;
                     image?: string;
+                    familyFriendly?: ((string | number) | null) | null;
+                    dogFriendly?: ((string | number) | null) | null;
+                    difficulty?: ((string | number) | null) | null;
                 };
             };
         };
@@ -4606,6 +4851,9 @@ export interface operations {
                                 lastName: (string | null) | null;
                                 imageUrl: (string | null) | null;
                             }[];
+                            viewerFamilyFriendly: (number | null) | null;
+                            viewerDogFriendly: (number | null) | null;
+                            viewerDifficulty: (number | null) | null;
                         };
                     };
                     "multipart/form-data": {
@@ -4630,6 +4878,9 @@ export interface operations {
                                 lastName: (string | null) | null;
                                 imageUrl: (string | null) | null;
                             }[];
+                            viewerFamilyFriendly: (number | null) | null;
+                            viewerDogFriendly: (number | null) | null;
+                            viewerDifficulty: (number | null) | null;
                         };
                     };
                     "text/plain": {
@@ -4654,6 +4905,9 @@ export interface operations {
                                 lastName: (string | null) | null;
                                 imageUrl: (string | null) | null;
                             }[];
+                            viewerFamilyFriendly: (number | null) | null;
+                            viewerDogFriendly: (number | null) | null;
+                            viewerDifficulty: (number | null) | null;
                         };
                     };
                 };
@@ -4716,18 +4970,27 @@ export interface operations {
                     summitedAt?: string;
                     image?: string;
                     usersId?: string[];
+                    familyFriendly?: ((string | number) | null) | null;
+                    dogFriendly?: ((string | number) | null) | null;
+                    difficulty?: ((string | number) | null) | null;
                 };
                 "multipart/form-data": {
                     summitId: string;
                     summitedAt?: string;
                     image?: string;
                     usersId?: string[];
+                    familyFriendly?: ((string | number) | null) | null;
+                    dogFriendly?: ((string | number) | null) | null;
+                    difficulty?: ((string | number) | null) | null;
                 };
                 "text/plain": {
                     summitId: string;
                     summitedAt?: string;
                     image?: string;
                     usersId?: string[];
+                    familyFriendly?: ((string | number) | null) | null;
+                    dogFriendly?: ((string | number) | null) | null;
+                    difficulty?: ((string | number) | null) | null;
                 };
             };
         };
@@ -7366,6 +7629,62 @@ export interface operations {
             };
         };
     };
+    getApiAdminUsersByIdSaved: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            mountainId: string;
+                            slug: string;
+                            name: string;
+                            location: string;
+                            height: string;
+                            imageUrl: (string | null) | null;
+                            savedAt: Record<string, never> | string | number;
+                        }[];
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            mountainId: string;
+                            slug: string;
+                            name: string;
+                            location: string;
+                            height: string;
+                            imageUrl: (string | null) | null;
+                            savedAt: Record<string, never> | string | number;
+                        }[];
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            mountainId: string;
+                            slug: string;
+                            name: string;
+                            location: string;
+                            height: string;
+                            imageUrl: (string | null) | null;
+                            savedAt: Record<string, never> | string | number;
+                        }[];
+                    };
+                };
+            };
+        };
+    };
     getApiAdminMountains: {
         parameters: {
             query?: {
@@ -7398,6 +7717,12 @@ export interface operations {
                                 isOfficial: boolean;
                                 creatorName: (string | null) | null;
                                 createdAt: Record<string, never> | string | number;
+                                avgFamilyFriendly: (number | null) | null;
+                                familyRatingCount: number;
+                                avgDogFriendly: (number | null) | null;
+                                dogRatingCount: number;
+                                avgDifficulty: (number | null) | null;
+                                difficultyRatingCount: number;
                             }[];
                             page: number;
                             pageSize: number;
@@ -7419,6 +7744,12 @@ export interface operations {
                                 isOfficial: boolean;
                                 creatorName: (string | null) | null;
                                 createdAt: Record<string, never> | string | number;
+                                avgFamilyFriendly: (number | null) | null;
+                                familyRatingCount: number;
+                                avgDogFriendly: (number | null) | null;
+                                dogRatingCount: number;
+                                avgDifficulty: (number | null) | null;
+                                difficultyRatingCount: number;
                             }[];
                             page: number;
                             pageSize: number;
@@ -7440,6 +7771,12 @@ export interface operations {
                                 isOfficial: boolean;
                                 creatorName: (string | null) | null;
                                 createdAt: Record<string, never> | string | number;
+                                avgFamilyFriendly: (number | null) | null;
+                                familyRatingCount: number;
+                                avgDogFriendly: (number | null) | null;
+                                dogRatingCount: number;
+                                avgDifficulty: (number | null) | null;
+                                difficultyRatingCount: number;
                             }[];
                             page: number;
                             pageSize: number;
@@ -7483,6 +7820,12 @@ export interface operations {
                             isOfficial: boolean;
                             creatorName: (string | null) | null;
                             createdAt: Record<string, never> | string | number;
+                            avgFamilyFriendly: (number | null) | null;
+                            familyRatingCount: number;
+                            avgDogFriendly: (number | null) | null;
+                            dogRatingCount: number;
+                            avgDifficulty: (number | null) | null;
+                            difficultyRatingCount: number;
                         };
                     };
                     "multipart/form-data": {
@@ -7501,6 +7844,12 @@ export interface operations {
                             isOfficial: boolean;
                             creatorName: (string | null) | null;
                             createdAt: Record<string, never> | string | number;
+                            avgFamilyFriendly: (number | null) | null;
+                            familyRatingCount: number;
+                            avgDogFriendly: (number | null) | null;
+                            dogRatingCount: number;
+                            avgDifficulty: (number | null) | null;
+                            difficultyRatingCount: number;
                         };
                     };
                     "text/plain": {
@@ -7519,6 +7868,12 @@ export interface operations {
                             isOfficial: boolean;
                             creatorName: (string | null) | null;
                             createdAt: Record<string, never> | string | number;
+                            avgFamilyFriendly: (number | null) | null;
+                            familyRatingCount: number;
+                            avgDogFriendly: (number | null) | null;
+                            dogRatingCount: number;
+                            avgDifficulty: (number | null) | null;
+                            difficultyRatingCount: number;
                         };
                     };
                 };
@@ -7734,6 +8089,125 @@ export interface operations {
                             isOfficial: boolean;
                             creatorName: (string | null) | null;
                         }[];
+                    };
+                };
+            };
+        };
+    };
+    getApiAdminMountainsByIdRatings: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            familyFriendly: (number | null) | null;
+                            dogFriendly: (number | null) | null;
+                            difficulty: (number | null) | null;
+                            createdAt: Record<string, never> | string | number;
+                            updatedAt: Record<string, never> | string | number;
+                            user: {
+                                id: string;
+                                username: (string | null) | null;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                            };
+                        }[];
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            familyFriendly: (number | null) | null;
+                            dogFriendly: (number | null) | null;
+                            difficulty: (number | null) | null;
+                            createdAt: Record<string, never> | string | number;
+                            updatedAt: Record<string, never> | string | number;
+                            user: {
+                                id: string;
+                                username: (string | null) | null;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                            };
+                        }[];
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            familyFriendly: (number | null) | null;
+                            dogFriendly: (number | null) | null;
+                            difficulty: (number | null) | null;
+                            createdAt: Record<string, never> | string | number;
+                            updatedAt: Record<string, never> | string | number;
+                            user: {
+                                id: string;
+                                username: (string | null) | null;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                            };
+                        }[];
+                    };
+                };
+            };
+        };
+    };
+    "deleteApiAdminMountain-ratingsById": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
                     };
                 };
             };

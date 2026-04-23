@@ -6,6 +6,7 @@ import {
   integer,
   numeric,
   pgTable,
+  real,
   text,
   timestamp,
   date,
@@ -52,6 +53,18 @@ export const mountainTable = pgTable("mountain", {
   // Community mountains fields
   creatorId: uuid().references(() => userTable.id, { onDelete: "set null" }),
   createdAt: timestamp().notNull().defaultNow(),
+  // Denormalized rating aggregates — kept in sync by the rating write paths
+  // (packages/api/src/api/lib/mountain-ratings.ts). Null average means
+  // "no ratings on this axis yet". Scale semantics match the per-user columns
+  // on mountainRatingTable below: avgFamilyFriendly/avgDogFriendly are
+  // "higher = safer" (1 = unsafe, 5 = very safe), avgDifficulty is
+  // "higher = harder" (1 = easy, 5 = hard).
+  avgFamilyFriendly: real(),
+  familyRatingCount: integer().notNull().default(0),
+  avgDogFriendly: real(),
+  dogRatingCount: integer().notNull().default(0),
+  avgDifficulty: real(),
+  difficultyRatingCount: integer().notNull().default(0),
 });
 
 export const userTable = pgTable("user", {
@@ -108,6 +121,54 @@ export const summitTable = pgTable(
   (table) => [
     index("summit_user_id_idx").on(table.userId),
     index("summit_mountain_id_idx").on(table.mountainId),
+  ],
+);
+
+export const mountainRatingTable = pgTable(
+  "mountain_rating",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    mountainId: uuid()
+      .notNull()
+      .references(() => mountainTable.id, { onDelete: "cascade" }),
+    userId: uuid()
+      .notNull()
+      .references(() => userTable.id, { onDelete: "cascade" }),
+    // All three columns are 1–5 integers (enforced by CHECK below) or null
+    // if the user didn't rate that axis. Scale direction is NOT uniform:
+    //   familyFriendly — 1 = dangerous for children, 5 = very safe
+    //   dogFriendly    — 1 = dangerous for dogs,     5 = very safe
+    //   difficulty     — 1 = easy (e.g. a 100m stroll),
+    //                    5 = hard (e.g. 4k+ peak, technical terrain)
+    // Higher is "more of the axis name" — safety for the first two, hardness
+    // for difficulty. Don't assume "5 = good" across axes.
+    familyFriendly: integer(),
+    dogFriendly: integer(),
+    difficulty: integer(),
+    createdAt: timestamp().notNull().defaultNow(),
+    updatedAt: timestamp().notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("mountain_rating_mountain_user_unique_idx").on(
+      table.mountainId,
+      table.userId,
+    ),
+    check(
+      "mountain_rating_family_range_check",
+      sql`${table.familyFriendly} IS NULL OR (${table.familyFriendly} BETWEEN 1 AND 5)`,
+    ),
+    check(
+      "mountain_rating_dog_range_check",
+      sql`${table.dogFriendly} IS NULL OR (${table.dogFriendly} BETWEEN 1 AND 5)`,
+    ),
+    check(
+      "mountain_rating_difficulty_range_check",
+      sql`${table.difficulty} IS NULL OR (${table.difficulty} BETWEEN 1 AND 5)`,
+    ),
+    check(
+      "mountain_rating_at_least_one_check",
+      sql`${table.familyFriendly} IS NOT NULL OR ${table.dogFriendly} IS NOT NULL OR ${table.difficulty} IS NOT NULL`,
+    ),
   ],
 );
 
@@ -639,3 +700,25 @@ export const userPeopleTable = pgTable(
 
 export const orderPeoplePair = (x: string, y: string): [string, string] =>
   x < y ? [x, y] : [y, x];
+
+export const userSavedMountainTable = pgTable(
+  "user_saved_mountain",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    userId: uuid()
+      .notNull()
+      .references(() => userTable.id, { onDelete: "cascade" }),
+    mountainId: uuid()
+      .notNull()
+      .references(() => mountainTable.id, { onDelete: "cascade" }),
+    createdAt: timestamp().notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("user_saved_user_mountain_unique").on(
+      table.userId,
+      table.mountainId,
+    ),
+    index("user_saved_user_id_idx").on(table.userId),
+    index("user_saved_mountain_id_idx").on(table.mountainId),
+  ],
+);
