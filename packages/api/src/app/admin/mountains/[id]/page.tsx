@@ -23,11 +23,16 @@ import { Label } from "@/components/ui/label";
 import {
   type AdminMountainUpdateBody,
   useAdminMountainChallenges,
+  useAdminMountainComments,
   useAdminMountainDetail,
   useAdminMountainRatings,
+  useCreateAdminMountainComment,
   useDeleteAdminMountain,
+  useDeleteAdminMountainComment,
   useDeleteAdminMountainRating,
   useUpdateAdminMountain,
+  useUpdateAdminMountainComment,
+  useUpvoteAdminMountainComment,
 } from "@/domains/admin/api";
 import { getAdminUserDisplayName } from "@/lib/admin-user-display-name";
 import { formatDate, formatDateTime } from "@/lib/format-date";
@@ -65,9 +70,14 @@ export default function AdminMountainDetailPage({
   const detail = useAdminMountainDetail(id);
   const challenges = useAdminMountainChallenges(id);
   const ratings = useAdminMountainRatings(id);
+  const comments = useAdminMountainComments(id);
   const update = useUpdateAdminMountain(id);
   const deleteMountain = useDeleteAdminMountain(id);
   const deleteRating = useDeleteAdminMountainRating(id);
+  const createComment = useCreateAdminMountainComment(id);
+  const updateComment = useUpdateAdminMountainComment(id);
+  const upvoteComment = useUpvoteAdminMountainComment(id);
+  const deleteComment = useDeleteAdminMountainComment(id);
 
   const onDelete = () =>
     deleteMountain.mutate(undefined, {
@@ -414,6 +424,58 @@ export default function AdminMountainDetailPage({
         )}
       </section>
 
+      <CommentsSection
+        mountainId={id}
+        comments={comments.data}
+        isLoading={comments.isLoading}
+        error={comments.error}
+        onCreate={(input) =>
+          new Promise<void>((resolve, reject) => {
+            createComment.mutate(input, {
+              onSuccess: () => {
+                toast.success(
+                  input.parentCommentId ? "Reply posted" : "Comment posted",
+                );
+                resolve();
+              },
+              onError: (e) => {
+                toast.error(e instanceof Error ? e.message : "Post failed");
+                reject(e);
+              },
+            });
+          })
+        }
+        onUpdate={(input) =>
+          new Promise<void>((resolve, reject) => {
+            updateComment.mutate(input, {
+              onSuccess: () => {
+                toast.success("Comment updated");
+                resolve();
+              },
+              onError: (e) => {
+                toast.error(e instanceof Error ? e.message : "Update failed");
+                reject(e);
+              },
+            });
+          })
+        }
+        onUpvote={(commentId) =>
+          upvoteComment.mutate(commentId, {
+            onError: (e) =>
+              toast.error(e instanceof Error ? e.message : "Upvote failed"),
+          })
+        }
+        onDelete={(commentId) =>
+          deleteComment.mutate(commentId, {
+            onSuccess: () => toast.success("Comment deleted"),
+            onError: (e) =>
+              toast.error(e instanceof Error ? e.message : "Delete failed"),
+          })
+        }
+        createPending={createComment.isPending}
+        updatePending={updateComment.isPending}
+      />
+
       <section className="space-y-3 max-w-2xl pt-4 border-t border-destructive/30">
         <h2 className="text-sm font-medium text-destructive uppercase tracking-wide">
           Danger zone
@@ -496,5 +558,364 @@ function Badge({
     >
       {label}
     </span>
+  );
+}
+
+type AdminComment = NonNullable<
+  ReturnType<typeof useAdminMountainComments>["data"]
+>[number];
+
+function CommentsSection({
+  mountainId,
+  comments,
+  isLoading,
+  error,
+  onCreate,
+  onUpdate,
+  onUpvote,
+  onDelete,
+  createPending,
+  updatePending,
+}: {
+  mountainId: string;
+  comments: AdminComment[] | undefined;
+  isLoading: boolean;
+  error: Error | null;
+  onCreate: (input: {
+    body: string;
+    parentCommentId?: string;
+  }) => Promise<void>;
+  onUpdate: (input: { id: string; body: string }) => Promise<void>;
+  onUpvote: (commentId: string) => void;
+  onDelete: (commentId: string) => void;
+  createPending: boolean;
+  updatePending: boolean;
+}) {
+  void mountainId;
+  const [newBody, setNewBody] = useState("");
+  // replyAnchorId = the comment the user clicked Reply on (where the composer
+  // shows visually). The server-side parent is always the top-level ancestor,
+  // resolved from the anchor's parentCommentId or its own id.
+  const [replyAnchorId, setReplyAnchorId] = useState<string | null>(null);
+  const [replyBody, setReplyBody] = useState("");
+  const [editTargetId, setEditTargetId] = useState<string | null>(null);
+  const [editBody, setEditBody] = useState("");
+
+  const topLevel = (comments ?? []).filter((c) => c.parentCommentId === null);
+  const repliesByParent = new Map<string, AdminComment[]>();
+  for (const c of comments ?? []) {
+    if (c.parentCommentId) {
+      const list = repliesByParent.get(c.parentCommentId) ?? [];
+      list.push(c);
+      repliesByParent.set(c.parentCommentId, list);
+    }
+  }
+
+  const submitTopLevel = async () => {
+    const trimmed = newBody.trim();
+    if (!trimmed) return;
+    await onCreate({ body: trimmed });
+    setNewBody("");
+  };
+
+  const submitReply = async (parentCommentId: string) => {
+    const trimmed = replyBody.trim();
+    if (!trimmed) return;
+    await onCreate({ body: trimmed, parentCommentId });
+    setReplyBody("");
+    setReplyAnchorId(null);
+  };
+
+  // Inline reply composer, reused under either a top-level or a sub-comment.
+  const ReplyComposer = ({ topLevelId }: { topLevelId: string }) => (
+    <div className="space-y-2 mt-2">
+      <textarea
+        value={replyBody}
+        onChange={(e) => setReplyBody(e.target.value)}
+        placeholder="Write a reply…"
+        className="w-full min-h-[60px] rounded border px-3 py-2 text-sm resize-y bg-background"
+        maxLength={2000}
+        autoFocus
+      />
+      <div className="flex items-center gap-2">
+        <Button
+          size="sm"
+          disabled={!replyBody.trim() || createPending}
+          onClick={() => {
+            void submitReply(topLevelId);
+          }}
+        >
+          {createPending ? "Posting…" : "Reply"}
+        </Button>
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={() => {
+            setReplyAnchorId(null);
+            setReplyBody("");
+          }}
+        >
+          Cancel
+        </Button>
+      </div>
+    </div>
+  );
+
+  const submitEdit = async (commentId: string) => {
+    const trimmed = editBody.trim();
+    if (!trimmed) return;
+    await onUpdate({ id: commentId, body: trimmed });
+    setEditBody("");
+    setEditTargetId(null);
+  };
+
+  return (
+    <section className="space-y-3">
+      <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+        Comments {comments ? `(${comments.length})` : ""}
+      </h2>
+
+      {/* New top-level composer */}
+      <div className="space-y-2 max-w-2xl">
+        <textarea
+          value={newBody}
+          onChange={(e) => setNewBody(e.target.value)}
+          placeholder="Write a comment…"
+          className="w-full min-h-[80px] rounded border px-3 py-2 text-sm resize-y bg-background"
+          maxLength={2000}
+        />
+        <div className="flex items-center justify-between">
+          <span className="text-xs text-muted-foreground">
+            {newBody.length} / 2000
+          </span>
+          <Button
+            size="sm"
+            disabled={!newBody.trim() || createPending}
+            onClick={() => {
+              void submitTopLevel();
+            }}
+          >
+            {createPending ? "Posting…" : "Post"}
+          </Button>
+        </div>
+      </div>
+
+      {error && <p className="text-red-600">{error.message}</p>}
+      {isLoading && !comments && (
+        <p className="text-muted-foreground">Loading…</p>
+      )}
+      {comments && comments.length === 0 && (
+        <p className="text-muted-foreground">No comments yet.</p>
+      )}
+
+      {topLevel.length > 0 && (
+        <ul className="space-y-3">
+          {topLevel.map((c) => (
+            <li key={c.id} className="space-y-2">
+              <CommentRow
+                comment={c}
+                onUpvote={onUpvote}
+                onDelete={onDelete}
+                onStartReply={() => {
+                  setReplyAnchorId(c.id);
+                  setReplyBody("");
+                }}
+                onStartEdit={() => {
+                  setEditTargetId(c.id);
+                  setEditBody(c.body);
+                }}
+                isEditing={editTargetId === c.id}
+                editBody={editBody}
+                setEditBody={setEditBody}
+                onSubmitEdit={() => {
+                  void submitEdit(c.id);
+                }}
+                onCancelEdit={() => {
+                  setEditTargetId(null);
+                  setEditBody("");
+                }}
+                updatePending={updatePending}
+              />
+              {replyAnchorId === c.id && <ReplyComposer topLevelId={c.id} />}
+              {(repliesByParent.get(c.id) ?? []).length > 0 && (
+                <ul className="ml-10 space-y-2 border-l pl-4">
+                  {(repliesByParent.get(c.id) ?? []).map((reply) => (
+                    <li key={reply.id} className="space-y-2">
+                      <CommentRow
+                        comment={reply}
+                        onUpvote={onUpvote}
+                        onDelete={onDelete}
+                        onStartReply={() => {
+                          setReplyAnchorId(reply.id);
+                          setReplyBody("");
+                        }}
+                        onStartEdit={() => {
+                          setEditTargetId(reply.id);
+                          setEditBody(reply.body);
+                        }}
+                        isEditing={editTargetId === reply.id}
+                        editBody={editBody}
+                        setEditBody={setEditBody}
+                        onSubmitEdit={() => {
+                          void submitEdit(reply.id);
+                        }}
+                        onCancelEdit={() => {
+                          setEditTargetId(null);
+                          setEditBody("");
+                        }}
+                        updatePending={updatePending}
+                      />
+                      {replyAnchorId === reply.id && (
+                        <ReplyComposer topLevelId={c.id} />
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
+function CommentRow({
+  comment,
+  onUpvote,
+  onDelete,
+  onStartReply,
+  onStartEdit,
+  isEditing,
+  editBody,
+  setEditBody,
+  onSubmitEdit,
+  onCancelEdit,
+  updatePending,
+}: {
+  comment: AdminComment;
+  onUpvote: (commentId: string) => void;
+  onDelete: (commentId: string) => void;
+  onStartReply?: () => void;
+  onStartEdit: () => void;
+  isEditing: boolean;
+  editBody: string;
+  setEditBody: (v: string) => void;
+  onSubmitEdit: () => void;
+  onCancelEdit: () => void;
+  updatePending: boolean;
+}) {
+  return (
+    <div className="flex gap-3">
+      <Avatar className="size-8 shrink-0">
+        {comment.user.imageUrl && (
+          <AvatarImage
+            src={comment.user.imageUrl}
+            alt={
+              [comment.user.firstName, comment.user.lastName]
+                .filter(Boolean)
+                .join(" ") || ""
+            }
+          />
+        )}
+        <AvatarFallback>
+          {(comment.user.firstName ?? comment.user.username ?? "?")
+            .slice(0, 2)
+            .toUpperCase()}
+        </AvatarFallback>
+      </Avatar>
+      <div className="flex-1 min-w-0 space-y-1">
+        <div className="flex items-center gap-2 text-sm">
+          <Link
+            href={`/admin/users/${comment.user.id}`}
+            className="font-medium hover:underline"
+          >
+            {[comment.user.firstName, comment.user.lastName]
+              .filter(Boolean)
+              .join(" ") ||
+              comment.user.username ||
+              comment.user.id.slice(0, 8)}
+          </Link>
+          <span className="text-xs text-muted-foreground">
+            {formatDateTime(comment.createdAt)}
+          </span>
+          {comment.updatedAt.getTime() !== comment.createdAt.getTime() && (
+            <span className="text-xs text-muted-foreground">(edited)</span>
+          )}
+        </div>
+
+        {isEditing ? (
+          <div className="space-y-2">
+            <textarea
+              value={editBody}
+              onChange={(e) => setEditBody(e.target.value)}
+              className="w-full min-h-[60px] rounded border px-3 py-2 text-sm resize-y bg-background"
+              maxLength={2000}
+              autoFocus
+            />
+            <div className="flex items-center gap-2">
+              <Button
+                size="sm"
+                disabled={!editBody.trim() || updatePending}
+                onClick={onSubmitEdit}
+              >
+                {updatePending ? "Saving…" : "Save"}
+              </Button>
+              <Button size="sm" variant="ghost" onClick={onCancelEdit}>
+                Cancel
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <p className="text-sm whitespace-pre-wrap break-words">
+            {comment.body}
+          </p>
+        )}
+
+        {!isEditing && (
+          <div className="flex items-center gap-3 text-xs">
+            <button
+              type="button"
+              onClick={() => onUpvote(comment.id)}
+              className={`inline-flex items-center gap-1 rounded px-2 py-1 hover:bg-muted ${
+                comment.viewerHasUpvoted
+                  ? "text-orange-600 dark:text-orange-400 font-medium"
+                  : "text-muted-foreground"
+              }`}
+            >
+              <span aria-hidden>▲</span>
+              <span>{comment.upvoteCount}</span>
+            </button>
+            {onStartReply && (
+              <button
+                type="button"
+                onClick={onStartReply}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                Reply
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={onStartEdit}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              Edit
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (confirm("Delete this comment?")) {
+                  onDelete(comment.id);
+                }
+              }}
+              className="text-destructive hover:underline"
+            >
+              Delete
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

@@ -88,6 +88,7 @@ export const ActionRow = forwardRef<View, Props>(
       trailing,
       children,
       className,
+      disabled,
       ...props
     },
     ref,
@@ -98,7 +99,13 @@ export const ActionRow = forwardRef<View, Props>(
     return (
       <TouchableOpacity
         ref={ref}
-        className={twMerge("flex-row items-center", sizing.row, className)}
+        disabled={disabled}
+        className={twMerge(
+          "flex-row items-center",
+          sizing.row,
+          disabled && "opacity-50",
+          className,
+        )}
         {...props}
       >
         <View

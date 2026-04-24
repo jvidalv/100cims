@@ -35,7 +35,8 @@ const isPlanPushType = (value: unknown) =>
   value === "plan-join" ||
   value === "plan-leave" ||
   value === "plan-chat" ||
-  value === "plan-reminder";
+  value === "plan-reminder" ||
+  value === "plan-saved-mountain";
 
 const getStringField = (data: unknown, key: string): string | null => {
   if (!data || typeof data !== "object" || !(key in data)) return null;

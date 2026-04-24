@@ -235,9 +235,9 @@ export default function JoinScreen() {
       <View className="items-center">
         <ThemedLogo style={{ width: 200, height: 120 }} />
         <View className="mt-10 items-center gap-1">
-          <ThemedText className="text-center text-4xl font-black">
+          <ThemedText className="text-center text-4xl font-bold">
             <FormattedMessage defaultMessage="Join" />{" "}
-            <ThemedText className="text-4xl font-black text-primary">
+            <ThemedText className="text-4xl font-bold text-primary">
               Cims{" "}
             </ThemedText>
             <FormattedMessage defaultMessage="today" />

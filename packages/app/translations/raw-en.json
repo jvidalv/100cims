@@ -1,4 +1,10 @@
 {
+  "+++bIs": {
+    "defaultMessage": "Add the first comment"
+  },
+  "+3x+Vt": {
+    "defaultMessage": "Show 1 more reply"
+  },
   "+QiHz4": {
     "defaultMessage": "One more thing"
   },
@@ -29,6 +35,9 @@
   "/awD4G": {
     "defaultMessage": "Used in {count} challenge"
   },
+  "/n7LBX": {
+    "defaultMessage": "Posting…"
+  },
   "/tXsJc": {
     "defaultMessage": "Create mountain"
   },
@@ -38,14 +47,26 @@
   "0/UXHx": {
     "defaultMessage": "Easiest first"
   },
+  "00LcfG": {
+    "defaultMessage": "Load more"
+  },
   "05nKhi": {
     "defaultMessage": "Location is required"
   },
   "0BUTMv": {
     "defaultMessage": "Search..."
   },
+  "0TZMjQ": {
+    "defaultMessage": "Oldest"
+  },
   "0UNObB": {
     "defaultMessage": "No summits yet."
+  },
+  "0cGwT0": {
+    "defaultMessage": "Show {count} more replies"
+  },
+  "0duFmF": {
+    "defaultMessage": "Be the first to share tips, warnings or recent conditions."
   },
   "1F6Xt8": {
     "defaultMessage": "Edit summit"
@@ -89,6 +110,12 @@
   "3IlAwo": {
     "defaultMessage": "Something went wrong, try again later!"
   },
+  "3PmenN": {
+    "defaultMessage": "Could not update comment"
+  },
+  "3Sssqr": {
+    "defaultMessage": "Most upvoted"
+  },
   "3Ykujz": {
     "defaultMessage": "Safest for kids"
   },
@@ -100,6 +127,9 @@
   },
   "3f6HhZ": {
     "defaultMessage": "When you summit with other cims users, they'll appear here."
+  },
+  "3fyB8h": {
+    "defaultMessage": "Replying to {name}"
   },
   "3wJHrF": {
     "defaultMessage": "Join plan"
@@ -200,6 +230,9 @@
   "9Dtoo5": {
     "defaultMessage": "Pick up some merch and support the app."
   },
+  "9HU8vw": {
+    "defaultMessage": "Reply"
+  },
   "9MidH4": {
     "defaultMessage": "Challenge"
   },
@@ -217,6 +250,9 @@
   },
   "9j3stl": {
     "defaultMessage": "No mountains match these filters."
+  },
+  "9nBDqM": {
+    "defaultMessage": "Comments on {name}"
   },
   "9yslhD": {
     "defaultMessage": "Yes, I'm sure"
@@ -245,6 +281,9 @@
   "AUwGVY": {
     "defaultMessage": "Extra info"
   },
+  "AX5HT2": {
+    "defaultMessage": "Search comments…"
+  },
   "AYGQCR": {
     "defaultMessage": "Delete as admin"
   },
@@ -271,6 +310,9 @@
   },
   "BWpuKl": {
     "defaultMessage": "Update"
+  },
+  "BcfQf8": {
+    "defaultMessage": "Could not post reply"
   },
   "BrWLlb": {
     "defaultMessage": "Plans can now be private — only the people you invite will see them."
@@ -307,6 +349,9 @@
   },
   "Dlpujw": {
     "defaultMessage": "You decide who comes, don't worry about removing users that joined if you feel like it."
+  },
+  "DpHmj+": {
+    "defaultMessage": "Show all {count} replies"
   },
   "DtYaOc": {
     "defaultMessage": "Recent first"
@@ -599,6 +644,12 @@
   "SWMHO+": {
     "defaultMessage": "Go home"
   },
+  "T4DiF1": {
+    "defaultMessage": "Share summit image!"
+  },
+  "T4VxQN": {
+    "defaultMessage": "Loading…"
+  },
   "T9bZ8o": {
     "defaultMessage": "Edit mountains"
   },
@@ -641,6 +692,9 @@
   "VPyacz": {
     "defaultMessage": "Send order"
   },
+  "VU8RQM": {
+    "defaultMessage": "Could not post comment"
+  },
   "VuzjdC": {
     "defaultMessage": "Ongoing"
   },
@@ -671,6 +725,9 @@
   "Xai36g": {
     "defaultMessage": "Cancel this plan?"
   },
+  "XqXMjU": {
+    "defaultMessage": "View full thread"
+  },
   "Y8lhVt": {
     "defaultMessage": "Add people"
   },
@@ -695,6 +752,9 @@
   "YzLFgz": {
     "defaultMessage": "Image too big."
   },
+  "Z14ALL": {
+    "defaultMessage": "Write a reply…"
+  },
   "ZPboiN": {
     "defaultMessage": "Chat with others"
   },
@@ -703,6 +763,9 @@
   },
   "ZYxiR7": {
     "defaultMessage": "Remove from your people?"
+  },
+  "ZyG8IL": {
+    "defaultMessage": "Top comments"
   },
   "a5msuh": {
     "defaultMessage": "Yes"
@@ -737,6 +800,9 @@
   "aqAp+n": {
     "defaultMessage": "Delete summit"
   },
+  "aqHNbT": {
+    "defaultMessage": "No comments match your search."
+  },
   "aqaOUn": {
     "defaultMessage": "{count} of {max} challenges"
   },
@@ -745,6 +811,9 @@
   },
   "bBdCTh": {
     "defaultMessage": "Add new mountain"
+  },
+  "bVfBOs": {
+    "defaultMessage": "No comments yet"
   },
   "bWST2F": {
     "defaultMessage": "Add to your people"
@@ -815,6 +884,12 @@
   "eDuQmI": {
     "defaultMessage": "Used in {count} challenges"
   },
+  "eGf9fb": {
+    "defaultMessage": "Reply to a comment"
+  },
+  "eKv7yX": {
+    "defaultMessage": "Post"
+  },
   "eUb6NB": {
     "defaultMessage": "Image is required"
   },
@@ -823,6 +898,9 @@
   },
   "edfPgP": {
     "defaultMessage": "Leave plan?"
+  },
+  "eiaPxp": {
+    "defaultMessage": "Add comment"
   },
   "f3iukN": {
     "defaultMessage": "{distance} km away from you"
@@ -841,6 +919,9 @@
   },
   "fsB/4p": {
     "defaultMessage": "Saved"
+  },
+  "fwIt1X": {
+    "defaultMessage": "Newest"
   },
   "g5pX+a": {
     "defaultMessage": "About"
@@ -920,6 +1001,9 @@
   "lnUmYp": {
     "defaultMessage": "I'll join later"
   },
+  "mKa7fP": {
+    "defaultMessage": "Dogs"
+  },
   "n0cU4E": {
     "defaultMessage": "Recommend"
   },
@@ -928,6 +1012,9 @@
   },
   "nEbAUi": {
     "defaultMessage": "This screen does not exist."
+  },
+  "nKGBQr": {
+    "defaultMessage": "Edit comment"
   },
   "nNIocP": {
     "defaultMessage": "{count} cims"
@@ -1076,6 +1163,9 @@
   "v0btUQ": {
     "defaultMessage": "No one has yet reached the hiscores."
   },
+  "vYGdjC": {
+    "defaultMessage": "Delete this comment?"
+  },
   "vg1jsx": {
     "defaultMessage": "Summit photo"
   },
@@ -1093,6 +1183,9 @@
   },
   "wBMkI1": {
     "defaultMessage": "Mountain"
+  },
+  "wCgTu5": {
+    "defaultMessage": "Comments"
   },
   "wEQDC6": {
     "defaultMessage": "Edit"
@@ -1135,6 +1228,9 @@
   },
   "xkgeNE": {
     "defaultMessage": "Activity title"
+  },
+  "xxK2sQ": {
+    "defaultMessage": "Write a comment…"
   },
   "xz+ZVN": {
     "defaultMessage": "Thanks — we got it"

@@ -68,6 +68,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/public/mountain-comments/list": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiPublicMountain-commentsList"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/public/mountain-comments/top": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiPublicMountain-commentsTop"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/public/mountain-comments/replies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiPublicMountain-commentsReplies"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/public/join": {
         parameters: {
             query?: never;
@@ -670,6 +718,70 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["postApiProtectedMountainsSummit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/protected/mountain-comments/create": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["postApiProtectedMountain-commentsCreate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/protected/mountain-comments/update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["postApiProtectedMountain-commentsUpdate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/protected/mountain-comments/upvote": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["postApiProtectedMountain-commentsUpvote"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/protected/mountain-comments/delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["postApiProtectedMountain-commentsDelete"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1348,6 +1460,86 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/mountains/{id}/comments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiAdminMountainsByIdComments"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/mountain-comments/create": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["postApiAdminMountain-commentsCreate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/mountain-comments/update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["postApiAdminMountain-commentsUpdate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/mountain-comments/upvote": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["postApiAdminMountain-commentsUpvote"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/mountain-comments/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["deleteApiAdminMountain-commentsById"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/challenges": {
         parameters: {
             query?: never;
@@ -2011,6 +2203,398 @@ export interface operations {
                                 lastName: (string | null) | null;
                                 imageUrl: (string | null) | null;
                             }[];
+                        }[];
+                    };
+                };
+            };
+        };
+    };
+    "getApiPublicMountain-commentsList": {
+        parameters: {
+            query: {
+                mountainId: string;
+                cursor?: string;
+                limit?: number;
+                q?: string;
+                sort?: "newest" | "oldest" | "top";
+                onlySummiters?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                mountainId: string;
+                                parentCommentId: (string | null) | null;
+                                body: string;
+                                upvoteCount: number;
+                                viewerHasUpvoted: boolean;
+                                createdAt: Record<string, never> | string | number;
+                                updatedAt: Record<string, never> | string | number;
+                                user: {
+                                    id: string;
+                                    username: (string | null) | null;
+                                    firstName: (string | null) | null;
+                                    lastName: (string | null) | null;
+                                    imageUrl: (string | null) | null;
+                                    hasSummitedThisMountain: boolean;
+                                };
+                                parent?: {
+                                    id: string;
+                                    body: string;
+                                    user: {
+                                        id: string;
+                                        username: (string | null) | null;
+                                        firstName: (string | null) | null;
+                                        lastName: (string | null) | null;
+                                        imageUrl: (string | null) | null;
+                                        hasSummitedThisMountain: boolean;
+                                    };
+                                };
+                                replyCount?: number;
+                            }[];
+                            nextCursor: (string | null) | null;
+                            total: number;
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                mountainId: string;
+                                parentCommentId: (string | null) | null;
+                                body: string;
+                                upvoteCount: number;
+                                viewerHasUpvoted: boolean;
+                                createdAt: Record<string, never> | string | number;
+                                updatedAt: Record<string, never> | string | number;
+                                user: {
+                                    id: string;
+                                    username: (string | null) | null;
+                                    firstName: (string | null) | null;
+                                    lastName: (string | null) | null;
+                                    imageUrl: (string | null) | null;
+                                    hasSummitedThisMountain: boolean;
+                                };
+                                parent?: {
+                                    id: string;
+                                    body: string;
+                                    user: {
+                                        id: string;
+                                        username: (string | null) | null;
+                                        firstName: (string | null) | null;
+                                        lastName: (string | null) | null;
+                                        imageUrl: (string | null) | null;
+                                        hasSummitedThisMountain: boolean;
+                                    };
+                                };
+                                replyCount?: number;
+                            }[];
+                            nextCursor: (string | null) | null;
+                            total: number;
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                mountainId: string;
+                                parentCommentId: (string | null) | null;
+                                body: string;
+                                upvoteCount: number;
+                                viewerHasUpvoted: boolean;
+                                createdAt: Record<string, never> | string | number;
+                                updatedAt: Record<string, never> | string | number;
+                                user: {
+                                    id: string;
+                                    username: (string | null) | null;
+                                    firstName: (string | null) | null;
+                                    lastName: (string | null) | null;
+                                    imageUrl: (string | null) | null;
+                                    hasSummitedThisMountain: boolean;
+                                };
+                                parent?: {
+                                    id: string;
+                                    body: string;
+                                    user: {
+                                        id: string;
+                                        username: (string | null) | null;
+                                        firstName: (string | null) | null;
+                                        lastName: (string | null) | null;
+                                        imageUrl: (string | null) | null;
+                                        hasSummitedThisMountain: boolean;
+                                    };
+                                };
+                                replyCount?: number;
+                            }[];
+                            nextCursor: (string | null) | null;
+                            total: number;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "getApiPublicMountain-commentsTop": {
+        parameters: {
+            query: {
+                mountainId: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                mountainId: string;
+                                parentCommentId: (string | null) | null;
+                                body: string;
+                                upvoteCount: number;
+                                viewerHasUpvoted: boolean;
+                                createdAt: Record<string, never> | string | number;
+                                updatedAt: Record<string, never> | string | number;
+                                user: {
+                                    id: string;
+                                    username: (string | null) | null;
+                                    firstName: (string | null) | null;
+                                    lastName: (string | null) | null;
+                                    imageUrl: (string | null) | null;
+                                    hasSummitedThisMountain: boolean;
+                                };
+                                parent?: {
+                                    id: string;
+                                    body: string;
+                                    user: {
+                                        id: string;
+                                        username: (string | null) | null;
+                                        firstName: (string | null) | null;
+                                        lastName: (string | null) | null;
+                                        imageUrl: (string | null) | null;
+                                        hasSummitedThisMountain: boolean;
+                                    };
+                                };
+                                replyCount?: number;
+                            }[];
+                            total: number;
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                mountainId: string;
+                                parentCommentId: (string | null) | null;
+                                body: string;
+                                upvoteCount: number;
+                                viewerHasUpvoted: boolean;
+                                createdAt: Record<string, never> | string | number;
+                                updatedAt: Record<string, never> | string | number;
+                                user: {
+                                    id: string;
+                                    username: (string | null) | null;
+                                    firstName: (string | null) | null;
+                                    lastName: (string | null) | null;
+                                    imageUrl: (string | null) | null;
+                                    hasSummitedThisMountain: boolean;
+                                };
+                                parent?: {
+                                    id: string;
+                                    body: string;
+                                    user: {
+                                        id: string;
+                                        username: (string | null) | null;
+                                        firstName: (string | null) | null;
+                                        lastName: (string | null) | null;
+                                        imageUrl: (string | null) | null;
+                                        hasSummitedThisMountain: boolean;
+                                    };
+                                };
+                                replyCount?: number;
+                            }[];
+                            total: number;
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                mountainId: string;
+                                parentCommentId: (string | null) | null;
+                                body: string;
+                                upvoteCount: number;
+                                viewerHasUpvoted: boolean;
+                                createdAt: Record<string, never> | string | number;
+                                updatedAt: Record<string, never> | string | number;
+                                user: {
+                                    id: string;
+                                    username: (string | null) | null;
+                                    firstName: (string | null) | null;
+                                    lastName: (string | null) | null;
+                                    imageUrl: (string | null) | null;
+                                    hasSummitedThisMountain: boolean;
+                                };
+                                parent?: {
+                                    id: string;
+                                    body: string;
+                                    user: {
+                                        id: string;
+                                        username: (string | null) | null;
+                                        firstName: (string | null) | null;
+                                        lastName: (string | null) | null;
+                                        imageUrl: (string | null) | null;
+                                        hasSummitedThisMountain: boolean;
+                                    };
+                                };
+                                replyCount?: number;
+                            }[];
+                            total: number;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "getApiPublicMountain-commentsReplies": {
+        parameters: {
+            query: {
+                parentCommentId: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            mountainId: string;
+                            parentCommentId: (string | null) | null;
+                            body: string;
+                            upvoteCount: number;
+                            viewerHasUpvoted: boolean;
+                            createdAt: Record<string, never> | string | number;
+                            updatedAt: Record<string, never> | string | number;
+                            user: {
+                                id: string;
+                                username: (string | null) | null;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                hasSummitedThisMountain: boolean;
+                            };
+                            parent?: {
+                                id: string;
+                                body: string;
+                                user: {
+                                    id: string;
+                                    username: (string | null) | null;
+                                    firstName: (string | null) | null;
+                                    lastName: (string | null) | null;
+                                    imageUrl: (string | null) | null;
+                                    hasSummitedThisMountain: boolean;
+                                };
+                            };
+                            replyCount?: number;
+                        }[];
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            mountainId: string;
+                            parentCommentId: (string | null) | null;
+                            body: string;
+                            upvoteCount: number;
+                            viewerHasUpvoted: boolean;
+                            createdAt: Record<string, never> | string | number;
+                            updatedAt: Record<string, never> | string | number;
+                            user: {
+                                id: string;
+                                username: (string | null) | null;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                hasSummitedThisMountain: boolean;
+                            };
+                            parent?: {
+                                id: string;
+                                body: string;
+                                user: {
+                                    id: string;
+                                    username: (string | null) | null;
+                                    firstName: (string | null) | null;
+                                    lastName: (string | null) | null;
+                                    imageUrl: (string | null) | null;
+                                    hasSummitedThisMountain: boolean;
+                                };
+                            };
+                            replyCount?: number;
+                        }[];
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            mountainId: string;
+                            parentCommentId: (string | null) | null;
+                            body: string;
+                            upvoteCount: number;
+                            viewerHasUpvoted: boolean;
+                            createdAt: Record<string, never> | string | number;
+                            updatedAt: Record<string, never> | string | number;
+                            user: {
+                                id: string;
+                                username: (string | null) | null;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                hasSummitedThisMountain: boolean;
+                            };
+                            parent?: {
+                                id: string;
+                                body: string;
+                                user: {
+                                    id: string;
+                                    username: (string | null) | null;
+                                    firstName: (string | null) | null;
+                                    lastName: (string | null) | null;
+                                    imageUrl: (string | null) | null;
+                                    hasSummitedThisMountain: boolean;
+                                };
+                            };
+                            replyCount?: number;
                         }[];
                     };
                 };
@@ -4927,6 +5511,359 @@ export interface operations {
                 };
             };
             500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    "postApiProtectedMountain-commentsCreate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    mountainId: string;
+                    parentCommentId?: string;
+                    body: string;
+                };
+                "multipart/form-data": {
+                    mountainId: string;
+                    parentCommentId?: string;
+                    body: string;
+                };
+                "text/plain": {
+                    mountainId: string;
+                    parentCommentId?: string;
+                    body: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            mountainId: string;
+                            parentCommentId: (string | null) | null;
+                            body: string;
+                            upvoteCount: number;
+                            viewerHasUpvoted: boolean;
+                            createdAt: Record<string, never> | string | number;
+                            updatedAt: Record<string, never> | string | number;
+                            user: {
+                                id: string;
+                                username: (string | null) | null;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                hasSummitedThisMountain: boolean;
+                            };
+                            parent?: {
+                                id: string;
+                                body: string;
+                                user: {
+                                    id: string;
+                                    username: (string | null) | null;
+                                    firstName: (string | null) | null;
+                                    lastName: (string | null) | null;
+                                    imageUrl: (string | null) | null;
+                                    hasSummitedThisMountain: boolean;
+                                };
+                            };
+                            replyCount?: number;
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            mountainId: string;
+                            parentCommentId: (string | null) | null;
+                            body: string;
+                            upvoteCount: number;
+                            viewerHasUpvoted: boolean;
+                            createdAt: Record<string, never> | string | number;
+                            updatedAt: Record<string, never> | string | number;
+                            user: {
+                                id: string;
+                                username: (string | null) | null;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                hasSummitedThisMountain: boolean;
+                            };
+                            parent?: {
+                                id: string;
+                                body: string;
+                                user: {
+                                    id: string;
+                                    username: (string | null) | null;
+                                    firstName: (string | null) | null;
+                                    lastName: (string | null) | null;
+                                    imageUrl: (string | null) | null;
+                                    hasSummitedThisMountain: boolean;
+                                };
+                            };
+                            replyCount?: number;
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            mountainId: string;
+                            parentCommentId: (string | null) | null;
+                            body: string;
+                            upvoteCount: number;
+                            viewerHasUpvoted: boolean;
+                            createdAt: Record<string, never> | string | number;
+                            updatedAt: Record<string, never> | string | number;
+                            user: {
+                                id: string;
+                                username: (string | null) | null;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                hasSummitedThisMountain: boolean;
+                            };
+                            parent?: {
+                                id: string;
+                                body: string;
+                                user: {
+                                    id: string;
+                                    username: (string | null) | null;
+                                    firstName: (string | null) | null;
+                                    lastName: (string | null) | null;
+                                    imageUrl: (string | null) | null;
+                                    hasSummitedThisMountain: boolean;
+                                };
+                            };
+                            replyCount?: number;
+                        };
+                    };
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    "postApiProtectedMountain-commentsUpdate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    id: string;
+                    body: string;
+                };
+                "multipart/form-data": {
+                    id: string;
+                    body: string;
+                };
+                "text/plain": {
+                    id: string;
+                    body: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    "postApiProtectedMountain-commentsUpvote": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    commentId: string;
+                };
+                "multipart/form-data": {
+                    commentId: string;
+                };
+                "text/plain": {
+                    commentId: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            commentId: string;
+                            upvoteCount: number;
+                            viewerHasUpvoted: boolean;
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            commentId: string;
+                            upvoteCount: number;
+                            viewerHasUpvoted: boolean;
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            commentId: string;
+                            upvoteCount: number;
+                            viewerHasUpvoted: boolean;
+                        };
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    "postApiProtectedMountain-commentsDelete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    id: string;
+                };
+                "multipart/form-data": {
+                    id: string;
+                };
+                "text/plain": {
+                    id: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -8312,6 +9249,471 @@ export interface operations {
         };
     };
     "deleteApiAdminMountain-ratingsById": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    getApiAdminMountainsByIdComments: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            mountainId: string;
+                            parentCommentId: (string | null) | null;
+                            body: string;
+                            upvoteCount: number;
+                            viewerHasUpvoted: boolean;
+                            createdAt: Record<string, never> | string | number;
+                            updatedAt: Record<string, never> | string | number;
+                            user: {
+                                id: string;
+                                username: (string | null) | null;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                hasSummitedThisMountain: boolean;
+                            };
+                            parent?: {
+                                id: string;
+                                body: string;
+                                user: {
+                                    id: string;
+                                    username: (string | null) | null;
+                                    firstName: (string | null) | null;
+                                    lastName: (string | null) | null;
+                                    imageUrl: (string | null) | null;
+                                    hasSummitedThisMountain: boolean;
+                                };
+                            };
+                            replyCount?: number;
+                        }[];
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            mountainId: string;
+                            parentCommentId: (string | null) | null;
+                            body: string;
+                            upvoteCount: number;
+                            viewerHasUpvoted: boolean;
+                            createdAt: Record<string, never> | string | number;
+                            updatedAt: Record<string, never> | string | number;
+                            user: {
+                                id: string;
+                                username: (string | null) | null;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                hasSummitedThisMountain: boolean;
+                            };
+                            parent?: {
+                                id: string;
+                                body: string;
+                                user: {
+                                    id: string;
+                                    username: (string | null) | null;
+                                    firstName: (string | null) | null;
+                                    lastName: (string | null) | null;
+                                    imageUrl: (string | null) | null;
+                                    hasSummitedThisMountain: boolean;
+                                };
+                            };
+                            replyCount?: number;
+                        }[];
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            mountainId: string;
+                            parentCommentId: (string | null) | null;
+                            body: string;
+                            upvoteCount: number;
+                            viewerHasUpvoted: boolean;
+                            createdAt: Record<string, never> | string | number;
+                            updatedAt: Record<string, never> | string | number;
+                            user: {
+                                id: string;
+                                username: (string | null) | null;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                hasSummitedThisMountain: boolean;
+                            };
+                            parent?: {
+                                id: string;
+                                body: string;
+                                user: {
+                                    id: string;
+                                    username: (string | null) | null;
+                                    firstName: (string | null) | null;
+                                    lastName: (string | null) | null;
+                                    imageUrl: (string | null) | null;
+                                    hasSummitedThisMountain: boolean;
+                                };
+                            };
+                            replyCount?: number;
+                        }[];
+                    };
+                };
+            };
+        };
+    };
+    "postApiAdminMountain-commentsCreate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    mountainId: string;
+                    parentCommentId?: string;
+                    body: string;
+                };
+                "multipart/form-data": {
+                    mountainId: string;
+                    parentCommentId?: string;
+                    body: string;
+                };
+                "text/plain": {
+                    mountainId: string;
+                    parentCommentId?: string;
+                    body: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            mountainId: string;
+                            parentCommentId: (string | null) | null;
+                            body: string;
+                            upvoteCount: number;
+                            viewerHasUpvoted: boolean;
+                            createdAt: Record<string, never> | string | number;
+                            updatedAt: Record<string, never> | string | number;
+                            user: {
+                                id: string;
+                                username: (string | null) | null;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                hasSummitedThisMountain: boolean;
+                            };
+                            parent?: {
+                                id: string;
+                                body: string;
+                                user: {
+                                    id: string;
+                                    username: (string | null) | null;
+                                    firstName: (string | null) | null;
+                                    lastName: (string | null) | null;
+                                    imageUrl: (string | null) | null;
+                                    hasSummitedThisMountain: boolean;
+                                };
+                            };
+                            replyCount?: number;
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            mountainId: string;
+                            parentCommentId: (string | null) | null;
+                            body: string;
+                            upvoteCount: number;
+                            viewerHasUpvoted: boolean;
+                            createdAt: Record<string, never> | string | number;
+                            updatedAt: Record<string, never> | string | number;
+                            user: {
+                                id: string;
+                                username: (string | null) | null;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                hasSummitedThisMountain: boolean;
+                            };
+                            parent?: {
+                                id: string;
+                                body: string;
+                                user: {
+                                    id: string;
+                                    username: (string | null) | null;
+                                    firstName: (string | null) | null;
+                                    lastName: (string | null) | null;
+                                    imageUrl: (string | null) | null;
+                                    hasSummitedThisMountain: boolean;
+                                };
+                            };
+                            replyCount?: number;
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            mountainId: string;
+                            parentCommentId: (string | null) | null;
+                            body: string;
+                            upvoteCount: number;
+                            viewerHasUpvoted: boolean;
+                            createdAt: Record<string, never> | string | number;
+                            updatedAt: Record<string, never> | string | number;
+                            user: {
+                                id: string;
+                                username: (string | null) | null;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                hasSummitedThisMountain: boolean;
+                            };
+                            parent?: {
+                                id: string;
+                                body: string;
+                                user: {
+                                    id: string;
+                                    username: (string | null) | null;
+                                    firstName: (string | null) | null;
+                                    lastName: (string | null) | null;
+                                    imageUrl: (string | null) | null;
+                                    hasSummitedThisMountain: boolean;
+                                };
+                            };
+                            replyCount?: number;
+                        };
+                    };
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    "postApiAdminMountain-commentsUpdate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    id: string;
+                    body: string;
+                };
+                "multipart/form-data": {
+                    id: string;
+                    body: string;
+                };
+                "text/plain": {
+                    id: string;
+                    body: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    "postApiAdminMountain-commentsUpvote": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    commentId: string;
+                };
+                "multipart/form-data": {
+                    commentId: string;
+                };
+                "text/plain": {
+                    commentId: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            commentId: string;
+                            upvoteCount: number;
+                            viewerHasUpvoted: boolean;
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            commentId: string;
+                            upvoteCount: number;
+                            viewerHasUpvoted: boolean;
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            commentId: string;
+                            upvoteCount: number;
+                            viewerHasUpvoted: boolean;
+                        };
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    "deleteApiAdminMountain-commentsById": {
         parameters: {
             query?: never;
             header?: never;

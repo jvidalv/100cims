@@ -421,6 +421,13 @@
       "when": 1776967996807,
       "tag": "0059_add-user-saved-mountain",
       "breakpoints": true
+    },
+    {
+      "idx": 60,
+      "version": "7",
+      "when": 1777013688305,
+      "tag": "0060_add-mountain-comments",
+      "breakpoints": true
     }
   ]
 }

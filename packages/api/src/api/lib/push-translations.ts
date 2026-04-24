@@ -111,3 +111,33 @@ export const pushShopRequestBody = (
   senderEmail: string,
   preview: string,
 ) => shopRequestBody[normalizeAppLocale(locale)](senderEmail, preview);
+
+const planForSavedMountainTitle = {
+  en: (mountainName: string) => `New plan for ${mountainName}`,
+  ca: (mountainName: string) => `Nou pla pel ${mountainName}`,
+  es: (mountainName: string) => `Nuevo plan para ${mountainName}`,
+} satisfies Record<AppLocale, (mountainName: string) => string>;
+
+const planForSavedMountainBody = {
+  en: (creatorName: string, planTitle: string) =>
+    `${creatorName} just created: ${planTitle}`,
+  ca: (creatorName: string, planTitle: string) =>
+    `${creatorName} acaba de crear: ${planTitle}`,
+  es: (creatorName: string, planTitle: string) =>
+    `${creatorName} acaba de crear: ${planTitle}`,
+} satisfies Record<
+  AppLocale,
+  (creatorName: string, planTitle: string) => string
+>;
+
+export const pushPlanForSavedMountainTitle = (
+  locale: string | null,
+  mountainName: string,
+) => planForSavedMountainTitle[normalizeAppLocale(locale)](mountainName);
+
+export const pushPlanForSavedMountainBody = (
+  locale: string | null,
+  creatorName: string,
+  planTitle: string,
+) =>
+  planForSavedMountainBody[normalizeAppLocale(locale)](creatorName, planTitle);

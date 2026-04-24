@@ -43,6 +43,10 @@ export const mountainKeys = {
   one: (slug: string) => ["mountain", slug] as const,
   search: (query: string, challengeId?: string) =>
     ["mountain", "search", query, challengeId] as const,
+  comments: (mountainId: string) =>
+    ["mountain", "comments", mountainId] as const,
+  topComments: (mountainId: string) =>
+    ["mountain", "comments", mountainId, "top"] as const,
 };
 
 // Summit keys

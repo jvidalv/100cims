@@ -4,7 +4,7 @@ import { useIntl } from "react-intl";
 export function useScoreFormatter() {
   const intl = useIntl();
   const scoreFormatter = useMemo(
-    () => Intl.NumberFormat(intl.locale, { maximumFractionDigits: 2 }),
+    () => Intl.NumberFormat(intl.locale, { maximumFractionDigits: 0 }),
     [intl.locale],
   );
   return useCallback(
