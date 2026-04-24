@@ -10,12 +10,15 @@ import { ThemedText } from "@/components/ui/atoms/themed-text";
 
 type ColorCodedMode = "red-green" | "green-red";
 
+type Size = "sm" | "md";
+
 type Props = {
   value: number | null;
   onChange: (value: number | null) => void;
   labels?: readonly string[];
   values?: readonly number[];
   count?: number;
+  size?: Size;
   /**
    * Render a small colored dot on the left of each pill, interpolated across
    * positions. `"red-green"`: first chip red → last chip green (e.g. safety,
@@ -74,9 +77,10 @@ type PillProps = {
   selected: boolean;
   onPress: () => void;
   dotColor?: string;
+  size: Size;
 };
 
-const Pill = ({ label, selected, onPress, dotColor }: PillProps) => {
+const Pill = ({ label, selected, onPress, dotColor, size }: PillProps) => {
   const { colorScheme } = useColorScheme();
   const selectedBorder =
     colorScheme === "dark" ? FOREGROUND_DARK : FOREGROUND_LIGHT;
@@ -90,15 +94,20 @@ const Pill = ({ label, selected, onPress, dotColor }: PillProps) => {
     }),
   }));
 
+  const shell =
+    size === "sm"
+      ? "h-10 flex-row items-center justify-center rounded-full border-2 px-3.5"
+      : "h-12 flex-row items-center justify-center rounded-full border-2 px-4";
+
   return (
     <Pressable onPress={onPress} hitSlop={4}>
-      <Animated.View
-        style={animatedStyle}
-        className="h-12 flex-row items-center justify-center rounded-full border-2 px-4"
-      >
+      <Animated.View style={animatedStyle} className={shell}>
         {dotColor && (
           <View
-            className="mr-2 size-3 rounded-full"
+            className={twMerge(
+              "rounded-full",
+              size === "sm" ? "mr-1.5 size-2.5" : "mr-2 size-3",
+            )}
             style={{ backgroundColor: dotColor }}
           />
         )}
@@ -122,6 +131,7 @@ export const ThemedTierPicker = ({
   values,
   count = values?.length ?? labels?.length ?? 5,
   colorCoded,
+  size = "md",
 }: Props) => {
   const reverse = colorCoded === "green-red";
   return (
@@ -139,6 +149,7 @@ export const ThemedTierPicker = ({
             dotColor={
               colorCoded ? tierColor(i, count, reverse) : undefined
             }
+            size={size}
           />
         );
       })}
