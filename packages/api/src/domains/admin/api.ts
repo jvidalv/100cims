@@ -232,6 +232,93 @@ export const useDeleteAdminMountainRating = (mountainId: string) => {
   });
 };
 
+export const useAdminMountainComments = (id: string) =>
+  useQuery({
+    queryKey: adminKeys.mountainComments(id),
+    queryFn: async () => {
+      const { data, error } = await api.api.admin
+        .mountains({ id })
+        .comments.get();
+      if (error) throw error;
+      return data.message;
+    },
+  });
+
+export const useCreateAdminMountainComment = (mountainId: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: { body: string; parentCommentId?: string }) => {
+      const { data, error } = await api.api.admin[
+        "mountain-comments"
+      ].create.post({
+        mountainId,
+        body: input.body,
+        parentCommentId: input.parentCommentId,
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({
+        queryKey: adminKeys.mountainComments(mountainId),
+      });
+    },
+  });
+};
+
+export const useUpdateAdminMountainComment = (mountainId: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: { id: string; body: string }) => {
+      const { data, error } =
+        await api.api.admin["mountain-comments"].update.post(input);
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({
+        queryKey: adminKeys.mountainComments(mountainId),
+      });
+    },
+  });
+};
+
+export const useUpvoteAdminMountainComment = (mountainId: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (commentId: string) => {
+      const { data, error } = await api.api.admin[
+        "mountain-comments"
+      ].upvote.post({ commentId });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({
+        queryKey: adminKeys.mountainComments(mountainId),
+      });
+    },
+  });
+};
+
+export const useDeleteAdminMountainComment = (mountainId: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (commentId: string) => {
+      const { data, error } = await api.api.admin["mountain-comments"]({
+        id: commentId,
+      }).delete();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({
+        queryKey: adminKeys.mountainComments(mountainId),
+      });
+    },
+  });
+};
+
 export type AdminMountainUpdateBody = {
   name?: string;
   location?: string;

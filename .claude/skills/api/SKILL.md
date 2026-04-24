@@ -363,6 +363,7 @@ void sendPushLocalized(
 - Add new copy in `api/lib/push-translations.ts` (en/ca/es). New event types go in `PUSH_TYPE` at `api/lib/push-types.ts`; the app's tap-routing whitelist (`isPlanPushType` / the other type checks in `packages/app/domains/user/push.api.ts`) must be kept in sync.
 - Users with `pushNotificationsEnabled = false` or null `expoPushToken` are filtered automatically.
 - Set `EXPO_ACCESS_TOKEN` env var to enable Expo's Enhanced Push Security.
+- **Fan-out (many-recipient) sends**: extract the logic into `api/lib/<feature>-notify.ts` (see `plan-saved-mountain-notify.ts` for the canonical shape) and wrap the body in `try/catch` with `console.error("[<feature>] failed:", err)`. `sendPushLocalized`'s internal try/catch only protects its own body — the DB query and dedupe/group logic that runs *before* the send are not covered, so a `void`'d helper that throws pre-send becomes an unhandled rejection.
 
 ### Add New Cron
 

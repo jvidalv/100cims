@@ -58,6 +58,7 @@ import { useIsAdmin, useUserMe } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
 import { useAskPushPermission } from "@/hooks/use-ask-push-permission";
 import {
+  CONFETTI_COLORS,
   CONFETTI_EXPLOSION_SPEED,
   CONFETTI_FALL_SPEED,
   getConfettiOrigin,
@@ -635,6 +636,7 @@ export default function PlanIdPage() {
           origin={getConfettiOrigin(screenW, screenH)}
           fadeOut
           autoStart
+          colors={CONFETTI_COLORS}
           explosionSpeed={CONFETTI_EXPLOSION_SPEED}
           fallSpeed={CONFETTI_FALL_SPEED}
         />

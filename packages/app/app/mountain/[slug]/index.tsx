@@ -1,4 +1,3 @@
-import { LinearGradient } from "expo-linear-gradient";
 import * as Linking from "expo-linking";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { setStatusBarStyle } from "expo-status-bar";
@@ -8,11 +7,13 @@ import {
   BadgeCheck,
   Bookmark,
   BookmarkCheck,
+  ChevronRight,
   CircleDot,
   Dog,
   Footprints,
   Map,
   MapPin,
+  MessageCircle,
   Share as ShareIcon,
   TriangleAlert,
   type LucideIcon as LucideIconType,
@@ -20,14 +21,7 @@ import {
 import { useColorScheme } from "nativewind";
 import { useEffect, useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import {
-  Alert,
-  Image,
-  Pressable,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Alert, Image, TouchableOpacity, View } from "react-native";
 
 
 import { useAuth } from "@/components/providers/auth-provider";
@@ -40,12 +34,14 @@ import {
 } from "@/components/ui/atoms";
 import {
   ActionRow,
-  MountainItemList,
+  MountainRowMinimal,
+  TopMountainComments,
   UpdatesDialog,
 } from "@/components/ui/molecules";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
 import { useMountainOne, useMountains } from "@/domains/mountain/mountain.api";
 import { difficultyTier, safetyTier } from "@/domains/mountain/rating-tiers";
+import { useTopMountainComments } from "@/domains/mountain-comments/mountain-comments.api";
 import {
   useIsMountainSaved,
   useSavedAddMutation,
@@ -67,6 +63,7 @@ export default function MountainScreen() {
   const { isAuthenticated } = useAuth();
   const { data: mountains } = useMountains();
   const { data: fetchedMountain } = useMountainOne({ mountainSlug: slug });
+  const { data: topComments } = useTopMountainComments(fetchedMountain?.id);
   const [activeRating, setActiveRating] = useState<
     null | "difficulty" | "family" | "dog"
   >(null);
@@ -256,76 +253,6 @@ export default function MountainScreen() {
             )}
           </ThemedText>
         </View>
-        {fetchedMountain &&
-          (fetchedMountain.difficultyRatingCount > 0 ||
-            fetchedMountain.familyRatingCount > 0 ||
-            fetchedMountain.dogRatingCount > 0) && (
-            <View className="flex-row flex-wrap items-center gap-x-4 gap-y-2">
-              {fetchedMountain.difficultyRatingCount > 0 &&
-                fetchedMountain.avgDifficulty != null && (
-                  <Pressable
-                    onPress={() => setActiveRating("difficulty")}
-                    hitSlop={8}
-                  >
-                    {(() => {
-                      const tier = difficultyTier(
-                        fetchedMountain.avgDifficulty,
-                        intl,
-                      );
-                      return (
-                        <RatingTag
-                          icon={TriangleAlert}
-                          label={tier.label}
-                          color={tierColor(tier.position, 5, true)}
-                        />
-                      );
-                    })()}
-                  </Pressable>
-                )}
-              {fetchedMountain.familyRatingCount > 0 &&
-                fetchedMountain.avgFamilyFriendly != null && (
-                  <Pressable
-                    onPress={() => setActiveRating("family")}
-                    hitSlop={8}
-                  >
-                    {(() => {
-                      const tier = safetyTier(
-                        fetchedMountain.avgFamilyFriendly,
-                        intl,
-                      );
-                      return (
-                        <RatingTag
-                          icon={Baby}
-                          label={tier.label}
-                          color={tierColor(tier.position, 3)}
-                        />
-                      );
-                    })()}
-                  </Pressable>
-                )}
-              {fetchedMountain.dogRatingCount > 0 &&
-                fetchedMountain.avgDogFriendly != null && (
-                  <Pressable
-                    onPress={() => setActiveRating("dog")}
-                    hitSlop={8}
-                  >
-                    {(() => {
-                      const tier = safetyTier(
-                        fetchedMountain.avgDogFriendly,
-                        intl,
-                      );
-                      return (
-                        <RatingTag
-                          icon={Dog}
-                          label={tier.label}
-                          color={tierColor(tier.position, 3)}
-                        />
-                      );
-                    })()}
-                  </Pressable>
-                )}
-            </View>
-          )}
       </View>
       <View className="gap-2">
         <ThemedText className="text-2xl font-semibold">
@@ -365,18 +292,32 @@ export default function MountainScreen() {
         >
           <FormattedMessage defaultMessage="Share with your friends" />
         </ActionRow>
+        <Link
+          href={{
+            pathname: "/mountain/[slug]/comments",
+            params: { slug },
+          }}
+          asChild
+        >
+          <ActionRow icon={MessageCircle} intent="muted" size="sm">
+            <FormattedMessage defaultMessage="Comments" />
+            {typeof topComments?.total === "number" && topComments.total > 0
+              ? ` (${topComments.total})`
+              : ""}
+          </ActionRow>
+        </Link>
         <ActionRow
           onPress={() => {
             void Linking.openURL(
               `https://www.google.es/maps?q=${mountain.latitude},${mountain.longitude}`,
             );
           }}
-          icon={Map}
-          intent="blue"
+          icon={MapPin}
+          intent="muted"
         >
           <FormattedMessage defaultMessage="View on maps" />
         </ActionRow>
-        <TouchableOpacity
+        <ActionRow
           onPress={() => {
             const locale = intl.locale as "en" | "es" | "ca";
             const wikilocSubdomain =
@@ -385,73 +326,100 @@ export default function MountainScreen() {
               `https://${wikilocSubdomain}.wikiloc.com/wikiloc/map.do?q=${mountain.name}, ${mountain.location}&fitMapToTrails=1&page=1`,
             );
           }}
-          className="flex-row items-center gap-2"
+          icon={Map}
+          intent="muted"
         >
-          <View className="size-8 items-center justify-center rounded-full bg-green-100 dark:bg-green-900">
-            <LucideIcon icon={Map} size={16} color="#4b8c2a" />
-          </View>
-          <ThemedText style={{ color: "#4b8c2a" }}>
-            <FormattedMessage defaultMessage="View on wikiloc" />
-          </ThemedText>
-        </TouchableOpacity>
+          <FormattedMessage defaultMessage="View on wikiloc" />
+        </ActionRow>
       </View>
+      {fetchedMountain &&
+        (fetchedMountain.difficultyRatingCount > 0 ||
+          fetchedMountain.familyRatingCount > 0 ||
+          fetchedMountain.dogRatingCount > 0) && (
+          <View className="gap-2">
+            <ThemedText className="text-2xl font-semibold">
+              <FormattedMessage defaultMessage="Ratings" />
+            </ThemedText>
+            {fetchedMountain.difficultyRatingCount > 0 &&
+              fetchedMountain.avgDifficulty != null &&
+              (() => {
+                const tier = difficultyTier(
+                  fetchedMountain.avgDifficulty,
+                  intl,
+                );
+                return (
+                  <RatingActionRow
+                    icon={TriangleAlert}
+                    prefix={<FormattedMessage defaultMessage="Difficulty" />}
+                    label={tier.label}
+                    color={tierColor(tier.position, 5, true)}
+                    count={fetchedMountain.difficultyRatingCount}
+                    onPress={() => setActiveRating("difficulty")}
+                  />
+                );
+              })()}
+            {fetchedMountain.familyRatingCount > 0 &&
+              fetchedMountain.avgFamilyFriendly != null &&
+              (() => {
+                const tier = safetyTier(
+                  fetchedMountain.avgFamilyFriendly,
+                  intl,
+                );
+                return (
+                  <RatingActionRow
+                    icon={Baby}
+                    prefix={<FormattedMessage defaultMessage="Family" />}
+                    label={tier.label}
+                    color={tierColor(tier.position, 3)}
+                    count={fetchedMountain.familyRatingCount}
+                    onPress={() => setActiveRating("family")}
+                  />
+                );
+              })()}
+            {fetchedMountain.dogRatingCount > 0 &&
+              fetchedMountain.avgDogFriendly != null &&
+              (() => {
+                const tier = safetyTier(fetchedMountain.avgDogFriendly, intl);
+                return (
+                  <RatingActionRow
+                    icon={Dog}
+                    prefix={<FormattedMessage defaultMessage="Dogs" />}
+                    label={tier.label}
+                    color={tierColor(tier.position, 3)}
+                    count={fetchedMountain.dogRatingCount}
+                    onPress={() => setActiveRating("dog")}
+                  />
+                );
+              })()}
+          </View>
+        )}
       <View className="gap-4">
         <ThemedText className="text-2xl font-semibold">
           <FormattedMessage defaultMessage="Nearby summits" />
         </ThemedText>
         <View className="gap-3">
           {closestMountains.map(
-            ({
-              id,
-              name,
-              height,
-              slug,
-              imageUrl,
-              essential,
-              location,
-              latitude,
-              longitude,
-              distance,
-            }) => (
-              <View className="relative" key={id}>
-                <MountainItemList
-                  name={name}
-                  height={height}
-                  slug={slug}
-                  imageUrl={imageUrl}
-                  essential={essential}
-                  location={location}
-                  latitude={latitude}
-                  longitude={longitude}
-                />
-                <View
-                  pointerEvents="none"
-                  className="absolute overflow-hidden"
-                  style={{ width: 100, height: 100, borderRadius: 6 }}
-                >
-                  <LinearGradient
-                    colors={[
-                      "transparent",
-                      "transparent",
-                      "transparent",
-                      "rgba(0,0,0,0.6)",
-                    ]}
-                    style={StyleSheet.absoluteFill}
-                  />
-                </View>
-                <View
-                  pointerEvents="none"
-                  className="absolute bottom-1 left-2"
-                >
-                  <ThemedText className="text-white font-medium">
-                    {distance} km
-                  </ThemedText>
-                </View>
-              </View>
+            ({ id, name, height, slug, imageUrl, essential, distance }) => (
+              <MountainRowMinimal
+                key={id}
+                name={name}
+                height={height}
+                slug={slug}
+                imageUrl={imageUrl}
+                essential={essential}
+                distance={distance}
+                isSummited={userSummits?.summits.some(
+                  (s) => s.mountainSlug === slug,
+                )}
+              />
             ),
           )}
         </View>
       </View>
+      <TopMountainComments
+        mountainId={mountain.id}
+        isAuthenticated={isAuthenticated}
+      />
       <View className="mb-32 gap-4">
         <ThemedText className="text-2xl font-semibold">
           <FormattedMessage
@@ -611,20 +579,43 @@ const buildRatingUpdate = (
   };
 };
 
-function RatingTag({
+function RatingActionRow({
   icon,
+  prefix,
   label,
   color,
+  count,
+  onPress,
 }: {
   icon: LucideIconType;
+  prefix: React.ReactNode;
   label: string;
   color: string;
+  count: number;
+  onPress: () => void;
 }) {
   return (
-    <View className="flex-row items-center gap-2">
-      <LucideIcon icon={icon} color={color} />
-      <ThemedText className="text-xl font-medium">{label}</ThemedText>
-    </View>
+    <TouchableOpacity
+      onPress={onPress}
+      className="flex-row items-center gap-2"
+    >
+      <View
+        className="size-8 items-center justify-center rounded-full"
+        style={{ backgroundColor: color.replace("rgb(", "rgba(").replace(")", ", 0.15)") }}
+      >
+        <LucideIcon icon={icon} size={16} color={color} />
+      </View>
+      <ThemedText className="flex-1 font-medium">
+        {prefix} <ThemedText className="font-medium" style={{ color }}>{label}</ThemedText>
+      </ThemedText>
+      <ThemedText
+        className="text-muted-foreground"
+        style={{ opacity: 0.6 }}
+      >
+        {count}
+      </ThemedText>
+      <LucideIcon icon={ChevronRight} size={18} muted />
+    </TouchableOpacity>
   );
 }
 

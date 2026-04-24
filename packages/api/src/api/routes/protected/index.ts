@@ -9,6 +9,7 @@ import { protectedAdminRoutes } from "@/api/routes/protected/admin";
 import { communityChallengeRoute } from "@/api/routes/protected/community-challenge";
 import { donorsRoute } from "@/api/routes/protected/donors";
 import { mountainLegacyPostRoute } from "@/api/routes/protected/mountain-legacy.post";
+import { mountainCommentsRoute } from "@/api/routes/protected/mountain-comments";
 import { mountainsRoute } from "@/api/routes/protected/mountains";
 import { planChatRoute } from "@/api/routes/protected/plan-chat";
 import { plansRoute } from "@/api/routes/protected/plans";
@@ -77,6 +78,7 @@ export const protectedRoutes = new Elysia({ prefix: "/protected" })
   .use(userRoute)
   .use(mountainLegacyPostRoute) // LEGACY: /mountain/summit for old app versions
   .use(mountainsRoute)
+  .use(mountainCommentsRoute)
   .use(summitRoute)
   .use(donorsRoute)
   .use(plansRoute)

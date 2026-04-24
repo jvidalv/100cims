@@ -64,6 +64,9 @@ interface FilterableListHeaderProps<
   settingsGroups?: SettingsGroup<S>[];
   settingsSelected?: S[];
   onSettingsChange?: (selected: S[]) => void;
+  // Optional element rendered inside the horizontal chip row, before the chips.
+  // Good spot for an action button that should sit next to the filter chips.
+  leadingElement?: ReactNode;
   className?: string;
 }
 
@@ -83,6 +86,7 @@ export function FilterableListHeader<
   settingsGroups = [],
   settingsSelected = [],
   onSettingsChange,
+  leadingElement,
   className,
 }: FilterableListHeaderProps<T, S>) {
   const intl = useIntl();
@@ -273,13 +277,16 @@ export function FilterableListHeader<
       </Modal>
 
       {/* Filter Chips */}
-      {(filters.length > 0 || settingsGroups.length > 0) && (
+      {(filters.length > 0 ||
+        settingsGroups.length > 0 ||
+        leadingElement) && (
         <ScrollView
           keyboardShouldPersistTaps="handled"
           showsHorizontalScrollIndicator={false}
-          contentContainerClassName="pl-6 pr-4"
+          contentContainerClassName="pl-6 pr-4 items-center gap-2"
           horizontal
         >
+          {leadingElement}
           {filters.map(({ type, name, onSelectDeselect, showDot, icon }) => {
             const isSelected = filtersSelected.includes(type);
             return (

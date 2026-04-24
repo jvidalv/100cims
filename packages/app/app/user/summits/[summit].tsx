@@ -44,7 +44,6 @@ import {
   PushPermissionDialog,
   ScreenHeader,
   SharePreviewModal,
-  SharePulseBadge,
   useImagePreview,
 } from "@/components/ui/molecules";
 import {
@@ -64,6 +63,7 @@ import { useAskPushPermission } from "@/hooks/use-ask-push-permission";
 import {
   CONFETTI_EXPLOSION_SPEED,
   CONFETTI_FALL_SPEED,
+  CONFETTI_COLORS,
   getConfettiOrigin,
 } from "@/lib/confetti";
 import { captureShareCard, shareDeeplink } from "@/lib/share";
@@ -330,11 +330,14 @@ const Content = () => {
           <ActionRow
             onPress={handleShare}
             icon={ShareIcon}
-            intent="muted"
+            intent={justCreated ? "primary" : "muted"}
             iconOverride={isSharing ? <ActivityIndicator size="sm" /> : undefined}
-            trailing={justCreated ? <SharePulseBadge /> : undefined}
           >
-            <FormattedMessage defaultMessage="Share" />
+            {justCreated ? (
+              <FormattedMessage defaultMessage="Share summit image!" />
+            ) : (
+              <FormattedMessage defaultMessage="Share" />
+            )}
           </ActionRow>
           {isUserParticipant && (
             <Link
@@ -500,6 +503,7 @@ const Content = () => {
           origin={getConfettiOrigin(screenW, screenH)}
           fadeOut
           autoStart
+          colors={CONFETTI_COLORS}
           explosionSpeed={CONFETTI_EXPLOSION_SPEED}
           fallSpeed={CONFETTI_FALL_SPEED}
         />

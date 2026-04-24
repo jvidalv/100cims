@@ -722,3 +722,54 @@ export const userSavedMountainTable = pgTable(
     index("user_saved_mountain_id_idx").on(table.mountainId),
   ],
 );
+
+// Reddit-style threaded comments on mountains. Depth capped at 2 by the API
+// (reply to a reply gets re-parented to the top-level ancestor). Upvote
+// counts are denormalized here and kept in sync by recalcMountainCommentUpvoteCount
+// inside every write path. Same pattern as mountainRatingTable's aggregates.
+export const mountainCommentTable = pgTable(
+  "mountain_comment",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    mountainId: uuid()
+      .notNull()
+      .references(() => mountainTable.id, { onDelete: "cascade" }),
+    userId: uuid()
+      .notNull()
+      .references(() => userTable.id, { onDelete: "cascade" }),
+    // Self-ref: null for top-level, or the id of the top-level ancestor.
+    // No hard FK to avoid drizzle's forward-ref friction; application
+    // enforces existence + same-mountain on insert.
+    parentCommentId: uuid(),
+    body: text().notNull(),
+    upvoteCount: integer().notNull().default(0),
+    createdAt: timestamp().notNull().defaultNow(),
+    updatedAt: timestamp().notNull().defaultNow(),
+  },
+  (table) => [
+    index("mountain_comment_mountain_id_idx").on(table.mountainId),
+    index("mountain_comment_parent_id_idx").on(table.parentCommentId),
+    index("mountain_comment_user_id_idx").on(table.userId),
+  ],
+);
+
+export const mountainCommentUpvoteTable = pgTable(
+  "mountain_comment_upvote",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    commentId: uuid()
+      .notNull()
+      .references(() => mountainCommentTable.id, { onDelete: "cascade" }),
+    userId: uuid()
+      .notNull()
+      .references(() => userTable.id, { onDelete: "cascade" }),
+    createdAt: timestamp().notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("mountain_comment_upvote_unique_idx").on(
+      table.commentId,
+      table.userId,
+    ),
+    index("mountain_comment_upvote_comment_id_idx").on(table.commentId),
+  ],
+);

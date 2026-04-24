@@ -3,6 +3,7 @@ export const PUSH_TYPE = {
   PLAN_LEAVE: "plan-leave",
   PLAN_CHAT: "plan-chat",
   PLAN_REMINDER: "plan-reminder",
+  PLAN_SAVED_MOUNTAIN: "plan-saved-mountain",
   MOUNTAIN_SUGGESTION: "mountain-suggestion",
   SUMMIT_TAGGED: "summit-tagged",
   SHOP_REQUEST: "shop-request",

@@ -17,12 +17,14 @@ export const SearchInput = ({
   autoFocus,
   onBlur,
   onFocus,
+  placeholder,
 }: {
   className?: string;
   autoFocus?: boolean;
   onChangeText: (text: string) => void;
   onBlur?: (e: BlurEvent) => void;
   onFocus?: (e: FocusEvent) => void;
+  placeholder?: string;
 }) => {
   const { colorScheme } = useColorScheme();
   const intl = useIntl();
@@ -49,12 +51,15 @@ export const SearchInput = ({
           onBlur?.(e);
         }}
         onChangeText={onChangeText}
-        placeholder={intl.formatMessage({ defaultMessage: "Search..." })}
+        placeholder={
+          placeholder ?? intl.formatMessage({ defaultMessage: "Search..." })
+        }
         placeholderTextColor={
           isAndroid && colorScheme === "dark" ? "gray" : undefined
         }
         autoCapitalize="none"
         autoCorrect={false}
+        style={{ fontSize: 16 }}
         className={twMerge(inputClassName, focused && "border-blue-500")}
       />
     </View>
