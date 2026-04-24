@@ -4,7 +4,7 @@ import { ExpoConfig } from "@expo/config-types";
 const config: ExpoConfig & { newArchEnabled?: boolean } = {
   name: "Cims",
   slug: "100cims",
-  version: "3.0.0",
+  version: "3.1.0",
   orientation: "portrait",
   icon: "./assets/images/icon.png",
   scheme: "centcims",
