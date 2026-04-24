@@ -2,7 +2,7 @@ import { Link } from "expo-router";
 import { FormattedMessage } from "react-intl";
 import { Image, ScrollView, View } from "react-native";
 
-import { ThemedText, ThemedView } from "@/components/ui/atoms";
+import { SocialIcons, ThemedText, ThemedView } from "@/components/ui/atoms";
 import { ScreenHeader } from "@/components/ui/molecules";
 
 export default function AboutTheAppScreen() {
@@ -17,9 +17,12 @@ export default function AboutTheAppScreen() {
         <ThemedText className="mb-3 text-4xl font-bold">
           <FormattedMessage defaultMessage="About" />
         </ThemedText>
-        <ThemedText className="mb-10 text-muted-foreground">
+        <ThemedText className="mb-6 text-muted-foreground">
           <FormattedMessage defaultMessage="A non-profit app to help hikers discover the territory while enjoying the mountains. Made with care, shared for free." />
         </ThemedText>
+        <View className="mb-10">
+          <SocialIcons />
+        </View>
 
         <View className="mb-10 flex-row items-center gap-4">
           <Image

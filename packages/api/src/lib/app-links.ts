@@ -12,3 +12,7 @@ export const IOS_APP_URL =
 
 export const ANDROID_APP_URL =
   "https://play.google.com/store/apps/details?id=app.x100cims.x100cims";
+
+export const INSTAGRAM_URL = "https://instagram.com/fescims";
+
+export const TIKTOK_URL = "https://tiktok.com/@fescims";

@@ -8,6 +8,7 @@ import {
   Share as ShareIcon,
   Target,
   Trash2,
+  Trophy,
 } from "lucide-react-native";
 import { useColorScheme } from "nativewind";
 import { useEffect } from "react";
@@ -246,6 +247,14 @@ export default function ChallengeDetailScreen() {
           ) : (
             <FormattedMessage defaultMessage="Set as active challenge" />
           )}
+        </ActionRow>
+
+        <ActionRow
+          onPress={() => router.push("/hiscores")}
+          icon={Trophy}
+          intent="gold"
+        >
+          <FormattedMessage defaultMessage="See hiscores" />
         </ActionRow>
 
         <ActionRow

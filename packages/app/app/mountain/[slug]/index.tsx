@@ -84,7 +84,9 @@ export default function MountainScreen() {
 
   const mountain = localMountain || fetchedMountain;
 
-  const { location: userLocation, status: locationStatus } = useLocation();
+  const { location: userLocation, status: locationStatus } = useLocation({
+    prompt: true,
+  });
 
   const distanceFromUser = useMemo(() => {
     if (!userLocation || !mountain) return null;
