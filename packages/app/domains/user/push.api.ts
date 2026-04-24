@@ -38,6 +38,11 @@ const isPlanPushType = (value: unknown) =>
   value === "plan-reminder" ||
   value === "plan-saved-mountain";
 
+const isCommentPushType = (value: unknown) =>
+  value === "comment-reply" ||
+  value === "comment-thread-reply" ||
+  value === "comment-upvote-milestone";
+
 const getStringField = (data: unknown, key: string): string | null => {
   if (!data || typeof data !== "object" || !(key in data)) return null;
   const value: unknown = Reflect.get(data, key);
@@ -56,6 +61,12 @@ const routeFromNotificationData = (data: unknown) => {
   if (type === "summit-tagged") {
     const summitId = getStringField(data, "summitId");
     if (summitId) router.push(`/user/summits/${summitId}`);
+    return;
+  }
+
+  if (isCommentPushType(type)) {
+    const slug = getStringField(data, "mountainSlug");
+    if (slug) router.push(`/mountain/${slug}/comments`);
     return;
   }
 

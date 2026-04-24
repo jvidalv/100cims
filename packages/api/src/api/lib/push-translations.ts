@@ -141,3 +141,69 @@ export const pushPlanForSavedMountainBody = (
   planTitle: string,
 ) =>
   planForSavedMountainBody[normalizeAppLocale(locale)](creatorName, planTitle);
+
+const commentReplyTitle = {
+  en: (mountainName: string) => `New reply on ${mountainName}`,
+  ca: (mountainName: string) => `Nova resposta a ${mountainName}`,
+  es: (mountainName: string) => `Nueva respuesta en ${mountainName}`,
+} satisfies Record<AppLocale, (mountainName: string) => string>;
+
+const commentReplyBody = {
+  en: (name: string) => `${name} replied to your comment`,
+  ca: (name: string) => `${name} ha respost al teu comentari`,
+  es: (name: string) => `${name} ha respondido a tu comentario`,
+} satisfies Record<AppLocale, (name: string) => string>;
+
+const commentThreadReplyTitle = {
+  en: (mountainName: string) => `New reply on ${mountainName}`,
+  ca: (mountainName: string) => `Nova resposta a ${mountainName}`,
+  es: (mountainName: string) => `Nueva respuesta en ${mountainName}`,
+} satisfies Record<AppLocale, (mountainName: string) => string>;
+
+const commentThreadReplyBody = {
+  en: (name: string) => `${name} replied in a thread you joined`,
+  ca: (name: string) => `${name} ha respost en un fil on has participat`,
+  es: (name: string) => `${name} ha respondido en un hilo donde participaste`,
+} satisfies Record<AppLocale, (name: string) => string>;
+
+const commentUpvoteMilestoneTitle = {
+  en: (count: number) => `Your comment reached ${count} upvotes`,
+  ca: (count: number) => `El teu comentari té ${count} vots`,
+  es: (count: number) => `Tu comentario tiene ${count} votos`,
+} satisfies Record<AppLocale, (count: number) => string>;
+
+const commentUpvoteMilestoneBody = {
+  en: (mountainName: string) => `On ${mountainName}. Nice tip!`,
+  ca: (mountainName: string) => `A ${mountainName}. Bon consell!`,
+  es: (mountainName: string) => `En ${mountainName}. ¡Buen consejo!`,
+} satisfies Record<AppLocale, (mountainName: string) => string>;
+
+export const pushCommentReplyTitle = (
+  locale: string | null,
+  mountainName: string,
+) => commentReplyTitle[normalizeAppLocale(locale)](mountainName);
+
+export const pushCommentReplyBody = (
+  locale: string | null,
+  authorName: string,
+) => commentReplyBody[normalizeAppLocale(locale)](authorName);
+
+export const pushCommentThreadReplyTitle = (
+  locale: string | null,
+  mountainName: string,
+) => commentThreadReplyTitle[normalizeAppLocale(locale)](mountainName);
+
+export const pushCommentThreadReplyBody = (
+  locale: string | null,
+  authorName: string,
+) => commentThreadReplyBody[normalizeAppLocale(locale)](authorName);
+
+export const pushCommentUpvoteMilestoneTitle = (
+  locale: string | null,
+  count: number,
+) => commentUpvoteMilestoneTitle[normalizeAppLocale(locale)](count);
+
+export const pushCommentUpvoteMilestoneBody = (
+  locale: string | null,
+  mountainName: string,
+) => commentUpvoteMilestoneBody[normalizeAppLocale(locale)](mountainName);

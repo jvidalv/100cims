@@ -7,6 +7,12 @@ export const PUSH_TYPE = {
   MOUNTAIN_SUGGESTION: "mountain-suggestion",
   SUMMIT_TAGGED: "summit-tagged",
   SHOP_REQUEST: "shop-request",
+  // Comments: your own comment got a direct reply.
+  COMMENT_REPLY: "comment-reply",
+  // Comments: a new reply landed in a thread you participated in (not yours).
+  COMMENT_THREAD_REPLY: "comment-thread-reply",
+  // Comments: your comment crossed an upvote milestone (5, 10, 15, 20).
+  COMMENT_UPVOTE_MILESTONE: "comment-upvote-milestone",
 } as const;
 
 export type PushType = (typeof PUSH_TYPE)[keyof typeof PUSH_TYPE];
