@@ -12,7 +12,8 @@ export type ActionRowIntent =
   | "muted"
   | "blue"
   | "emerald"
-  | "danger";
+  | "danger"
+  | "gold";
 
 const INTENT_STYLES: Record<
   ActionRowIntent,
@@ -41,6 +42,11 @@ const INTENT_STYLES: Record<
     bg: "bg-red-100 dark:bg-red-950",
     text: "text-red-500",
     iconColor: "#ef4444",
+  },
+  gold: {
+    bg: "bg-yellow-100 dark:bg-yellow-900/40",
+    text: "text-yellow-600 dark:text-yellow-500",
+    iconColor: "#eab308",
   },
 };
 

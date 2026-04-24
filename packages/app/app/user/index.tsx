@@ -21,9 +21,10 @@ import { ScrollView, TouchableOpacity, View } from "react-native";
 
 
 import {
+  LucideIcon,
+  SocialIcons,
   ThemedText,
   ThemedView,
-  LucideIcon,
 } from "@/components/ui/atoms";
 import { ScreenHeader } from "@/components/ui/molecules";
 import { Colors } from "@/constants/colors";
@@ -162,7 +163,8 @@ export default function UserIndexScreen() {
             </View>
           </LinearGradient>
         </TouchableOpacity>
-        <View className="mt-auto pb-12">
+        <View className="mt-auto items-center gap-4 pb-12">
+          <SocialIcons />
           <ThemedText className="text-center text-muted-foreground">
             <FormattedMessage defaultMessage="Version" />
             {" ~"}

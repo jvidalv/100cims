@@ -1,6 +1,39 @@
 import type { AppLocale } from "@/api/lib/locale";
 import { LanguageSwitcher } from "@/components/language-switcher";
-import { ANDROID_APP_URL, IOS_APP_URL } from "@/lib/app-links";
+import {
+  ANDROID_APP_URL,
+  INSTAGRAM_URL,
+  IOS_APP_URL,
+  TIKTOK_URL,
+} from "@/lib/app-links";
+
+const InstagramIcon = ({ className }: { className?: string }) => (
+  <svg
+    className={className}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden
+  >
+    <rect x="2" y="2" width="20" height="20" rx="5" />
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+  </svg>
+);
+
+const TikTokIcon = ({ className }: { className?: string }) => (
+  <svg
+    className={className}
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    aria-hidden
+  >
+    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5.8 20.1a6.34 6.34 0 0 0 10.86-4.43V8.57a8.16 8.16 0 0 0 4.77 1.52V6.69a4.85 4.85 0 0 1-1.84 0z" />
+  </svg>
+);
 
 export interface SiteFooterStrings {
   tagline: string;
@@ -166,6 +199,26 @@ export const SiteFooter = ({ strings: s, locale }: Props) => {
               >
                 {s.colContactHelp}
               </a>
+              <div className="flex items-center gap-3 py-1">
+                <a
+                  href={INSTAGRAM_URL}
+                  target="_blank"
+                  rel="noopener"
+                  aria-label="Instagram"
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <InstagramIcon className="size-5" />
+                </a>
+                <a
+                  href={TIKTOK_URL}
+                  target="_blank"
+                  rel="noopener"
+                  aria-label="TikTok"
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <TikTokIcon className="size-5" />
+                </a>
+              </div>
               <p className="text-muted-foreground">
                 {s.madeBy}{" "}
                 <a
