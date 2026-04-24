@@ -1,6 +1,6 @@
 import { format } from "date-fns/format";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { Camera } from "lucide-react-native";
+import { Camera, Check, Clock } from "lucide-react-native";
 import { useState } from "react";
 import { useIntl, FormattedMessage } from "react-intl";
 import { Alert, ScrollView, TouchableOpacity, View, Image } from "react-native";
@@ -11,18 +11,34 @@ import {
   ActivityIndicator,
   Avatar,
   BlurView,
-  Button,
   ThemedText,
   ThemedView,
   LucideIcon,
 } from "@/components/ui/atoms";
-import { ScreenHeader } from "@/components/ui/molecules";
+import {
+  ActionRow,
+  ScreenHeader,
+  SummitRatingFields,
+} from "@/components/ui/molecules";
 import { useSummitPost } from "@/domains/mountain/mountain.api";
 import { getMountainPts } from "@/domains/mountain/mountain.util";
 import { stashPlanCompletionImages } from "@/domains/plan/plan-completion-cache";
 import { usePlanOne, usePlanUpdate } from "@/domains/plan/plan.api";
 import { pickAndOptimizeImage } from "@/lib/images";
 import { logError } from "@/lib/log-error";
+import { getInitials } from "@/lib/strings";
+
+type SummitRating = {
+  familyFriendly: number | null;
+  dogFriendly: number | null;
+  difficulty: number | null;
+};
+
+const EMPTY_RATING: SummitRating = {
+  familyFriendly: null,
+  dogFriendly: null,
+  difficulty: null,
+};
 
 export default function PlanCompleteScreen() {
   const intl = useIntl();
@@ -34,6 +50,13 @@ export default function PlanCompleteScreen() {
   const [images, setImages] = useState<Record<string, string>>({});
   const [isHandlingImages, setIsHandlingImages] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [ratings, setRatings] = useState<Record<string, SummitRating>>({});
+
+  const setRating = (mountainId: string, patch: Partial<SummitRating>) =>
+    setRatings((prev) => ({
+      ...prev,
+      [mountainId]: { ...(prev[mountainId] ?? EMPTY_RATING), ...patch },
+    }));
 
   const plan = planData;
   const mountains = plan?.mountains ?? [];
@@ -67,14 +90,18 @@ export default function PlanCompleteScreen() {
       if (hasMountains) {
         try {
           await Promise.all(
-            mountains.map((m) =>
-              summitMountain({
+            mountains.map((m) => {
+              const r = ratings[m.id];
+              return summitMountain({
                 mountainId: m.id,
                 date: plan.startDate ?? new Date().toISOString(),
                 image: images[m.id],
                 usersId: plan.users.map((u) => u.id),
-              }),
-            ),
+                familyFriendly: r?.familyFriendly ?? null,
+                dogFriendly: r?.dogFriendly ?? null,
+                difficulty: r?.difficulty ?? null,
+              });
+            }),
           );
         } catch (err) {
           logError(err, "plan/complete/summit");
@@ -112,16 +139,16 @@ export default function PlanCompleteScreen() {
     <ThemedView className="flex-1">
       <ScreenHeader />
       <ScrollView
-        contentContainerClassName="gap-6 px-6 pb-64 pt-2"
+        contentContainerClassName="gap-6 px-6 pb-32 pt-2"
         showsVerticalScrollIndicator={false}
       >
         <View>
           <ThemedText className="text-muted-foreground">
             <FormattedMessage defaultMessage="Complete your plan" />
           </ThemedText>
-          <ThemedText className="text-4xl font-bold">{plan.title}</ThemedText>
+          <ThemedText className="text-2xl font-bold">{plan.title}</ThemedText>
           {!!plan.startDate && (
-            <ThemedText className="text-muted-foreground">
+            <ThemedText className="mt-2 text-muted-foreground">
               {format(plan.startDate, "d MMMM yyyy")}
             </ThemedText>
           )}
@@ -142,19 +169,20 @@ export default function PlanCompleteScreen() {
           </View>
         )}
         {hasMountains && (
-          <View className="gap-4">
+          <View className="gap-10">
             {mountains.map((m) => (
               <View key={m.id} className="relative gap-3">
                 <View className="flex-row items-center justify-between gap-4">
                   <View className="shrink flex-row items-center gap-2">
                     <Avatar
                       size="xs"
-                      initials={m.name[0]}
+                      shape="square"
+                      initials={getInitials(m.name)}
                       imageUrl={m.imageUrl}
                     />
                     <ThemedText
                       numberOfLines={1}
-                      className="flex-1 shrink text-lg font-semibold"
+                      className="flex-1 shrink text-base font-semibold"
                     >
                       {m.name}
                     </ThemedText>
@@ -163,10 +191,11 @@ export default function PlanCompleteScreen() {
                     <ThemedText
                       className={twMerge(
                         "text-muted-foreground",
+                        m.essential && "text-primary",
                         !!images[m.id] && "text-green-500",
                       )}
                     >
-                      {getMountainPts(parseFloat(m.height), m.essential)} pts
+                      +{getMountainPts(parseFloat(m.height), m.essential)} pts
                     </ThemedText>
                   </View>
                 </View>
@@ -216,7 +245,7 @@ export default function PlanCompleteScreen() {
                         />
                       )}
                       <View className="absolute inset-0 items-center justify-center">
-                        <LucideIcon icon={Camera} size={32} muted />
+                        <LucideIcon icon={Camera} size={32} />
                       </View>
                     </View>
                   )}
@@ -226,27 +255,50 @@ export default function PlanCompleteScreen() {
                     </BlurView>
                   )}
                 </TouchableOpacity>
+                <SummitRatingFields
+                  familyFriendly={ratings[m.id]?.familyFriendly ?? null}
+                  onFamilyFriendlyChange={(v) =>
+                    setRating(m.id, { familyFriendly: v })
+                  }
+                  dogFriendly={ratings[m.id]?.dogFriendly ?? null}
+                  onDogFriendlyChange={(v) =>
+                    setRating(m.id, { dogFriendly: v })
+                  }
+                  difficulty={ratings[m.id]?.difficulty ?? null}
+                  onDifficultyChange={(v) =>
+                    setRating(m.id, { difficulty: v })
+                  }
+                  titleClassName="text-sm font-medium text-muted-foreground"
+                  size="sm"
+                />
               </View>
             ))}
           </View>
         )}
-      </ScrollView>
-      <BlurView className="absolute bottom-0 left-0 w-full px-6 pb-32 pt-4">
-        <View>
-          <Button
-            isLoading={isSubmitting}
-            intent="success"
+        <View className="gap-1 pt-4">
+          <ActionRow
+            icon={Check}
+            intent="emerald"
+            size="lg"
+            disabled={isSubmitting}
             onPress={handleSubmit}
           >
-            <FormattedMessage defaultMessage="Complete plan" />
-          </Button>
-          <TouchableOpacity className="pt-6" onPress={router.back}>
-            <ThemedText className="text-center text-muted-foreground underline">
-              <FormattedMessage defaultMessage="I'll complete it later" />
-            </ThemedText>
-          </TouchableOpacity>
+            {isSubmitting ? (
+              <ActivityIndicator size="sm" />
+            ) : (
+              <FormattedMessage defaultMessage="Complete plan" />
+            )}
+          </ActionRow>
+          <ActionRow
+            icon={Clock}
+            intent="muted"
+            size="lg"
+            onPress={router.back}
+          >
+            <FormattedMessage defaultMessage="I'll complete it later" />
+          </ActionRow>
         </View>
-      </BlurView>
+      </ScrollView>
     </ThemedView>
   );
 }

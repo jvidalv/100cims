@@ -608,13 +608,15 @@ function RatingActionRow({
       <ThemedText className="flex-1 font-medium">
         {prefix} <ThemedText className="font-medium" style={{ color }}>{label}</ThemedText>
       </ThemedText>
-      <ThemedText
-        className="text-muted-foreground"
-        style={{ opacity: 0.6 }}
-      >
-        {count}
-      </ThemedText>
-      <LucideIcon icon={ChevronRight} size={18} muted />
+      <View className="flex-row items-center gap-0.5">
+        <ThemedText
+          className="text-muted-foreground"
+          style={{ opacity: 0.6 }}
+        >
+          {count}
+        </ThemedText>
+        <LucideIcon icon={ChevronRight} size={18} muted />
+      </View>
     </TouchableOpacity>
   );
 }

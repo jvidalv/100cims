@@ -23,6 +23,8 @@ const SAFETY_VALUES = [1, 5];
 const DIFFICULTY_VALUES = [1, 3, 5];
 const FADE_MS = 180;
 
+type Size = "sm" | "md";
+
 type Props = {
   familyFriendly: number | null;
   onFamilyFriendlyChange: (v: number | null) => void;
@@ -30,6 +32,12 @@ type Props = {
   onDogFriendlyChange: (v: number | null) => void;
   difficulty: number | null;
   onDifficultyChange: (v: number | null) => void;
+  // Tailwind classes for the two section titles (Difficulty / Recommend).
+  // Defaults to "text-lg font-bold" for the standalone summit forms; pass a
+  // smaller variant from screens where the section is nested inside a list.
+  titleClassName?: string;
+  // Controls icon bubble + pill sizing. "md" is the single-summit default.
+  size?: Size;
 };
 
 /**
@@ -44,6 +52,8 @@ export const SummitRatingFields = ({
   onDogFriendlyChange,
   difficulty,
   onDifficultyChange,
+  titleClassName = "text-lg font-bold",
+  size = "md",
 }: Props) => {
   const intl = useIntl();
 
@@ -60,7 +70,7 @@ export const SummitRatingFields = ({
   return (
     <>
       <View className="gap-3">
-        <ThemedText className="text-lg font-bold">
+        <ThemedText className={titleClassName}>
           <FormattedMessage defaultMessage="Difficulty" />
         </ThemedText>
         <RatingRow
@@ -70,11 +80,12 @@ export const SummitRatingFields = ({
           labels={difficultyLabels}
           values={DIFFICULTY_VALUES}
           colorMode="green-red"
+          size={size}
         />
       </View>
       <View className="gap-3">
         <View className="flex-row items-center gap-2">
-          <ThemedText className="text-lg font-bold">
+          <ThemedText className={titleClassName}>
             <FormattedMessage defaultMessage="Recommend" />
           </ThemedText>
           <Pressable
@@ -99,6 +110,7 @@ export const SummitRatingFields = ({
           labels={safetyLabels}
           values={SAFETY_VALUES}
           colorMode="red-green"
+          size={size}
         />
         <RatingRow
           icon={Dog}
@@ -107,6 +119,7 @@ export const SummitRatingFields = ({
           labels={safetyLabels}
           values={SAFETY_VALUES}
           colorMode="red-green"
+          size={size}
         />
       </View>
     </>
@@ -120,6 +133,7 @@ type RatingRowProps = {
   labels: string[];
   values: readonly number[];
   colorMode: "red-green" | "green-red";
+  size: Size;
 };
 
 const RatingRow = ({
@@ -129,17 +143,23 @@ const RatingRow = ({
   labels,
   values,
   colorMode,
+  size,
 }: RatingRowProps) => {
   const reverse = colorMode === "green-red";
   const activeColor =
     value !== null
       ? tierColor(values.indexOf(value), values.length, reverse)
       : null;
+  const bubbleClass =
+    size === "sm"
+      ? "size-10 items-center justify-center rounded-full border-2 border-muted-foreground/50"
+      : "size-12 items-center justify-center rounded-full border-2 border-muted-foreground/50";
+  const iconSize = size === "sm" ? 20 : 24;
 
   return (
     <View className="flex-row items-center gap-3">
-      <View className="size-12 items-center justify-center rounded-full border-2 border-muted-foreground/50">
-        <FadeIcon icon={icon} color={activeColor} />
+      <View className={bubbleClass}>
+        <FadeIcon icon={icon} color={activeColor} size={iconSize} />
       </View>
       <ThemedTierPicker
         value={value}
@@ -147,6 +167,7 @@ const RatingRow = ({
         labels={labels}
         values={values}
         colorCoded={colorMode}
+        size={size}
       />
     </View>
   );

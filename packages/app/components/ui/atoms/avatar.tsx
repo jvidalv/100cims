@@ -6,6 +6,7 @@ import { tv } from "tailwind-variants";
 import { ThemedText } from "@/components/ui/atoms/themed-text";
 
 export type AvatarSize = "xs" | "sm" | "md" | "lg" | "xl";
+export type AvatarShape = "circle" | "square";
 
 interface AvatarProps {
   initials?: string;
@@ -13,10 +14,11 @@ interface AvatarProps {
   className?: string;
   style?: StyleProp<ViewStyle>;
   size?: AvatarSize;
+  shape?: AvatarShape;
 }
 
 const avatarStyles = tv({
-  base: "relative flex items-center justify-center overflow-hidden rounded-full",
+  base: "relative flex items-center justify-center overflow-hidden",
   variants: {
     size: {
       xs: "size-8",
@@ -25,9 +27,14 @@ const avatarStyles = tv({
       lg: "size-16",
       xl: "size-20",
     },
+    shape: {
+      circle: "rounded-full",
+      square: "rounded",
+    },
   },
   defaultVariants: {
     size: "md",
+    shape: "circle",
   },
 });
 
@@ -35,6 +42,7 @@ export const Avatar: FC<AvatarProps> = ({
   initials,
   imageUrl,
   size = "md",
+  shape = "circle",
   className,
   style,
 }) => {
@@ -45,7 +53,7 @@ export const Avatar: FC<AvatarProps> = ({
     <View
       style={style}
       className={twMerge(
-        avatarStyles({ size }),
+        avatarStyles({ size, shape }),
         (!imageUrl || isImageError || isImageLoading) &&
           "bg-gray-400 dark:bg-gray-500",
         className,
@@ -72,7 +80,10 @@ export const Avatar: FC<AvatarProps> = ({
         >
           <Image
             source={{ uri: imageUrl, cache: "force-cache" }}
-            className="size-full flex-1 rounded-full"
+            className={twMerge(
+              "size-full flex-1",
+              shape === "circle" ? "rounded-full" : "rounded",
+            )}
             onLoadEnd={() => setIsImageLoading(false)}
             onError={() => setIsImageError(true)}
           />
