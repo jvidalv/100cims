@@ -9,7 +9,10 @@ import {
   summitHasUsersTable,
   summitTable,
 } from "@/db/schema";
-import { formatDateForPostgresFromISOString } from "@/api/lib/dates";
+import {
+  clampDateStringToTodayUtc,
+  formatDateForPostgresFromISOString,
+} from "@/api/lib/dates";
 import { isBase64SizeValid, reportImageTooBig } from "@/api/lib/images";
 import { recalcMountainRatingAggregates } from "@/api/lib/mountain-ratings";
 import { sendPushLocalized } from "@/api/lib/push";
@@ -76,7 +79,9 @@ export const mountainSummitPostRoute = new Elysia().post(
           mountainId: body.mountainId,
           userId: body.usersId[0],
           imageUrl,
-          summitedAt: formatDateForPostgresFromISOString(body.date),
+          summitedAt: clampDateStringToTodayUtc(
+            formatDateForPostgresFromISOString(body.date),
+          ),
         })
         .returning();
 
