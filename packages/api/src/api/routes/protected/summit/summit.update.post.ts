@@ -1,6 +1,7 @@
 import { and, eq, ne, sql } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 
+import { clampDateStringToTodayUtc } from "@/api/lib/dates";
 import { isBase64SizeValid, reportImageTooBig } from "@/api/lib/images";
 import { recalcMountainRatingAggregates } from "@/api/lib/mountain-ratings";
 import { getUserFromRequest } from "@/api/routes/@shared/auth";
@@ -59,7 +60,7 @@ export const summitUpdatePostRoute = new Elysia().post(
     }
 
     const updates: { summitedAt?: string; imageUrl?: string } = {};
-    if (summitedAt) updates.summitedAt = summitedAt;
+    if (summitedAt) updates.summitedAt = clampDateStringToTodayUtc(summitedAt);
 
     if (image) {
       if (!isBase64SizeValid(image)) {

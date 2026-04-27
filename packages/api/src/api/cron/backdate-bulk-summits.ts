@@ -26,5 +26,17 @@ export async function backdateBulkSummits(): Promise<void> {
     RETURNING s.id;
   `);
 
-  console.log(`[backdate-bulk-summits] backdated ${updated.length} summit(s)`);
+  // Catch any summits dated in the future relative to their creation date —
+  // these can't be legitimate (you can't summit tomorrow) and slip past the
+  // bulk-threshold check above when users log fewer than BATCH_THRESHOLD.
+  const future = await db.execute(sql`
+    UPDATE ${summitTable} AS s
+    SET summited_at = s.summited_at - INTERVAL '${sql.raw(String(BACKDATE_YEARS))} years'
+    WHERE summited_at > (created_at AT TIME ZONE 'UTC')::date
+    RETURNING s.id;
+  `);
+
+  console.log(
+    `[backdate-bulk-summits] backdated ${updated.length} bulk summit(s), ${future.length} future summit(s)`,
+  );
 }
