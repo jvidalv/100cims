@@ -20,7 +20,7 @@ export const adminKeys = {
   userPeople: (id: string) => ["admin", "users", id, "people"] as const,
   userSaved: (id: string) => ["admin", "users", id, "saved"] as const,
   mountainsList: () => ["admin", "mountains"] as const,
-  mountains: (params: { page: number; q: string }) =>
+  mountains: (params: { page: number; q: string; sort: string }) =>
     ["admin", "mountains", params] as const,
   mountainDetail: (id: string) => ["admin", "mountains", id] as const,
   mountainChallenges: (id: string) =>

@@ -7,6 +7,13 @@ import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useAdminMountains } from "@/domains/admin/api";
 import { formatDate } from "@/lib/format-date";
 import { formatRating } from "@/lib/format-rating";
@@ -15,6 +22,7 @@ export default function AdminMountainsPage() {
   const router = useRouter();
   const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1));
   const [q, setQ] = useQueryState("q", parseAsString.withDefault(""));
+  const [sort, setSort] = useQueryState("sort", parseAsString.withDefault(""));
   const [search, setSearch] = useState(q);
 
   useEffect(() => {
@@ -27,19 +35,39 @@ export default function AdminMountainsPage() {
     return () => clearTimeout(id);
   }, [search, q, setQ, setPage]);
 
-  const { data, error, isLoading } = useAdminMountains({ page, q });
+  const { data, error, isLoading } = useAdminMountains({ page, q, sort });
 
   return (
     <div className="p-8">
       <h1 className="text-2xl font-bold mb-6">Mountains</h1>
 
-      <Input
-        type="search"
-        placeholder="Search by name or location…"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="max-w-sm mb-6"
-      />
+      <div className="flex flex-wrap items-center gap-3 mb-6">
+        <Input
+          type="search"
+          placeholder="Search by name or location…"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="max-w-sm"
+        />
+
+        <Select
+          value={sort || "createdAt_desc"}
+          onValueChange={(value) => {
+            void setSort(value === "createdAt_desc" ? null : value);
+            void setPage(1);
+          }}
+        >
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Sort" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="createdAt_desc">Newest first</SelectItem>
+            <SelectItem value="createdAt_asc">Oldest first</SelectItem>
+            <SelectItem value="summits_desc">Most summits</SelectItem>
+            <SelectItem value="summits_asc">Fewest summits</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
       {error && <p className="text-red-600 mb-4">{error.message}</p>}
       {isLoading && !data && <p className="text-muted-foreground">Loading…</p>}
@@ -57,6 +85,7 @@ export default function AdminMountainsPage() {
                   <th className="py-2 pr-4 font-medium">Family</th>
                   <th className="py-2 pr-4 font-medium">Dog</th>
                   <th className="py-2 pr-4 font-medium">Difficulty</th>
+                  <th className="py-2 pr-4 font-medium text-right">Summits</th>
                   <th className="py-2 pr-4 font-medium">Creator</th>
                   <th className="py-2 pr-4 font-medium">Created</th>
                 </tr>
@@ -113,6 +142,9 @@ export default function AdminMountainsPage() {
                           },
                         )}
                       </td>
+                      <td className="py-2 pr-4 text-muted-foreground text-right tabular-nums">
+                        {m.totalSummits}
+                      </td>
                       <td className="py-2 pr-4 text-muted-foreground">
                         {m.isOfficial ? "Official" : (m.creatorName ?? "—")}
                       </td>
@@ -125,7 +157,7 @@ export default function AdminMountainsPage() {
                 {data.items.length === 0 && (
                   <tr>
                     <td
-                      colSpan={9}
+                      colSpan={10}
                       className="py-8 text-center text-muted-foreground"
                     >
                       No mountains match “{q}”.

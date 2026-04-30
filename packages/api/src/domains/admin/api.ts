@@ -163,12 +163,25 @@ export const useRemoveAdminUserPerson = (id: string) => {
   });
 };
 
-export const useAdminMountains = ({ page, q }: { page: number; q: string }) =>
+export const useAdminMountains = ({
+  page,
+  q,
+  sort,
+}: {
+  page: number;
+  q: string;
+  sort: string;
+}) =>
   useQuery({
-    queryKey: adminKeys.mountains({ page, q }),
+    queryKey: adminKeys.mountains({ page, q, sort }),
     queryFn: async () => {
       const { data, error } = await api.api.admin.mountains.get({
-        query: { page, pageSize: 15, q: q || undefined },
+        query: {
+          page,
+          pageSize: 15,
+          q: q || undefined,
+          sort: sort || undefined,
+        },
       });
       if (error) throw error;
       return data.message;
