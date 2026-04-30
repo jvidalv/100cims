@@ -1,6 +1,6 @@
 "use client";
 
-import { Dog, Mountain as MountainIcon, Users } from "lucide-react";
+import { Dog, Mountain as MountainIcon, Trash2, Users } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { use, useEffect, useState } from "react";
@@ -386,7 +386,7 @@ export default function AdminMountainDetailPage({
                     )}
                     <AvatarFallback>{initials}</AvatarFallback>
                   </Avatar>
-                  <div className="min-w-0 max-w-[220px]">
+                  <div className="min-w-0 flex-1">
                     <Link
                       href={`/admin/users/${r.user.id}`}
                       className="font-medium hover:underline block truncate"
@@ -397,7 +397,7 @@ export default function AdminMountainDetailPage({
                       {r.user.email}
                     </p>
                   </div>
-                  <div className="flex items-center gap-2 ml-2">
+                  <div className="flex items-center gap-2 shrink-0">
                     <RatingBadge
                       icon={<Users className="size-3.5" />}
                       label="Family"
@@ -417,27 +417,27 @@ export default function AdminMountainDetailPage({
                       tone="violet"
                     />
                   </div>
-                  <div className="flex items-center gap-2 ml-auto">
-                    <span className="text-xs text-muted-foreground whitespace-nowrap">
-                      {formatDateTime(r.updatedAt)}
-                    </span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      disabled={deleteRating.isPending}
-                      onClick={() =>
-                        deleteRating.mutate(r.id, {
-                          onSuccess: () => toast.success("Rating deleted"),
-                          onError: (e) =>
-                            toast.error(
-                              e instanceof Error ? e.message : "Delete failed",
-                            ),
-                        })
-                      }
-                    >
-                      Delete
-                    </Button>
-                  </div>
+                  <span className="text-xs text-muted-foreground whitespace-nowrap shrink-0">
+                    {formatDateTime(r.updatedAt)}
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label="Delete rating"
+                    disabled={deleteRating.isPending}
+                    onClick={() =>
+                      deleteRating.mutate(r.id, {
+                        onSuccess: () => toast.success("Rating deleted"),
+                        onError: (e) =>
+                          toast.error(
+                            e instanceof Error ? e.message : "Delete failed",
+                          ),
+                      })
+                    }
+                    className="text-muted-foreground hover:text-destructive shrink-0"
+                  >
+                    <Trash2 className="size-4" />
+                  </Button>
                 </li>
               );
             })}
