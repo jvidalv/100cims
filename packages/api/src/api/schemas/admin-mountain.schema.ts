@@ -63,6 +63,7 @@ export const AdminMountainRatingEntrySchema = t.Object({
     firstName: t.Nullable(t.String()),
     lastName: t.Nullable(t.String()),
     imageUrl: t.Nullable(t.String()),
+    email: t.String(),
   }),
 });
 

@@ -23,6 +23,7 @@ export const adminMountainRatingsGetRoute = new Elysia().get(
           firstName: userTable.firstName,
           lastName: userTable.lastName,
           imageUrl: userTable.imageUrl,
+          email: userTable.email,
         },
       })
       .from(mountainRatingTable)
