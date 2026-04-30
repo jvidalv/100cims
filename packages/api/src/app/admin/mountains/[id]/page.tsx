@@ -1,5 +1,6 @@
 "use client";
 
+import { Dog, Mountain as MountainIcon, Users } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { use, useEffect, useState } from "react";
@@ -34,7 +35,6 @@ import {
   useUpdateAdminMountainComment,
   useUpvoteAdminMountainComment,
 } from "@/domains/admin/api";
-import { getAdminUserDisplayName } from "@/lib/admin-user-display-name";
 import { formatDate, formatDateTime } from "@/lib/format-date";
 import { formatRating } from "@/lib/format-rating";
 
@@ -367,59 +367,80 @@ export default function AdminMountainDetailPage({
 
         {ratings.data && ratings.data.length > 0 && (
           <ul className="divide-y border rounded">
-            {ratings.data.map((r) => (
-              <li
-                key={r.id}
-                className="flex items-center gap-3 px-4 py-3 text-sm"
-              >
-                <Avatar className="size-8">
-                  {r.user.imageUrl && (
-                    <AvatarImage
-                      src={r.user.imageUrl}
-                      alt={r.user.username ?? ""}
+            {ratings.data.map((r) => {
+              const fullName = [r.user.firstName, r.user.lastName]
+                .filter(Boolean)
+                .join(" ");
+              const displayName = fullName || r.user.email;
+              const initials = (fullName || r.user.email)
+                .slice(0, 2)
+                .toUpperCase();
+              return (
+                <li
+                  key={r.id}
+                  className="flex items-center gap-3 px-4 py-3 text-sm"
+                >
+                  <Avatar className="size-9 shrink-0">
+                    {r.user.imageUrl && (
+                      <AvatarImage src={r.user.imageUrl} alt={displayName} />
+                    )}
+                    <AvatarFallback>{initials}</AvatarFallback>
+                  </Avatar>
+                  <div className="min-w-0 max-w-[220px]">
+                    <Link
+                      href={`/admin/users/${r.user.id}`}
+                      className="font-medium hover:underline block truncate"
+                    >
+                      {displayName}
+                    </Link>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {r.user.email}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 ml-2">
+                    <RatingBadge
+                      icon={<Users className="size-3.5" />}
+                      label="Family"
+                      value={r.familyFriendly}
+                      tone="sky"
                     />
-                  )}
-                  <AvatarFallback>
-                    {(r.user.username ?? "?").slice(0, 2).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <Link
-                  href={`/admin/users/${r.user.id}`}
-                  className="font-medium hover:underline"
-                >
-                  {getAdminUserDisplayName(r.user)}
-                </Link>
-                <span className="text-muted-foreground">
-                  family{" "}
-                  <span className="font-mono">{r.familyFriendly ?? "—"}</span>
-                </span>
-                <span className="text-muted-foreground">
-                  dog <span className="font-mono">{r.dogFriendly ?? "—"}</span>
-                </span>
-                <span className="text-muted-foreground">
-                  diff <span className="font-mono">{r.difficulty ?? "—"}</span>
-                </span>
-                <span className="text-xs text-muted-foreground ml-auto">
-                  {formatDateTime(r.updatedAt)}
-                </span>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  disabled={deleteRating.isPending}
-                  onClick={() =>
-                    deleteRating.mutate(r.id, {
-                      onSuccess: () => toast.success("Rating deleted"),
-                      onError: (e) =>
-                        toast.error(
-                          e instanceof Error ? e.message : "Delete failed",
-                        ),
-                    })
-                  }
-                >
-                  Delete
-                </Button>
-              </li>
-            ))}
+                    <RatingBadge
+                      icon={<Dog className="size-3.5" />}
+                      label="Dog"
+                      value={r.dogFriendly}
+                      tone="amber"
+                    />
+                    <RatingBadge
+                      icon={<MountainIcon className="size-3.5" />}
+                      label="Difficulty"
+                      value={r.difficulty}
+                      tone="violet"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2 ml-auto">
+                    <span className="text-xs text-muted-foreground whitespace-nowrap">
+                      {formatDateTime(r.updatedAt)}
+                    </span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      disabled={deleteRating.isPending}
+                      onClick={() =>
+                        deleteRating.mutate(r.id, {
+                          onSuccess: () => toast.success("Rating deleted"),
+                          onError: (e) =>
+                            toast.error(
+                              e instanceof Error ? e.message : "Delete failed",
+                            ),
+                        })
+                      }
+                    >
+                      Delete
+                    </Button>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         )}
       </section>
@@ -538,25 +559,48 @@ function FieldText({
   );
 }
 
-const BADGE_STYLES = {
+const BADGE_TONES = {
   neutral: "bg-muted text-foreground",
+  muted: "bg-muted text-muted-foreground",
   sky: "bg-sky-100 text-sky-900 dark:bg-sky-900/30 dark:text-sky-300",
   green: "bg-green-100 text-green-900 dark:bg-green-900/30 dark:text-green-300",
   amber: "bg-amber-100 text-amber-900 dark:bg-amber-900/30 dark:text-amber-300",
+  violet:
+    "bg-violet-100 text-violet-900 dark:bg-violet-900/30 dark:text-violet-300",
 } as const;
 
-function Badge({
+type BadgeTone = keyof typeof BADGE_TONES;
+
+function Badge({ label, variant }: { label: string; variant: BadgeTone }) {
+  return (
+    <span
+      className={`inline-flex items-center rounded px-2 py-0.5 text-xs font-medium ${BADGE_TONES[variant]}`}
+    >
+      {label}
+    </span>
+  );
+}
+
+function RatingBadge({
+  icon,
   label,
-  variant,
+  value,
+  tone,
 }: {
+  icon: React.ReactNode;
   label: string;
-  variant: keyof typeof BADGE_STYLES;
+  value: number | null;
+  tone: BadgeTone;
 }) {
   return (
     <span
-      className={`inline-flex items-center rounded px-2 py-0.5 text-xs font-medium ${BADGE_STYLES[variant]}`}
+      title={`${label}: ${value ?? "not rated"}`}
+      className={`inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs font-medium tabular-nums ${
+        value === null ? BADGE_TONES.muted : BADGE_TONES[tone]
+      }`}
     >
-      {label}
+      {icon}
+      <span>{value ?? "—"}</span>
     </span>
   );
 }
