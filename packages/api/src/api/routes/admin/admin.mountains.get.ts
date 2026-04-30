@@ -1,8 +1,18 @@
-import { and, count, desc, eq, ilike, or, type SQL } from "drizzle-orm";
+import {
+  and,
+  asc,
+  count,
+  desc,
+  eq,
+  ilike,
+  or,
+  sql,
+  type SQL,
+} from "drizzle-orm";
 import { Elysia, t } from "elysia";
 
 import { db } from "@/db";
-import { mountainTable, userTable } from "@/db/schema";
+import { mountainTable, summitTable, userTable } from "@/db/schema";
 import { creatorNameConcat } from "@/api/routes/@shared/sql-helpers";
 import { AdminMountainsResponseSchema } from "@/api/schemas/admin-mountain.schema";
 import { SuccessResponse } from "@/api/schemas/common.schema";
@@ -33,6 +43,24 @@ export const adminMountainsGetRoute = new Elysia().get(
 
     const where = conditions.length ? and(...conditions) : undefined;
 
+    const totalSummitsSql = sql<number>`(
+      SELECT COUNT(*)::int FROM ${summitTable}
+      WHERE ${summitTable.mountainId} = ${mountainTable.id}
+    )`;
+
+    const orderBy = (() => {
+      switch (query.sort) {
+        case "createdAt_asc":
+          return [asc(mountainTable.createdAt)];
+        case "summits_desc":
+          return [desc(totalSummitsSql), desc(mountainTable.createdAt)];
+        case "summits_asc":
+          return [asc(totalSummitsSql), desc(mountainTable.createdAt)];
+        default:
+          return [desc(mountainTable.createdAt)];
+      }
+    })();
+
     const [countResult, rows] = await Promise.all([
       db.select({ total: count() }).from(mountainTable).where(where),
       db
@@ -53,11 +81,12 @@ export const adminMountainsGetRoute = new Elysia().get(
           dogRatingCount: mountainTable.dogRatingCount,
           avgDifficulty: mountainTable.avgDifficulty,
           difficultyRatingCount: mountainTable.difficultyRatingCount,
+          totalSummits: totalSummitsSql,
         })
         .from(mountainTable)
         .leftJoin(userTable, eq(mountainTable.creatorId, userTable.id))
         .where(where)
-        .orderBy(desc(mountainTable.createdAt))
+        .orderBy(...orderBy)
         .limit(pageSize)
         .offset(offset),
     ]);
@@ -83,6 +112,7 @@ export const adminMountainsGetRoute = new Elysia().get(
       page: t.Optional(t.Number()),
       pageSize: t.Optional(t.Number()),
       q: t.Optional(t.String()),
+      sort: t.Optional(t.String()),
     }),
     response: SuccessResponse(AdminMountainsResponseSchema),
   },

@@ -17,6 +17,7 @@ export const AdminMountainEntrySchema = t.Object({
   dogRatingCount: t.Number(),
   avgDifficulty: t.Nullable(t.Number()),
   difficultyRatingCount: t.Number(),
+  totalSummits: t.Number(),
 });
 
 export const AdminMountainsResponseSchema = t.Object({
