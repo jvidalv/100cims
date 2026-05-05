@@ -2,6 +2,7 @@ import type { ChallengeContent, ChallengeLocale } from "./schema";
 
 import hundredCims from "./100-cims.json";
 import hundredCimsUsa from "./100-cims-usa.json";
+import ehunMendiak from "./ehun-mendiak.json";
 import altosMadrilenos from "./altos-madrilenos.json";
 import aragon from "./aragon.json";
 import corsicaGr20 from "./corsica-gr-20.json";
@@ -43,6 +44,7 @@ const narrow = (raw: RawContent, source: string): ChallengeContent => {
 export const CHALLENGE_CONTENT = {
   "100-cims": narrow(hundredCims, "100-cims"),
   "100-cims-usa": narrow(hundredCimsUsa, "100-cims-usa"),
+  "ehun-mendiak": narrow(ehunMendiak, "ehun-mendiak"),
   "altos-madrilenos": narrow(altosMadrilenos, "altos-madrilenos"),
   aragon: narrow(aragon, "aragon"),
   "corsica-gr-20": narrow(corsicaGr20, "corsica-gr-20"),

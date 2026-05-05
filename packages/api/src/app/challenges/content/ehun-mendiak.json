@@ -1,0 +1,32 @@
+{
+  "locale": "es",
+  "title": "Ehun Mendiak · Cien Montes · Reto centenario de la EMF en la app Cims",
+  "shortName": "Ehun Mendiak / Cien Montes",
+  "description": "Sigue tu progreso en el Centenario Especial del 100 Aniversario: 100 cumbres vasco-navarras seleccionadas por la Hermandad de Centenarios.",
+  "heroTagline": "Las 100 cimas elegidas para el centenario de la Federación Vasco-Navarra de Alpinismo, en tu móvil.",
+  "heroImageUrl": "https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/gorbeia.jpg?date=1777985906239",
+  "whatIsTitle": "¿Qué es el Centenario Especial del 100 Aniversario?",
+  "whatIsParagraphs": [
+    "Con motivo del centenario de la Federación Vasco-Navarra de Alpinismo (1924–2024), la Hermandad de Centenarios ha seleccionado 100 cumbres representativas de los siete territorios de Euskal Herria — desde el Adarra guipuzcoano hasta el Hiru Erregeen Mahaia, techo de Navarra a 2.446 m.",
+    "El plazo oficial va del 27 de abril de 2024 al 31 de diciembre de 2033, con una cima máxima por día y mínimo una al año. Quien complete las 100 dentro del plazo recibe un diploma acreditativo de la Hermandad.",
+    "Con Cims llevas la cuenta automáticamente: marcas la cima, añades fecha y foto, y el progreso queda registrado sin papeleo."
+  ],
+  "faqs": [
+    {
+      "q": "¿Cuántas cumbres tiene el reto?",
+      "a": "100 cumbres seleccionadas entre Araba, Bizkaia, Gipuzkoa, Lapurdi, Nafarroa, Nafarroa Beherea y Zuberoa — los siete territorios históricos."
+    },
+    {
+      "q": "¿Hace falta licencia federativa?",
+      "a": "Para la acreditación oficial de la Hermandad sí, según el reglamento de la EMF. La app Cims te sirve igualmente para llevar el conteo aunque no estés federado."
+    },
+    {
+      "q": "¿Valen ascensiones anteriores a 2024?",
+      "a": "Para la acreditación oficial solo si ya formabas parte de la Hermandad y la cumbre figura en un historial validado por ella. En la app puedes registrar cualquier ascensión, sea de la fecha que sea."
+    },
+    {
+      "q": "¿Se puede combinar con otros retos de 100 montes?",
+      "a": "Sí. El reglamento permite contabilizar la misma cima para este centenario y para otro \"ordinario\" simultáneamente."
+    }
+  ]
+}

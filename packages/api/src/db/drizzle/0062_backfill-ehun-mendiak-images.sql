@@ -1,0 +1,92 @@
+-- Backfill image_url for the 84 Ehun Mendiak peaks that have a Wikimedia Commons photo.
+-- Uploaded to S3 under 100cims/mountain/profile/<slug>.jpg, served via CloudFront.
+-- Single shared cache-buster timestamp (1777985906239) matches the existing seed-data convention.
+-- The 16 peaks without a usable Commons photo (adi, arangoiti, arbarain, arthanolatze,
+-- bachicabo, dulantz, etxauriko-haitzak, illon, kanpanzar, larrogain, oriol, palomares,
+-- pena-del-moro, penalta, repico, san-pedro) keep image_url = NULL; the UI falls back to the
+-- country-flag avatar for them.
+
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/adarra.jpg?date=1777985906239' WHERE slug = 'adarra';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/aketegi.jpg?date=1777985906239' WHERE slug = 'aketegi';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/alkaxuri.jpg?date=1777985906239' WHERE slug = 'alkaxuri';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/alkurruntz.jpg?date=1777985906239' WHERE slug = 'alkurruntz';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/anboto.jpg?date=1777985906239' WHERE slug = 'anboto';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/andarto.jpg?date=1777985906239' WHERE slug = 'andarto';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/aratz.jpg?date=1777985906239' WHERE slug = 'aratz';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/arradoi.jpg?date=1777985906239' WHERE slug = 'arradoi';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/artzamendi.jpg?date=1777985906239' WHERE slug = 'artzamendi';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/atxabal.jpg?date=1777985906239' WHERE slug = 'atxabal';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/baigura-areta.jpg?date=1777985906239' WHERE slug = 'baigura-areta';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/baigura-lapurdi.jpg?date=1777985906239' WHERE slug = 'baigura-lapurdi';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/baio.jpg?date=1777985906239' WHERE slug = 'baio';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/balerdi.jpg?date=1777985906239' WHERE slug = 'balerdi';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/behorlegituturru.jpg?date=1777985906239' WHERE slug = 'behorlegituturru';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/beriain.jpg?date=1777985906239' WHERE slug = 'beriain';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/berrendi.jpg?date=1777985906239' WHERE slug = 'berrendi';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/bianditz.jpg?date=1777985906239' WHERE slug = 'bianditz';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/carrias.jpg?date=1777985906239' WHERE slug = 'carrias';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/erenozar.jpg?date=1777985906239' WHERE slug = 'erenozar';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/eretza.jpg?date=1777985906239' WHERE slug = 'eretza';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/erga.jpg?date=1777985906239' WHERE slug = 'erga';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/erlo.jpg?date=1777985906239' WHERE slug = 'erlo';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/ermua.jpg?date=1777985906239' WHERE slug = 'ermua';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/erroilbide.jpg?date=1777985906239' WHERE slug = 'erroilbide';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/errozate.jpg?date=1777985906239' WHERE slug = 'errozate';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/eskutxi.jpg?date=1777985906239' WHERE slug = 'eskutxi';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/etxekortea.jpg?date=1777985906239' WHERE slug = 'etxekortea';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/fraile.jpg?date=1777985906239' WHERE slug = 'fraile';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/ganekogorta.jpg?date=1777985906239' WHERE slug = 'ganekogorta';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/gorbeia.jpg?date=1777985906239' WHERE slug = 'gorbeia';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/hauza.jpg?date=1777985906239' WHERE slug = 'hauza';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/hernio.jpg?date=1777985906239' WHERE slug = 'hernio';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/higa.jpg?date=1777985906239' WHERE slug = 'higa';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/hiru-erregeen-mahaia.jpg?date=1777985906239' WHERE slug = 'hiru-erregeen-mahaia';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/intxorta.jpg?date=1777985906239' WHERE slug = 'intxorta';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/iparla.jpg?date=1777985906239' WHERE slug = 'iparla';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/ireber.jpg?date=1777985906239' WHERE slug = 'ireber';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/irimo.jpg?date=1777985906239' WHERE slug = 'irimo';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/irulegi.jpg?date=1777985906239' WHERE slug = 'irulegi';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/iturrigorri.jpg?date=1777985906239' WHERE slug = 'iturrigorri';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/izarbe.jpg?date=1777985906239' WHERE slug = 'izarbe';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/jaizkibel.jpg?date=1777985906239' WHERE slug = 'jaizkibel';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/jata.jpg?date=1777985906239' WHERE slug = 'jata';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/joar.jpg?date=1777985906239' WHERE slug = 'joar';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/jorrios.jpg?date=1777985906239' WHERE slug = 'jorrios';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/kapildui.jpg?date=1777985906239' WHERE slug = 'kapildui';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/kolitza.jpg?date=1777985906239' WHERE slug = 'kolitza';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/lapoblacion.jpg?date=1777985906239' WHERE slug = 'lapoblacion';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/larhun.jpg?date=1777985906239' WHERE slug = 'larhun';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/larrunarri.jpg?date=1777985906239' WHERE slug = 'larrunarri';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/legate.jpg?date=1777985906239' WHERE slug = 'legate';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/lekanda.jpg?date=1777985906239' WHERE slug = 'lekanda';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/lokiz.jpg?date=1777985906239' WHERE slug = 'lokiz';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/mendaur.jpg?date=1777985906239' WHERE slug = 'mendaur';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/mondarrain.jpg?date=1777985906239' WHERE slug = 'mondarrain';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/montejurra.jpg?date=1777985906239' WHERE slug = 'montejurra';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/mugarra.jpg?date=1777985906239' WHERE slug = 'mugarra';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/murugil.jpg?date=1777985906239' WHERE slug = 'murugil';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/ogono.jpg?date=1777985906239' WHERE slug = 'ogono';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/oiz.jpg?date=1777985906239' WHERE slug = 'oiz';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/okabe.jpg?date=1777985906239' WHERE slug = 'okabe';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/orhi.jpg?date=1777985906239' WHERE slug = 'orhi';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/ortzantzurieta.jpg?date=1777985906239' WHERE slug = 'ortzantzurieta';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/oteros.jpg?date=1777985906239' WHERE slug = 'oteros';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/penablanca.jpg?date=1777985906239' WHERE slug = 'penablanca';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/perriain.jpg?date=1777985906239' WHERE slug = 'perriain';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/puttarri.jpg?date=1777985906239' WHERE slug = 'puttarri';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/saioa.jpg?date=1777985906239' WHERE slug = 'saioa';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/serantes.jpg?date=1777985906239' WHERE slug = 'serantes';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/soila.jpg?date=1777985906239' WHERE slug = 'soila';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/sollazbizkargana.jpg?date=1777985906239' WHERE slug = 'sollazbizkargana';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/sollube.jpg?date=1777985906239' WHERE slug = 'sollube';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/tolono.jpg?date=1777985906239' WHERE slug = 'tolono';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/txamantxoia.jpg?date=1777985906239' WHERE slug = 'txamantxoia';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/txarlazo.jpg?date=1777985906239' WHERE slug = 'txarlazo';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/udalatx.jpg?date=1777985906239' WHERE slug = 'udalatx';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/untzillatx.jpg?date=1777985906239' WHERE slug = 'untzillatx';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/urepel.jpg?date=1777985906239' WHERE slug = 'urepel';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/urko.jpg?date=1777985906239' WHERE slug = 'urko';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/urkulu.jpg?date=1777985906239' WHERE slug = 'urkulu';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/urtemondo.jpg?date=1777985906239' WHERE slug = 'urtemondo';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/uzturre.jpg?date=1777985906239' WHERE slug = 'uzturre';
+UPDATE mountain SET image_url = 'https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/zalama.jpg?date=1777985906239' WHERE slug = 'zalama';
