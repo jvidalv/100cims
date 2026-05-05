@@ -428,6 +428,20 @@
       "when": 1777013688305,
       "tag": "0060_add-mountain-comments",
       "breakpoints": true
+    },
+    {
+      "idx": 61,
+      "version": "7",
+      "when": 1777981754421,
+      "tag": "0061_add-ehun-mendiak-challenge",
+      "breakpoints": true
+    },
+    {
+      "idx": 62,
+      "version": "7",
+      "when": 1777985884788,
+      "tag": "0062_backfill-ehun-mendiak-images",
+      "breakpoints": true
     }
   ]
 }

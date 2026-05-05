@@ -81,6 +81,7 @@ const FEATURED_CHALLENGES: { slug: string; label: string; href?: string }[] = [
   { slug: "top-spain", label: "Top Spain" },
   { slug: "cumbres-astures", label: "Cumbres Astures" },
   { slug: "100-cims-usa", label: "100 Cims USA" },
+  { slug: "ehun-mendiak", label: "Ehun Mendiak", href: "/ehun-mendiak" },
 ];
 
 interface Props {
