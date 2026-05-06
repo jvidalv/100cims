@@ -16,9 +16,14 @@ import { SimpleSuccessResponse } from "@/api/schemas/common.schema";
 // Patterns we never forward to Discord — pure noise that drowns out real errors.
 // "Network request failed": transient mobile connectivity, nothing we can fix.
 // "user canceled the authorization attempt": user dismissed the Apple/Google Sign-In sheet.
+// "authorization attempt failed for an unknown reason": opaque Google Sign-In failure (iOS), not actionable.
+// "INTERNAL_ERROR" / ApiException: Google Play Services transient failure on Android, not actionable.
 const IGNORED_MESSAGE_PATTERNS = [
   /network request failed/i,
   /user canceled the authorization attempt/i,
+  /authorization attempt failed for an unknown reason/i,
+  /\bINTERNAL_ERROR\b/,
+  /com\.google\.android\.gms\.common\.api\.ApiException/i,
 ];
 
 const shouldIgnore = (message: string): boolean =>
