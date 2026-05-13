@@ -40,7 +40,7 @@ export const selfRestart = async (
   const heapMb = Math.round(process.memoryUsage().heapUsed / 1024 / 1024);
   sendDiscordEmbed(DISCORD_ERRORS_WEBHOOK_URL, {
     title: scheduled
-      ? "🔄 Daily restart"
+      ? "🔄 Weekly restart"
       : "🚨 Emergency restart (critical health)",
     color: scheduled ? DISCORD_COLOR.BLURPLE : DISCORD_COLOR.RED,
     fields: [
@@ -59,5 +59,7 @@ export const selfRestart = async (
   process.exit(1);
 };
 
-export const dailyRestart = (): Promise<void> =>
-  selfRestart("Scheduled daily restart (2 AM UTC)", { scheduled: true });
+export const weeklyRestart = (): Promise<void> =>
+  selfRestart("Scheduled weekly restart (Monday 2 AM UTC)", {
+    scheduled: true,
+  });

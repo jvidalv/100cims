@@ -7,7 +7,7 @@ import { syncImageUrlsToCdn } from "@/api/cron/sync-image-urls-to-cdn";
 import { monitorHealth } from "@/api/cron/monitor-health";
 import { notifyUpcomingPlans } from "@/api/cron/notify-upcoming-plans";
 import { recommendWeeklyMountain } from "@/api/cron/recommend-weekly-mountain";
-import { dailyRestart } from "@/api/cron/self-restart";
+import { weeklyRestart } from "@/api/cron/self-restart";
 
 export interface CronEntry {
   name: string;
@@ -26,11 +26,11 @@ export const CRON_REGISTRY: CronEntry[] = [
     fn: completeStalePlans,
   },
   {
-    name: "daily-restart",
-    pattern: "0 0 2 * * *",
+    name: "weekly-restart",
+    pattern: "0 0 2 * * 1",
     description:
-      "Force the API process to exit so Railway respawns it. Clears slow-leak memory and reconnects pools. Runs nightly at 02:00.",
-    fn: dailyRestart,
+      "Force the API process to exit so Railway respawns it. Clears slow-leak memory and reconnects pools. Runs Monday at 02:00.",
+    fn: weeklyRestart,
   },
   {
     name: "cleanup-orphan-mountains",
