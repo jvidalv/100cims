@@ -7,6 +7,7 @@ import { toast } from "sonner";
 
 import { MAX_IMAGE_KB } from "@/api/lib/images";
 import { fileToBase64 } from "@/app/admin/_lib/file-to-base64";
+import { SearchPicker } from "@/app/admin/_lib/search-picker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,10 +19,33 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { PLAN_SPEEDS, type PlanSpeed } from "@/db/enums";
+import {
+  useAdminChallenges,
+  useAdminMountains,
+  useCreateAdminPlan,
+} from "@/domains/admin/api";
 
 const isPlanSpeed = (v: string): v is PlanSpeed =>
   (PLAN_SPEEDS as readonly string[]).includes(v);
-import { useCreateAdminPlan } from "@/domains/admin/api";
+
+type SelectedMountain = { id: string; name: string; location: string };
+type SelectedChallenge = { id: string; name: string };
+
+const useMountainSearch = (q: string) => {
+  const { data, isLoading } = useAdminMountains(
+    { page: 1, q, sort: "" },
+    { enabled: q.trim().length > 0 },
+  );
+  return { items: data?.items ?? [], isLoading };
+};
+
+const useChallengeSearch = (q: string) => {
+  const { data, isLoading } = useAdminChallenges(
+    { page: 1, q, kind: "" },
+    { enabled: q.trim().length > 0 },
+  );
+  return { items: data?.items ?? [], isLoading };
+};
 
 export default function AdminPlanNewPage() {
   const router = useRouter();
@@ -33,10 +57,15 @@ export default function AdminPlanNewPage() {
   const [speed, setSpeed] = useState<PlanSpeed>("normal");
   const [isPrivate, setIsPrivate] = useState(false);
   const [publishAsCims, setPublishAsCims] = useState(false);
-  const [challengeId, setChallengeId] = useState("");
-  const [mountainIdsText, setMountainIdsText] = useState("");
+  const [selectedChallenge, setSelectedChallenge] =
+    useState<SelectedChallenge | null>(null);
+  const [selectedMountains, setSelectedMountains] = useState<
+    SelectedMountain[]
+  >([]);
   const [imageValue, setImageValue] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+
+  const selectedMountainIds = new Set(selectedMountains.map((m) => m.id));
 
   const onPickImage = async (file: File | null) => {
     if (!file) return;
@@ -55,11 +84,6 @@ export default function AdminPlanNewPage() {
   };
 
   const submit = () => {
-    const mountainIds = mountainIdsText
-      .split(/[\s,]+/)
-      .map((s) => s.trim())
-      .filter(Boolean);
-
     create.mutate(
       {
         title: title.trim(),
@@ -68,8 +92,10 @@ export default function AdminPlanNewPage() {
         speed,
         isPrivate,
         publishAsCims,
-        challengeId: challengeId.trim() || undefined,
-        mountainIds: mountainIds.length > 0 ? mountainIds : undefined,
+        challengeId: selectedChallenge?.id,
+        mountainIds: selectedMountains.length
+          ? selectedMountains.map((m) => m.id)
+          : undefined,
         imageUrl: imageValue,
       },
       {
@@ -149,27 +175,91 @@ export default function AdminPlanNewPage() {
           </div>
         </div>
 
-        <div className="space-y-1">
-          <Label>Mountain IDs</Label>
-          <textarea
-            value={mountainIdsText}
-            rows={2}
-            onChange={(e) => setMountainIdsText(e.target.value)}
-            className="flex w-full rounded border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-            placeholder="UUIDs separated by commas or whitespace"
+        <div className="space-y-2">
+          <Label>Mountains</Label>
+          {selectedMountains.length > 0 && (
+            <ul className="flex flex-wrap gap-1.5">
+              {selectedMountains.map((m) => (
+                <li
+                  key={m.id}
+                  className="inline-flex items-center gap-1.5 rounded border bg-muted/40 pl-2 pr-1 py-0.5 text-sm"
+                >
+                  <span>{m.name}</span>
+                  {m.location && (
+                    <span className="text-xs text-muted-foreground">
+                      · {m.location}
+                    </span>
+                  )}
+                  <button
+                    type="button"
+                    aria-label={`Remove ${m.name}`}
+                    onClick={() =>
+                      setSelectedMountains((prev) =>
+                        prev.filter((x) => x.id !== m.id),
+                      )
+                    }
+                    className="text-muted-foreground hover:text-foreground rounded px-1 leading-none"
+                  >
+                    ×
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+          <SearchPicker
+            placeholder="Search mountains by name or location…"
+            emptyLabel="No mountains match."
+            useResults={useMountainSearch}
+            excludeIds={selectedMountainIds}
+            onPick={(m) =>
+              setSelectedMountains((prev) => [
+                ...prev,
+                { id: m.id, name: m.name, location: m.location },
+              ])
+            }
+            renderOption={(m) => (
+              <>
+                <span className="font-medium">{m.name}</span>
+                {m.location && (
+                  <span className="text-xs text-muted-foreground">
+                    {m.location}
+                  </span>
+                )}
+              </>
+            )}
           />
-          <p className="text-xs text-muted-foreground">
-            Optional. Paste mountain UUIDs to link them to the plan.
-          </p>
         </div>
 
-        <div className="space-y-1">
-          <Label>Challenge ID</Label>
-          <Input
-            value={challengeId}
-            onChange={(e) => setChallengeId(e.target.value)}
-            placeholder="Optional — defaults to the standard 100cims challenge"
-          />
+        <div className="space-y-2">
+          <Label>Challenge</Label>
+          {selectedChallenge ? (
+            <span className="inline-flex items-center gap-1.5 rounded border bg-muted/40 pl-2 pr-1 py-0.5 text-sm">
+              <span>{selectedChallenge.name}</span>
+              <button
+                type="button"
+                aria-label={`Remove ${selectedChallenge.name}`}
+                onClick={() => setSelectedChallenge(null)}
+                className="text-muted-foreground hover:text-foreground rounded px-1 leading-none"
+              >
+                ×
+              </button>
+            </span>
+          ) : (
+            <SearchPicker
+              placeholder="Optional — defaults to the standard 100cims challenge"
+              emptyLabel="No challenges match."
+              useResults={useChallengeSearch}
+              onPick={(c) => setSelectedChallenge({ id: c.id, name: c.name })}
+              renderOption={(c) => (
+                <>
+                  <span className="font-medium">{c.name}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {c.slug}
+                  </span>
+                </>
+              )}
+            />
+          )}
         </div>
 
         <div className="space-y-2">

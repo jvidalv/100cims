@@ -164,15 +164,18 @@ export const useRemoveAdminUserPerson = (id: string) => {
   });
 };
 
-export const useAdminMountains = ({
-  page,
-  q,
-  sort,
-}: {
-  page: number;
-  q: string;
-  sort: string;
-}) =>
+export const useAdminMountains = (
+  {
+    page,
+    q,
+    sort,
+  }: {
+    page: number;
+    q: string;
+    sort: string;
+  },
+  options?: { enabled?: boolean },
+) =>
   useQuery({
     queryKey: adminKeys.mountains({ page, q, sort }),
     queryFn: async () => {
@@ -188,6 +191,7 @@ export const useAdminMountains = ({
       return data.message;
     },
     placeholderData: (prev) => prev,
+    enabled: options?.enabled ?? true,
   });
 
 export const useAdminMountainDetail = (id: string) =>
@@ -579,15 +583,18 @@ export const useAdminStatsTimeseries = (
     },
   });
 
-export const useAdminChallenges = ({
-  page,
-  q,
-  kind,
-}: {
-  page: number;
-  q: string;
-  kind: string;
-}) =>
+export const useAdminChallenges = (
+  {
+    page,
+    q,
+    kind,
+  }: {
+    page: number;
+    q: string;
+    kind: string;
+  },
+  options?: { enabled?: boolean },
+) =>
   useQuery({
     queryKey: adminKeys.challenges({ page, q, kind }),
     queryFn: async () => {
@@ -603,6 +610,7 @@ export const useAdminChallenges = ({
       return data.message;
     },
     placeholderData: (prev) => prev,
+    enabled: options?.enabled ?? true,
   });
 
 export const useAdminChallengeDetail = (id: string) =>
