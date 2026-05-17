@@ -268,7 +268,13 @@ export const planHasMountainsTable = pgTable(
       onDelete: "cascade",
     }),
   },
-  (table) => [index("plan_has_mountains_plan_id_idx").on(table.planId)],
+  (table) => [
+    index("plan_has_mountains_plan_id_idx").on(table.planId),
+    uniqueIndex("plan_has_mountains_plan_mountain_unq_idx").on(
+      table.planId,
+      table.mountainId,
+    ),
+  ],
 );
 
 export const planHasUsersTable = pgTable(

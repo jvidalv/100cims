@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { MAX_IMAGE_KB } from "@/api/lib/images";
 import { fileToBase64 } from "@/app/admin/_lib/file-to-base64";
 import { SearchPicker } from "@/app/admin/_lib/search-picker";
+import { useMountainSearch } from "@/app/admin/_lib/use-mountain-search";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,25 +20,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { PLAN_SPEEDS, type PlanSpeed } from "@/db/enums";
-import {
-  useAdminChallenges,
-  useAdminMountains,
-  useCreateAdminPlan,
-} from "@/domains/admin/api";
+import { useAdminChallenges, useCreateAdminPlan } from "@/domains/admin/api";
 
 const isPlanSpeed = (v: string): v is PlanSpeed =>
   (PLAN_SPEEDS as readonly string[]).includes(v);
 
 type SelectedMountain = { id: string; name: string; location: string };
 type SelectedChallenge = { id: string; name: string };
-
-const useMountainSearch = (q: string) => {
-  const { data, isLoading } = useAdminMountains(
-    { page: 1, q, sort: "" },
-    { enabled: q.trim().length > 0 },
-  );
-  return { items: data?.items ?? [], isLoading };
-};
 
 const useChallengeSearch = (q: string) => {
   const { data, isLoading } = useAdminChallenges(

@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "plan_has_mountains_plan_mountain_unq_idx" ON "plan_has_mountains" USING btree ("plan_id","mountain_id");

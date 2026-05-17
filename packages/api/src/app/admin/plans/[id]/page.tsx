@@ -27,14 +27,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { SearchPicker } from "@/app/admin/_lib/search-picker";
+import { useMountainSearch } from "@/app/admin/_lib/use-mountain-search";
 import {
   type AdminPlanUpdateBody,
+  useAddAdminPlanMountain,
   useAdminPlanDetail,
   useDeleteAdminPlan,
   useRemoveAdminPlanMember,
+  useRemoveAdminPlanMountain,
   useUpdateAdminPlan,
 } from "@/domains/admin/api";
-import { formatDate, formatDateTime } from "@/lib/format-date";
+import {
+  formatDate,
+  formatDateTime,
+  toDateInputValue,
+} from "@/lib/format-date";
 
 const STATUSES = ["open", "completed", "canceled"] as const;
 const SPEEDS = ["chill", "normal", "fast"] as const;
@@ -77,6 +85,8 @@ export default function AdminPlanDetailPage({
   const update = useUpdateAdminPlan(id);
   const deletePlan = useDeleteAdminPlan(id);
   const removeMember = useRemoveAdminPlanMember(id);
+  const addMountain = useAddAdminPlanMountain(id);
+  const removeMountain = useRemoveAdminPlanMountain(id);
 
   const [form, setForm] = useState<Form>(emptyForm);
   const [initial, setInitial] = useState<Form>(emptyForm);
@@ -88,7 +98,7 @@ export default function AdminPlanDetailPage({
       description: detail.data.description ?? "",
       status: detail.data.status,
       speed: isSpeed(detail.data.speed) ? detail.data.speed : "normal",
-      startDate: detail.data.startDate ?? "",
+      startDate: toDateInputValue(detail.data.startDate),
       imageUrl: detail.data.imageUrl ?? "",
       routeUrl: detail.data.routeUrl ?? "",
     };
@@ -338,15 +348,11 @@ export default function AdminPlanDetailPage({
         </dl>
       </section>
 
-      <section className="space-y-3">
+      <section className="space-y-3 max-w-2xl">
         <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
           Mountains ({p.mountains.length})
         </h2>
-        {p.mountains.length === 0 ? (
-          <p className="text-muted-foreground text-sm">
-            No mountains linked to this plan.
-          </p>
-        ) : (
+        {p.mountains.length > 0 && (
           <ul className="divide-y border rounded">
             {p.mountains.map((m) => (
               <li
@@ -359,13 +365,52 @@ export default function AdminPlanDetailPage({
                 >
                   {m.name}
                 </Link>
-                <span className="text-sm text-muted-foreground">
-                  {m.height} m{m.essential ? " · essential" : ""}
-                </span>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm text-muted-foreground">
+                    {m.height} m{m.essential ? " · essential" : ""}
+                  </span>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    disabled={removeMountain.isPending}
+                    onClick={() =>
+                      removeMountain.mutate(m.mountainId, {
+                        onError: (e) =>
+                          toast.error(
+                            e instanceof Error ? e.message : "Remove failed",
+                          ),
+                      })
+                    }
+                  >
+                    Remove
+                  </Button>
+                </div>
               </li>
             ))}
           </ul>
         )}
+        <SearchPicker
+          placeholder="Add a mountain by name or location…"
+          emptyLabel="No mountains match."
+          useResults={useMountainSearch}
+          excludeIds={new Set(p.mountains.map((m) => m.mountainId))}
+          onPick={(m) =>
+            addMountain.mutate(m.id, {
+              onError: (e) =>
+                toast.error(e instanceof Error ? e.message : "Add failed"),
+            })
+          }
+          renderOption={(m) => (
+            <>
+              <span className="font-medium">{m.name}</span>
+              {m.location && (
+                <span className="text-xs text-muted-foreground">
+                  {m.location}
+                </span>
+              )}
+            </>
+          )}
+        />
       </section>
 
       <section className="space-y-3">

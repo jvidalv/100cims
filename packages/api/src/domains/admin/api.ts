@@ -550,6 +550,42 @@ export const useRemoveAdminPlanMember = (planId: string) => {
   });
 };
 
+export const useAddAdminPlanMountain = (planId: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (mountainId: string) => {
+      const { data, error } = await api.api.admin
+        .plans({ id: planId })
+        .mountains({ mountainId })
+        .post();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: adminKeys.planDetail(planId) });
+      void qc.invalidateQueries({ queryKey: adminKeys.plansList() });
+    },
+  });
+};
+
+export const useRemoveAdminPlanMountain = (planId: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (mountainId: string) => {
+      const { data, error } = await api.api.admin
+        .plans({ id: planId })
+        .mountains({ mountainId })
+        .delete();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: adminKeys.planDetail(planId) });
+      void qc.invalidateQueries({ queryKey: adminKeys.plansList() });
+    },
+  });
+};
+
 export const useDeleteAdminSummit = (id: string) => {
   const qc = useQueryClient();
   return useMutation({
