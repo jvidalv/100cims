@@ -224,6 +224,7 @@ export const AdminPlanMountainSchema = t.Object({
   slug: t.String(),
   height: t.String(),
   essential: t.Boolean(),
+  imageUrl: t.Nullable(t.String()),
 });
 
 export const AdminPlanMessageSchema = t.Object({

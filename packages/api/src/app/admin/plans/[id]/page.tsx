@@ -357,34 +357,43 @@ export default function AdminPlanDetailPage({
             {p.mountains.map((m) => (
               <li
                 key={m.mountainId}
-                className="flex items-center justify-between px-4 py-3"
+                className="flex items-center gap-3 px-4 py-3"
               >
+                {m.imageUrl ? (
+                  <img
+                    src={m.imageUrl}
+                    alt=""
+                    className="size-10 rounded object-cover shrink-0"
+                  />
+                ) : (
+                  <div className="size-10 rounded bg-muted flex items-center justify-center text-lg shrink-0">
+                    ⛰
+                  </div>
+                )}
                 <Link
                   href={`/admin/mountains/${m.mountainId}`}
-                  className="font-medium hover:underline"
+                  className="font-medium hover:underline flex-1 min-w-0 truncate"
                 >
                   {m.name}
                 </Link>
-                <div className="flex items-center gap-3">
-                  <span className="text-sm text-muted-foreground">
-                    {m.height} m{m.essential ? " · essential" : ""}
-                  </span>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    disabled={removeMountain.isPending}
-                    onClick={() =>
-                      removeMountain.mutate(m.mountainId, {
-                        onError: (e) =>
-                          toast.error(
-                            e instanceof Error ? e.message : "Remove failed",
-                          ),
-                      })
-                    }
-                  >
-                    Remove
-                  </Button>
-                </div>
+                <span className="text-sm text-muted-foreground">
+                  {m.height} m{m.essential ? " · essential" : ""}
+                </span>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  disabled={removeMountain.isPending}
+                  onClick={() =>
+                    removeMountain.mutate(m.mountainId, {
+                      onError: (e) =>
+                        toast.error(
+                          e instanceof Error ? e.message : "Remove failed",
+                        ),
+                    })
+                  }
+                >
+                  Remove
+                </Button>
               </li>
             ))}
           </ul>
