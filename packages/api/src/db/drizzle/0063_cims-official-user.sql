@@ -1,13 +1,13 @@
 -- Custom SQL migration file, put your code below! --
 INSERT INTO "user" (
-  "username",
-  "email",
-  "firstName",
-  "imageUrl",
-  "town",
-  "admin",
-  "visibleOnHiscores",
-  "visibleOnPeopleSearch"
+  username,
+  email,
+  first_name,
+  image_url,
+  town,
+  admin,
+  visible_on_hiscores,
+  visible_on_people_search
 )
 VALUES (
   'cims',
@@ -19,4 +19,4 @@ VALUES (
   false,
   false
 )
-ON CONFLICT ("email") DO NOTHING;
+ON CONFLICT (email) DO NOTHING;
