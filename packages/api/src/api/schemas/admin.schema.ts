@@ -275,6 +275,19 @@ export const AdminPlanUpdateBodySchema = t.Object({
   isPrivate: t.Optional(t.Boolean()),
 });
 
+export const AdminPlanCreateBodySchema = t.Object({
+  title: t.String({ minLength: 1 }),
+  description: t.Optional(t.String()),
+  startDate: t.Optional(t.String()),
+  speed: t.Optional(PlanSpeedSchema),
+  mountainIds: t.Optional(t.Array(t.String())),
+  challengeId: t.Optional(t.String()),
+  isPrivate: t.Optional(t.Boolean()),
+  // Either an http(s) URL (keep as-is) or a raw base64 payload (uploaded to S3).
+  imageUrl: t.Optional(t.Nullable(t.String())),
+  publishAsCims: t.Optional(t.Boolean()),
+});
+
 export const MerchVariantSchema = t.Object({
   color: t.String(),
   imageUrls: t.Array(t.String()),

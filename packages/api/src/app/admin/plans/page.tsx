@@ -76,7 +76,12 @@ export default function AdminPlansPage() {
 
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold mb-6">Plans</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold">Plans</h1>
+        <Button asChild size="sm">
+          <Link href="/admin/plans/new">New plan</Link>
+        </Button>
+      </div>
 
       <div className="flex flex-wrap items-center gap-3 mb-6">
         <Input

@@ -7,6 +7,7 @@ import type {
   AdminCouponUpdateBodySchema,
   AdminMerchCreateBodySchema,
   AdminMerchUpdateBodySchema,
+  AdminPlanCreateBodySchema,
   AdminShopRequestUpdateBodySchema,
 } from "@/api/schemas/admin.schema";
 import type { PlanSpeed, PlanStatus } from "@/db/enums";
@@ -480,6 +481,22 @@ export type AdminPlanUpdateBody = {
   startDate?: string | null;
   imageUrl?: string | null;
   routeUrl?: string | null;
+};
+
+export type AdminPlanCreateBody = Static<typeof AdminPlanCreateBodySchema>;
+
+export const useCreateAdminPlan = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (body: AdminPlanCreateBody) => {
+      const { data, error } = await api.api.admin.plans.post(body);
+      if (error) throw error;
+      return data.message;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: adminKeys.plansList() });
+    },
+  });
 };
 
 export const useUpdateAdminPlan = (id: string) => {
