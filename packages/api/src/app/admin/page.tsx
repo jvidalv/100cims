@@ -26,6 +26,7 @@ import {
   type StatsRange,
   useAdminStatsTimeseries,
 } from "@/domains/admin/api";
+import { toDateInputValue } from "@/lib/format-date";
 
 const RANGES: { value: StatsRange; label: string }[] = [
   { value: "week", label: "Last week" },
@@ -55,12 +56,6 @@ interface Marker {
   x: string;
   versions: string[];
 }
-
-// API schema declares `date: t.String()` but Eden parses ISO date strings
-// into Date instances at the network boundary. Normalise both shapes to
-// YYYY-MM-DD so XAxis categories and ReferenceLine `x` values match.
-const toIsoDate = (value: string | Date): string =>
-  value instanceof Date ? value.toISOString().slice(0, 10) : value.slice(0, 10);
 
 const markersForPoints = (dates: string[]): Marker[] => {
   if (dates.length === 0) return [];
@@ -136,7 +131,7 @@ function ChartCard({
   const points: ChartPoint[] = useMemo(
     () =>
       data?.points.map((p) => ({
-        date: toIsoDate(p.date),
+        date: toDateInputValue(p.date),
         count: p.count,
       })) ?? [],
     [data],
