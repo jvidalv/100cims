@@ -81,6 +81,12 @@ Rules:
 
 Do **not** use `drizzle-kit push` anywhere: it bypasses the versioned migration files, skips custom SQL (like data backfills), and leaves the DB in a state that later `db:migrate` can't reconcile.
 
+**CRITICAL — hand-written SQL must use snake_case column identifiers, NOT the camelCase field names from `schema.ts`.** Drizzle's `text()` / `boolean()` / `uuid()` builders map TS field `imageUrl` to DB column `image_url` automatically — so the schema reads `imageUrl: text()`, but the actual column on disk is `image_url`. When you write `INSERT`/`UPDATE` SQL in a custom migration:
+
+- Always reference real DB column names: `first_name`, `image_url`, `visible_on_hiscores`, `created_at`, `active_challenge_id`, etc.
+- Do NOT quote camelCase identifiers like `"imageUrl"` — they don't exist as columns and the migration will fail at apply time with a swallowed error (drizzle-kit prints `error Command failed with exit code 1.` and hides the real PG message), breaking every Railway build until reverted.
+- Sanity-check by reading an existing migration in the same folder (e.g. `0001_seed-data.sql`, `0012_grant_josep_admin.sql`) or by querying `information_schema.columns WHERE table_name = '<table>'` before authoring the SQL.
+
 ## Deployment Agents
 
 ### Mobile App Deployment (EAS Build)
