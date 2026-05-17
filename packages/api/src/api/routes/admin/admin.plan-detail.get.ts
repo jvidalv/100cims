@@ -75,6 +75,7 @@ export const adminPlanDetailGetRoute = new Elysia().get(
           slug: mountainTable.slug,
           height: mountainTable.height,
           essential: mountainTable.essential,
+          imageUrl: mountainTable.imageUrl,
         })
         .from(planHasMountainsTable)
         .innerJoin(
