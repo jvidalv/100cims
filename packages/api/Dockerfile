@@ -7,7 +7,7 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json yarn.lock ./
 COPY packages/api/package.json ./packages/api/package.json
-RUN --mount=type=cache,target=/usr/local/share/.cache/yarn \
+RUN --mount=type=cache,id=yarn-cache,target=/usr/local/share/.cache/yarn \
   yarn install --frozen-lockfile --ignore-scripts
 
 # Production-only install — slim node_modules shipped in the final image.
@@ -18,7 +18,7 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json yarn.lock ./
 COPY packages/api/package.json ./packages/api/package.json
-RUN --mount=type=cache,target=/usr/local/share/.cache/yarn \
+RUN --mount=type=cache,id=yarn-cache,target=/usr/local/share/.cache/yarn \
   yarn install --frozen-lockfile --ignore-scripts --production
 
 # Rebuild the source code only when needed
