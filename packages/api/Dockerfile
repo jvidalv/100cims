@@ -1,13 +1,25 @@
+# syntax=docker/dockerfile:1
 FROM node:24-alpine AS base
 
-# Install dependencies only when needed
+# Full install (incl. devDependencies) — needed to run `next build`.
 FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
-
 COPY package.json yarn.lock ./
 COPY packages/api/package.json ./packages/api/package.json
-RUN yarn install --frozen-lockfile --ignore-scripts
+RUN --mount=type=cache,target=/usr/local/share/.cache/yarn \
+  yarn install --frozen-lockfile --ignore-scripts
+
+# Production-only install — slim node_modules shipped in the final image.
+# drizzle-kit + dotenv are runtime deps (the container runs `db:migrate` on
+# start), so they must resolve here too.
+FROM base AS prod-deps
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+COPY package.json yarn.lock ./
+COPY packages/api/package.json ./packages/api/package.json
+RUN --mount=type=cache,target=/usr/local/share/.cache/yarn \
+  yarn install --frozen-lockfile --ignore-scripts --production
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -49,15 +61,13 @@ COPY --from=builder --chown=nextjs:nodejs /app/packages/api/.next/static ./packa
 COPY --from=builder /app/packages/api/src/db/drizzle ./packages/api/src/db/drizzle
 COPY --from=builder /app/packages/api/drizzle.config.ts ./packages/api/drizzle.config.ts
 
-# geoip-lite ships .dat data files loaded via __dirname; Next's file-tracing
-# doesn't see them, so copy the package into the standalone tree explicitly.
-COPY --from=builder /app/node_modules/geoip-lite ./packages/api/node_modules/geoip-lite
-
-# Runtime migrations need drizzle-kit, which compiles drizzle.config.ts
-# via esbuild. esbuild has a platform-specific binary pulled in as an
-# optional dep (@esbuild/linux-x64), plus drizzle-orm as a peer. Cherry-
-# picking them is fragile — ship the full hoisted node_modules instead.
-COPY --from=builder /app/node_modules ./node_modules
+# Runtime needs the production dependency tree: geoip-lite ships .dat data
+# files that Next's file-tracing misses, and `db:migrate` on start needs
+# drizzle-kit (compiles drizzle.config.ts via esbuild) + dotenv. The
+# prod-deps stage is a --production install, so it excludes the ~1.6GB of
+# devDependencies (Next compiler, Turbopack, TypeScript) that bloated the
+# image when the full node_modules was shipped.
+COPY --from=prod-deps /app/node_modules ./node_modules
 
 USER nextjs
 
