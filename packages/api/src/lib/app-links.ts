@@ -16,3 +16,17 @@ export const ANDROID_APP_URL =
 export const INSTAGRAM_URL = "https://instagram.com/fescims";
 
 export const TIKTOK_URL = "https://tiktok.com/@fescims";
+
+export type Platform = "ios" | "android" | "other";
+
+export const detectPlatform = (userAgent: string): Platform => {
+  if (/iPhone|iPad|iPod/i.test(userAgent)) return "ios";
+  if (/Android/i.test(userAgent)) return "android";
+  return "other";
+};
+
+export const resolveStoreUrl = (platform: Platform): string => {
+  if (platform === "ios") return IOS_APP_URL;
+  if (platform === "android") return ANDROID_APP_URL;
+  return SITE_URL;
+};
