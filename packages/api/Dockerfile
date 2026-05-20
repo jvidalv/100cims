@@ -1,13 +1,18 @@
 # syntax=docker/dockerfile:1
 FROM node:24-alpine AS base
 
+# Cache mount ids must be prefixed with `s/<service-id>-` — Railway's builder
+# rejects unprefixed ids ("missing the cacheKey prefix from its id"). The
+# service id can't come from a build arg (vars aren't allowed in mount ids),
+# so it's hardcoded: CIMS service in the fescims.com Railway project.
+
 # Full install (incl. devDependencies) — needed to run `next build`.
 FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json yarn.lock ./
 COPY packages/api/package.json ./packages/api/package.json
-RUN --mount=type=cache,id=yarn-cache,target=/usr/local/share/.cache/yarn \
+RUN --mount=type=cache,id=s/a6516d83-a67d-4db7-b7a9-b98d8dc803af-yarn,target=/usr/local/share/.cache/yarn \
   yarn install --frozen-lockfile --ignore-scripts
 
 # Production-only install — slim node_modules shipped in the final image.
@@ -18,7 +23,7 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json yarn.lock ./
 COPY packages/api/package.json ./packages/api/package.json
-RUN --mount=type=cache,id=yarn-cache,target=/usr/local/share/.cache/yarn \
+RUN --mount=type=cache,id=s/a6516d83-a67d-4db7-b7a9-b98d8dc803af-yarn,target=/usr/local/share/.cache/yarn \
   yarn install --frozen-lockfile --ignore-scripts --production
 
 # Rebuild the source code only when needed
