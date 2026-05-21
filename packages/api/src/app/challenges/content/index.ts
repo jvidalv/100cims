@@ -13,6 +13,7 @@ import highlandTerraAlta from "./highland-terra-alta.json";
 import islasCanarias from "./islas-canarias.json";
 import montesGallegos from "./montes-gallegos.json";
 import repteDelGirones from "./repte-del-girones.json";
+import sostresComarcals from "./sostres-comarcals.json";
 import topSpain from "./top-spain.json";
 
 const VALID_LOCALES: readonly ChallengeLocale[] = ["ca", "es", "en"];
@@ -55,6 +56,7 @@ export const CHALLENGE_CONTENT = {
   "islas-canarias": narrow(islasCanarias, "islas-canarias"),
   "montes-gallegos": narrow(montesGallegos, "montes-gallegos"),
   "repte-del-girones": narrow(repteDelGirones, "repte-del-girones"),
+  "sostres-comarcals": narrow(sostresComarcals, "sostres-comarcals"),
   "top-spain": narrow(topSpain, "top-spain"),
 } satisfies Record<string, ChallengeContent>;
 
