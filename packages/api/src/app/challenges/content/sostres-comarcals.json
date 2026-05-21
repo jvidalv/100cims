@@ -1,0 +1,36 @@
+{
+  "locale": "ca",
+  "title": "Sostres Comarcals de Catalunya · Els 41 cims comarcals a l'app Cims",
+  "shortName": "Sostres Comarcals de Catalunya",
+  "description": "Segueix el teu progrés pujant el sostre de cada comarca de Catalunya: 41 cims, des de la Pica d'Estats fins al Tibidabo. App gratuïta per a iOS i Android.",
+  "heroTagline": "El cim més alt de cada comarca de Catalunya, al teu mòbil.",
+  "heroImageUrl": "https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/matagalls.jpg?date=1761896472107",
+  "whatIsTitle": "Què són els Sostres Comarcals de Catalunya?",
+  "whatIsParagraphs": [
+    "Els sostres comarcals són el punt més alt de cadascuna de les comarques de Catalunya. Catalunya té 43 comarques, però com que el Sant Jeroni de Montserrat corona alhora l'Anoia i el Bages, i el Tossal de la Baltasana el Baix Camp i la Conca de Barberà, el repte aplega 41 cims diferents.",
+    "És un recorregut per tota la geografia del país: tresmils del Pirineu com la Pica d'Estats, sostre de Catalunya a 3.143 m; cims emblemàtics del Montseny com el Matagalls i el Turó de l'Home; turons litorals com el Tibidabo o el Turó d'en Vives, i discrets sostres de la plana de Ponent com el Tossal de l'Infern, de tot just 301 m.",
+    "Amb Cims, sempre amunt portes la llista al mòbil, marques cada ascens amb una foto i la data, i veus com avances comarca a comarca sense haver de portar cap fitxa."
+  ],
+  "faqs": [
+    {
+      "q": "Quants cims té el repte?",
+      "a": "41 cims. Catalunya té 43 comarques, però dues parelles de comarques comparteixen sostre (Montserrat per a l'Anoia i el Bages; el Tossal de la Baltasana per al Baix Camp i la Conca de Barberà)."
+    },
+    {
+      "q": "Quin és el cim més alt i el més baix?",
+      "a": "El més alt és la Pica d'Estats (3.143 m), sostre del Pallars Sobirà i de tot Catalunya. El més baix és el Tossal de l'Infern (301 m), sostre del Pla d'Urgell."
+    },
+    {
+      "q": "Cal estar federat o tenir cap llicència?",
+      "a": "No. És un repte personal: l'app et serveix per portar el compte tant si estàs federat com si no."
+    },
+    {
+      "q": "Valen ascensions anteriors a haver instal·lat l'app?",
+      "a": "Sí. Pots registrar qualsevol ascensió, sigui de la data que sigui — només has d'afegir la cima amb la data corresponent."
+    },
+    {
+      "q": "Quina és la millor època per fer-lo?",
+      "a": "Depèn del cim: els tresmils del Pirineu es fan millor d'estiu i tardor, mentre que els sostres del sud i de la plana són ideals de tardor, hivern i primavera."
+    }
+  ]
+}
