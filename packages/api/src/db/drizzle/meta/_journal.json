@@ -484,6 +484,13 @@
       "when": 1779381054177,
       "tag": "0068_backfill-remaining-sostres-comarcals-images",
       "breakpoints": true
+    },
+    {
+      "idx": 69,
+      "version": "7",
+      "when": 1779381389114,
+      "tag": "0069_fix-roca-de-migdia-image",
+      "breakpoints": true
     }
   ]
 }
