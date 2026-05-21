@@ -84,7 +84,7 @@ const FEATURED_CHALLENGES: { slug: string; label: string; href?: string }[] = [
   { slug: "ehun-mendiak", label: "Ehun Mendiak", href: "/ehun-mendiak" },
   {
     slug: "sostres-comarcals",
-    label: "Sostres Comarcals de Catalunya",
+    label: "Sostres Comarcals",
     href: "/sostres-comarcals",
   },
 ];
