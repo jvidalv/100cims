@@ -139,6 +139,13 @@ eas submit --platform android
 3. Image is deployed to the production service
 4. Automatic HTTPS on all attached domains
 
+**Migrations apply automatically on deploy.** The `api` package's `build` script
+is `next build && yarn db:migrate`, so `drizzle-kit migrate` runs as part of every
+Railway build — any pending migration files committed to `main` are applied
+automatically. Do NOT tell the user to run `yarn api db:migrate` manually after a
+push; that's only for local dev. (`drizzle-kit` + `dotenv` are runtime deps
+precisely so the container can run migrations — see the Dockerfile comments.)
+
 **Manual operations**:
 - Rollback: Railway dashboard → Deployments → redeploy a previous build
 - Logs: `railway logs` (or the dashboard)
