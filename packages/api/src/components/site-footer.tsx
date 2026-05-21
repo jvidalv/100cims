@@ -82,6 +82,11 @@ const FEATURED_CHALLENGES: { slug: string; label: string; href?: string }[] = [
   { slug: "cumbres-astures", label: "Cumbres Astures" },
   { slug: "100-cims-usa", label: "100 Cims USA" },
   { slug: "ehun-mendiak", label: "Ehun Mendiak", href: "/ehun-mendiak" },
+  {
+    slug: "sostres-comarcals",
+    label: "Sostres Comarcals de Catalunya",
+    href: "/sostres-comarcals",
+  },
 ];
 
 interface Props {
