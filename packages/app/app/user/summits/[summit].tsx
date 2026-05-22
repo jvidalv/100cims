@@ -66,6 +66,7 @@ import {
   CONFETTI_COLORS,
   getConfettiOrigin,
 } from "@/lib/confetti";
+import { parseLocalDateString } from "@/lib/dates";
 import { captureShareCard, shareDeeplink } from "@/lib/share";
 import { getInitials } from "@/lib/strings";
 
@@ -283,7 +284,7 @@ const Content = () => {
             {data.mountainName}
           </ThemedText>
           <ThemedText className="text-lg font-semibold text-muted-foreground">
-            {format(data.summitedAt, "dd MMM yyyy")}
+            {format(parseLocalDateString(data.summitedAt), "dd MMM yyyy")}
           </ThemedText>
         </View>
         <Pressable

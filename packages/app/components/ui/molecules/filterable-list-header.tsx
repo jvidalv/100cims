@@ -117,7 +117,9 @@ export function FilterableListHeader<
     }
   };
 
-  const handleApply = () => {
+  // Every way of dismissing the modal (X, backdrop tap, Android back, the
+  // Apply button) commits the pending selection — closing never discards it.
+  const closeAndApply = () => {
     onSettingsChange?.(pending);
     setShowSettings(false);
   };
@@ -169,20 +171,17 @@ export function FilterableListHeader<
         visible={showSettings}
         transparent
         animationType="fade"
-        onRequestClose={() => setShowSettings(false)}
+        onRequestClose={closeAndApply}
       >
         <View className="flex-1 bg-black/50">
-          <Pressable
-            className="flex-1"
-            onPress={() => setShowSettings(false)}
-          />
+          <Pressable className="flex-1" onPress={closeAndApply} />
           <View className="h-[90%]">
             <ThemedView className="flex-1 rounded-t-3xl">
                 <View className="flex-row items-center justify-between px-6 pb-4 pt-6">
                   <ThemedText className="text-2xl font-bold">
                     {intl.formatMessage({ defaultMessage: "Filters" })}
                   </ThemedText>
-                  <TouchableOpacity onPress={() => setShowSettings(false)}>
+                  <TouchableOpacity onPress={closeAndApply}>
                     <LucideIconView icon={X} size={24} />
                   </TouchableOpacity>
                 </View>
@@ -254,7 +253,7 @@ export function FilterableListHeader<
                     icon={Check}
                     intent="emerald"
                     size="lg"
-                    onPress={handleApply}
+                    onPress={closeAndApply}
                   >
                     {intl.formatMessage({ defaultMessage: "Apply filters" })}
                   </ActionRow>

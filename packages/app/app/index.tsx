@@ -517,8 +517,7 @@ export default function IndexScreen() {
       />
       <Animated.ScrollView
         ref={scrollRef}
-        className="px-6 pb-12"
-        contentContainerClassName="gap-8"
+        contentContainerClassName="gap-8 px-6 pb-12"
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />

@@ -287,7 +287,8 @@ function MessageList({
 
   return (
     <FlatList
-      className="flex-1 px-4 pt-4"
+      className="flex-1"
+      contentContainerClassName="px-4 pt-4"
       data={messages}
       inverted
       keyExtractor={(item) => item.id}

@@ -259,7 +259,7 @@ export default function UserMeScreen() {
           })}
         </View>
       </View>
-      <ScrollView className="flex-1 px-6 pt-4">
+      <ScrollView className="flex-1" contentContainerClassName="px-6 pt-4">
         {tab === "details" && (
           <View className="gap-6 pb-8">
             <ThemedTextInput

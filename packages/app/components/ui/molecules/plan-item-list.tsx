@@ -8,7 +8,7 @@ import { Skeleton, ThemedText } from "@/components/ui/atoms";
 import { AvatarGroup } from "@/components/ui/molecules/avatar-group";
 import { usePlanChatUnread } from "@/domains/plan/plan-chat.api";
 import { getFullName } from "@/domains/user/user.utils";
-import { formatDayDistance } from "@/lib/dates";
+import { formatDayDistance, parseLocalDateString } from "@/lib/dates";
 
 export const PlanItemList = ({
   id,
@@ -41,11 +41,12 @@ export const PlanItemList = ({
   const mountainsWithImages = mountains?.filter(({ imageUrl }) => imageUrl);
 
   const when = startDate
-    ? formatDayDistance(new Date(startDate))
+    ? formatDayDistance(parseLocalDateString(startDate))
     : intl.formatMessage({ defaultMessage: "Still deciding a date" });
 
   const isOpen = status === "open";
-  const isOngoing = isOpen && startDate && isToday(new Date(startDate));
+  const isOngoing =
+    isOpen && !!startDate && isToday(parseLocalDateString(startDate));
   const isCompleted = status === "completed";
   const isCanceled = status === "canceled";
 

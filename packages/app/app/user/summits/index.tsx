@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/atoms";
 import { ScreenHeader } from "@/components/ui/molecules";
 import { useUserMe, useUserAllSummits } from "@/domains/user/user.api";
+import { parseLocalDateString } from "@/lib/dates";
 
 type SortOption = "recent" | "height";
 
@@ -67,7 +68,8 @@ const SummitRow = memo(function SummitRow({
             {mountainName}
           </ThemedText>
           <ThemedText className="text-sm text-muted-foreground">
-            {format(summitedAt, "dd MMM yyyy")} • {mountainHeight}m
+            {format(parseLocalDateString(summitedAt), "dd MMM yyyy")} •{" "}
+            {mountainHeight}m
           </ThemedText>
         </View>
         <ThemedText

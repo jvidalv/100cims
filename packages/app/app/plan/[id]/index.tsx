@@ -63,7 +63,7 @@ import {
   CONFETTI_FALL_SPEED,
   getConfettiOrigin,
 } from "@/lib/confetti";
-import { formatDayDistance } from "@/lib/dates";
+import { formatDayDistance, parseLocalDateString } from "@/lib/dates";
 import { captureShareCard, shareDeeplink } from "@/lib/share";
 import { getInitials } from "@/lib/strings";
 
@@ -160,12 +160,14 @@ export default function PlanIdPage() {
 
   const mountainsWithImages = plan?.mountains?.filter((m) => m.imageUrl);
   const when = plan?.startDate
-    ? formatDayDistance(new Date(plan.startDate))
+    ? formatDayDistance(parseLocalDateString(plan.startDate))
     : intl.formatMessage({ defaultMessage: "Date not decided" });
 
   const isOpen = plan?.status === "open";
   const isOngoing =
-    isOpen && plan?.startDate && isToday(new Date(plan.startDate));
+    isOpen &&
+    !!plan?.startDate &&
+    isToday(parseLocalDateString(plan.startDate));
   const isCompleted = plan?.status === "completed";
   const isCanceled = plan?.status === "canceled";
 

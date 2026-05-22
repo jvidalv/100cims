@@ -9,6 +9,7 @@ import {
   MapPin,
   Mountain,
   SearchX,
+  SlidersHorizontal,
   TrendingDown,
   TriangleAlert,
 } from "lucide-react-native";
@@ -38,7 +39,6 @@ import {
   difficultyTier,
   safetyTier,
   type DifficultyTierKey,
-  type SafetyTierKey,
 } from "@/domains/mountain/rating-tiers";
 import { useUserChallengeSummits } from "@/domains/user/user.api";
 import { useLocation } from "@/hooks/use-location";
@@ -64,11 +64,7 @@ type SettingsFilter =
   | "diff-moderate"
   | "diff-hard"
   | "diff-very-hard"
-  | "family-unsafe"
-  | "family-mixed"
   | "family-safe"
-  | "dog-unsafe"
-  | "dog-mixed"
   | "dog-safe";
 
 export default function MountainsScreen() {
@@ -204,46 +200,19 @@ export default function MountainsScreen() {
         ],
       },
       {
-        title: intl.formatMessage({ defaultMessage: "Family" }),
-        icon: Baby,
+        title: intl.formatMessage({ defaultMessage: "Other" }),
+        icon: SlidersHorizontal,
         multiSelect: true,
         options: [
-          {
-            type: "family-unsafe",
-            name: intl.formatMessage({ defaultMessage: "Unsafe" }),
-            dotColor: tierColor(0, 3),
-          },
-          {
-            type: "family-mixed",
-            name: intl.formatMessage({ defaultMessage: "Mixed" }),
-            dotColor: tierColor(1, 3),
-          },
           {
             type: "family-safe",
-            name: intl.formatMessage({ defaultMessage: "Safe" }),
-            dotColor: tierColor(2, 3),
-          },
-        ],
-      },
-      {
-        title: intl.formatMessage({ defaultMessage: "Dog" }),
-        icon: Dog,
-        multiSelect: true,
-        options: [
-          {
-            type: "dog-unsafe",
-            name: intl.formatMessage({ defaultMessage: "Unsafe" }),
-            dotColor: tierColor(0, 3),
-          },
-          {
-            type: "dog-mixed",
-            name: intl.formatMessage({ defaultMessage: "Mixed" }),
-            dotColor: tierColor(1, 3),
+            name: intl.formatMessage({ defaultMessage: "Safe for kids" }),
+            icon: Baby,
           },
           {
             type: "dog-safe",
-            name: intl.formatMessage({ defaultMessage: "Safe" }),
-            dotColor: tierColor(2, 3),
+            name: intl.formatMessage({ defaultMessage: "Safe for dogs" }),
+            icon: Dog,
           },
         ],
       },
@@ -350,27 +319,17 @@ export default function MountainsScreen() {
       });
     }
 
-    const familyTiers = new Set<SafetyTierKey>(
-      settingsFilters
-        .filter((f) => f.startsWith("family-"))
-        .map((f) => f.slice("family-".length) as SafetyTierKey),
-    );
-    if (familyTiers.size > 0) {
+    if (settingsFilters.includes("family-safe")) {
       filtered = filtered.filter((m) => {
         if (!m.familyRatingCount || m.avgFamilyFriendly == null) return false;
-        return familyTiers.has(safetyTier(m.avgFamilyFriendly, intl).key);
+        return safetyTier(m.avgFamilyFriendly, intl).key === "safe";
       });
     }
 
-    const dogTiers = new Set<SafetyTierKey>(
-      settingsFilters
-        .filter((f) => f.startsWith("dog-"))
-        .map((f) => f.slice("dog-".length) as SafetyTierKey),
-    );
-    if (dogTiers.size > 0) {
+    if (settingsFilters.includes("dog-safe")) {
       filtered = filtered.filter((m) => {
         if (!m.dogRatingCount || m.avgDogFriendly == null) return false;
-        return dogTiers.has(safetyTier(m.avgDogFriendly, intl).key);
+        return safetyTier(m.avgDogFriendly, intl).key === "safe";
       });
     }
 

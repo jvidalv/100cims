@@ -24,6 +24,7 @@ import { type PeoplePickerUser } from "@/domains/user/people-picker-session";
 import { useUserMe } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
 import { useImagePicker } from "@/hooks/use-image-picker";
+import { toLocalDateString } from "@/lib/dates";
 import { logError } from "@/lib/log-error";
 import { userKeys } from "@/lib/query-keys";
 
@@ -77,7 +78,7 @@ export default function SummitMountainScreen() {
 
     try {
       const result = await mutateAsync({
-        date: date.toISOString(),
+        date: toLocalDateString(date),
         image: imageBase64 ?? undefined,
         mountainId: mountain?.id,
         usersId: selectedUsers.map((user) => user.id),

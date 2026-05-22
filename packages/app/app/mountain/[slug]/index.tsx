@@ -26,12 +26,7 @@ import { Alert, Image, TouchableOpacity, View } from "react-native";
 
 import { useAuth } from "@/components/providers/auth-provider";
 import { SummitCard } from "@/components/summit";
-import {
-  LucideIcon,
-  Skeleton,
-  ThemedText,
-  tierColor,
-} from "@/components/ui/atoms";
+import { LucideIcon, Skeleton, ThemedText } from "@/components/ui/atoms";
 import {
   ActionRow,
   MountainRowMinimal,
@@ -40,7 +35,10 @@ import {
 } from "@/components/ui/molecules";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
 import { useMountainOne, useMountains } from "@/domains/mountain/mountain.api";
-import { difficultyTier, safetyTier } from "@/domains/mountain/rating-tiers";
+import {
+  type RatingAxis,
+  resolveRatingTier,
+} from "@/domains/mountain/rating-tiers";
 import { useTopMountainComments } from "@/domains/mountain-comments/mountain-comments.api";
 import {
   useIsMountainSaved,
@@ -55,6 +53,10 @@ import { getDistanceInKm } from "@/lib/location";
 import { askForReview } from "@/lib/reviews";
 import { shareDeeplink } from "@/lib/share";
 
+// Hold the review prompt until the user has summited a few mountains —
+// someone three peaks in is far likelier to leave a positive review.
+const REVIEW_PROMPT_MIN_PEAKS = 3;
+
 export default function MountainScreen() {
   const intl = useIntl();
   const router = useRouter();
@@ -62,7 +64,8 @@ export default function MountainScreen() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const { isAuthenticated } = useAuth();
   const { data: mountains } = useMountains();
-  const { data: fetchedMountain } = useMountainOne({ mountainSlug: slug });
+  const { data: fetchedMountain, isPending: isPendingMountain } =
+    useMountainOne({ mountainSlug: slug });
   const { data: topComments } = useTopMountainComments(fetchedMountain?.id);
   const [activeRating, setActiveRating] = useState<
     null | "difficulty" | "family" | "dog"
@@ -162,11 +165,15 @@ export default function MountainScreen() {
     }
   };
 
+  const eligibleForReview =
+    !!isSummited &&
+    (userSummits?.uniquePeaksCount ?? 0) >= REVIEW_PROMPT_MIN_PEAKS;
+
   useEffect(() => {
-    if (isSummited) {
+    if (eligibleForReview) {
       void askForReview();
     }
-  }, [isSummited]);
+  }, [eligibleForReview]);
 
   if (!mountain) {
     return null;
@@ -332,67 +339,56 @@ export default function MountainScreen() {
           <FormattedMessage defaultMessage="View on wikiloc" />
         </ActionRow>
       </View>
-      {fetchedMountain &&
-        (fetchedMountain.difficultyRatingCount > 0 ||
-          fetchedMountain.familyRatingCount > 0 ||
-          fetchedMountain.dogRatingCount > 0) && (
-          <View className="gap-2">
-            <ThemedText className="text-2xl font-semibold">
-              <FormattedMessage defaultMessage="Ratings" />
-            </ThemedText>
-            {fetchedMountain.difficultyRatingCount > 0 &&
-              fetchedMountain.avgDifficulty != null &&
-              (() => {
-                const tier = difficultyTier(
-                  fetchedMountain.avgDifficulty,
-                  intl,
-                );
-                return (
-                  <RatingActionRow
-                    icon={TriangleAlert}
-                    prefix={<FormattedMessage defaultMessage="Difficulty" />}
-                    label={tier.label}
-                    color={tierColor(tier.position, 5, true)}
-                    count={fetchedMountain.difficultyRatingCount}
-                    onPress={() => setActiveRating("difficulty")}
-                  />
-                );
-              })()}
-            {fetchedMountain.familyRatingCount > 0 &&
-              fetchedMountain.avgFamilyFriendly != null &&
-              (() => {
-                const tier = safetyTier(
-                  fetchedMountain.avgFamilyFriendly,
-                  intl,
-                );
-                return (
-                  <RatingActionRow
-                    icon={Baby}
-                    prefix={<FormattedMessage defaultMessage="Family" />}
-                    label={tier.label}
-                    color={tierColor(tier.position, 3)}
-                    count={fetchedMountain.familyRatingCount}
-                    onPress={() => setActiveRating("family")}
-                  />
-                );
-              })()}
-            {fetchedMountain.dogRatingCount > 0 &&
-              fetchedMountain.avgDogFriendly != null &&
-              (() => {
-                const tier = safetyTier(fetchedMountain.avgDogFriendly, intl);
-                return (
-                  <RatingActionRow
-                    icon={Dog}
-                    prefix={<FormattedMessage defaultMessage="Dogs" />}
-                    label={tier.label}
-                    color={tierColor(tier.position, 3)}
-                    count={fetchedMountain.dogRatingCount}
-                    onPress={() => setActiveRating("dog")}
-                  />
-                );
-              })()}
-          </View>
-        )}
+      <View className="gap-2">
+        <ThemedText className="text-2xl font-semibold">
+          <FormattedMessage defaultMessage="Ratings" />
+        </ThemedText>
+        {(
+          [
+            {
+              key: "difficulty",
+              icon: TriangleAlert,
+              prefix: <FormattedMessage defaultMessage="Difficulty" />,
+              count: fetchedMountain?.difficultyRatingCount,
+              avg: fetchedMountain?.avgDifficulty,
+            },
+            {
+              key: "family",
+              icon: Baby,
+              prefix: <FormattedMessage defaultMessage="Family" />,
+              count: fetchedMountain?.familyRatingCount,
+              avg: fetchedMountain?.avgFamilyFriendly,
+            },
+            {
+              key: "dog",
+              icon: Dog,
+              prefix: <FormattedMessage defaultMessage="Dogs" />,
+              count: fetchedMountain?.dogRatingCount,
+              avg: fetchedMountain?.avgDogFriendly,
+            },
+          ] as const
+        ).map((row) => {
+          const hasData = (row.count ?? 0) > 0 && row.avg != null;
+          const resolved = hasData
+            ? resolveRatingTier(row.key, row.avg, intl)
+            : null;
+          return (
+            <RatingActionRow
+              key={row.key}
+              icon={row.icon}
+              prefix={row.prefix}
+              loading={isPendingMountain}
+              label={
+                resolved?.label ??
+                intl.formatMessage({ defaultMessage: "Unknown" })
+              }
+              color={resolved?.color ?? RATING_UNKNOWN_COLOR}
+              count={row.count ?? 0}
+              onPress={() => setActiveRating(row.key)}
+            />
+          );
+        })}
+      </View>
       <View className="gap-4">
         <ThemedText className="text-2xl font-semibold">
           <FormattedMessage defaultMessage="Nearby summits" />
@@ -481,7 +477,7 @@ type FetchedMountain = {
 };
 
 const buildRatingUpdate = (
-  axis: "difficulty" | "family" | "dog",
+  axis: RatingAxis,
   m: FetchedMountain,
   intl: ReturnType<typeof useIntl>,
 ) => {
@@ -503,9 +499,11 @@ const buildRatingUpdate = (
 
   if (axis === "difficulty") {
     const count = m.difficultyRatingCount;
-    const tier = difficultyTier(m.avgDifficulty ?? 0, intl);
-    const { label } = tier;
-    const color = tierColor(tier.position, 5, true);
+    const { label, color } = resolveRatingTier(
+      "difficulty",
+      m.avgDifficulty ?? 0,
+      intl,
+    );
     return {
       id: "rating-difficulty",
       title: intl.formatMessage({ defaultMessage: "Difficulty" }),
@@ -529,9 +527,11 @@ const buildRatingUpdate = (
   }
   if (axis === "family") {
     const count = m.familyRatingCount;
-    const tier = safetyTier(m.avgFamilyFriendly ?? 0, intl);
-    const { label } = tier;
-    const color = tierColor(tier.position, 3);
+    const { label, color } = resolveRatingTier(
+      "family",
+      m.avgFamilyFriendly ?? 0,
+      intl,
+    );
     return {
       id: "rating-family",
       title: intl.formatMessage({ defaultMessage: "Family-friendly" }),
@@ -554,9 +554,11 @@ const buildRatingUpdate = (
     };
   }
   const count = m.dogRatingCount;
-  const tier = safetyTier(m.avgDogFriendly ?? 0, intl);
-  const { label } = tier;
-  const color = tierColor(tier.position, 3);
+  const { label, color } = resolveRatingTier(
+    "dog",
+    m.avgDogFriendly ?? 0,
+    intl,
+  );
   return {
     id: "rating-dog",
     title: intl.formatMessage({ defaultMessage: "Dog-friendly" }),
@@ -579,12 +581,17 @@ const buildRatingUpdate = (
   };
 };
 
+// Neutral gray for ratings with no data yet — distinct from the red→green
+// tier gradient so an "Unknown" row reads as absent, not as a real score.
+const RATING_UNKNOWN_COLOR = "rgb(115, 115, 115)";
+
 function RatingActionRow({
   icon,
   prefix,
   label,
   color,
   count,
+  loading,
   onPress,
 }: {
   icon: LucideIconType;
@@ -592,29 +599,49 @@ function RatingActionRow({
   label: string;
   color: string;
   count: number;
+  loading?: boolean;
   onPress: () => void;
 }) {
+  // While loading, the icon and section label stay put — only the rating word
+  // and count are unknown, so just those become skeletons.
+  const iconColor = loading ? RATING_UNKNOWN_COLOR : color;
   return (
     <TouchableOpacity
       onPress={onPress}
+      disabled={loading}
       className="flex-row items-center gap-2"
     >
       <View
         className="size-8 items-center justify-center rounded-full"
-        style={{ backgroundColor: color.replace("rgb(", "rgba(").replace(")", ", 0.15)") }}
+        style={{
+          backgroundColor: iconColor
+            .replace("rgb(", "rgba(")
+            .replace(")", ", 0.15)"),
+        }}
       >
-        <LucideIcon icon={icon} size={16} color={color} />
+        <LucideIcon icon={icon} size={16} color={iconColor} />
       </View>
-      <ThemedText className="flex-1 font-medium">
-        {prefix} <ThemedText className="font-medium" style={{ color }}>{label}</ThemedText>
-      </ThemedText>
+      <View className="flex-1 flex-row items-center gap-1">
+        <ThemedText className="font-medium">{prefix}</ThemedText>
+        {loading ? (
+          <Skeleton style={{ width: 56, height: 14, borderRadius: 4 }} />
+        ) : (
+          <ThemedText className="font-medium" style={{ color }}>
+            {label}
+          </ThemedText>
+        )}
+      </View>
       <View className="flex-row items-center gap-0.5">
-        <ThemedText
-          className="text-muted-foreground"
-          style={{ opacity: 0.6 }}
-        >
-          {count}
-        </ThemedText>
+        {loading ? (
+          <Skeleton style={{ width: 14, height: 14, borderRadius: 4 }} />
+        ) : (
+          <ThemedText
+            className="text-muted-foreground"
+            style={{ opacity: 0.6 }}
+          >
+            {count}
+          </ThemedText>
+        )}
         <LucideIcon icon={ChevronRight} size={18} muted />
       </View>
     </TouchableOpacity>

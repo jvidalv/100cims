@@ -5,6 +5,7 @@ import { twMerge } from "tailwind-merge";
 import { ThemedText } from "@/components/ui/atoms";
 import { AvatarGroup } from "@/components/ui/molecules";
 import { getFullName } from "@/domains/user/user.utils";
+import { parseLocalDateString } from "@/lib/dates";
 
 type SummitCardProps = {
   summit: {
@@ -72,7 +73,7 @@ export function SummitCard({
           </View>
           <View className="flex-row items-center justify-between gap-2">
             <ThemedText className="text-muted-foreground text-xs">
-              {format(summit.summitedAt, "dd MMM yyyy")}
+              {format(parseLocalDateString(summit.summitedAt), "dd MMM yyyy")}
             </ThemedText>
           </View>
         </View>
