@@ -37,6 +37,7 @@ import { useMountains } from "@/domains/mountain/mountain.api";
 import { useMarkPlansAsVisited, usePlanCreate } from "@/domains/plan/plan.api";
 import { useIsKeyboardVisible } from "@/hooks/use-is-keyboard-visible";
 import { cleanText } from "@/lib";
+import { toLocalDateString } from "@/lib/dates";
 import { isAndroid } from "@/lib/device";
 import { getLocale } from "@/lib/locale";
 
@@ -376,7 +377,7 @@ export default function PlanCreatePage() {
       const response = await mutateAsync({
         title,
         description,
-        startDate: date ? date.toISOString() : undefined,
+        startDate: date ? toLocalDateString(date) : undefined,
         mountainIds: mountains,
         isPrivate,
       });

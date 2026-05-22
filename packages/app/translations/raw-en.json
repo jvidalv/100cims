@@ -32,6 +32,9 @@
   "/V1GsM": {
     "defaultMessage": "Country/Region"
   },
+  "/VnDMl": {
+    "defaultMessage": "Other"
+  },
   "/awD4G": {
     "defaultMessage": "Used in {count} challenge"
   },
@@ -173,8 +176,14 @@
   "5djesH": {
     "defaultMessage": "Keep it private if you want"
   },
+  "5jeq8P": {
+    "defaultMessage": "Unknown"
+  },
   "5lwgvM": {
     "defaultMessage": "Visible on people search?"
+  },
+  "6Jl56G": {
+    "defaultMessage": "Safe for kids"
   },
   "6n4LpX": {
     "defaultMessage": "Easy"
@@ -821,11 +830,11 @@
   "bbPfn0": {
     "defaultMessage": "Longitude"
   },
+  "beUIjd": {
+    "defaultMessage": "Safe for dogs"
+  },
   "bhN9Hq": {
     "defaultMessage": "Delete your account"
-  },
-  "bjTpk9": {
-    "defaultMessage": "Dog"
   },
   "c1AKgx": {
     "defaultMessage": "Missing information."

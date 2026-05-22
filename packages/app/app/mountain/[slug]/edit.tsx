@@ -153,7 +153,8 @@ export default function MountainEditScreen() {
       <View className="flex-1 bg-background">
         <ScreenHeader />
         <ScrollView
-          className="flex-1 px-6"
+          className="flex-1"
+          contentContainerClassName="px-6"
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >

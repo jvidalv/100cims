@@ -24,6 +24,7 @@ import { useSummitPost } from "@/domains/mountain/mountain.api";
 import { getMountainPts } from "@/domains/mountain/mountain.util";
 import { stashPlanCompletionImages } from "@/domains/plan/plan-completion-cache";
 import { usePlanOne, usePlanUpdate } from "@/domains/plan/plan.api";
+import { parseLocalDateString, toLocalDateString } from "@/lib/dates";
 import { pickAndOptimizeImage } from "@/lib/images";
 import { logError } from "@/lib/log-error";
 import { getInitials } from "@/lib/strings";
@@ -94,7 +95,7 @@ export default function PlanCompleteScreen() {
               const r = ratings[m.id];
               return summitMountain({
                 mountainId: m.id,
-                date: plan.startDate ?? new Date().toISOString(),
+                date: plan.startDate ?? toLocalDateString(new Date()),
                 image: images[m.id],
                 usersId: plan.users.map((u) => u.id),
                 familyFriendly: r?.familyFriendly ?? null,
@@ -149,7 +150,7 @@ export default function PlanCompleteScreen() {
           <ThemedText className="text-2xl font-bold">{plan.title}</ThemedText>
           {!!plan.startDate && (
             <ThemedText className="mt-2 text-muted-foreground">
-              {format(plan.startDate, "d MMMM yyyy")}
+              {format(parseLocalDateString(plan.startDate), "d MMMM yyyy")}
             </ThemedText>
           )}
         </View>

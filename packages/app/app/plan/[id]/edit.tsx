@@ -37,6 +37,7 @@ import {
 } from "@/domains/plan/plan.api";
 import { type PeoplePickerUser } from "@/domains/user/people-picker-session";
 import { getFullName } from "@/domains/user/user.utils";
+import { parseLocalDateString, toLocalDateString } from "@/lib/dates";
 
 export default function PlanEditPage() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -57,7 +58,7 @@ export default function PlanEditPage() {
     plan?.description || undefined,
   );
   const [date, setDate] = useState<Date | null>(
-    plan?.startDate ? new Date(plan?.startDate) : null,
+    plan?.startDate ? parseLocalDateString(plan.startDate) : null,
   );
   const [mountains, setMountains] = useState<MountainPickerMountain[]>([]);
   const [users, setUsers] = useState<PeoplePickerUser[]>([]);
@@ -67,7 +68,7 @@ export default function PlanEditPage() {
     if (plan) {
       setTitle(plan.title);
       setDescription(plan.description ?? undefined);
-      setDate(plan.startDate ? new Date(plan.startDate) : null);
+      setDate(plan.startDate ? parseLocalDateString(plan.startDate) : null);
       setIsPrivate(plan.isPrivate ?? false);
 
       // Ensure the creator is always first. PeopleList locks index 0, and
@@ -108,7 +109,7 @@ export default function PlanEditPage() {
       id,
       title,
       description,
-      startDate: date ? date.toISOString() : undefined,
+      startDate: date ? toLocalDateString(date) : undefined,
       mountainIds: mountains.map((m) => m.id),
       userIds: users.map((u) => u.id),
       isPrivate,
@@ -176,9 +177,8 @@ export default function PlanEditPage() {
         </ScreenHeader>
         <ThemedKeyboardAvoidingView>
           <ScrollView
-            className="p-6"
             keyboardShouldPersistTaps="handled"
-            contentContainerClassName="gap-6 pb-24"
+            contentContainerClassName="gap-6 px-6 pt-6 pb-24"
           >
             <ThemedTextInput
               label={intl.formatMessage({ defaultMessage: "Activity title" })}

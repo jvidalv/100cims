@@ -77,9 +77,8 @@ export default function CreateMountainScreen() {
         </ScreenHeader>
         <ThemedKeyboardAvoidingView>
           <ScrollView
-            className="p-6"
             keyboardShouldPersistTaps="handled"
-            contentContainerClassName="gap-4 pb-24"
+            contentContainerClassName="gap-4 px-6 pt-6 pb-24"
           >
             <View className="flex-row items-end gap-4">
               <TouchableOpacity
