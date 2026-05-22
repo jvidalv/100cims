@@ -2,6 +2,7 @@ import { Link } from "expo-router";
 import {
   ArrowRight,
   Backpack,
+  CalendarDays,
   CircleDot,
   Map,
   Moon,
@@ -271,6 +272,11 @@ const PageHeader = ({
         </Animated.View>
         <View className="flex-1 flex-row items-center justify-end gap-2">
           <ThemeToggleButton />
+          <Link href="/calendar" asChild>
+            <TouchableOpacity className="size-10 items-center justify-center rounded-full border-2 border-border">
+              <LucideIcon icon={CalendarDays} muted />
+            </TouchableOpacity>
+          </Link>
           <Link href="/hiscores" asChild>
             <TouchableOpacity className="size-10 items-center justify-center rounded-full border-2 border-border">
               <LucideIcon icon={Trophy} muted />
