@@ -8,6 +8,7 @@ import { calendarKeys, planKeys } from "@/lib/query-keys";
 const PLANS_PAGE_SIZE = 20;
 
 export type PlanStatus = "open" | "completed" | "canceled";
+export type PlanType = "hike" | "trail" | "bike";
 
 export const usePlans = (
   params?: {
@@ -118,6 +119,8 @@ export const usePlanCreate = () => {
       title: string;
       description: string;
       startDate?: string;
+      startTime?: string;
+      type?: PlanType;
       mountainIds?: string[];
       userIds?: string[];
       isPrivate?: boolean;
@@ -145,6 +148,8 @@ export const usePlanUpdate = () => {
       description?: string;
       mountainIds?: string[];
       startDate?: string;
+      startTime?: string | null;
+      type?: PlanType | null;
       userIds?: string[];
       status?: PlanStatus;
       isPrivate?: boolean;

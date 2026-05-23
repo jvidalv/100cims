@@ -17,12 +17,14 @@ import {
   ThemedText,
   ThemedDateInput,
   ThemedTextInput,
+  ThemedTimeInput,
   ThemedToggleInput,
 } from "@/components/ui/atoms";
 import {
   ActionRow,
   MountainList,
   PeopleList,
+  PlanTypeChips,
   ScreenHeader,
 } from "@/components/ui/molecules";
 import {
@@ -31,6 +33,7 @@ import {
 } from "@/domains/mountain/mountain-picker-session";
 import { useMountains } from "@/domains/mountain/mountain.api";
 import {
+  type PlanType,
   usePlanDelete,
   usePlanOne,
   usePlanUpdate,
@@ -38,6 +41,12 @@ import {
 import { type PeoplePickerUser } from "@/domains/user/people-picker-session";
 import { getFullName } from "@/domains/user/user.utils";
 import { parseLocalDateString, toLocalDateString } from "@/lib/dates";
+
+const PLAN_TYPES: readonly PlanType[] = ["hike", "trail", "bike"];
+const toPlanType = (value: string | null | undefined): PlanType | null => {
+  if (!value) return null;
+  return PLAN_TYPES.find((t) => t === value) ?? null;
+};
 
 export default function PlanEditPage() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -60,6 +69,10 @@ export default function PlanEditPage() {
   const [date, setDate] = useState<Date | null>(
     plan?.startDate ? parseLocalDateString(plan.startDate) : null,
   );
+  const [startTime, setStartTime] = useState<string | null>(
+    plan?.startTime ?? null,
+  );
+  const [type, setType] = useState<PlanType>(toPlanType(plan?.type) ?? "hike");
   const [mountains, setMountains] = useState<MountainPickerMountain[]>([]);
   const [users, setUsers] = useState<PeoplePickerUser[]>([]);
   const [isPrivate, setIsPrivate] = useState(plan?.isPrivate ?? false);
@@ -69,6 +82,8 @@ export default function PlanEditPage() {
       setTitle(plan.title);
       setDescription(plan.description ?? undefined);
       setDate(plan.startDate ? parseLocalDateString(plan.startDate) : null);
+      setStartTime(plan.startTime ?? null);
+      setType(toPlanType(plan.type) ?? "hike");
       setIsPrivate(plan.isPrivate ?? false);
 
       // Ensure the creator is always first. PeopleList locks index 0, and
@@ -110,6 +125,8 @@ export default function PlanEditPage() {
       title,
       description,
       startDate: date ? toLocalDateString(date) : undefined,
+      startTime: date ? startTime : null,
+      type,
       mountainIds: mountains.map((m) => m.id),
       userIds: users.map((u) => u.id),
       isPrivate,
@@ -197,11 +214,15 @@ export default function PlanEditPage() {
               checked={isPrivate}
               onChecked={setIsPrivate}
             />
+            <PlanTypeChips value={type} onChange={setType} />
             <ThemedDateInput
               value={date}
               onDateValid={(date) => setDate(date)}
               noPastDates
             />
+            {date && (
+              <ThemedTimeInput value={startTime} onChange={setStartTime} />
+            )}
 
             <View className="gap-3">
               <ThemedText className="text-lg font-medium">

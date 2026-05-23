@@ -10,7 +10,7 @@ import type {
   AdminPlanCreateBodySchema,
   AdminShopRequestUpdateBodySchema,
 } from "@/api/schemas/admin.schema";
-import type { PlanSpeed, PlanStatus } from "@/db/enums";
+import type { PlanSpeed, PlanStatus, PlanType } from "@/db/enums";
 import { api } from "@/lib/api";
 import { adminKeys } from "@/lib/query-keys";
 
@@ -482,7 +482,9 @@ export type AdminPlanUpdateBody = {
   description?: string | null;
   status?: PlanStatus;
   speed?: PlanSpeed;
+  type?: PlanType | null;
   startDate?: string | null;
+  startTime?: string | null;
   imageUrl?: string | null;
   routeUrl?: string | null;
 };

@@ -1,16 +1,23 @@
+import { format } from "date-fns/format";
 import { isToday } from "date-fns/isToday";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, Link, useRouter } from "expo-router";
 import {
+  Activity,
   ArrowDown,
   ArrowUp,
   BadgeCheck,
+  Ban,
+  Bike,
   Calendar,
+  CircleDot,
   Clock,
+  Footprints,
   Lock,
   MessagesSquare,
   Settings,
   Share as ShareIcon,
+  SportShoe,
   Trash2,
 } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
@@ -64,8 +71,40 @@ import {
   getConfettiOrigin,
 } from "@/lib/confetti";
 import { formatDayDistance, parseLocalDateString } from "@/lib/dates";
+import { getDateFnsLocale, getLocale } from "@/lib/locale";
 import { captureShareCard, shareDeeplink } from "@/lib/share";
 import { getInitials } from "@/lib/strings";
+
+const PLAN_TYPE_META: Record<
+  "hike" | "trail" | "bike",
+  { icon: typeof Bike; label: React.ReactNode }
+> = {
+  hike: {
+    icon: Footprints,
+    label: <FormattedMessage defaultMessage="Hike" />,
+  },
+  trail: {
+    icon: SportShoe,
+    label: <FormattedMessage defaultMessage="Trail" />,
+  },
+  bike: { icon: Bike, label: <FormattedMessage defaultMessage="Bike" /> },
+};
+
+const PlanTypeBadge = ({
+  type,
+}: {
+  type: "hike" | "trail" | "bike";
+}) => {
+  const meta = PLAN_TYPE_META[type];
+  return (
+    <View className="flex flex-row items-center gap-2">
+      <LucideIcon icon={meta.icon} size={20} primary />
+      <ThemedText className="text-lg font-medium text-primary">
+        {meta.label}
+      </ThemedText>
+    </View>
+  );
+};
 
 const PlanSummits = ({
   mountains,
@@ -162,6 +201,13 @@ export default function PlanIdPage() {
   const when = plan?.startDate
     ? formatDayDistance(parseLocalDateString(plan.startDate))
     : intl.formatMessage({ defaultMessage: "Date not decided" });
+  const whenAbsolute = plan?.startDate
+    ? format(
+        parseLocalDateString(plan.startDate),
+        getLocale() === "en" ? "d MMMM yyyy" : "d 'de' MMMM yyyy",
+        { locale: getDateFnsLocale() },
+      )
+    : null;
 
   const isOpen = plan?.status === "open";
   const isOngoing =
@@ -431,50 +477,63 @@ export default function PlanIdPage() {
       }
     >
       <View>
-        <View className="mb-4 flex flex-row gap-4">
-          {isOpen && !isOngoing && (
-            <View className="flex flex-row items-center gap-2">
-              <View className="size-4 rounded bg-blue-500" />
-              <ThemedText className="text-lg font-medium text-blue-500">
-                <FormattedMessage defaultMessage="Open" />
-              </ThemedText>
-            </View>
-          )}
-          {isOpen && isOngoing && (
-            <View className="flex flex-row items-center gap-2">
-              <View className="size-4 rounded bg-purple-500" />
-              <ThemedText className="text-lg font-medium text-purple-500">
-                <FormattedMessage defaultMessage="Ongoing" />
-              </ThemedText>
-            </View>
-          )}
-          {isCompleted && (
-            <View className="flex flex-row items-center gap-2">
-              <View className="size-4 rounded bg-emerald-500" />
-              <ThemedText className="text-lg font-medium text-emerald-500">
-                <FormattedMessage defaultMessage="Completed" />
-              </ThemedText>
-            </View>
-          )}
-          {isCanceled && (
-            <View className="flex flex-row items-center gap-2">
-              <View className="size-4 rounded bg-neutral-500" />
-              <ThemedText className="text-lg font-medium text-neutral-500">
-                <FormattedMessage defaultMessage="Canceled" />
-              </ThemedText>
-            </View>
-          )}
-          {plan.isPrivate && (
-            <View className="flex flex-row items-center gap-2">
-              <LucideIcon icon={Lock} size={16} primary />
-              <ThemedText className="text-lg font-medium text-primary">
-                <FormattedMessage defaultMessage="Private" />
-              </ThemedText>
-            </View>
-          )}
+        <View className="mb-4 gap-2">
+          <View className="flex flex-row flex-wrap items-center gap-4">
+            {isOpen && !isOngoing && (
+              <View className="flex flex-row items-center gap-2">
+                <LucideIcon icon={CircleDot} size={20} color="#3b82f6" />
+                <ThemedText className="text-lg font-medium text-blue-500">
+                  <FormattedMessage defaultMessage="Open" />
+                </ThemedText>
+              </View>
+            )}
+            {isOpen && isOngoing && (
+              <View className="flex flex-row items-center gap-2">
+                <LucideIcon icon={Activity} size={20} color="#a855f7" />
+                <ThemedText className="text-lg font-medium text-purple-500">
+                  <FormattedMessage defaultMessage="Ongoing" />
+                </ThemedText>
+              </View>
+            )}
+            {isCompleted && (
+              <View className="flex flex-row items-center gap-2">
+                <LucideIcon icon={BadgeCheck} size={20} color="#10b981" />
+                <ThemedText className="text-lg font-medium text-emerald-500">
+                  <FormattedMessage defaultMessage="Completed" />
+                </ThemedText>
+              </View>
+            )}
+            {isCanceled && (
+              <View className="flex flex-row items-center gap-2">
+                <LucideIcon icon={Ban} size={20} color="#737373" />
+                <ThemedText className="text-lg font-medium text-neutral-500">
+                  <FormattedMessage defaultMessage="Canceled" />
+                </ThemedText>
+              </View>
+            )}
+            {(plan.type === "hike" ||
+              plan.type === "trail" ||
+              plan.type === "bike") && <PlanTypeBadge type={plan.type} />}
+            {plan.isPrivate && (
+              <View className="flex flex-row items-center gap-2">
+                <LucideIcon icon={Lock} size={20} primary />
+                <ThemedText className="text-lg font-medium text-primary">
+                  <FormattedMessage defaultMessage="Private" />
+                </ThemedText>
+              </View>
+            )}
+          </View>
           <View className="flex-row items-center gap-2">
             <LucideIcon icon={Clock} size={20} />
-            <ThemedText className="text-lg font-medium">{when}</ThemedText>
+            <ThemedText className="text-lg font-medium">
+              {when}
+              {plan.startDate && plan.startTime ? ` · ${plan.startTime}` : ""}
+            </ThemedText>
+            {whenAbsolute && (
+              <ThemedText className="text-lg text-muted-foreground">
+                {whenAbsolute}
+              </ThemedText>
+            )}
           </View>
         </View>
         <View>

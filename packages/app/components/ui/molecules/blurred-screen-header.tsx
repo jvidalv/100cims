@@ -2,38 +2,37 @@ import { useRouter } from "expo-router";
 import { ChevronLeft } from "lucide-react-native";
 import { PropsWithChildren, ReactNode } from "react";
 import { TouchableOpacity, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { twMerge } from "tailwind-merge";
 
 import { BlurView } from "@/components/ui/atoms";
 import { LucideIcon } from "@/components/ui/atoms/lucide-icon";
+import { hasDynamicIsland } from "@/lib/device";
 
-// Height of the interactive row (back button / title / right element).
-// Status-bar inset is added on top via useSafeAreaInsets() so the row never
-// collides with the notch / dynamic island / time row, regardless of device.
-const ROW_HEIGHT = 48;
+// Band height. Larger on Dynamic Island devices to leave clear breathing
+// room between the island and the row of back-button + title, since the row
+// is bottom-aligned via mt-auto.
+const HEIGHT_CLASSNAME = "h-24";
+const HEIGHT_CLASSNAME_DYNAMIC_ISLAND = "h-48";
 
 /**
- * Total height the header occupies on the current device, including the
- * status-bar safe-area inset. Use this from consumers to pad content below
- * the absolute-positioned header (e.g. `paddingTop: useBlurredScreenHeaderHeight()`).
+ * Tailwind class names matching the header's total height. Screens that
+ * render `<BlurredScreenHeader />` should add this as `pt-…` to their content
+ * so the first visible item sits below the absolute-positioned bar.
+ *
+ *     const headerOffset = blurredScreenHeaderPaddingClassName();
+ *     <ScrollView contentContainerClassName={`${headerOffset} ...`} />
  */
-export const useBlurredScreenHeaderHeight = (): number => {
-  const { top } = useSafeAreaInsets();
-  return top + ROW_HEIGHT;
-};
+export const blurredScreenHeaderPaddingClassName = (): string =>
+  hasDynamicIsland ? "pt-48" : "pt-24";
 
 /**
- * Blurred top header matching the collapsed state of ParallaxScrollView's
- * header. Use this on screens that should visually continue from a parallax
- * screen — most notably the Summit and Comments tabs of a mountain detail
- * page, so swapping tabs preserves the "collapsed parallax" look.
+ * Blurred top header for screens that need a translucent bar at the top —
+ * the Summit and Comments tabs of a mountain detail page, which visually
+ * echo the collapsed state of `ParallaxScrollView`'s header.
  *
- * Absolute-positioned; consumers must pad their content using
- * `useBlurredScreenHeaderHeight()` so it flows below the header rather than
- * underneath it.
- *
- * Same JSX as ParallaxScrollView's internal collapsed Header used to be —
- * ParallaxScrollView now imports this component to stay in sync.
+ * Structurally identical to ParallaxScrollView's internal collapsed Header
+ * (copied verbatim) so the visual continuity is exact. Absolute-positioned;
+ * consumers pad their content with `blurredScreenHeaderPaddingClassName()`.
  *
  * API mirrors `ScreenHeader` (children = title, optional `rightElement`).
  */
@@ -42,31 +41,29 @@ export const BlurredScreenHeader = ({
   rightElement,
 }: PropsWithChildren<{ rightElement?: ReactNode }>) => {
   const router = useRouter();
-  const { top } = useSafeAreaInsets();
 
   return (
     <View
-      className="absolute top-0 w-full"
-      style={{ paddingTop: top, height: top + ROW_HEIGHT }}
+      className={twMerge(
+        "absolute top-0 w-full flex-1",
+        HEIGHT_CLASSNAME,
+        hasDynamicIsland && HEIGHT_CLASSNAME_DYNAMIC_ISLAND,
+      )}
+      // zIndex/elevation keep the header above any later-rendered absolute
+      // siblings on iOS and Android respectively.
+      style={{ zIndex: 10, elevation: 10 }}
     >
       <BlurView className="flex-1">
-        <View
-          className="flex-row items-center justify-between"
-          style={{ height: ROW_HEIGHT }}
-        >
+        <View className="mt-auto flex-row items-center justify-between">
           <TouchableOpacity
             onPress={router.back}
             hitSlop={16}
-            className="h-full w-1/5 items-start justify-center pl-6"
+            className="-mt-3 w-1/5 py-4 pl-6 pr-4"
           >
             <LucideIcon size={28} icon={ChevronLeft} />
           </TouchableOpacity>
-          <View className="mx-auto items-center justify-center">
-            {children}
-          </View>
-          <View className="h-full w-1/5 items-end justify-center pr-6">
-            {rightElement}
-          </View>
+          <View className="mx-auto pb-3 text-center">{children}</View>
+          <View className="w-1/5">{rightElement}</View>
         </View>
       </BlurView>
     </View>

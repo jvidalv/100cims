@@ -188,6 +188,7 @@ export default function PlansScreen() {
             id={item.id}
             title={item.title}
             status={item.status}
+            type={item.type}
             startDate={item.startDate}
             isPrivate={item.isPrivate}
             mountains={item.mountains?.map(({ imageUrl }) => ({ imageUrl }))}

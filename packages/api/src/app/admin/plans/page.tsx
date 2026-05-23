@@ -139,6 +139,7 @@ export default function AdminPlansPage() {
                   <th className="py-2 pr-4 font-medium">Plan</th>
                   <th className="py-2 pr-4 font-medium">Creator</th>
                   <th className="py-2 pr-4 font-medium">Status</th>
+                  <th className="py-2 pr-4 font-medium">Type</th>
                   <th className="py-2 pr-4 font-medium">Speed</th>
                   <th className="py-2 pr-4 font-medium">Start</th>
                   <th className="py-2 pr-4 font-medium">People</th>
@@ -207,10 +208,14 @@ export default function AdminPlansPage() {
                         </span>
                       </td>
                       <td className="py-2 pr-4 text-muted-foreground">
+                        {p.type ?? "—"}
+                      </td>
+                      <td className="py-2 pr-4 text-muted-foreground">
                         {p.speed}
                       </td>
                       <td className="py-2 pr-4 text-muted-foreground">
                         {p.startDate ? formatDate(p.startDate) : "—"}
+                        {p.startTime ? ` · ${p.startTime}` : ""}
                       </td>
                       <td className="py-2 pr-4 text-muted-foreground">
                         {p.participantsCount}
@@ -227,7 +232,7 @@ export default function AdminPlansPage() {
                 {data.items.length === 0 && (
                   <tr>
                     <td
-                      colSpan={8}
+                      colSpan={9}
                       className="py-8 text-center text-muted-foreground"
                     >
                       No plans match the current filters.
