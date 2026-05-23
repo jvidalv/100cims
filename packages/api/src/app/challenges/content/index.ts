@@ -12,6 +12,7 @@ import frenchAlps from "./french-alps.json";
 import highlandTerraAlta from "./highland-terra-alta.json";
 import islasCanarias from "./islas-canarias.json";
 import montesGallegos from "./montes-gallegos.json";
+import philippineUltras from "./philippine-ultras.json";
 import repteDelGirones from "./repte-del-girones.json";
 import sostresComarcals from "./sostres-comarcals.json";
 import topSpain from "./top-spain.json";
@@ -55,6 +56,7 @@ export const CHALLENGE_CONTENT = {
   "highland-terra-alta": narrow(highlandTerraAlta, "highland-terra-alta"),
   "islas-canarias": narrow(islasCanarias, "islas-canarias"),
   "montes-gallegos": narrow(montesGallegos, "montes-gallegos"),
+  "philippine-ultras": narrow(philippineUltras, "philippine-ultras"),
   "repte-del-girones": narrow(repteDelGirones, "repte-del-girones"),
   "sostres-comarcals": narrow(sostresComarcals, "sostres-comarcals"),
   "top-spain": narrow(topSpain, "top-spain"),

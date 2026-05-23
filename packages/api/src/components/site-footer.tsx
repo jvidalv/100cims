@@ -87,6 +87,11 @@ const FEATURED_CHALLENGES: { slug: string; label: string; href?: string }[] = [
     label: "Sostres Comarcals",
     href: "/sostres-comarcals",
   },
+  {
+    slug: "philippine-ultras",
+    label: "Philippine Ultras",
+    href: "/philippine-ultras",
+  },
 ];
 
 interface Props {

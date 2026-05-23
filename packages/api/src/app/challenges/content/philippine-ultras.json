@@ -1,0 +1,40 @@
+{
+  "locale": "en",
+  "title": "Philippine Ultras · The 29 ultra-prominent peaks of the Philippines | Cims, sempre amunt",
+  "shortName": "Philippine Ultras",
+  "description": "Track your progress climbing the 29 ultra-prominent peaks of the Philippines — from Mount Apo to Mount Mambajao. Free, ad-free iOS and Android app.",
+  "heroTagline": "Every ultra-prominent peak of the Philippines, in your pocket.",
+  "heroImageUrl": "https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/mayon.jpg?date=1779574800000",
+  "whatIsTitle": "What are the Philippine Ultras?",
+  "whatIsParagraphs": [
+    "The Philippine Ultras are the 29 mountains of the archipelago with a topographic prominence of at least 1,500 metres — the standard that defines an \"ultra\" worldwide. From Mount Apo (2,956 m), the roof of the country and of Mindanao, to Mount Mambajao on the small volcanic island of Camiguin, the list runs across eight islands and is the canonical reference catalogued by peaklist.org.",
+    "Of the 29 peaks, eight are essential — the highest of each island represented: Apo for Mindanao, Pulag for Luzon, Halcon for Mindoro, Mantalingajan for Palawan, plus the island roofs Kanlaon (Negros), Madja-as (Panay), Guiting-Guiting (Sibuyan) and Mambajao (Camiguin). The remaining 21 fill out the picture across Luzon, Mindanao, Mindoro and Palawan.",
+    "With Cims, sempre amunt you keep the list on your phone, log each ascent with a photo and a date, and watch your progress build island by island."
+  ],
+  "faqs": [
+    {
+      "q": "What is an ultra-prominent peak?",
+      "a": "A peak with topographic prominence of at least 1,500 metres — meaning you have to descend that far before climbing anything higher. It's the international standard for an \"ultra,\" maintained by peaklist.org."
+    },
+    {
+      "q": "How many ultras does the Philippines have?",
+      "a": "29 peaks across eight islands: Luzon (9), Mindanao (11), Mindoro (2), Palawan (3), plus single-roof islands Negros, Panay, Sibuyan and Camiguin."
+    },
+    {
+      "q": "Which are the essentials?",
+      "a": "The highest peak on each island represented in the list: Mount Apo (Mindanao, 2,956 m), Mount Pulag (Luzon, 2,928 m), Mount Halcon (Mindoro, 2,616 m), Kanlaon (Negros, 2,465 m), Mount Madja-as (Panay, 2,117 m), Mount Mantalingajan (Palawan, 2,085 m), Mount Guiting-Guiting (Sibuyan, 2,050 m) and Mount Mambajao (Camiguin, 1,630 m)."
+    },
+    {
+      "q": "Do I need to climb them in any order or within a time limit?",
+      "a": "No. It's a lifetime personal challenge. Pick the peaks you can reach; many climbers spread the list across several years and trips."
+    },
+    {
+      "q": "Do climbs from before installing the app count?",
+      "a": "Yes — you can log any ascent with the date it actually happened. The app is a tracker, not a verifier."
+    },
+    {
+      "q": "Are these all open to hikers?",
+      "a": "Most are, though several (Apo, Pulag, Kanlaon, Bulusan, Mayon) sit in protected areas that require permits or have restrictions around volcanic activity. Always check with local authorities and use a registered guide where required."
+    }
+  ]
+}

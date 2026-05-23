@@ -35,7 +35,8 @@ type LandingPageNamespace =
   | "picos-de-andalucia-page"
   | "cumbres-alicante-page"
   | "ehun-mendiak-page"
-  | "sostres-comarcals-page";
+  | "sostres-comarcals-page"
+  | "philippine-ultras-page";
 
 export const getLandingPageTranslator = (
   locale: ChallengeLocale,
