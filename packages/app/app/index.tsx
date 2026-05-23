@@ -29,14 +29,8 @@ import Animated, {
 } from "react-native-reanimated";
 import { twMerge } from "tailwind-merge";
 
-
 import { useAuth } from "@/components/providers/auth-provider";
-import {
-  Avatar,
-  BlurView,
-  LucideIcon,
-  Skeleton,
-} from "@/components/ui/atoms";
+import { Avatar, BlurView, LucideIcon, Skeleton } from "@/components/ui/atoms";
 import { ThemedText } from "@/components/ui/atoms/themed-text";
 import { ThemedView } from "@/components/ui/atoms/themed-view";
 import {
@@ -88,13 +82,13 @@ const MountainsDone = ({
       href={
         user ? { pathname: "/user/[user]", params: { user: user.id } } : "/join"
       }
-      className="flex-row items-center gap-2 mt-1"
+      asChild
     >
       {userSummits || !isAuthenticated ? (
-        <View className="flex-row items-center gap-2">
+        <View className="flex-row gap-2">
           <View
             className={twMerge(
-              "flex-row items-center gap-1 rounded border-2 px-2 py-1",
+              "flex-row items-center gap-1 rounded border px-2 py-1",
               showAllMountains ? "border-border" : "border-transparent",
             )}
           >
@@ -108,7 +102,7 @@ const MountainsDone = ({
             <ThemedText>{challenge?.totalEssentialMountains}</ThemedText>
           </View>
           {showAllMountains && (
-            <View className="flex-row items-center gap-1 rounded border-2 border-border px-2 py-1">
+            <View className="flex-row gap-1 rounded border px-2 py-1 border-border">
               <View>
                 <LucideIcon icon={Mountain} size={20} muted />
               </View>
@@ -346,10 +340,7 @@ const UPDATE_IDS = UPDATES.map((u) => u.id);
 
 const RecommendedMountainSkeleton = () => (
   <View className="flex-row gap-4">
-    <Skeleton
-      className="rounded"
-      style={{ width: 100, height: 100 }}
-    />
+    <Skeleton className="rounded" style={{ width: 100, height: 100 }} />
     <View className="flex-1 justify-center gap-1">
       <Skeleton className="h-6 w-3/4" />
       <Skeleton className="h-5 w-1/2" />
@@ -386,8 +377,7 @@ export default function IndexScreen() {
 
   const isUnauthorized = userMeError?.message === UNAUTHORIZED;
   const hasFatalError =
-    !isUnauthorized &&
-    (isUserMeError || isMountainsError || isSummitsError);
+    !isUnauthorized && (isUserMeError || isMountainsError || isSummitsError);
   const fatalError = userMeError ?? mountainsError ?? summitsError;
 
   const isCurrentRoute = useIsCurrentScreen("/");
