@@ -1,10 +1,8 @@
 import { Link, useRouter } from "expo-router";
 import { Plus } from "lucide-react-native";
-import { useMemo, useState } from "react";
-import { FormattedMessage, useIntl } from "react-intl";
-import { Pressable, ScrollView, View } from "react-native";
-import { twMerge } from "tailwind-merge";
-
+import { useMemo } from "react";
+import { FormattedMessage } from "react-intl";
+import { ScrollView, View } from "react-native";
 
 import { useAuth } from "@/components/providers/auth-provider";
 import {
@@ -13,11 +11,7 @@ import {
   ThemedText,
   ThemedView,
 } from "@/components/ui/atoms";
-import {
-  ActionRow,
-  ChallengeListItem,
-  ScreenHeader,
-} from "@/components/ui/molecules";
+import { ActionRow, ChallengeListItem } from "@/components/ui/molecules";
 import {
   useActiveChallenge,
   useChallengesGet,
@@ -26,11 +20,19 @@ import { countryToEmoji } from "@/domains/challenge/challenge.model";
 import { useCommunityChallengesList } from "@/domains/community-challenge/community-challenge.api";
 import { useUpdateUserMeMutation, useUserMe } from "@/domains/user/user.api";
 
-type Tab = "official" | "community";
+type Variant = "official" | "community";
 
-export default function ChallengesScreen() {
+type Props = {
+  variant: Variant;
+};
+
+/**
+ * Shared list body for the Official / Community challenge tabs. The two tab
+ * screens (app/challenges/(tabs)/official.tsx, app/challenges/(tabs)/community.tsx)
+ * each render this with their own variant.
+ */
+export const ChallengeList = ({ variant }: Props) => {
   const router = useRouter();
-  const intl = useIntl();
   const { isAuthenticated } = useAuth();
   const { data: challenge } = useActiveChallenge();
   const { data: officialChallenges, isPending: isPendingOfficial } =
@@ -43,9 +45,18 @@ export default function ChallengesScreen() {
     isPending,
     variables,
   } = useUpdateUserMeMutation();
-  const [activeTab, setActiveTab] = useState<Tab>("official");
 
+  const isCommunity = variant === "community";
   const activeChallengeId = challenge?.id;
+  const rawChallenges = isCommunity ? communityChallenges : officialChallenges;
+  const isPendingList = isCommunity ? isPendingCommunity : isPendingOfficial;
+
+  const challenges = useMemo(() => {
+    if (!rawChallenges || !activeChallengeId) return rawChallenges;
+    const active = rawChallenges.find((c) => c.id === activeChallengeId);
+    if (!active) return rawChallenges;
+    return [active, ...rawChallenges.filter((c) => c.id !== activeChallengeId)];
+  }, [rawChallenges, activeChallengeId]);
 
   const onChallengeSelect = async (id: string) => {
     if (!isAuthenticated) {
@@ -64,70 +75,9 @@ export default function ChallengesScreen() {
     router.push("/user/challenges");
   };
 
-  const isCommunityTab = activeTab === "community";
-  const rawChallenges = isCommunityTab
-    ? communityChallenges
-    : officialChallenges;
-  const challenges = useMemo(() => {
-    if (!rawChallenges || !activeChallengeId) return rawChallenges;
-    const active = rawChallenges.find((c) => c.id === activeChallengeId);
-    if (!active) return rawChallenges;
-    return [active, ...rawChallenges.filter((c) => c.id !== activeChallengeId)];
-  }, [rawChallenges, activeChallengeId]);
-
-  const tabs = useMemo<{ type: Tab; name: string }[]>(
-    () => [
-      {
-        type: "official",
-        name: intl.formatMessage({ defaultMessage: "Official" }),
-      },
-      {
-        type: "community",
-        name: intl.formatMessage({ defaultMessage: "Community" }),
-      },
-    ],
-    [intl],
-  );
-
   return (
     <ThemedView className="flex-1">
-      <ScreenHeader />
-      <View className="mx-6 mb-2">
-        <ThemedText className="text-4xl font-bold">
-          <FormattedMessage defaultMessage="Challenges" />
-        </ThemedText>
-      </View>
-      <View className="mb-4 flex-row gap-1 px-6">
-        {tabs.map(({ type, name }) => {
-          const isSelected = activeTab === type;
-          return (
-            <Pressable
-              key={type}
-              onPress={() => {
-                if (type === "community" && !isAuthenticated) {
-                  router.push("/join");
-                  return;
-                }
-                setActiveTab(type);
-              }}
-              className={twMerge(
-                "rounded py-2 px-2.5 mr-1 disabled:opacity-50",
-                isSelected ? "bg-primary" : "bg-border",
-              )}
-            >
-              <ThemedText
-                className={twMerge(
-                  "font-medium text-foreground",
-                  isSelected && "text-white",
-                )}
-              >
-                {name}
-              </ThemedText>
-            </Pressable>
-          );
-        })}
-      </View>
-      {isCommunityTab && (
+      {isCommunity && (
         <View className="mx-6 mb-4">
           <ActionRow
             icon={Plus}
@@ -143,11 +93,13 @@ export default function ChallengesScreen() {
         contentContainerClassName="gap-2 px-6 pb-40"
         showsVerticalScrollIndicator={false}
       >
-        {((isCommunityTab && isPendingCommunity) ||
-          (!isCommunityTab && isPendingOfficial)) &&
+        {isPendingList &&
           !challenges &&
           [0, 1, 2].map((i) => (
-            <View key={i} className="overflow-hidden rounded border-2 border-border">
+            <View
+              key={i}
+              className="overflow-hidden rounded border-2 border-border"
+            >
               <Skeleton className="h-40 w-full rounded-none" />
               <View className="gap-2 p-3">
                 <Skeleton className="h-7 w-40" />
@@ -159,13 +111,14 @@ export default function ChallengesScreen() {
             </View>
           ))}
         {challenges?.map((challenge, index) => {
-          // Use custom emoji for community challenges if available, otherwise use country flag
+          // Use custom emoji for community challenges if available, otherwise
+          // fall back to the country flag.
           const displayEmoji =
             "emoji" in challenge && challenge.emoji
               ? challenge.emoji
               : countryToEmoji(challenge.country);
 
-          // Check if user owns this community challenge
+          // Check if the viewer owns this community challenge.
           const isOwner =
             "creatorId" in challenge && challenge.creatorId === user?.id;
 
@@ -198,7 +151,7 @@ export default function ChallengesScreen() {
           );
         })}
 
-        {!isCommunityTab && (
+        {!isCommunity && (
           <Link href="/user/suggestions" asChild>
             <ThemedText className="mt-4 text-center font-medium text-muted-foreground underline">
               <FormattedMessage defaultMessage="Suggest a new challenge" />
@@ -206,7 +159,7 @@ export default function ChallengesScreen() {
           </Link>
         )}
 
-        {isCommunityTab && (!challenges || challenges.length === 0) && (
+        {isCommunity && (!challenges || challenges.length === 0) && (
           <View className="mt-8 items-center">
             <ThemedText className="text-center text-muted-foreground">
               <FormattedMessage defaultMessage="No community challenges yet. Be the first to create one!" />
@@ -216,4 +169,4 @@ export default function ChallengesScreen() {
       </ScrollView>
     </ThemedView>
   );
-}
+};

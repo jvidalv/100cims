@@ -32,10 +32,17 @@ export const CalendarMonth = memo(
     // after startup has resolved it — see lib/locale.ts initLocale.
     const weekdays = useMemo(() => getWeekdayLabels(), []);
 
+    // key is `YYYY-MM`, so slicing is the simplest source for the year — no
+    // need to walk into the weeks array (which can start in the prior month).
+    const year = month.key.slice(0, 4);
+
     return (
-      <View className="px-3 pb-2" style={{ height }}>
-        <ThemedText className="h-16 text-4xl font-bold capitalize">
-          {month.label}
+      <View className="pb-2" style={{ height }}>
+        <ThemedText className="h-16 px-6 text-4xl font-bold capitalize">
+          {month.label}{" "}
+          <ThemedText className="text-4xl font-bold text-muted-foreground/50">
+            {year}
+          </ThemedText>
         </ThemedText>
         <View className="h-[18px] flex-row border-b border-border">
           {weekdays.map((label, i) => (

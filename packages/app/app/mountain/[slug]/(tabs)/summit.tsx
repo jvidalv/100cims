@@ -1,4 +1,8 @@
-import { useLocalSearchParams, useRouter } from "expo-router";
+import {
+  Redirect,
+  useGlobalSearchParams,
+  useRouter,
+} from "expo-router";
 import { Camera, Check, Clock } from "lucide-react-native";
 import { useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
@@ -31,7 +35,13 @@ import { userKeys } from "@/lib/query-keys";
 export default function SummitMountainScreen() {
   const intl = useIntl();
   const router = useRouter();
-  const { slug } = useLocalSearchParams<{ slug: string }>();
+  // NOTE: useGlobalSearchParams, not useLocalSearchParams. Inside a NativeTabs
+  // navigator that lives under [slug], eagerly-mounted tab screens don't
+  // receive the dynamic [slug] via useLocalSearchParams — it stays undefined
+  // until the user actually focuses the tab via the URL. useGlobalSearchParams
+  // reads from the URL directly, so it works for both tab-bar taps and
+  // in-page Link navigation.
+  const { slug } = useGlobalSearchParams<{ slug: string }>();
   const { mutateAsync, isPending } = useSummitPost(slug);
   const { data: mountains } = useMountains();
   const { data: user } = useUserMe();
@@ -61,8 +71,19 @@ export default function SummitMountainScreen() {
 
   const mountain = mountains?.find((mountain) => slug === mountain.slug);
 
-  if (!mountain || !user) {
-    return null;
+  // Tabs mount eagerly, so this screen can render before useMountains /
+  // useUserMe have resolved. Distinguish loading (mountains still pending,
+  // show spinner) from "no such mountain" (404) and "not logged in" (redirect).
+  if (!mountains || !user) {
+    return (
+      <ThemedView className="flex-1 items-center justify-center">
+        <ActivityIndicator />
+      </ThemedView>
+    );
+  }
+
+  if (!mountain) {
+    return <Redirect href="/+not-found" />;
   }
 
   const submitDisabled = !date || !selectedUsers?.length || !mountain;

@@ -3,7 +3,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/components/providers/auth-provider";
 import { queryClient } from "@/components/providers/query-client-provider";
 import apiClient from "@/lib/api-client";
-import { summitKeys, userKeys } from "@/lib/query-keys";
+import { calendarKeys, summitKeys, userKeys } from "@/lib/query-keys";
 
 export const SUMMITS_KEY = ({
   mountainId,
@@ -92,6 +92,7 @@ export const useDeleteSummitMutation = () => {
       void queryClient.invalidateQueries({
         queryKey: userKeys.summits(),
       });
+      void queryClient.invalidateQueries({ queryKey: calendarKeys.all });
     },
   });
 };
@@ -144,6 +145,7 @@ export const useUpdateSummitMutation = () => {
         queryKey: summitKeys.one(variables.summitId),
       });
       void queryClient.invalidateQueries({ queryKey: userKeys.summits() });
+      void queryClient.invalidateQueries({ queryKey: calendarKeys.all });
     },
   });
 };
@@ -164,6 +166,7 @@ export const useAdminDeleteSummitMutation = () => {
         queryKey: SUMMITS_KEY({ mountainId: undefined, limit: undefined }),
       });
       void queryClient.invalidateQueries({ queryKey: userKeys.summits() });
+      void queryClient.invalidateQueries({ queryKey: calendarKeys.all });
     },
   });
 };

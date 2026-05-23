@@ -1,4 +1,4 @@
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useGlobalSearchParams, useRouter } from "expo-router";
 import {
   ArrowUp,
   Clock,
@@ -85,7 +85,8 @@ const useDebounced = <T,>(value: T, delayMs: number): T => {
 export default function MountainCommentsScreen() {
   const intl = useIntl();
   const router = useRouter();
-  const { slug } = useLocalSearchParams<{ slug: string }>();
+  // useGlobalSearchParams (not useLocalSearchParams) — see comment in summit.tsx.
+  const { slug } = useGlobalSearchParams<{ slug: string }>();
   const { isAuthenticated } = useAuth();
   const { data: mountain } = useMountainOne({ mountainSlug: slug });
   const { data: me } = useUserMe();

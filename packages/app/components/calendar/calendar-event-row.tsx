@@ -3,6 +3,7 @@ import { memo } from "react";
 import { Image, TouchableOpacity, View } from "react-native";
 
 import { ThemedText } from "@/components/ui/atoms";
+import { PlanItemList } from "@/components/ui/molecules/plan-item-list";
 import {
   CALENDAR_EVENT_DOT_COLOR,
   type CalendarEvent,
@@ -50,6 +51,29 @@ export const CalendarEventRow = memo(({ event }: Props) => {
             </View>
           </TouchableOpacity>
         </Link>
+      );
+
+    case "plan":
+      // Reuses the same PlanItemList the home page renders, wrapped with the
+      // calendar's color stripe so plan + summit rows share visual rhythm.
+      return (
+        <View className="flex-row items-stretch gap-3 px-6 py-3">
+          <View
+            className="w-1 rounded-full"
+            style={{ backgroundColor: CALENDAR_EVENT_DOT_COLOR.plan }}
+          />
+          <View className="flex-1">
+            <PlanItemList
+              id={event.id}
+              title={event.title}
+              status={event.status}
+              startDate={event.date}
+              isPrivate={event.isPrivate}
+              mountains={event.mountains}
+              users={event.users}
+            />
+          </View>
+        </View>
       );
   }
 });

@@ -1,5 +1,5 @@
 import * as Linking from "expo-linking";
-import { Link, useLocalSearchParams, useRouter } from "expo-router";
+import { useGlobalSearchParams, useRouter } from "expo-router";
 import { setStatusBarStyle } from "expo-status-bar";
 import {
   ArrowUp,
@@ -10,10 +10,8 @@ import {
   ChevronRight,
   CircleDot,
   Dog,
-  Footprints,
   Map,
   MapPin,
-  MessageCircle,
   Share as ShareIcon,
   TriangleAlert,
   type LucideIcon as LucideIconType,
@@ -39,7 +37,6 @@ import {
   type RatingAxis,
   resolveRatingTier,
 } from "@/domains/mountain/rating-tiers";
-import { useTopMountainComments } from "@/domains/mountain-comments/mountain-comments.api";
 import {
   useIsMountainSaved,
   useSavedAddMutation,
@@ -61,12 +58,12 @@ export default function MountainScreen() {
   const intl = useIntl();
   const router = useRouter();
   const { colorScheme } = useColorScheme();
-  const { slug } = useLocalSearchParams<{ slug: string }>();
+  // useGlobalSearchParams (not useLocalSearchParams) — see comment in summit.tsx.
+  const { slug } = useGlobalSearchParams<{ slug: string }>();
   const { isAuthenticated } = useAuth();
   const { data: mountains } = useMountains();
   const { data: fetchedMountain, isPending: isPendingMountain } =
     useMountainOne({ mountainSlug: slug });
-  const { data: topComments } = useTopMountainComments(fetchedMountain?.id);
   const [activeRating, setActiveRating] = useState<
     null | "difficulty" | "family" | "dog"
   >(null);
@@ -265,22 +262,6 @@ export default function MountainScreen() {
         <ThemedText className="text-2xl font-semibold">
           <FormattedMessage defaultMessage="Actions" />
         </ThemedText>
-        <Link
-          href={
-            isAuthenticated
-              ? { pathname: "/mountain/[slug]/summit", params: { slug } }
-              : "/join"
-          }
-          asChild
-        >
-          <ActionRow icon={Footprints} iconSize={18} intent="primary">
-            {isSummited ? (
-              <FormattedMessage defaultMessage="Summit again" />
-            ) : (
-              <FormattedMessage defaultMessage="Summit" />
-            )}
-          </ActionRow>
-        </Link>
         <ActionRow
           onPress={handleToggleSaved}
           icon={isSaved ? BookmarkCheck : Bookmark}
@@ -299,20 +280,6 @@ export default function MountainScreen() {
         >
           <FormattedMessage defaultMessage="Share with your friends" />
         </ActionRow>
-        <Link
-          href={{
-            pathname: "/mountain/[slug]/comments",
-            params: { slug },
-          }}
-          asChild
-        >
-          <ActionRow icon={MessageCircle} intent="muted" size="sm">
-            <FormattedMessage defaultMessage="Comments" />
-            {typeof topComments?.total === "number" && topComments.total > 0
-              ? ` (${topComments.total})`
-              : ""}
-          </ActionRow>
-        </Link>
         <ActionRow
           onPress={() => {
             void Linking.openURL(

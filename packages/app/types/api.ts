@@ -4959,7 +4959,7 @@ export interface operations {
                     "application/json": {
                         success: boolean;
                         message: {
-                            events: {
+                            events: ({
                                 /** @constant */
                                 type: "summit";
                                 /** @description YYYY-MM-DD in the user's local timezone */
@@ -4969,13 +4969,32 @@ export interface operations {
                                 mountainSlug: string;
                                 mountainHeight: string;
                                 mountainImageUrl: (string | null) | null;
-                            }[];
+                            } | {
+                                /** @constant */
+                                type: "plan";
+                                /** @description YYYY-MM-DD plan start date */
+                                date: string;
+                                id: string;
+                                title: string;
+                                status: "open" | "completed" | "canceled";
+                                isPrivate: boolean;
+                                isCreator: boolean;
+                                mountains: {
+                                    imageUrl: (string | null) | null;
+                                }[];
+                                users: {
+                                    id: string;
+                                    firstName: (string | null) | null;
+                                    lastName: (string | null) | null;
+                                    imageUrl: (string | null) | null;
+                                }[];
+                            })[];
                         };
                     };
                     "multipart/form-data": {
                         success: boolean;
                         message: {
-                            events: {
+                            events: ({
                                 /** @constant */
                                 type: "summit";
                                 /** @description YYYY-MM-DD in the user's local timezone */
@@ -4985,13 +5004,32 @@ export interface operations {
                                 mountainSlug: string;
                                 mountainHeight: string;
                                 mountainImageUrl: (string | null) | null;
-                            }[];
+                            } | {
+                                /** @constant */
+                                type: "plan";
+                                /** @description YYYY-MM-DD plan start date */
+                                date: string;
+                                id: string;
+                                title: string;
+                                status: "open" | "completed" | "canceled";
+                                isPrivate: boolean;
+                                isCreator: boolean;
+                                mountains: {
+                                    imageUrl: (string | null) | null;
+                                }[];
+                                users: {
+                                    id: string;
+                                    firstName: (string | null) | null;
+                                    lastName: (string | null) | null;
+                                    imageUrl: (string | null) | null;
+                                }[];
+                            })[];
                         };
                     };
                     "text/plain": {
                         success: boolean;
                         message: {
-                            events: {
+                            events: ({
                                 /** @constant */
                                 type: "summit";
                                 /** @description YYYY-MM-DD in the user's local timezone */
@@ -5001,7 +5039,26 @@ export interface operations {
                                 mountainSlug: string;
                                 mountainHeight: string;
                                 mountainImageUrl: (string | null) | null;
-                            }[];
+                            } | {
+                                /** @constant */
+                                type: "plan";
+                                /** @description YYYY-MM-DD plan start date */
+                                date: string;
+                                id: string;
+                                title: string;
+                                status: "open" | "completed" | "canceled";
+                                isPrivate: boolean;
+                                isCreator: boolean;
+                                mountains: {
+                                    imageUrl: (string | null) | null;
+                                }[];
+                                users: {
+                                    id: string;
+                                    firstName: (string | null) | null;
+                                    lastName: (string | null) | null;
+                                    imageUrl: (string | null) | null;
+                                }[];
+                            })[];
                         };
                     };
                 };
@@ -6524,6 +6581,7 @@ export interface operations {
                     description: string;
                     startDate?: string;
                     mountainIds?: string[];
+                    userIds?: string[];
                     challengeId?: string;
                     isPrivate?: boolean;
                 };
@@ -6532,6 +6590,7 @@ export interface operations {
                     description: string;
                     startDate?: string;
                     mountainIds?: string[];
+                    userIds?: string[];
                     challengeId?: string;
                     isPrivate?: boolean;
                 };
@@ -6540,6 +6599,7 @@ export interface operations {
                     description: string;
                     startDate?: string;
                     mountainIds?: string[];
+                    userIds?: string[];
                     challengeId?: string;
                     isPrivate?: boolean;
                 };

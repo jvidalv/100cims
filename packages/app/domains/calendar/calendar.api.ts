@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { useAuth } from "@/components/providers/auth-provider";
+import { Colors } from "@/constants/colors";
 import apiClient from "@/lib/api-client";
 import { calendarKeys } from "@/lib/query-keys";
 
@@ -16,6 +17,22 @@ export type CalendarEvent =
       mountainSlug: string;
       mountainHeight: string;
       mountainImageUrl: string | null;
+    }
+  | {
+      type: "plan";
+      date: string;
+      id: string;
+      title: string;
+      status: "open" | "completed" | "canceled";
+      isPrivate: boolean;
+      isCreator: boolean;
+      mountains: { imageUrl: string | null }[];
+      users: {
+        id: string;
+        firstName: string | null;
+        lastName: string | null;
+        imageUrl: string | null;
+      }[];
     };
 
 export type CalendarEventType = CalendarEvent["type"];
@@ -26,7 +43,8 @@ export type CalendarEventType = CalendarEvent["type"];
  * compile error, so the visual mapping stays in lockstep with the data.
  */
 export const CALENDAR_EVENT_DOT_COLOR: Record<CalendarEventType, string> = {
-  summit: "#22c55e",
+  summit: Colors.light.success,
+  plan: Colors.light.accent,
 };
 
 export const useCalendarEvents = ({
@@ -41,6 +59,9 @@ export const useCalendarEvents = ({
   return useQuery({
     queryKey: calendarKeys.events(from, to),
     enabled: () => isAuthenticated,
+    // Summits don't change minute-to-minute; refetch only after 5 minutes so
+    // tab switches don't trigger a round trip every time.
+    staleTime: 5 * 60_000,
     queryFn: async () => {
       const { data, error } = await apiClient.GET(
         "/api/protected/user/calendar",

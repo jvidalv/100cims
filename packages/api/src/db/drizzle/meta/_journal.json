@@ -512,6 +512,13 @@
       "when": 1779533578641,
       "tag": "0072_backfill-philippine-ultras-images-pt2",
       "breakpoints": true
+    },
+    {
+      "idx": 73,
+      "version": "7",
+      "when": 1779549841606,
+      "tag": "0073_add-techos-provinciales-challenge",
+      "breakpoints": true
     }
   ]
 }
