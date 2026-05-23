@@ -180,6 +180,12 @@ export default function CalendarScreen() {
         <View className="px-6 pt-4">
           <ThemedText className="text-lg font-bold capitalize">
             {selectedDateLabel}
+            {isSelectedToday && (
+              <ThemedText className="text-lg font-bold text-muted-foreground/50">
+                {" "}
+                {intl.formatMessage({ defaultMessage: "Today" })}
+              </ThemedText>
+            )}
           </ThemedText>
         </View>
         <FlatList
