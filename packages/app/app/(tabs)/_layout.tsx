@@ -21,6 +21,18 @@ export default function TabsLayout() {
           {intl.formatMessage({ defaultMessage: "Mountains" })}
         </NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="calendar">
+        <NativeTabs.Trigger.Icon sf="calendar" md="calendar_month" />
+        <NativeTabs.Trigger.Label>
+          {intl.formatMessage({ defaultMessage: "Calendar" })}
+        </NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="shop">
+        <NativeTabs.Trigger.Icon sf="bag.fill" md="shopping_bag" />
+        <NativeTabs.Trigger.Label>
+          {intl.formatMessage({ defaultMessage: "Shop" })}
+        </NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
     </NativeTabs>
   );
 }

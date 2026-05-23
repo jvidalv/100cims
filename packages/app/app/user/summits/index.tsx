@@ -1,9 +1,11 @@
 import { format } from "date-fns/format";
 import { Link, Redirect } from "expo-router";
+import { Download } from "lucide-react-native";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   Image,
   TouchableOpacity,
@@ -12,14 +14,17 @@ import {
 import { twMerge } from "tailwind-merge";
 
 import {
+  LucideIcon,
   ThemedText,
   ThemedView,
   SearchInput,
   Skeleton,
 } from "@/components/ui/atoms";
 import { ScreenHeader } from "@/components/ui/molecules";
+import { exportUserSummitsCsv } from "@/domains/summit/summit-export";
 import { useUserMe, useUserAllSummits } from "@/domains/user/user.api";
 import { parseLocalDateString } from "@/lib/dates";
+import { logError } from "@/lib/log-error";
 
 type SortOption = "recent" | "height";
 
@@ -120,6 +125,22 @@ export default function UserSummitsScreen() {
     [],
   );
 
+  const [isExporting, setIsExporting] = useState(false);
+  const handleExport = useCallback(async () => {
+    if (isExporting) return;
+    setIsExporting(true);
+    try {
+      await exportUserSummitsCsv();
+    } catch (error) {
+      logError(error, "summits/export");
+      Alert.alert(
+        intl.formatMessage({ defaultMessage: "Couldn't export your summits" }),
+      );
+    } finally {
+      setIsExporting(false);
+    }
+  }, [isExporting, intl]);
+
   const sortOptions = useMemo<{ value: SortOption; label: string }[]>(
     () => [
       {
@@ -140,7 +161,25 @@ export default function UserSummitsScreen() {
 
   return (
     <ThemedView className="flex-1">
-      <ScreenHeader />
+      <ScreenHeader
+        rightElement={
+          <TouchableOpacity
+            accessibilityLabel={intl.formatMessage({
+              defaultMessage: "Export to CSV",
+            })}
+            disabled={isExporting}
+            hitSlop={16}
+            onPress={handleExport}
+            className="py-4 pl-4 pr-6"
+          >
+            {isExporting ? (
+              <ActivityIndicator />
+            ) : (
+              <LucideIcon icon={Download} size={24} />
+            )}
+          </TouchableOpacity>
+        }
+      />
       <FlatList
         data={items}
         initialNumToRender={25}

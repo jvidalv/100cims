@@ -2,19 +2,32 @@ import { memo, useMemo } from "react";
 import { View } from "react-native";
 
 import { ThemedText } from "@/components/ui/atoms";
+import { type CalendarEventType } from "@/domains/calendar/calendar.api";
 import { type CalendarMonthData, getWeekdayLabels } from "@/lib/calendar";
+import { toLocalDateString } from "@/lib/dates";
 
 import { CalendarDay } from "./calendar-day";
 
 type Props = {
   month: CalendarMonthData;
   height: number;
+  selectedDateKey: string | null;
+  eventTypesByDay: Record<string, CalendarEventType[]>;
   onDayPress: (date: Date) => void;
   onDayLongPress: (date: Date) => void;
 };
 
+const EMPTY_EVENT_TYPES: CalendarEventType[] = [];
+
 export const CalendarMonth = memo(
-  ({ month, height, onDayPress, onDayLongPress }: Props) => {
+  ({
+    month,
+    height,
+    selectedDateKey,
+    eventTypesByDay,
+    onDayPress,
+    onDayLongPress,
+  }: Props) => {
     // Computed in-component (not at module scope) so it reads the locale only
     // after startup has resolved it — see lib/locale.ts initLocale.
     const weekdays = useMemo(() => getWeekdayLabels(), []);
@@ -43,14 +56,19 @@ export const CalendarMonth = memo(
                 : "flex-1 flex-row"
             }
           >
-            {week.map((cell, dayIndex) => (
-              <CalendarDay
-                key={dayIndex}
-                cell={cell}
-                onPress={onDayPress}
-                onLongPress={onDayLongPress}
-              />
-            ))}
+            {week.map((cell, dayIndex) => {
+              const key = toLocalDateString(cell.date);
+              return (
+                <CalendarDay
+                  key={dayIndex}
+                  cell={cell}
+                  selected={key === selectedDateKey}
+                  eventTypes={eventTypesByDay[key] ?? EMPTY_EVENT_TYPES}
+                  onPress={onDayPress}
+                  onLongPress={onDayLongPress}
+                />
+              );
+            })}
           </View>
         ))}
       </View>
