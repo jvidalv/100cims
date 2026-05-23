@@ -530,6 +530,9 @@
   "Lv0zJu": {
     "defaultMessage": "Details"
   },
+  "LwSvQR": {
+    "defaultMessage": "Couldn't export your summits"
+  },
   "MJ2jZQ": {
     "defaultMessage": "Total"
   },
@@ -988,6 +991,9 @@
   },
   "kAEQyV": {
     "defaultMessage": "OK"
+  },
+  "kM6XaM": {
+    "defaultMessage": "Export to CSV"
   },
   "khcfUd": {
     "defaultMessage": "Select size"

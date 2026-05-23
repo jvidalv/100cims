@@ -548,6 +548,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/protected/user/summits/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiProtectedUserSummitsExport"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/protected/user/calendar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiProtectedUserCalendar"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/protected/user/all": {
         parameters: {
             query?: never;
@@ -1629,7 +1661,7 @@ export interface paths {
         };
         get: operations["getApiAdminPlans"];
         put?: never;
-        post?: never;
+        post: operations["postApiAdminPlans"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1663,6 +1695,22 @@ export interface paths {
         put?: never;
         post?: never;
         delete: operations["deleteApiAdminPlansByIdMembersByUserId"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/plans/{id}/mountains/{mountainId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["postApiAdminPlansByIdMountainsByMountainId"];
+        delete: operations["deleteApiAdminPlansByIdMountainsByMountainId"];
         options?: never;
         head?: never;
         patch?: never;
@@ -4861,6 +4909,99 @@ export interface operations {
                                 totalPages: number;
                                 hasMore: boolean;
                             };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    getApiProtectedUserSummitsExport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description CSV body (text/csv; charset=utf-8) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string;
+                    "multipart/form-data": string;
+                    "text/plain": string;
+                };
+            };
+        };
+    };
+    getApiProtectedUserCalendar: {
+        parameters: {
+            query: {
+                /** @description YYYY-MM-DD inclusive */
+                from: string;
+                /** @description YYYY-MM-DD inclusive */
+                to: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            events: {
+                                /** @constant */
+                                type: "summit";
+                                /** @description YYYY-MM-DD in the user's local timezone */
+                                date: string;
+                                id: string;
+                                mountainName: string;
+                                mountainSlug: string;
+                                mountainHeight: string;
+                                mountainImageUrl: (string | null) | null;
+                            }[];
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            events: {
+                                /** @constant */
+                                type: "summit";
+                                /** @description YYYY-MM-DD in the user's local timezone */
+                                date: string;
+                                id: string;
+                                mountainName: string;
+                                mountainSlug: string;
+                                mountainHeight: string;
+                                mountainImageUrl: (string | null) | null;
+                            }[];
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            events: {
+                                /** @constant */
+                                type: "summit";
+                                /** @description YYYY-MM-DD in the user's local timezone */
+                                date: string;
+                                id: string;
+                                mountainName: string;
+                                mountainSlug: string;
+                                mountainHeight: string;
+                                mountainImageUrl: (string | null) | null;
+                            }[];
                         };
                     };
                 };
@@ -8771,6 +8912,7 @@ export interface operations {
                 page?: number;
                 pageSize?: number;
                 q?: string;
+                sort?: string;
             };
             header?: never;
             path?: never;
@@ -8803,6 +8945,7 @@ export interface operations {
                                 dogRatingCount: number;
                                 avgDifficulty: (number | null) | null;
                                 difficultyRatingCount: number;
+                                totalSummits: number;
                             }[];
                             page: number;
                             pageSize: number;
@@ -8830,6 +8973,7 @@ export interface operations {
                                 dogRatingCount: number;
                                 avgDifficulty: (number | null) | null;
                                 difficultyRatingCount: number;
+                                totalSummits: number;
                             }[];
                             page: number;
                             pageSize: number;
@@ -8857,6 +9001,7 @@ export interface operations {
                                 dogRatingCount: number;
                                 avgDifficulty: (number | null) | null;
                                 difficultyRatingCount: number;
+                                totalSummits: number;
                             }[];
                             page: number;
                             pageSize: number;
@@ -9205,6 +9350,7 @@ export interface operations {
                                 firstName: (string | null) | null;
                                 lastName: (string | null) | null;
                                 imageUrl: (string | null) | null;
+                                email: string;
                             };
                         }[];
                     };
@@ -9223,6 +9369,7 @@ export interface operations {
                                 firstName: (string | null) | null;
                                 lastName: (string | null) | null;
                                 imageUrl: (string | null) | null;
+                                email: string;
                             };
                         }[];
                     };
@@ -9241,6 +9388,7 @@ export interface operations {
                                 firstName: (string | null) | null;
                                 lastName: (string | null) | null;
                                 imageUrl: (string | null) | null;
+                                email: string;
                             };
                         }[];
                     };
@@ -10618,6 +10766,110 @@ export interface operations {
             };
         };
     };
+    postApiAdminPlans: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    title: string;
+                    description?: string;
+                    startDate?: string;
+                    speed?: "chill" | "normal" | "fast";
+                    mountainIds?: string[];
+                    challengeId?: string;
+                    isPrivate?: boolean;
+                    imageUrl?: (string | null) | null;
+                    publishAsCims?: boolean;
+                };
+                "multipart/form-data": {
+                    title: string;
+                    description?: string;
+                    startDate?: string;
+                    speed?: "chill" | "normal" | "fast";
+                    mountainIds?: string[];
+                    challengeId?: string;
+                    isPrivate?: boolean;
+                    imageUrl?: (string | null) | null;
+                    publishAsCims?: boolean;
+                };
+                "text/plain": {
+                    title: string;
+                    description?: string;
+                    startDate?: string;
+                    speed?: "chill" | "normal" | "fast";
+                    mountainIds?: string[];
+                    challengeId?: string;
+                    isPrivate?: boolean;
+                    imageUrl?: (string | null) | null;
+                    publishAsCims?: boolean;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                        };
+                    };
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
     getApiAdminPlansById: {
         parameters: {
             query?: never;
@@ -10674,6 +10926,7 @@ export interface operations {
                                 slug: string;
                                 height: string;
                                 essential: boolean;
+                                imageUrl: (string | null) | null;
                             }[];
                             recentMessages: {
                                 id: string;
@@ -10727,6 +10980,7 @@ export interface operations {
                                 slug: string;
                                 height: string;
                                 essential: boolean;
+                                imageUrl: (string | null) | null;
                             }[];
                             recentMessages: {
                                 id: string;
@@ -10780,6 +11034,7 @@ export interface operations {
                                 slug: string;
                                 height: string;
                                 essential: boolean;
+                                imageUrl: (string | null) | null;
                             }[];
                             recentMessages: {
                                 id: string;
@@ -10943,6 +11198,98 @@ export interface operations {
             path: {
                 id: string;
                 userId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    postApiAdminPlansByIdMountainsByMountainId: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                mountainId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    deleteApiAdminPlansByIdMountainsByMountainId: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                mountainId: string;
             };
             cookie?: never;
         };

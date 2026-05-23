@@ -85,3 +85,10 @@ export const updateKeys = {
   unseen: (updateIds: string[]) =>
     ["updates", "unseen", updateIds.join(",")] as const,
 };
+
+// Calendar keys
+export const calendarKeys = {
+  all: ["calendar"] as const,
+  events: (from: string, to: string) =>
+    ["calendar", "events", from, to] as const,
+};
