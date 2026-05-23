@@ -26,8 +26,8 @@ export const CalendarMonth = memo(
     return (
       // Explicit fixed height (matches getItemLayout in calendar.tsx) so the
       // FlatList never re-measures and the screen has no mount-time drift.
-      <View className="px-6 pb-6" style={{ height: CALENDAR_MONTH_HEIGHT }}>
-        <ThemedText className="h-7 text-lg font-bold capitalize">
+      <View className="px-6 pb-2" style={{ height: CALENDAR_MONTH_HEIGHT }}>
+        <ThemedText className="h-14 text-lg font-bold capitalize">
           {month.label}
         </ThemedText>
         <View className="h-[18px] flex-row">

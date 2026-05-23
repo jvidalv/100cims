@@ -31,9 +31,9 @@ export const WEEKS_PER_MONTH = 6;
 // explicit height and the screen's getItemLayout. Keep them in sync with the
 // classNames in calendar-month.tsx.
 const HORIZONTAL_PADDING = 24; // px-6 on each side
-const MONTH_HEADER_HEIGHT = 28; // text-lg label row
+const MONTH_HEADER_HEIGHT = 56; // text-lg label row + generous gap to the grid (h-14)
 const WEEKDAY_ROW_HEIGHT = 18; // text-xs weekday-label row
-const MONTH_BOTTOM_PADDING = 24; // pb-6
+const MONTH_BOTTOM_PADDING = 8; // pb-2 — tight gap between months
 
 /** Height of one week row: 7 aspect-square cells across the padded width. */
 export const WEEK_ROW_HEIGHT =
