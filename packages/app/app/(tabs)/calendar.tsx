@@ -1,20 +1,19 @@
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { format } from "date-fns/format";
+import { useRouter } from "expo-router";
+import { Calendar, Plus } from "lucide-react-native";
+import { useCallback, useMemo, useRef, useState } from "react";
+import { useIntl } from "react-intl";
 import {
   FlatList,
   type LayoutChangeEvent,
-  type NativeScrollEvent,
-  type NativeSyntheticEvent,
+  type ListRenderItem,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { CalendarEventRow, CalendarMonth } from "@/components/calendar";
 import { ThemedText, ThemedView } from "@/components/ui/atoms";
+import { ActionRow } from "@/components/ui/molecules";
 import {
   type CalendarEvent,
   type CalendarEventType,
@@ -24,15 +23,21 @@ import {
   buildCalendarRange,
   type CalendarMonthData,
 } from "@/lib/calendar";
-import { toLocalDateString } from "@/lib/dates";
+import { parseLocalDateString, toLocalDateString } from "@/lib/dates";
 import { isAndroid } from "@/lib/device";
+import { getDateFnsLocale } from "@/lib/locale";
 
 const MONTHS_BACK = 1;
 const MONTHS_FORWARD = 12;
 // Top half of the screen hosts the paged month grid; bottom is the events list.
 const MONTH_HEIGHT_RATIO = 0.45;
 
+const EMPTY_EVENTS: CalendarEvent[] = [];
+
 export default function CalendarScreen() {
+  const intl = useIntl();
+  const router = useRouter();
+  const { top: topInset } = useSafeAreaInsets();
   const months = useMemo(
     () => buildCalendarRange(MONTHS_BACK, MONTHS_FORWARD),
     [],
@@ -47,8 +52,9 @@ export default function CalendarScreen() {
     setPageHeight((prev) => (prev === next ? prev : next));
   }, []);
 
-  // Fetch events for the full visible window (one round trip). The endpoint
-  // returns YYYY-MM-DD dates already, so grouping is a plain object lookup.
+  // Fetch events for the full visible window (one round trip). The bounds
+  // walk through the grid (not startOfMonth/endOfMonth) so leading/trailing
+  // dim cells from adjacent months are included too.
   const range = useMemo(() => {
     const first = months[0]?.weeks[0]?.[0]?.date;
     const last = months[months.length - 1]?.weeks.at(-1)?.at(-1)?.date;
@@ -76,30 +82,11 @@ export default function CalendarScreen() {
   const todayKey = useMemo(() => toLocalDateString(new Date()), []);
   const [selectedDateKey, setSelectedDateKey] = useState(todayKey);
 
-  const onDayPress = useCallback((date: Date) => {
-    setSelectedDateKey(toLocalDateString(date));
-  }, []);
-
   const onDayLongPress = useCallback((date: Date) => {
     console.log("calendar day long press", toLocalDateString(date));
   }, []);
 
-  // Year label tracks the currently visible month. Paged scrolling means
-  // exactly one month is visible at a time; we read it off the scroll offset.
   const listRef = useRef<FlatList<CalendarMonthData>>(null);
-  const [visibleMonthIndex, setVisibleMonthIndex] = useState(MONTHS_BACK);
-  const onMomentumScrollEnd = useCallback(
-    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      if (pageHeight === 0) return;
-      const index = Math.round(
-        event.nativeEvent.contentOffset.y / pageHeight,
-      );
-      setVisibleMonthIndex(index);
-    },
-    [pageHeight],
-  );
-  const visibleYear = months[visibleMonthIndex]?.weeks[1]?.[0]?.date
-    .getFullYear();
 
   // Android workaround for the `pagingEnabled` + `initialScrollIndex` bug.
   const onListLayoutOnce = useRef(false);
@@ -109,36 +96,63 @@ export default function CalendarScreen() {
     listRef.current?.scrollToIndex({ index: MONTHS_BACK, animated: false });
   }, []);
 
-  // When the selected day changes (today on mount, or user tap), keep the
-  // visible month in sync if the user picks a day in a different month.
-  useEffect(() => {
-    const idx = months.findIndex((m) =>
-      m.weeks.some((w) =>
-        w.some(
-          (c) => c.inMonth && toLocalDateString(c.date) === selectedDateKey,
-        ),
-      ),
-    );
-    if (idx >= 0 && idx !== visibleMonthIndex) {
-      setVisibleMonthIndex(idx);
-      listRef.current?.scrollToIndex({ index: idx, animated: true });
-    }
-    // visibleMonthIndex intentionally omitted: this effect only reacts to
-    // selection changes, not to scrolls (which already update visibleMonthIndex).
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedDateKey, months]);
+  // Tapping a day selects it and scrolls the FlatList to its month. If the
+  // day is already in the visible page the scrollToIndex is a no-op — cheap
+  // and avoids tracking the visible index in state.
+  const onDayPress = useCallback(
+    (date: Date) => {
+      const key = toLocalDateString(date);
+      setSelectedDateKey(key);
+      const monthKey = key.slice(0, 7);
+      const idx = months.findIndex((m) => m.key === monthKey);
+      if (idx >= 0) {
+        listRef.current?.scrollToIndex({ index: idx, animated: true });
+      }
+    },
+    [months],
+  );
+
+  const onJumpToToday = useCallback(() => {
+    onDayPress(new Date());
+  }, [onDayPress]);
+
+  const renderMonth: ListRenderItem<CalendarMonthData> = useCallback(
+    ({ item }) => (
+      <CalendarMonth
+        month={item}
+        height={pageHeight}
+        selectedDateKey={selectedDateKey}
+        eventTypesByDay={eventTypesByDay}
+        onDayPress={onDayPress}
+        onDayLongPress={onDayLongPress}
+      />
+    ),
+    [pageHeight, selectedDateKey, eventTypesByDay, onDayPress, onDayLongPress],
+  );
+
+  const renderEvent: ListRenderItem<CalendarEvent> = useCallback(
+    ({ item }) => <CalendarEventRow event={item} />,
+    [],
+  );
 
   const selectedEvents = eventsByDay[selectedDateKey] ?? EMPTY_EVENTS;
+  const selectedDateLabel = format(
+    parseLocalDateString(selectedDateKey),
+    "d MMMM yyyy",
+    { locale: getDateFnsLocale() },
+  );
+  // YYYY-MM-DD strings compare chronologically, so a plain `<` works.
+  const isSelectedPast = selectedDateKey < todayKey;
+  const isSelectedToday = selectedDateKey === todayKey;
 
   return (
-    <ThemedView className="flex-1">
-      <View className="h-14 flex-row items-center px-6">
-        <ThemedText className="text-2xl font-bold">{visibleYear}</ThemedText>
-      </View>
-
+    <ThemedView className="flex-1" style={{ paddingTop: topInset }}>
       <View
-        className="border-b border-border"
-        style={{ height: pageHeight || undefined, flexBasis: `${MONTH_HEIGHT_RATIO * 100}%` }}
+        className="border-b-2 border-border"
+        style={{
+          height: pageHeight || undefined,
+          flexBasis: `${MONTH_HEIGHT_RATIO * 100}%`,
+        }}
         onLayout={onMonthAreaLayout}
       >
         {pageHeight > 0 && (
@@ -157,30 +171,49 @@ export default function CalendarScreen() {
             initialNumToRender={3}
             maxToRenderPerBatch={3}
             onLayout={onListLayout}
-            onMomentumScrollEnd={onMomentumScrollEnd}
-            renderItem={({ item }) => (
-              <CalendarMonth
-                month={item}
-                height={pageHeight}
-                selectedDateKey={selectedDateKey}
-                eventTypesByDay={eventTypesByDay}
-                onDayPress={onDayPress}
-                onDayLongPress={onDayLongPress}
-              />
-            )}
+            renderItem={renderMonth}
           />
         )}
       </View>
 
-      <FlatList
-        className="flex-1"
-        data={selectedEvents}
-        keyExtractor={(event) => `${event.type}-${event.id}`}
-        contentContainerClassName="py-2"
-        renderItem={({ item }) => <CalendarEventRow event={item} />}
-      />
+      <View className="flex-1">
+        <View className="px-6 pt-4">
+          <ThemedText className="text-lg font-bold capitalize">
+            {selectedDateLabel}
+          </ThemedText>
+        </View>
+        <FlatList
+          className="flex-1"
+          data={selectedEvents}
+          keyExtractor={(event) => `${event.type}-${event.id}`}
+          contentContainerClassName="py-2"
+          renderItem={renderEvent}
+          ListEmptyComponent={
+            <View className="gap-2 px-6 py-6">
+              {!isSelectedPast && (
+                <ActionRow
+                  icon={Plus}
+                  intent="primary"
+                  size="lg"
+                  onPress={() => router.push("/plan/create")}
+                >
+                  {intl.formatMessage({ defaultMessage: "Create plan" })}
+                </ActionRow>
+              )}
+              {!isSelectedToday && (
+                <ActionRow
+                  icon={Calendar}
+                  intent="muted"
+                  size="lg"
+                  onPress={onJumpToToday}
+                >
+                  {intl.formatMessage({ defaultMessage: "Today" })}
+                </ActionRow>
+              )}
+            </View>
+          }
+        />
+      </View>
     </ThemedView>
   );
 }
-
-const EMPTY_EVENTS: CalendarEvent[] = [];

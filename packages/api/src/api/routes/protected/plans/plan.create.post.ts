@@ -5,6 +5,7 @@ import {
   planTable,
   planHasUsersTable,
   planHasMountainsTable,
+  planUserLogTable,
 } from "@/db/schema";
 import { formatDateForPostgresFromISOString } from "@/api/lib/dates";
 import { notifyUsersWithSavedMountains } from "@/api/lib/plan-saved-mountain-notify";
@@ -42,6 +43,28 @@ export const planCreatePostRoute = new Elysia().post(
         willBringDogs: false,
       });
 
+      const extraUserIds = Array.from(
+        new Set((body.userIds ?? []).filter((id) => id !== user.id)),
+      );
+
+      if (extraUserIds.length) {
+        await tx.insert(planHasUsersTable).values(
+          extraUserIds.map((id) => ({
+            userId: id,
+            planId: plan.id,
+            willBringDogs: false,
+          })),
+        );
+
+        await tx.insert(planUserLogTable).values(
+          extraUserIds.map((id) => ({
+            planId: plan.id,
+            userId: id,
+            action: "joined",
+          })),
+        );
+      }
+
       if (body.mountainIds?.length) {
         await tx.insert(planHasMountainsTable).values(
           body.mountainIds.map((mountainId) => ({
@@ -71,6 +94,7 @@ export const planCreatePostRoute = new Elysia().post(
       description: t.String(),
       startDate: t.Optional(t.String()),
       mountainIds: t.Optional(t.Array(t.String())),
+      userIds: t.Optional(t.Array(t.String())),
       challengeId: t.Optional(t.String()),
       isPrivate: t.Optional(t.Boolean()),
     }),

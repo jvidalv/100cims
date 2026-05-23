@@ -1,5 +1,7 @@
 import { t } from "elysia";
 
+import { PlanStatusSchema } from "@/api/schemas/enums";
+
 /**
  * Discriminated-union event shape used by `/api/protected/user/calendar`.
  * Add new event types by extending the union — clients can switch on `type`
@@ -15,7 +17,35 @@ export const CalendarSummitEventSchema = t.Object({
   mountainImageUrl: t.Nullable(t.String()),
 });
 
-export const CalendarEventSchema = t.Union([CalendarSummitEventSchema]);
+export const CalendarPlanEventSchema = t.Object({
+  type: t.Literal("plan"),
+  date: t.String({ description: "YYYY-MM-DD plan start date" }),
+  id: t.String(),
+  title: t.String(),
+  status: PlanStatusSchema,
+  isPrivate: t.Boolean(),
+  isCreator: t.Boolean(),
+  // Shaped to match PlanItemList's expected props so the mobile row can drop
+  // it in unchanged. Mountains carry only imageUrl (the home-page collage).
+  mountains: t.Array(
+    t.Object({
+      imageUrl: t.Nullable(t.String()),
+    }),
+  ),
+  users: t.Array(
+    t.Object({
+      id: t.String(),
+      firstName: t.Nullable(t.String()),
+      lastName: t.Nullable(t.String()),
+      imageUrl: t.Nullable(t.String()),
+    }),
+  ),
+});
+
+export const CalendarEventSchema = t.Union([
+  CalendarSummitEventSchema,
+  CalendarPlanEventSchema,
+]);
 
 export const CalendarResponseSchema = t.Object({
   events: t.Array(CalendarEventSchema),

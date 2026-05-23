@@ -3,7 +3,7 @@ import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient } from "@/components/providers/query-client-provider";
 import { useUserMe } from "@/domains/user/user.api";
 import apiClient from "@/lib/api-client";
-import { planKeys } from "@/lib/query-keys";
+import { calendarKeys, planKeys } from "@/lib/query-keys";
 
 const PLANS_PAGE_SIZE = 20;
 
@@ -131,6 +131,7 @@ export const usePlanCreate = () => {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: planKeys.all });
+      void queryClient.invalidateQueries({ queryKey: calendarKeys.all });
     },
   });
 };
@@ -157,6 +158,7 @@ export const usePlanUpdate = () => {
     },
     onSuccess: (_data, variables) => {
       void queryClient.invalidateQueries({ queryKey: planKeys.all });
+      void queryClient.invalidateQueries({ queryKey: calendarKeys.all });
       void queryClient.invalidateQueries({ queryKey: planKeys.one(variables.id) });
     },
   });
@@ -175,6 +177,7 @@ export const usePlanDelete = () => {
     },
     onSuccess: (_data, variables) => {
       void queryClient.invalidateQueries({ queryKey: planKeys.all });
+      void queryClient.invalidateQueries({ queryKey: calendarKeys.all });
       void queryClient.removeQueries({ queryKey: planKeys.one(variables.id) });
     },
   });
@@ -193,6 +196,7 @@ export const usePlanJoin = (planId: string) => {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: planKeys.all });
+      void queryClient.invalidateQueries({ queryKey: calendarKeys.all });
       void queryClient.invalidateQueries({ queryKey: planKeys.one(planId) });
     },
   });
@@ -211,6 +215,7 @@ export const usePlanLeave = (planId: string) => {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: planKeys.all });
+      void queryClient.invalidateQueries({ queryKey: calendarKeys.all });
       void queryClient.invalidateQueries({ queryKey: planKeys.one(planId) });
     },
   });
@@ -229,6 +234,7 @@ export const useAdminDeletePlanMutation = () => {
     },
     onSuccess: (_, { planId }) => {
       void queryClient.invalidateQueries({ queryKey: planKeys.all });
+      void queryClient.invalidateQueries({ queryKey: calendarKeys.all });
       void queryClient.removeQueries({ queryKey: planKeys.one(planId) });
     },
   });

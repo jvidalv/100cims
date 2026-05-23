@@ -1,6 +1,8 @@
 import { NativeTabs } from "expo-router/unstable-native-tabs";
 import { useIntl } from "react-intl";
 
+import { Colors } from "@/constants/colors";
+
 export default function TabsLayout() {
   const intl = useIntl();
   return (
@@ -8,7 +10,11 @@ export default function TabsLayout() {
     // the user scrolls to the very bottom of a list. Without it, iOS 18 and
     // earlier render the bar as fully transparent at the scroll edge, which
     // reads as broken. iOS 26+ liquid glass ignores the flag.
-    <NativeTabs disableTransparentOnScrollEdge>
+    // `tintColor` is the brand primary (rose), same in light + dark.
+    <NativeTabs
+      disableTransparentOnScrollEdge
+      tintColor={Colors.light.primary}
+    >
       <NativeTabs.Trigger name="index">
         <NativeTabs.Trigger.Icon sf="house.fill" md="home" />
         <NativeTabs.Trigger.Label>
@@ -16,7 +22,7 @@ export default function TabsLayout() {
         </NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="mountains">
-        <NativeTabs.Trigger.Icon sf="map.fill" md="map" />
+        <NativeTabs.Trigger.Icon sf="mountain.2.fill" md="terrain" />
         <NativeTabs.Trigger.Label>
           {intl.formatMessage({ defaultMessage: "Mountains" })}
         </NativeTabs.Trigger.Label>

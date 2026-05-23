@@ -1,6 +1,6 @@
 import { nextSunday } from "date-fns/nextSunday";
 import { useRouter, Redirect } from "expo-router";
-import { Check } from "lucide-react-native";
+import { Check, Heart, Lock, MessageCircle, Users } from "lucide-react-native";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
@@ -31,10 +31,13 @@ import {
 } from "@/components/ui/atoms";
 import { ThemedCheckbox } from "@/components/ui/atoms/themed-checkbox";
 import { ThemedDateInput } from "@/components/ui/atoms/themed-date-input";
-import { ScreenHeader } from "@/components/ui/molecules";
+import { PeopleList, ScreenHeader } from "@/components/ui/molecules";
 import { MountainItemListAsTouchable } from "@/components/ui/molecules/mountain-item-list";
 import { useMountains } from "@/domains/mountain/mountain.api";
 import { useMarkPlansAsVisited, usePlanCreate } from "@/domains/plan/plan.api";
+import { type PeoplePickerUser } from "@/domains/user/people-picker-session";
+import { useUserMe } from "@/domains/user/user.api";
+import { getFullName } from "@/domains/user/user.utils";
 import { useIsKeyboardVisible } from "@/hooks/use-is-keyboard-visible";
 import { cleanText } from "@/lib";
 import { toLocalDateString } from "@/lib/dates";
@@ -44,50 +47,47 @@ import { getLocale } from "@/lib/locale";
 const StartStep = () => {
   return (
     <View className="flex-1">
-      <ThemedText className="mb-3 text-lg font-medium">
-        <FormattedMessage defaultMessage="For you to know" />
-      </ThemedText>
       <View className="gap-2">
-        <View className="relative gap-1 rounded border border-border p-4">
-          <View className="absolute -right-3 -top-3">
-            <ThemedText>❤️</ThemedText>
+        <View className="gap-1 rounded border border-border p-4">
+          <View className="flex-row items-center gap-2">
+            <LucideIcon icon={Heart} size={16} primary />
+            <ThemedText className="font-medium">
+              <FormattedMessage defaultMessage="Not mandatory" />
+            </ThemedText>
           </View>
-          <ThemedText className="font-medium">
-            <FormattedMessage defaultMessage="Not mandatory" />
-          </ThemedText>
           <ThemedText className="text-muted-foreground ">
             <FormattedMessage defaultMessage="Plans can be deleted later without any obligation." />
           </ThemedText>
         </View>
-        <View className="relative gap-1 rounded border border-border p-4">
-          <View className="absolute -right-3 -top-3">
-            <ThemedText>👯</ThemedText>
+        <View className="gap-1 rounded border border-border p-4">
+          <View className="flex-row items-center gap-2">
+            <LucideIcon icon={Users} size={16} primary />
+            <ThemedText className="font-medium">
+              <FormattedMessage defaultMessage="You have total control over it" />
+            </ThemedText>
           </View>
-          <ThemedText className="font-medium">
-            <FormattedMessage defaultMessage="You have total control over it" />
-          </ThemedText>
           <ThemedText className="text-muted-foreground ">
             <FormattedMessage defaultMessage="You decide who comes, don't worry about removing users that joined if you feel like it." />
           </ThemedText>
         </View>
-        <View className="relative gap-1 rounded border border-border p-4">
-          <View className="absolute -right-3 -top-3">
-            <ThemedText>💬</ThemedText>
+        <View className="gap-1 rounded border border-border p-4">
+          <View className="flex-row items-center gap-2">
+            <LucideIcon icon={MessageCircle} size={16} primary />
+            <ThemedText className="font-medium">
+              <FormattedMessage defaultMessage="Chat within plans" />
+            </ThemedText>
           </View>
-          <ThemedText className="font-medium">
-            <FormattedMessage defaultMessage="Chat within plans" />
-          </ThemedText>
           <ThemedText className="text-muted-foreground">
             <FormattedMessage defaultMessage="Plans have an internal chat, but we recommend that you all share your phone number once ready." />
           </ThemedText>
         </View>
-        <View className="relative gap-1 rounded border border-border p-4">
-          <View className="absolute -right-3 -top-3">
-            <ThemedText>🔒</ThemedText>
+        <View className="gap-1 rounded border border-border p-4">
+          <View className="flex-row items-center gap-2">
+            <LucideIcon icon={Lock} size={16} primary />
+            <ThemedText className="font-medium">
+              <FormattedMessage defaultMessage="Keep it private if you want" />
+            </ThemedText>
           </View>
-          <ThemedText className="font-medium">
-            <FormattedMessage defaultMessage="Keep it private if you want" />
-          </ThemedText>
           <ThemedText className="text-muted-foreground">
             <FormattedMessage defaultMessage="Plans can now be private — only the people you invite will see them." />
           </ThemedText>
@@ -261,6 +261,24 @@ const DetailsStep = ({
   );
 };
 
+const PeopleStep = ({
+  value,
+  onPeopleChange,
+}: {
+  value: PeoplePickerUser[];
+  onPeopleChange: (users: PeoplePickerUser[]) => void;
+}) => {
+  return (
+    <View className="flex-1">
+      <PeopleList
+        selected={value}
+        onChange={onPeopleChange}
+        firstSelectedRemovable={false}
+      />
+    </View>
+  );
+};
+
 const buildTitleFromMountains = (
   mountainsIds: string[],
   allMountains: { id: string; name: string; height: string }[],
@@ -294,9 +312,9 @@ const buildTitleFromMountains = (
   return `Summit ${top} and ${count} more`;
 };
 
-type Step = "mountains" | "details" | "start";
+type Step = "mountains" | "details" | "people" | "start";
 
-const stepOrder = ["start", "mountains", "details"] as const;
+const stepOrder = ["start", "mountains", "details", "people"] as const;
 
 export default function PlanCreatePage() {
   const router = useRouter();
@@ -309,6 +327,22 @@ export default function PlanCreatePage() {
   const [description, setDescription] = useState("");
   const [mountains, setMountains] = useState<string[]>([]);
   const [isPrivate, setIsPrivate] = useState(false);
+  const [users, setUsers] = useState<PeoplePickerUser[]>([]);
+
+  const { data: me } = useUserMe();
+
+  useEffect(() => {
+    if (!me) return;
+    setUsers((current) => {
+      if (current.some((u) => u.id === me.id)) return current;
+      const meUser: PeoplePickerUser = {
+        id: me.id,
+        fullName: getFullName(me),
+        imageUrl: me.imageUrl,
+      };
+      return [meUser, ...current];
+    });
+  }, [me]);
 
   const { mutateAsync, isPending } = usePlanCreate();
   const { mutateAsync: markAsVisited } = useMarkPlansAsVisited();
@@ -316,6 +350,7 @@ export default function PlanCreatePage() {
   const stepTitles: Record<Step, string> = {
     mountains: intl.formatMessage({ defaultMessage: "Any mountains?" }),
     details: intl.formatMessage({ defaultMessage: "What are you doing?" }),
+    people: intl.formatMessage({ defaultMessage: "Who's coming?" }),
     start: intl.formatMessage({ defaultMessage: "Before starting" }),
   };
 
@@ -323,6 +358,7 @@ export default function PlanCreatePage() {
 
   const isStepMountains = step === "mountains";
   const isStepDetails = step === "details";
+  const isStepPeople = step === "people";
   const isStepStart = step === "start";
 
   const { data } = useMountains();
@@ -379,6 +415,7 @@ export default function PlanCreatePage() {
         description,
         startDate: date ? toLocalDateString(date) : undefined,
         mountainIds: mountains,
+        userIds: users.map((u) => u.id),
         isPrivate,
       });
 
@@ -429,6 +466,10 @@ export default function PlanCreatePage() {
       return <FormattedMessage defaultMessage="Lets do it" />;
     }
 
+    if (isStepDetails) {
+      return <FormattedMessage defaultMessage="Continue" />;
+    }
+
     return <FormattedMessage defaultMessage="Create plan" />;
   };
 
@@ -466,6 +507,9 @@ export default function PlanCreatePage() {
                 isPrivate,
               }}
             />
+          )}
+          {isStepPeople && (
+            <PeopleStep value={users} onPeopleChange={setUsers} />
           )}
         </View>
         <BlurView

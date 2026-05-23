@@ -15,6 +15,7 @@ import montesGallegos from "./montes-gallegos.json";
 import philippineUltras from "./philippine-ultras.json";
 import repteDelGirones from "./repte-del-girones.json";
 import sostresComarcals from "./sostres-comarcals.json";
+import techosProvinciales from "./techos-provinciales.json";
 import topSpain from "./top-spain.json";
 
 const VALID_LOCALES: readonly ChallengeLocale[] = ["ca", "es", "en"];

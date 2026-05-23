@@ -77,6 +77,7 @@ function Content() {
       {!isDataReady && <LoadingSkeleton />}
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="challenges" />
         <Stack.Screen name="+not-found" />
         <Stack.Screen
           name="join"

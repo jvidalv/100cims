@@ -23,45 +23,38 @@ export const CalendarDay = memo(
     const { date, inMonth } = cell;
     const today = isToday(date);
 
+    // Color the number to communicate today / selected / out-of-month, instead
+    // of drawing a circle behind it. Today wins over selected when both apply.
+    const numberClass = today
+      ? "font-bold text-primary"
+      : selected
+        ? "font-bold text-link"
+        : inMonth
+          ? "text-foreground"
+          : "text-muted-foreground opacity-40";
+
     return (
       <TouchableOpacity
-        className="h-full flex-1 items-center justify-start pt-2"
+        className="h-full flex-1 items-center pt-1"
         onPress={() => onPress(date)}
         onLongPress={() => onLongPress(date)}
       >
-        <View
-          className={twMerge(
-            "size-9 items-center justify-center rounded-full",
-            today && "bg-primary",
-            !today && selected && "border-2 border-foreground",
+        <ThemedText className={twMerge("text-base", numberClass)}>
+          {date.getDate()}
+        </ThemedText>
+        <View className="flex-1 items-center justify-center">
+          {eventTypes.length > 0 && (
+            <View className="flex-row gap-1">
+              {eventTypes.map((type) => (
+                <View
+                  key={type}
+                  className="size-1.5 rounded-full"
+                  style={{ backgroundColor: CALENDAR_EVENT_DOT_COLOR[type] }}
+                />
+              ))}
+            </View>
           )}
-        >
-          <ThemedText
-            className={twMerge(
-              "text-sm",
-              today
-                ? "font-bold text-white"
-                : selected
-                  ? "font-bold text-foreground"
-                  : inMonth
-                    ? "text-foreground"
-                    : "text-muted-foreground opacity-40",
-            )}
-          >
-            {date.getDate()}
-          </ThemedText>
         </View>
-        {eventTypes.length > 0 && (
-          <View className="mt-1 flex-row gap-1">
-            {eventTypes.map((type) => (
-              <View
-                key={type}
-                className="size-1.5 rounded-full"
-                style={{ backgroundColor: CALENDAR_EVENT_DOT_COLOR[type] }}
-              />
-            ))}
-          </View>
-        )}
       </TouchableOpacity>
     );
   },
