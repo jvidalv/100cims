@@ -12,6 +12,7 @@ import { notifyUsersWithSavedMountains } from "@/api/lib/plan-saved-mountain-not
 import { getUserFromRequest } from "@/api/routes/@shared/auth";
 import { resolveChallengeId } from "@/api/routes/@shared/challenge";
 import { SuccessResponse } from "@/api/schemas/common.schema";
+import { PlanTypeSchema } from "@/api/schemas/enums";
 import { BasicPlanSchema } from "@/api/schemas/plan.schema";
 
 export const planCreatePostRoute = new Elysia().post(
@@ -30,6 +31,8 @@ export const planCreatePostRoute = new Elysia().post(
           startDate: body.startDate
             ? formatDateForPostgresFromISOString(body.startDate)
             : null,
+          startTime: body.startTime ?? null,
+          type: body.type ?? "hike",
           speed: "normal",
           status: "open",
           challengeId,
@@ -93,6 +96,8 @@ export const planCreatePostRoute = new Elysia().post(
       title: t.String(),
       description: t.String(),
       startDate: t.Optional(t.String()),
+      startTime: t.Optional(t.String()),
+      type: t.Optional(PlanTypeSchema),
       mountainIds: t.Optional(t.Array(t.String())),
       userIds: t.Optional(t.Array(t.String())),
       challengeId: t.Optional(t.String()),

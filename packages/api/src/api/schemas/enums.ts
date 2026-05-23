@@ -12,6 +12,12 @@ export const PlanSpeedSchema = t.Union([
   t.Literal("fast"),
 ]);
 
+export const PlanTypeSchema = t.Union([
+  t.Literal("hike"),
+  t.Literal("trail"),
+  t.Literal("bike"),
+]);
+
 export const CouponDiscountTypeSchema = t.Union([
   t.Literal("percentage"),
   t.Literal("fixed"),

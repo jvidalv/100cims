@@ -19,6 +19,7 @@ import type {
   CouponDiscountType,
   PlanSpeed,
   PlanStatus,
+  PlanType,
   ShopRequestStatus,
 } from "@/db/enums";
 
@@ -247,6 +248,8 @@ export const planTable = pgTable(
     description: text(),
     imageUrl: text(),
     startDate: date(),
+    startTime: text(),
+    type: text().$type<PlanType>(),
     speed: text().notNull().$type<PlanSpeed>(),
     status: text().default("open").notNull().$type<PlanStatus>(),
     routeUrl: text(),

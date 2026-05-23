@@ -2,7 +2,7 @@ import { and, eq, inArray } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 
 import { db } from "@/db";
-import { PlanStatusSchema } from "@/api/schemas/enums";
+import { PlanStatusSchema, PlanTypeSchema } from "@/api/schemas/enums";
 import {
   planTable,
   planHasUsersTable,
@@ -45,6 +45,8 @@ export const planUpdatePostRoute = new Elysia().post(
           startDate: body.startDate
             ? formatDateForPostgresFromISOString(body.startDate)
             : undefined,
+          startTime: body.startTime,
+          type: body.type,
           isPrivate: body.isPrivate,
           updatedAt: new Date(),
         })
@@ -133,6 +135,8 @@ export const planUpdatePostRoute = new Elysia().post(
       status: t.Optional(PlanStatusSchema),
       routeUrl: t.Optional(t.String()),
       startDate: t.Optional(t.String()),
+      startTime: t.Optional(t.Nullable(t.String())),
+      type: t.Optional(t.Nullable(PlanTypeSchema)),
       mountainIds: t.Optional(t.Array(t.String())),
       userIds: t.Optional(t.Array(t.String())),
       isPrivate: t.Optional(t.Boolean()),

@@ -7,6 +7,10 @@ export {
 } from "./mountain-item-list";
 export { BottomDrawer } from "./bottom-drawer";
 export { ScreenHeader } from "./screen-header";
+export {
+  BlurredScreenHeader,
+  useBlurredScreenHeaderHeight,
+} from "./blurred-screen-header";
 export { UserSelectInput, type UserForSelectInput } from "./user-select-input";
 export {
   FilterableListHeader,

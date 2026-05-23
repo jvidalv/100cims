@@ -24,7 +24,10 @@ import {
   ThemedText,
   ThemedView,
 } from "@/components/ui/atoms";
-import { ScreenHeader } from "@/components/ui/molecules";
+import {
+  BlurredScreenHeader,
+  useBlurredScreenHeaderHeight,
+} from "@/components/ui/molecules";
 import {
   CommentRow,
   type CommentRowData,
@@ -85,6 +88,7 @@ const useDebounced = <T,>(value: T, delayMs: number): T => {
 export default function MountainCommentsScreen() {
   const intl = useIntl();
   const router = useRouter();
+  const headerHeight = useBlurredScreenHeaderHeight();
   // useGlobalSearchParams (not useLocalSearchParams) — see comment in summit.tsx.
   const { slug } = useGlobalSearchParams<{ slug: string }>();
   const { isAuthenticated } = useAuth();
@@ -322,23 +326,24 @@ export default function MountainCommentsScreen() {
   if (!mountain) {
     return (
       <ThemedView className="flex-1">
-        <ScreenHeader />
+        <BlurredScreenHeader />
       </ThemedView>
     );
   }
 
   return (
     <ThemedView className="flex-1">
-      <ScreenHeader />
-
-      {/* Pinned header: title + search + sort chips */}
-      <View className="gap-3 px-6">
-        <ThemedText className="text-2xl font-semibold" numberOfLines={1}>
-          <FormattedMessage
-            defaultMessage="Comments on {name}"
-            values={{ name: mountain.name }}
-          />
+      <BlurredScreenHeader>
+        <ThemedText numberOfLines={1} className="max-w-56 text-lg font-medium">
+          {mountain.name}
         </ThemedText>
+      </BlurredScreenHeader>
+
+      {/* Pinned header: search + sort chips */}
+      <View
+        className="gap-3 px-6"
+        style={{ paddingTop: headerHeight }}
+      >
         <SearchInput
           key={searchInputKey}
           onChangeText={setQuery}

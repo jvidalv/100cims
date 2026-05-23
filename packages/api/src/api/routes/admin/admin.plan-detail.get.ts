@@ -30,6 +30,8 @@ export const adminPlanDetailGetRoute = new Elysia().get(
         imageUrl: planTable.imageUrl,
         routeUrl: planTable.routeUrl,
         startDate: planTable.startDate,
+        startTime: planTable.startTime,
+        type: planTable.type,
         speed: planTable.speed,
         status: planTable.status,
         isPrivate: planTable.isPrivate,

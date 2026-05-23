@@ -54,6 +54,8 @@ export const adminPlanCreatePostRoute = new Elysia().post(
         startDate: body.startDate
           ? formatDateForPostgresFromISOString(body.startDate)
           : null,
+        startTime: body.startTime ?? null,
+        type: body.type ?? null,
         speed: body.speed ?? "normal",
         status: "open",
         challengeId: body.challengeId ?? DEFAULT_CHALLENGE_ID,
