@@ -92,6 +92,11 @@ const FEATURED_CHALLENGES: { slug: string; label: string; href?: string }[] = [
     label: "Philippine Ultras",
     href: "/philippine-ultras",
   },
+  {
+    slug: "techos-provinciales",
+    label: "Techos Provinciales",
+    href: "/techos-provinciales",
+  },
 ];
 
 interface Props {

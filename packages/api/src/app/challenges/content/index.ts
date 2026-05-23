@@ -60,6 +60,7 @@ export const CHALLENGE_CONTENT = {
   "philippine-ultras": narrow(philippineUltras, "philippine-ultras"),
   "repte-del-girones": narrow(repteDelGirones, "repte-del-girones"),
   "sostres-comarcals": narrow(sostresComarcals, "sostres-comarcals"),
+  "techos-provinciales": narrow(techosProvinciales, "techos-provinciales"),
   "top-spain": narrow(topSpain, "top-spain"),
 } satisfies Record<string, ChallengeContent>;
 
