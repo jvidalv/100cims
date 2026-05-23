@@ -31,10 +31,19 @@ import {
 } from "@/components/ui/atoms";
 import { ThemedCheckbox } from "@/components/ui/atoms/themed-checkbox";
 import { ThemedDateInput } from "@/components/ui/atoms/themed-date-input";
-import { PeopleList, ScreenHeader } from "@/components/ui/molecules";
+import { ThemedTimeInput } from "@/components/ui/atoms/themed-time-input";
+import {
+  PeopleList,
+  PlanTypeChips,
+  ScreenHeader,
+} from "@/components/ui/molecules";
 import { MountainItemListAsTouchable } from "@/components/ui/molecules/mountain-item-list";
 import { useMountains } from "@/domains/mountain/mountain.api";
-import { useMarkPlansAsVisited, usePlanCreate } from "@/domains/plan/plan.api";
+import {
+  type PlanType,
+  useMarkPlansAsVisited,
+  usePlanCreate,
+} from "@/domains/plan/plan.api";
 import { type PeoplePickerUser } from "@/domains/user/people-picker-session";
 import { useUserMe } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
@@ -196,22 +205,21 @@ MountainsStep.displayName = "MountainsStep";
 
 const nextSundayDate = nextSunday(new Date());
 
+type DetailsValues = {
+  title: string;
+  description?: string;
+  date?: Date | null;
+  startTime?: string | null;
+  type: PlanType;
+  isPrivate: boolean;
+};
+
 const DetailsStep = ({
   values,
   onDetailsChange,
 }: {
-  values: {
-    title: string;
-    description?: string;
-    date?: Date | null;
-    isPrivate: boolean;
-  };
-  onDetailsChange: (values: {
-    title: string;
-    description?: string;
-    date?: Date | null;
-    isPrivate: boolean;
-  }) => void;
+  values: DetailsValues;
+  onDetailsChange: (values: DetailsValues) => void;
 }) => {
   const intl = useIntl();
   return (
@@ -231,6 +239,12 @@ const DetailsStep = ({
         }
         className="mt-4"
       />
+      <View className="mt-6">
+        <PlanTypeChips
+          value={values.type}
+          onChange={(type) => onDetailsChange({ ...values, type })}
+        />
+      </View>
       <ThemedToggleInput
         label={intl.formatMessage({ defaultMessage: "Private plan" })}
         checked={values.isPrivate}
@@ -243,11 +257,17 @@ const DetailsStep = ({
           onDateValid={(date) => onDetailsChange({ ...values, date })}
           noPastDates
         />
+        {values.date && (
+          <ThemedTimeInput
+            value={values.startTime}
+            onChange={(startTime) => onDetailsChange({ ...values, startTime })}
+          />
+        )}
         <ThemedCheckbox
           checked={!values.date}
           onChecked={(checked) => {
             if (checked) {
-              onDetailsChange({ ...values, date: null });
+              onDetailsChange({ ...values, date: null, startTime: null });
             } else {
               onDetailsChange({ ...values, date: nextSundayDate });
             }
@@ -323,9 +343,11 @@ export default function PlanCreatePage() {
   const [step, setStep] = useState<Step>(stepOrder[0]);
 
   const [date, setDate] = useState<Date | null | undefined>(nextSundayDate);
+  const [startTime, setStartTime] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [mountains, setMountains] = useState<string[]>([]);
+  const [type, setType] = useState<PlanType>("hike");
   const [isPrivate, setIsPrivate] = useState(false);
   const [users, setUsers] = useState<PeoplePickerUser[]>([]);
 
@@ -385,16 +407,15 @@ export default function PlanCreatePage() {
     title,
     description,
     date,
+    startTime,
+    type,
     isPrivate,
-  }: {
-    title: string;
-    description?: string;
-    date?: Date | null;
-    isPrivate: boolean;
-  }) => {
+  }: DetailsValues) => {
     setTitle(title);
     setDescription(description || "");
     setDate(date);
+    setStartTime(startTime ?? null);
+    setType(type);
     setIsPrivate(isPrivate);
   };
 
@@ -414,6 +435,8 @@ export default function PlanCreatePage() {
         title,
         description,
         startDate: date ? toLocalDateString(date) : undefined,
+        startTime: date && startTime ? startTime : undefined,
+        type,
         mountainIds: mountains,
         userIds: users.map((u) => u.id),
         isPrivate,
@@ -504,6 +527,8 @@ export default function PlanCreatePage() {
                 title,
                 description,
                 date,
+                startTime,
+                type,
                 isPrivate,
               }}
             />

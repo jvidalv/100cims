@@ -145,12 +145,22 @@ const PlansSection = () => {
           </>
         )}
         {plans?.map(
-          ({ id, title, status, startDate, isPrivate, mountains, users }) => (
+          ({
+            id,
+            title,
+            status,
+            type,
+            startDate,
+            isPrivate,
+            mountains,
+            users,
+          }) => (
             <PlanItemList
               key={id}
               id={id}
               title={title}
               status={status}
+              type={type}
               startDate={startDate}
               isPrivate={isPrivate}
               mountains={mountains?.map(({ imageUrl }) => ({ imageUrl }))}

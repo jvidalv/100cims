@@ -10,11 +10,14 @@ import { usePlanChatUnread } from "@/domains/plan/plan-chat.api";
 import { getFullName } from "@/domains/user/user.utils";
 import { formatDayDistance, parseLocalDateString } from "@/lib/dates";
 
+import type { PlanType } from "@/domains/plan/plan.api";
+
 export const PlanItemList = ({
   id,
   title,
   startDate,
   status,
+  type,
   isPrivate,
   mountains,
   users,
@@ -23,6 +26,7 @@ export const PlanItemList = ({
   title: string;
   startDate?: string | null;
   status: "open" | "completed" | "canceled";
+  type?: PlanType | null;
   isPrivate?: boolean;
   mountains?: {
     imageUrl?: string | null;
@@ -40,9 +44,17 @@ export const PlanItemList = ({
   const intl = useIntl();
   const mountainsWithImages = mountains?.filter(({ imageUrl }) => imageUrl);
 
-  const when = startDate
+  const typeLabels: Record<PlanType, string> = {
+    hike: intl.formatMessage({ defaultMessage: "Hike" }),
+    trail: intl.formatMessage({ defaultMessage: "Trail" }),
+    bike: intl.formatMessage({ defaultMessage: "Bike" }),
+  };
+  const typeLabel = type ? typeLabels[type] : null;
+
+  const whenDate = startDate
     ? formatDayDistance(parseLocalDateString(startDate))
     : intl.formatMessage({ defaultMessage: "Still deciding a date" });
+  const when = typeLabel ? `${typeLabel}, ${whenDate}` : whenDate;
 
   const isOpen = status === "open";
   const isOngoing =

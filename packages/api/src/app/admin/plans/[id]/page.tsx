@@ -46,20 +46,26 @@ import {
 
 const STATUSES = ["open", "completed", "canceled"] as const;
 const SPEEDS = ["chill", "normal", "fast"] as const;
+const TYPES = ["hike", "trail", "bike"] as const;
 type PlanStatus = (typeof STATUSES)[number];
 type PlanSpeed = (typeof SPEEDS)[number];
+type PlanType = (typeof TYPES)[number];
 
 const isStatus = (v: string): v is PlanStatus =>
   (STATUSES as readonly string[]).includes(v);
 const isSpeed = (v: string): v is PlanSpeed =>
   (SPEEDS as readonly string[]).includes(v);
+const isType = (v: string): v is PlanType =>
+  (TYPES as readonly string[]).includes(v);
 
 type Form = {
   title: string;
   description: string;
   status: PlanStatus;
   speed: PlanSpeed;
+  type: PlanType | "";
   startDate: string;
+  startTime: string;
   imageUrl: string;
   routeUrl: string;
 };
@@ -69,7 +75,9 @@ const emptyForm: Form = {
   description: "",
   status: "open",
   speed: "normal",
+  type: "",
   startDate: "",
+  startTime: "",
   imageUrl: "",
   routeUrl: "",
 };
@@ -98,7 +106,10 @@ export default function AdminPlanDetailPage({
       description: detail.data.description ?? "",
       status: detail.data.status,
       speed: isSpeed(detail.data.speed) ? detail.data.speed : "normal",
+      type:
+        detail.data.type && isType(detail.data.type) ? detail.data.type : "",
       startDate: toDateInputValue(detail.data.startDate),
+      startTime: detail.data.startTime ?? "",
       imageUrl: detail.data.imageUrl ?? "",
       routeUrl: detail.data.routeUrl ?? "",
     };
@@ -117,8 +128,11 @@ export default function AdminPlanDetailPage({
       body.description = form.description || null;
     if (form.status !== initial.status) body.status = form.status;
     if (form.speed !== initial.speed) body.speed = form.speed;
+    if (form.type !== initial.type) body.type = form.type || null;
     if (form.startDate !== initial.startDate)
       body.startDate = form.startDate || null;
+    if (form.startTime !== initial.startTime)
+      body.startTime = form.startTime || null;
     if (form.imageUrl !== initial.imageUrl)
       body.imageUrl = form.imageUrl || null;
     if (form.routeUrl !== initial.routeUrl)
@@ -286,12 +300,44 @@ export default function AdminPlanDetailPage({
             </Select>
           </div>
           <div className="space-y-1">
+            <Label>Type</Label>
+            <Select
+              value={form.type || "__none"}
+              onValueChange={(v) => {
+                if (v === "__none") setForm((f) => ({ ...f, type: "" }));
+                else if (isType(v)) setForm((f) => ({ ...f, type: v }));
+              }}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__none">—</SelectItem>
+                {TYPES.map((s) => (
+                  <SelectItem key={s} value={s}>
+                    {s}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-1">
             <Label>Start date</Label>
             <Input
               type="date"
               value={form.startDate}
               onChange={(e) =>
                 setForm((f) => ({ ...f, startDate: e.target.value }))
+              }
+            />
+          </div>
+          <div className="space-y-1">
+            <Label>Start time</Label>
+            <Input
+              type="time"
+              value={form.startTime}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, startTime: e.target.value }))
               }
             />
           </div>

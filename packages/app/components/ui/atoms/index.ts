@@ -5,6 +5,7 @@ export { ThemedView } from "./themed-view";
 export { ThemedText } from "./themed-text";
 export { ThemedTextInput } from "./themed-text-input";
 export { ThemedDateInput } from "./themed-date-input";
+export { ThemedTimeInput } from "./themed-time-input";
 export { ThemedKeyboardAvoidingView } from "./themed-keyboard-avoiding-view";
 export { LucideIcon } from "./lucide-icon";
 export { SearchInput } from "./search-input";

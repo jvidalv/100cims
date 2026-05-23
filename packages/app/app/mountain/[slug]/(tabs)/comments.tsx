@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/atoms";
 import {
   BlurredScreenHeader,
-  useBlurredScreenHeaderHeight,
+  blurredScreenHeaderPaddingClassName,
 } from "@/components/ui/molecules";
 import {
   CommentRow,
@@ -88,7 +88,6 @@ const useDebounced = <T,>(value: T, delayMs: number): T => {
 export default function MountainCommentsScreen() {
   const intl = useIntl();
   const router = useRouter();
-  const headerHeight = useBlurredScreenHeaderHeight();
   // useGlobalSearchParams (not useLocalSearchParams) — see comment in summit.tsx.
   const { slug } = useGlobalSearchParams<{ slug: string }>();
   const { isAuthenticated } = useAuth();
@@ -340,10 +339,7 @@ export default function MountainCommentsScreen() {
       </BlurredScreenHeader>
 
       {/* Pinned header: search + sort chips */}
-      <View
-        className="gap-3 px-6"
-        style={{ paddingTop: headerHeight }}
-      >
+      <View className={`gap-3 px-6 pt-3 ${blurredScreenHeaderPaddingClassName()}`}>
         <SearchInput
           key={searchInputKey}
           onChangeText={setQuery}

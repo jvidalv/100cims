@@ -9,7 +9,7 @@ export { BottomDrawer } from "./bottom-drawer";
 export { ScreenHeader } from "./screen-header";
 export {
   BlurredScreenHeader,
-  useBlurredScreenHeaderHeight,
+  blurredScreenHeaderPaddingClassName,
 } from "./blurred-screen-header";
 export { UserSelectInput, type UserForSelectInput } from "./user-select-input";
 export {
@@ -28,6 +28,7 @@ export { FloatingCartButton } from "./floating-cart-button";
 export { SharePulseBadge } from "./share-pulse-badge";
 export { PersonRow } from "./person-row";
 export { PeopleList } from "./people-list";
+export { PlanTypeChips } from "./plan-type-chips";
 export { MountainList } from "./mountain-list";
 export { MountainRow } from "./mountain-row";
 export { MountainRowMinimal } from "./mountain-row-minimal";

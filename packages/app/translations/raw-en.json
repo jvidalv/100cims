@@ -215,6 +215,9 @@
   "82GzU3": {
     "defaultMessage": "Upcoming plans"
   },
+  "82UPI7": {
+    "defaultMessage": "Bike"
+  },
   "89eDMC": {
     "defaultMessage": "Picat"
   },
@@ -256,9 +259,6 @@
   },
   "9j3stl": {
     "defaultMessage": "No mountains match these filters."
-  },
-  "9nBDqM": {
-    "defaultMessage": "Comments on {name}"
   },
   "9yslhD": {
     "defaultMessage": "Yes, I'm sure"
@@ -488,6 +488,9 @@
   "J9wo18": {
     "defaultMessage": "more mountains"
   },
+  "JJhyw5": {
+    "defaultMessage": "Select a time"
+  },
   "JLegne": {
     "defaultMessage": "Forcat"
   },
@@ -535,6 +538,9 @@
   },
   "MmuKRi": {
     "defaultMessage": "Cims costs around 50€ a month to run. Pick up some merch to help keep it free."
+  },
+  "N3X/Sq": {
+    "defaultMessage": "Hike"
   },
   "N4mgpU": {
     "defaultMessage": "Delete (admin)"
@@ -1141,6 +1147,9 @@
   },
   "rzCvRt": {
     "defaultMessage": "Family"
+  },
+  "sp5kfQ": {
+    "defaultMessage": "Trail"
   },
   "sxWhq6": {
     "defaultMessage": "We couldn't load this screen. Please try again."
