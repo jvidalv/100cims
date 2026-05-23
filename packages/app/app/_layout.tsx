@@ -76,12 +76,13 @@ function Content() {
     <>
       {!isDataReady && <LoadingSkeleton />}
       <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="+not-found" />
-      <Stack.Screen
-        name="join"
-        options={{ presentation: isIpadOS ? "fullScreenModal" : "modal" }}
-      />
-    </Stack>
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="+not-found" />
+        <Stack.Screen
+          name="join"
+          options={{ presentation: isIpadOS ? "fullScreenModal" : "modal" }}
+        />
+      </Stack>
       <FloatingCartButton />
     </>
   );
