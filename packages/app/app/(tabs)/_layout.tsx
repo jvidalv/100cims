@@ -1,0 +1,26 @@
+import { NativeTabs } from "expo-router/unstable-native-tabs";
+import { useIntl } from "react-intl";
+
+export default function TabsLayout() {
+  const intl = useIntl();
+  return (
+    // `disableTransparentOnScrollEdge` keeps the bar's blurred material when
+    // the user scrolls to the very bottom of a list. Without it, iOS 18 and
+    // earlier render the bar as fully transparent at the scroll edge, which
+    // reads as broken. iOS 26+ liquid glass ignores the flag.
+    <NativeTabs disableTransparentOnScrollEdge>
+      <NativeTabs.Trigger name="index">
+        <NativeTabs.Trigger.Icon sf="house.fill" md="home" />
+        <NativeTabs.Trigger.Label>
+          {intl.formatMessage({ defaultMessage: "Home" })}
+        </NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="mountains">
+        <NativeTabs.Trigger.Icon sf="map.fill" md="map" />
+        <NativeTabs.Trigger.Label>
+          {intl.formatMessage({ defaultMessage: "Mountains" })}
+        </NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
+    </NativeTabs>
+  );
+}
