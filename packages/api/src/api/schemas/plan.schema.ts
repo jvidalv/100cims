@@ -1,7 +1,7 @@
 import { t } from "elysia";
 
 import { PaginatedSchema } from "@/api/schemas/common.schema";
-import { PlanStatusSchema } from "@/api/schemas/enums";
+import { PlanStatusSchema, PlanTypeSchema } from "@/api/schemas/enums";
 
 /**
  * Schema for a user participating in a plan
@@ -48,9 +48,11 @@ export const PlanSchema = t.Object({
   description: t.Nullable(t.String()),
   imageUrl: t.Nullable(t.String()),
   speed: t.Nullable(t.String()),
+  type: t.Nullable(PlanTypeSchema),
   status: PlanStatusSchema,
   routeUrl: t.Nullable(t.String()),
   startDate: t.Nullable(t.String()),
+  startTime: t.Nullable(t.String()),
   creatorId: t.String(),
   createdAt: t.Date(),
   updatedAt: t.Date(),
@@ -69,9 +71,11 @@ export const PlanDetailSchema = t.Object({
   description: t.Nullable(t.String()),
   imageUrl: t.Nullable(t.String()),
   speed: t.Nullable(t.String()),
+  type: t.Nullable(PlanTypeSchema),
   status: t.String(),
   routeUrl: t.Nullable(t.String()),
   startDate: t.Nullable(t.String()),
+  startTime: t.Nullable(t.String()),
   creatorId: t.String(),
   createdAt: t.Date(),
   updatedAt: t.Date(),
@@ -107,9 +111,11 @@ export const BasicPlanSchema = t.Object({
   description: t.Nullable(t.String()),
   imageUrl: t.Nullable(t.String()),
   speed: t.Nullable(t.String()),
+  type: t.Nullable(PlanTypeSchema),
   status: t.String(),
   routeUrl: t.Nullable(t.String()),
   startDate: t.Nullable(t.String()),
+  startTime: t.Nullable(t.String()),
   creatorId: t.String(),
   createdAt: t.Date(),
   updatedAt: t.Date(),

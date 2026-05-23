@@ -1,7 +1,7 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { ChevronLeft } from "lucide-react-native";
-import { PropsWithChildren, ReactElement, ReactNode } from "react";
+import { PropsWithChildren, ReactElement } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Animated, {
   interpolate,
@@ -16,6 +16,7 @@ import { twMerge } from "tailwind-merge";
 import { BlurView, ThemedText } from "@/components/ui/atoms";
 import { LucideIcon } from "@/components/ui/atoms/lucide-icon";
 import { ThemedView } from "@/components/ui/atoms/themed-view";
+import { BlurredScreenHeader } from "@/components/ui/molecules/blurred-screen-header";
 import { hasDynamicIsland, isAndroid } from "@/lib/device";
 
 const DEFAULT_BLURRED_HEADER_CLASSNAME = "font-medium text-lg max-w-56";
@@ -144,14 +145,8 @@ export default function ParallaxScrollView({
           </BlurView>
         </TouchableOpacity>
       </Animated.View>
-      <Animated.View
-        style={headerElementsStyle}
-        className={twMerge(
-          "absolute top-0 h-24 w-full flex-1",
-          hasDynamicIsland && "h-28",
-        )}
-      >
-        <Header title={title} rightElement={headerRightElement}>
+      <Animated.View style={headerElementsStyle}>
+        <BlurredScreenHeader rightElement={headerRightElement}>
           {headerCenterElement ? (
             headerCenterElement({
               title,
@@ -165,7 +160,7 @@ export default function ParallaxScrollView({
               {title}
             </ThemedText>
           )}
-        </Header>
+        </BlurredScreenHeader>
       </Animated.View>
     </ThemedView>
   );
@@ -213,28 +208,3 @@ const AnimatedHeaderBackground = ({
   );
 };
 
-const Header = ({
-  children,
-  rightElement,
-}: PropsWithChildren<{
-  title?: string;
-  rightElement?: ReactNode;
-}>) => {
-  const router = useRouter();
-
-  return (
-    <BlurView className="flex-1">
-      <View className="mt-auto flex-row items-center justify-between">
-        <TouchableOpacity
-          onPress={router.back}
-          hitSlop={16}
-          className="-mt-3 w-1/5 py-4 pl-6 pr-4"
-        >
-          <LucideIcon size={28} icon={ChevronLeft} />
-        </TouchableOpacity>
-        <View className="mx-auto pb-3 text-center">{children}</View>
-        <View className="w-1/5">{rightElement}</View>
-      </View>
-    </BlurView>
-  );
-};

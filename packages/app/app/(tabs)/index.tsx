@@ -623,7 +623,7 @@ export default function IndexScreen() {
                 )}
           </View>
         </View>
-        <View className="gap-4">
+        <View className="gap-4 pb-16">
           <View className="flex-row items-end justify-between">
             <ThemedText className="text-2xl font-bold">
               <FormattedMessage defaultMessage="Upcoming plans" />
@@ -638,28 +638,6 @@ export default function IndexScreen() {
             </Link>
           </View>
           <PlansSection />
-        </View>
-        <View className="gap-4 pb-16">
-          <View className="flex-row items-end justify-between">
-            <ThemedText className="text-2xl font-bold">
-              <FormattedMessage defaultMessage="Support Cims" />
-            </ThemedText>
-            <Link href="/shop" className="-mx-2 -mb-2 p-2">
-              <View className="flex-row items-center gap-1">
-                <ThemedText className="text-muted-foreground">
-                  <FormattedMessage defaultMessage="View more" />
-                </ThemedText>
-                <LucideIcon icon={ArrowRight} size={12} muted />
-              </View>
-            </Link>
-          </View>
-          <Link href="/shop">
-            <Image
-              source={require("@/assets/images/shop-header.jpg")}
-              className="h-48 w-full rounded bg-border"
-              resizeMode="cover"
-            />
-          </Link>
         </View>
       </Animated.ScrollView>
     </ThemedView>
