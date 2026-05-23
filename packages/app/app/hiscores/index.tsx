@@ -1,9 +1,16 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, useRouter } from "expo-router";
+import { setStatusBarStyle } from "expo-status-bar";
 import { ArrowRight, Info, Mountain } from "lucide-react-native";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FormattedMessage } from "react-intl";
-import { FlatList, TouchableOpacity, View, ViewToken } from "react-native";
+import {
+  FlatList,
+  TouchableOpacity,
+  useColorScheme,
+  View,
+  ViewToken,
+} from "react-native";
 import { twMerge } from "tailwind-merge";
 
 import {
@@ -27,6 +34,7 @@ import { useHiscoresGet } from "@/domains/hiscores/hiscores.api";
 import { useScoreFormatter } from "@/domains/hiscores/use-score-formatter";
 import { useUserMe } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
+import { isIOS } from "@/lib/device";
 import { getInitials } from "@/lib/strings";
 
 type HiscoreItem = {
@@ -42,6 +50,7 @@ const MEDAL_RING_COLORS = ["#FFD700", "#C0C0C0", "#CD7F32"] as const;
 
 export default function HiscoresScreen() {
   const router = useRouter();
+  const colorScheme = useColorScheme();
   const { data: user } = useUserMe();
   const {
     data: hiscoresData,
@@ -51,6 +60,14 @@ export default function HiscoresScreen() {
     isFetchingNextPage,
   } = useHiscoresGet();
   const { data: challenge } = useActiveChallenge();
+
+  // Other screens (mountain, challenge details) force `light` for their dark
+  // hero images. Restore the default here on mount so navigating into this
+  // page doesn't inherit their override.
+  useEffect(() => {
+    if (!isIOS) return;
+    setStatusBarStyle(colorScheme === "dark" ? "light" : "dark", true);
+  }, [colorScheme]);
 
   const hiscores = useMemo(
     () => hiscoresData?.pages?.flatMap((p) => p?.items ?? []) ?? [],

@@ -4,21 +4,21 @@ import { TouchableOpacity, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
 import { ThemedText } from "@/components/ui/atoms";
+import { type CalendarCell } from "@/lib/calendar";
 
 type Props = {
-  date: Date | null;
+  cell: CalendarCell;
   onPress: (date: Date) => void;
   onLongPress: (date: Date) => void;
 };
 
-export const CalendarDay = memo(({ date, onPress, onLongPress }: Props) => {
-  if (!date) return <View className="h-full flex-1" />;
-
+export const CalendarDay = memo(({ cell, onPress, onLongPress }: Props) => {
+  const { date, inMonth } = cell;
   const today = isToday(date);
 
   return (
     <TouchableOpacity
-      className="h-full flex-1 items-center justify-center"
+      className="h-full flex-1 items-center justify-start pt-2"
       onPress={() => onPress(date)}
       onLongPress={() => onLongPress(date)}
     >
@@ -31,7 +31,11 @@ export const CalendarDay = memo(({ date, onPress, onLongPress }: Props) => {
         <ThemedText
           className={twMerge(
             "text-sm",
-            today ? "font-bold text-white" : "text-foreground",
+            today
+              ? "font-bold text-white"
+              : inMonth
+                ? "text-foreground"
+                : "text-muted-foreground opacity-40",
           )}
         >
           {date.getDate()}

@@ -2,35 +2,29 @@ import { memo, useMemo } from "react";
 import { View } from "react-native";
 
 import { ThemedText } from "@/components/ui/atoms";
-import {
-  CALENDAR_MONTH_HEIGHT,
-  type CalendarMonthData,
-  getWeekdayLabels,
-  WEEK_ROW_HEIGHT,
-} from "@/lib/calendar";
+import { type CalendarMonthData, getWeekdayLabels } from "@/lib/calendar";
 
 import { CalendarDay } from "./calendar-day";
 
 type Props = {
   month: CalendarMonthData;
+  height: number;
   onDayPress: (date: Date) => void;
   onDayLongPress: (date: Date) => void;
 };
 
 export const CalendarMonth = memo(
-  ({ month, onDayPress, onDayLongPress }: Props) => {
+  ({ month, height, onDayPress, onDayLongPress }: Props) => {
     // Computed in-component (not at module scope) so it reads the locale only
     // after startup has resolved it — see lib/locale.ts initLocale.
     const weekdays = useMemo(() => getWeekdayLabels(), []);
 
     return (
-      // Explicit fixed height (matches getItemLayout in calendar.tsx) so the
-      // FlatList never re-measures and the screen has no mount-time drift.
-      <View className="px-6 pb-2" style={{ height: CALENDAR_MONTH_HEIGHT }}>
-        <ThemedText className="h-14 text-lg font-bold capitalize">
+      <View className="px-3 pb-2" style={{ height }}>
+        <ThemedText className="h-16 text-4xl font-bold capitalize">
           {month.label}
         </ThemedText>
-        <View className="h-[18px] flex-row">
+        <View className="h-[18px] flex-row border-b border-border">
           {weekdays.map((label, i) => (
             <ThemedText
               key={i}
@@ -43,13 +37,16 @@ export const CalendarMonth = memo(
         {month.weeks.map((week, weekIndex) => (
           <View
             key={weekIndex}
-            className="flex-row"
-            style={{ height: WEEK_ROW_HEIGHT }}
+            className={
+              weekIndex < month.weeks.length - 1
+                ? "flex-1 flex-row border-b border-border"
+                : "flex-1 flex-row"
+            }
           >
-            {week.map((date, dayIndex) => (
+            {week.map((cell, dayIndex) => (
               <CalendarDay
                 key={dayIndex}
-                date={date}
+                cell={cell}
                 onPress={onDayPress}
                 onLongPress={onDayLongPress}
               />
