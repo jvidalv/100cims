@@ -10,6 +10,10 @@ import React, {
 } from "react";
 import { IntlProvider } from "react-intl";
 import { View } from "react-native";
+import {
+  initialWindowMetrics,
+  SafeAreaProvider,
+} from "react-native-safe-area-context";
 
 import { QueryClientProvider } from "@/components/providers";
 import { AuthProvider } from "@/components/providers/auth-provider";
@@ -78,6 +82,10 @@ function Content() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="challenges" />
+        {/* No <Stack.Screen name="plans" />: plans/ contains only the (tabs)/
+            group, so Expo Router flattens the route to "plans/(tabs)" and a
+            "plans" declaration would not match any child — see the [Layout
+            children] warning. Routing still works through inference. */}
         <Stack.Screen name="+not-found" />
         <Stack.Screen
           name="join"
@@ -171,8 +179,14 @@ export default function Root() {
   if (!localeReady) return null;
 
   return (
-    <ThemeProvider>
-      <RootProviders />
-    </ThemeProvider>
+    // initialMetrics seeds useSafeAreaInsets() with the real top/bottom values
+    // from the native side at JS startup, so screens that read insets on first
+    // render (e.g. /calendar's paddingTop) don't flash content under the
+    // status bar / dynamic island before the provider re-measures.
+    <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+      <ThemeProvider>
+        <RootProviders />
+      </ThemeProvider>
+    </SafeAreaProvider>
   );
 }

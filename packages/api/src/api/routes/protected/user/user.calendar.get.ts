@@ -60,6 +60,7 @@ export const userCalendarGetRoute = new Elysia().get(
           startDate: sql<string>`${planTable.startDate}`.as("startDate"),
           title: planTable.title,
           status: planTable.status,
+          type: planTable.type,
           isPrivate: planTable.isPrivate,
           creatorId: planTable.creatorId,
         })
@@ -136,6 +137,7 @@ export const userCalendarGetRoute = new Elysia().get(
       id: row.id,
       title: row.title,
       status: row.status,
+      planType: row.type,
       isPrivate: row.isPrivate,
       isCreator: row.creatorId === user.id,
       mountains: planMountains

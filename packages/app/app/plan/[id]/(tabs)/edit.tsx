@@ -1,4 +1,5 @@
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { nextSunday } from "date-fns/nextSunday";
+import { useGlobalSearchParams, useRouter } from "expo-router";
 import { Ban, Check, Trash2, X } from "lucide-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { useIntl, FormattedMessage } from "react-intl";
@@ -20,6 +21,7 @@ import {
   ThemedTimeInput,
   ThemedToggleInput,
 } from "@/components/ui/atoms";
+import { ThemedCheckbox } from "@/components/ui/atoms/themed-checkbox";
 import {
   ActionRow,
   MountainList,
@@ -49,7 +51,9 @@ const toPlanType = (value: string | null | undefined): PlanType | null => {
 };
 
 export default function PlanEditPage() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  // useGlobalSearchParams (not useLocal-) — inside a NativeTabs eagerly-mounted
+  // child of [id], useLocalSearchParams doesn't bind the parent dynamic.
+  const { id } = useGlobalSearchParams<{ id: string }>();
   const { data: planData } = usePlanOne({ id });
   const { data: mountainsData } = useMountains();
   const { mutateAsync: updatePlan, isPending: isPendingUpdate } =
@@ -127,7 +131,7 @@ export default function PlanEditPage() {
       startDate: date ? toLocalDateString(date) : undefined,
       startTime: date ? startTime : null,
       type,
-      mountainIds: mountains.map((m) => m.id),
+      mountainIds: seededMountains ? mountains.map((m) => m.id) : undefined,
       userIds: users.map((u) => u.id),
       isPrivate,
     });
@@ -215,14 +219,30 @@ export default function PlanEditPage() {
               onChecked={setIsPrivate}
             />
             <PlanTypeChips value={type} onChange={setType} />
-            <ThemedDateInput
-              value={date}
-              onDateValid={(date) => setDate(date)}
-              noPastDates
-            />
-            {date && (
-              <ThemedTimeInput value={startTime} onChange={setStartTime} />
-            )}
+            <View className="gap-4">
+              <ThemedDateInput
+                value={date}
+                onDateValid={(date) => setDate(date)}
+                noPastDates
+              />
+              <ThemedCheckbox
+                checked={!date}
+                onChecked={(checked) => {
+                  if (checked) {
+                    setDate(null);
+                    setStartTime(null);
+                  } else {
+                    setDate(nextSunday(new Date()));
+                  }
+                }}
+                label={intl.formatMessage({
+                  defaultMessage: "I don't know exactly when.",
+                })}
+              />
+              {date && (
+                <ThemedTimeInput value={startTime} onChange={setStartTime} />
+              )}
+            </View>
 
             <View className="gap-3">
               <ThemedText className="text-lg font-medium">

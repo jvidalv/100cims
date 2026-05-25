@@ -6,6 +6,7 @@ import { userTable } from "@/db/schema";
 import { JWT } from "@/api/routes/@shared/jwt";
 import { setRequestContext } from "@/api/routes/@shared/request-context";
 import { protectedAdminRoutes } from "@/api/routes/protected/admin";
+import { challengeRoutes } from "@/api/routes/protected/challenge";
 import { communityChallengeRoute } from "@/api/routes/protected/community-challenge";
 import { donorsRoute } from "@/api/routes/protected/donors";
 import { mountainLegacyPostRoute } from "@/api/routes/protected/mountain-legacy.post";
@@ -83,6 +84,7 @@ export const protectedRoutes = new Elysia({ prefix: "/protected" })
   .use(donorsRoute)
   .use(plansRoute)
   .use(planChatRoute)
+  .use(challengeRoutes)
   .use(communityChallengeRoute)
   .use(shopRoutes)
   .use(protectedAdminRoutes);

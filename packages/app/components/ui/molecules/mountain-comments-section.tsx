@@ -74,7 +74,7 @@ export function MountainCommentsSection({
       return;
     }
     router.push({
-      pathname: "/mountain/[slug]/comment",
+      pathname: "/mountain/[slug]/comments/new",
       params: { slug: mountainSlug, ...params },
     });
   };

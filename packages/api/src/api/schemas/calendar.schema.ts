@@ -1,6 +1,6 @@
 import { t } from "elysia";
 
-import { PlanStatusSchema } from "@/api/schemas/enums";
+import { PlanStatusSchema, PlanTypeSchema } from "@/api/schemas/enums";
 
 /**
  * Discriminated-union event shape used by `/api/protected/user/calendar`.
@@ -23,6 +23,7 @@ export const CalendarPlanEventSchema = t.Object({
   id: t.String(),
   title: t.String(),
   status: PlanStatusSchema,
+  planType: t.Nullable(PlanTypeSchema),
   isPrivate: t.Boolean(),
   isCreator: t.Boolean(),
   // Shaped to match PlanItemList's expected props so the mobile row can drop

@@ -4,7 +4,10 @@ import { View, ScrollView } from "react-native";
 
 import { SummitCard } from "@/components/summit";
 import { Skeleton, ThemedText, ThemedView } from "@/components/ui/atoms";
-import { ScreenHeader } from "@/components/ui/molecules";
+import {
+  BLURRED_SCREEN_HEADER_HEIGHT,
+  BlurredScreenHeader,
+} from "@/components/ui/molecules";
 import { useSummitsGet } from "@/domains/summit/summit.api";
 
 export default function SummitsScreen() {
@@ -15,13 +18,22 @@ export default function SummitsScreen() {
 
   return (
     <ThemedView className="flex-1">
-      <ScreenHeader />
-      <ScrollView contentContainerClassName="flex flex-row flex-wrap mx-4">
-        <View className="w-full">
-          <ThemedText className="mx-1 mb-4 text-4xl font-bold">
-            <FormattedMessage defaultMessage="Latest summits" />
-          </ThemedText>
-        </View>
+      <BlurredScreenHeader>
+        <ThemedText numberOfLines={1} className="text-lg font-medium">
+          <FormattedMessage
+            defaultMessage="Latest summits ({count})"
+            values={{ count: summits?.length ?? 0 }}
+          />
+        </ThemedText>
+      </BlurredScreenHeader>
+      <ScrollView
+        contentContainerStyle={{
+          paddingTop: BLURRED_SCREEN_HEADER_HEIGHT,
+          paddingHorizontal: 16,
+          flexDirection: "row",
+          flexWrap: "wrap",
+        }}
+      >
         {isPendingSummits && (
           <>
             <View className="w-1/2">

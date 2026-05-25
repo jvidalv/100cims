@@ -11,7 +11,10 @@ import {
   ThemedText,
   ThemedView,
 } from "@/components/ui/atoms";
-import { ScreenHeader } from "@/components/ui/molecules";
+import {
+  BLURRED_SCREEN_HEADER_HEIGHT,
+  BlurredScreenHeader,
+} from "@/components/ui/molecules";
 import { useSavedGet, type SavedMountain } from "@/domains/saved/saved.api";
 import { useUserChallengeSummits, useUserMe } from "@/domains/user/user.api";
 
@@ -97,22 +100,20 @@ export default function UserSavedScreen() {
 
   return (
     <ThemedView className="flex-1">
-      <ScreenHeader />
+      <BlurredScreenHeader>
+        <ThemedText numberOfLines={1} className="text-lg font-medium">
+          <FormattedMessage
+            defaultMessage="My saved mountains ({count})"
+            values={{ count: data?.length ?? 0 }}
+          />
+        </ThemedText>
+      </BlurredScreenHeader>
       <FlatList
         data={data ?? []}
         initialNumToRender={25}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
-        ListHeaderComponent={
-          <View className="px-6 pb-4">
-            <ThemedText className="mb-2 text-4xl font-bold">
-              <FormattedMessage defaultMessage="My saved mountains" />{" "}
-              <ThemedText className="text-lg font-semibold text-muted-foreground">
-                {data?.length ?? 0}
-              </ThemedText>
-            </ThemedText>
-          </View>
-        }
+        contentContainerStyle={{ paddingTop: BLURRED_SCREEN_HEADER_HEIGHT }}
         ListEmptyComponent={
           isPending ? (
             <View className="px-6">

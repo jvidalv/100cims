@@ -24,6 +24,7 @@ export type CalendarEvent =
       id: string;
       title: string;
       status: "open" | "completed" | "canceled";
+      planType: "hike" | "trail" | "bike" | null;
       isPrivate: boolean;
       isCreator: boolean;
       mountains: { imageUrl: string | null }[];

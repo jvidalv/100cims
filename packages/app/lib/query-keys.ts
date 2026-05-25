@@ -25,6 +25,7 @@ export const challengeKeys = {
   active: () => ["challenge", "active"] as const,
   list: () => ["challenge", "list"] as const,
   detail: (id: string) => ["challenge", "detail", id] as const,
+  myProgress: (id: string) => ["challenge", "my-progress", id] as const,
 };
 
 // Community challenge keys

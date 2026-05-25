@@ -1,21 +1,16 @@
 import { nextSunday } from "date-fns/nextSunday";
 import { useRouter, Redirect } from "expo-router";
 import { Check, Heart, Lock, MessageCircle, Users } from "lucide-react-native";
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
   Alert,
   FlatList,
   Keyboard,
+  ScrollView,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import Animated, {
-  useSharedValue,
-  withTiming,
-  runOnJS,
-  useAnimatedStyle,
-} from "react-native-reanimated";
 import { twMerge } from "tailwind-merge";
 
 import { useAuth } from "@/components/providers/auth-provider";
@@ -33,9 +28,10 @@ import { ThemedCheckbox } from "@/components/ui/atoms/themed-checkbox";
 import { ThemedDateInput } from "@/components/ui/atoms/themed-date-input";
 import { ThemedTimeInput } from "@/components/ui/atoms/themed-time-input";
 import {
+  BlurredScreenHeader,
+  BLURRED_SCREEN_HEADER_HEIGHT,
   PeopleList,
   PlanTypeChips,
-  ScreenHeader,
 } from "@/components/ui/molecules";
 import { MountainItemListAsTouchable } from "@/components/ui/molecules/mountain-item-list";
 import { useMountains } from "@/domains/mountain/mountain.api";
@@ -50,12 +46,11 @@ import { getFullName } from "@/domains/user/user.utils";
 import { useIsKeyboardVisible } from "@/hooks/use-is-keyboard-visible";
 import { cleanText } from "@/lib";
 import { toLocalDateString } from "@/lib/dates";
-import { isAndroid } from "@/lib/device";
 import { getLocale } from "@/lib/locale";
 
 const StartStep = () => {
   return (
-    <View className="flex-1">
+    <View className="flex-1" style={{ paddingTop: BLURRED_SCREEN_HEADER_HEIGHT + 16 }}>
       <View className="gap-2">
         <View className="gap-1 rounded border border-border p-4">
           <View className="flex-row items-center gap-2">
@@ -138,7 +133,7 @@ const MountainsStep = memo(
     }, [query, data, value]);
 
     return (
-      <View>
+      <View className="flex-1">
         <FlatList
           data={queriedMountains}
           initialNumToRender={10}
@@ -146,6 +141,9 @@ const MountainsStep = memo(
           scrollEventThrottle={16}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{
+            paddingTop: BLURRED_SCREEN_HEADER_HEIGHT + 16,
+          }}
           getItemLayout={(_, index) => ({
             length: 100,
             offset: 100 * index,
@@ -223,7 +221,16 @@ const DetailsStep = ({
 }) => {
   const intl = useIntl();
   return (
-    <View className="flex-1">
+    <ScrollView
+      className="flex-1"
+      contentContainerStyle={{
+        gap: 24,
+        paddingBottom: 32,
+        paddingTop: BLURRED_SCREEN_HEADER_HEIGHT + 16,
+      }}
+      keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator={false}
+    >
       <ThemedTextInput
         label="Your activity"
         value={values.title}
@@ -237,32 +244,22 @@ const DetailsStep = ({
         onChangeText={(description) =>
           onDetailsChange({ ...values, description })
         }
-        className="mt-4"
       />
-      <View className="mt-6">
-        <PlanTypeChips
-          value={values.type}
-          onChange={(type) => onDetailsChange({ ...values, type })}
-        />
-      </View>
+      <PlanTypeChips
+        value={values.type}
+        onChange={(type) => onDetailsChange({ ...values, type })}
+      />
       <ThemedToggleInput
         label={intl.formatMessage({ defaultMessage: "Private plan" })}
         checked={values.isPrivate}
         onChecked={(isPrivate) => onDetailsChange({ ...values, isPrivate })}
-        className="mt-6"
       />
-      <View className="mt-6 gap-4">
+      <View className="gap-4">
         <ThemedDateInput
           value={values.date}
           onDateValid={(date) => onDetailsChange({ ...values, date })}
           noPastDates
         />
-        {values.date && (
-          <ThemedTimeInput
-            value={values.startTime}
-            onChange={(startTime) => onDetailsChange({ ...values, startTime })}
-          />
-        )}
         <ThemedCheckbox
           checked={!values.date}
           onChecked={(checked) => {
@@ -276,8 +273,14 @@ const DetailsStep = ({
             defaultMessage: "I don't know exactly when.",
           })}
         />
+        {values.date && (
+          <ThemedTimeInput
+            value={values.startTime}
+            onChange={(startTime) => onDetailsChange({ ...values, startTime })}
+          />
+        )}
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -289,7 +292,10 @@ const PeopleStep = ({
   onPeopleChange: (users: PeoplePickerUser[]) => void;
 }) => {
   return (
-    <View className="flex-1">
+    <View
+      className="flex-1"
+      style={{ paddingTop: BLURRED_SCREEN_HEADER_HEIGHT + 16 }}
+    >
       <PeopleList
         selected={value}
         onChange={onPeopleChange}
@@ -446,7 +452,9 @@ export default function PlanCreatePage() {
 
       const planId = response?.id;
       if (planId) {
-        router.dismiss();
+        // This screen is now a NativeTab, not a pushed screen, so dismiss()
+        // would no-op. Navigate to the new plan's detail page and push it on
+        // top of the tab stack (back-gesture returns to the Plans tab).
         return router.push({
           pathname: "/plan/[id]",
           params: {
@@ -467,8 +475,13 @@ export default function PlanCreatePage() {
   };
 
   const handleOnBack = () => {
-    if (currentStepIndex === -1 || currentStepIndex === 0) router.dismiss();
-    else setStep(stepOrder[currentStepIndex - 1]);
+    // From the first step, "back" leaves the create flow → return to the
+    // Plans tab. From any other step, back walks the wizard.
+    if (currentStepIndex === -1 || currentStepIndex === 0) {
+      router.replace("/plans");
+    } else {
+      setStep(stepOrder[currentStepIndex - 1]);
+    }
   };
 
   const ContinueText = () => {
@@ -503,16 +516,15 @@ export default function PlanCreatePage() {
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <ThemedView className="flex-1">
-        <ScreenHeader />
-        <View className={twMerge("px-6 pt-2 pb-4", isAndroid && "pt-24")}>
-          <ThemedText className="mb-1 text-muted-foreground">
-            <FormattedMessage defaultMessage="Creating a plan" />
-          </ThemedText>
-          <View className="relative mb-2 h-11 justify-center overflow-hidden">
-            <AnimatedTitle title={stepTitles[step]} />
-          </View>
-        </View>
+        <BlurredScreenHeader>{stepTitles[step]}</BlurredScreenHeader>
         <View className="flex-1 px-6 pb-4">
+          {/*
+            Steps own their internal scrollers; each one pads its scrollable
+            content with BLURRED_SCREEN_HEADER_HEIGHT + 16 so the first item
+            sits below the absolute blurred header without shrinking the
+            scroller itself. Wrapper has no paddingTop so MountainsStep's
+            sticky search header anchors at the visual top correctly.
+          */}
           {isStepStart && <StartStep />}
           {isStepMountains && (
             <MountainsStep
@@ -559,72 +571,3 @@ export default function PlanCreatePage() {
   );
 }
 
-const AnimatedTitle = ({ title }: { title: string }) => {
-  const [renderedTitle, setRenderedTitle] = useState(title);
-  const [showPrevLocal, setShowPrevLocal] = useState(false);
-  const previousTitle = useRef(title);
-
-  const prevOpacity = useSharedValue(0);
-  const prevTranslate = useSharedValue(-20);
-  const currOpacity = useSharedValue(1);
-  const currTranslate = useSharedValue(0);
-
-  useEffect(() => {
-    if (title !== renderedTitle) {
-      previousTitle.current = renderedTitle;
-      runOnJS(setShowPrevLocal)(true);
-
-      prevOpacity.value = 1;
-      prevTranslate.value = 0;
-      currOpacity.value = 0;
-      currTranslate.value = 20;
-
-      prevOpacity.value = withTiming(0, { duration: 200 });
-      prevTranslate.value = withTiming(-20, { duration: 200 });
-
-      currOpacity.value = withTiming(1, { duration: 200 });
-      currTranslate.value = withTiming(0, { duration: 200 }, () => {
-        runOnJS(setRenderedTitle)(title);
-        runOnJS(setShowPrevLocal)(false);
-      });
-    }
-  }, [
-    title,
-    renderedTitle,
-    prevOpacity,
-    prevTranslate,
-    currOpacity,
-    currTranslate,
-  ]);
-
-  const prevStyle = useAnimatedStyle(() => ({
-    opacity: prevOpacity.value,
-    transform: [{ translateX: prevTranslate.value }],
-    position: "absolute",
-  }));
-
-  const currStyle = useAnimatedStyle(() => ({
-    opacity: currOpacity.value,
-    transform: [{ translateX: currTranslate.value }],
-    position: "absolute",
-  }));
-
-  return (
-    <>
-      {showPrevLocal && (
-        <Animated.Text
-          style={prevStyle}
-          className="text-4xl font-semibold text-foreground"
-        >
-          {previousTitle.current}
-        </Animated.Text>
-      )}
-      <Animated.Text
-        style={currStyle}
-        className="text-4xl font-semibold text-foreground"
-      >
-        {title}
-      </Animated.Text>
-    </>
-  );
-};

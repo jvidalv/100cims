@@ -13,7 +13,8 @@ export type ActionRowIntent =
   | "blue"
   | "emerald"
   | "danger"
-  | "gold";
+  | "gold"
+  | "accent";
 
 const INTENT_STYLES: Record<
   ActionRowIntent,
@@ -47,6 +48,11 @@ const INTENT_STYLES: Record<
     bg: "bg-yellow-100 dark:bg-yellow-900/40",
     text: "text-yellow-600 dark:text-yellow-500",
     iconColor: "#eab308",
+  },
+  accent: {
+    bg: "bg-accent/10",
+    text: "text-accent",
+    iconColor: Colors.light.accent,
   },
 };
 

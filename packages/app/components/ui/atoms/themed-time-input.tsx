@@ -1,5 +1,5 @@
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { Clock, X } from "lucide-react-native";
+import { Clock } from "lucide-react-native";
 import { useState } from "react";
 import { FormattedMessage } from "react-intl";
 import { Platform, Pressable, View } from "react-native";
@@ -67,34 +67,33 @@ export const ThemedTimeInput = ({
 
   return (
     <>
-      <View className={twMerge("flex-row items-center gap-2", className)}>
-        <Pressable
-          onPress={() => setShowPicker(true)}
-          className="flex-1 border-2 border-border justify-center rounded py-3 pl-12 relative"
-        >
-          <View className="absolute left-4 h-full items-center justify-center">
-            <LucideIcon icon={Clock} size={20} muted />
-          </View>
-          <View className="py-2">
-            {value ? (
-              <ThemedText className="font-medium">{value}</ThemedText>
-            ) : (
-              <ThemedText className="font-medium text-muted-foreground">
-                <FormattedMessage defaultMessage="Select a time" />
-              </ThemedText>
-            )}
-          </View>
-        </Pressable>
-        {clearable && value && (
-          <Pressable
-            onPress={() => onChange(null)}
-            className="size-10 items-center justify-center rounded border-2 border-border"
-            hitSlop={8}
-          >
-            <LucideIcon icon={X} size={18} muted />
-          </Pressable>
+      <Pressable
+        onPress={() => setShowPicker(true)}
+        className={twMerge(
+          "border-2 border-border justify-center rounded py-3 pl-12 pr-4 relative",
+          className,
         )}
-      </View>
+      >
+        <View className="absolute left-4 h-full items-center justify-center">
+          <LucideIcon icon={Clock} size={20} muted />
+        </View>
+        <View className="flex-row items-center justify-between py-2">
+          {value ? (
+            <ThemedText className="font-medium">{value}</ThemedText>
+          ) : (
+            <ThemedText className="font-medium text-muted-foreground">
+              <FormattedMessage defaultMessage="Select meeting time" />
+            </ThemedText>
+          )}
+          {clearable && value && (
+            <Pressable onPress={() => onChange(null)} hitSlop={12}>
+              <ThemedText className="font-medium text-muted-foreground">
+                <FormattedMessage defaultMessage="Clear" />
+              </ThemedText>
+            </Pressable>
+          )}
+        </View>
+      </Pressable>
       {Platform.OS === "ios" ? (
         <BottomDrawer
           isOpen={showPicker}
