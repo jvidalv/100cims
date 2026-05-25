@@ -14,6 +14,9 @@ type ChallengeListItemProps = {
   peakImageUrl?: string | null;
   totalMountains: string;
   totalUsers?: string;
+  /** Mountains in this challenge the viewer has summited. Drives the % badge
+   *  that replaces the legacy "Active" pill when shown on the active card. */
+  summitedCount?: number;
   index: number;
   isSelected?: boolean;
   onPress: () => void;
@@ -28,6 +31,7 @@ export function ChallengeListItem({
   peakImageUrl,
   totalMountains,
   totalUsers,
+  summitedCount,
   index,
   isSelected,
   onPress,
@@ -36,6 +40,11 @@ export function ChallengeListItem({
   rightElement,
 }: ChallengeListItemProps) {
   const usersCount = totalUsers ? Number(totalUsers) : 0;
+  const totalMountainsNum = Number(totalMountains) || 0;
+  const completionPercent =
+    summitedCount != null && totalMountainsNum > 0
+      ? Math.round((summitedCount / totalMountainsNum) * 100)
+      : null;
   return (
     <View className="gap-2">
       <TouchableOpacity
@@ -90,10 +99,10 @@ export function ChallengeListItem({
                   </ThemedText>
                 </View>
               )}
-              {isSelected && (
-                <View className="ml-auto rounded-full bg-primary px-2 py-0.5">
-                  <ThemedText className="text-xs font-semibold text-white">
-                    <FormattedMessage defaultMessage="Active" />
+              {completionPercent != null && (
+                <View className="ml-auto rounded-full border border-primary/40 px-2 py-0.5">
+                  <ThemedText className="text-xs font-semibold text-primary">
+                    {completionPercent}%
                   </ThemedText>
                 </View>
               )}

@@ -6,7 +6,11 @@ import { Pressable, ScrollView, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
 import { LucideIcon, ThemedText, ThemedView } from "@/components/ui/atoms";
-import { ActionRow, ScreenHeader } from "@/components/ui/molecules";
+import {
+  ActionRow,
+  BLURRED_SCREEN_HEADER_HEIGHT,
+  BlurredScreenHeader,
+} from "@/components/ui/molecules";
 import {
   PlanItemList,
   PlanItemListSkeleton,
@@ -38,13 +42,15 @@ export default function UserPlansScreen() {
 
   return (
     <ThemedView className="flex-1">
-      <ScreenHeader />
-      <View className="mb-3 px-6">
-        <ThemedText className="text-4xl font-bold">
+      <BlurredScreenHeader>
+        <ThemedText numberOfLines={1} className="text-lg font-medium">
           <FormattedMessage defaultMessage="My plans" />
         </ThemedText>
-      </View>
-      <View className="mb-4 flex-row gap-1 px-6">
+      </BlurredScreenHeader>
+      <View
+        className="mb-4 flex-row gap-1 px-6"
+        style={{ paddingTop: BLURRED_SCREEN_HEADER_HEIGHT }}
+      >
         {statuses.map(({ type: pillStatus, name }) => {
           const isSelected = status === pillStatus;
           return (
@@ -73,7 +79,7 @@ export default function UserPlansScreen() {
           icon={Plus}
           size="lg"
           intent="primary"
-          onPress={() => router.push("/plan/create")}
+          onPress={() => router.push("/plans/create")}
         >
           <FormattedMessage defaultMessage="New plan" />
         </ActionRow>

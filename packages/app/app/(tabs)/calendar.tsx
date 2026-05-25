@@ -1,6 +1,6 @@
 import { format } from "date-fns/format";
 import { useRouter } from "expo-router";
-import { Calendar, Plus } from "lucide-react-native";
+import { Backpack, Calendar, Plus } from "lucide-react-native";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { useIntl } from "react-intl";
 import {
@@ -194,26 +194,38 @@ export default function CalendarScreen() {
           keyExtractor={(event) => `${event.type}-${event.id}`}
           contentContainerClassName="py-2"
           renderItem={renderEvent}
-          ListEmptyComponent={
-            <View className="gap-2 px-6 py-6">
+          ListFooterComponent={
+            // Single cohesive action block. Rendered as the list footer so it
+            // sits below events when the day has any, and right under the
+            // date header when the list is empty. `Create plan` and `Back to
+            // today` are conditional; `All plans` is always visible.
+            <View className="gap-2 px-6 pt-4">
               {!isSelectedPast && (
                 <ActionRow
                   icon={Plus}
                   intent="primary"
-                  size="lg"
-                  onPress={() => router.push("/plan/create")}
+                  size="sm"
+                  onPress={() => router.push("/plans/create")}
                 >
                   {intl.formatMessage({ defaultMessage: "Create plan" })}
                 </ActionRow>
               )}
+              <ActionRow
+                icon={Backpack}
+                intent="accent"
+                size="sm"
+                onPress={() => router.push("/plans")}
+              >
+                {intl.formatMessage({ defaultMessage: "All plans" })}
+              </ActionRow>
               {!isSelectedToday && (
                 <ActionRow
                   icon={Calendar}
                   intent="muted"
-                  size="lg"
+                  size="sm"
                   onPress={onJumpToToday}
                 >
-                  {intl.formatMessage({ defaultMessage: "Today" })}
+                  {intl.formatMessage({ defaultMessage: "Back to today" })}
                 </ActionRow>
               )}
             </View>

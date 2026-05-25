@@ -21,7 +21,10 @@ import {
   ThemedTextInput,
   Avatar,
 } from "@/components/ui/atoms";
-import { ScreenHeader } from "@/components/ui/molecules";
+import {
+  BLURRED_SCREEN_HEADER_HEIGHT,
+  BlurredScreenHeader,
+} from "@/components/ui/molecules";
 import { LanguagePicker } from "@/components/user/language-picker";
 import { ThemePicker } from "@/components/user/theme-picker";
 import { useHiscoresGet } from "@/domains/hiscores/hiscores.api";
@@ -210,11 +213,15 @@ export default function UserMeScreen() {
 
   return (
     <ThemedKeyboardAvoidingView>
-      <ScreenHeader />
-      <View className="px-6">
-        <ThemedText className="mb-4 text-4xl font-bold">
+      <BlurredScreenHeader>
+        <ThemedText numberOfLines={1} className="text-lg font-medium">
           <FormattedMessage defaultMessage="Me" />
         </ThemedText>
+      </BlurredScreenHeader>
+      <View
+        className="px-6"
+        style={{ paddingTop: BLURRED_SCREEN_HEADER_HEIGHT }}
+      >
         <View className="relative mb-6 items-center justify-center">
           <TouchableOpacity onPress={pickImage} className="relative">
             <Avatar

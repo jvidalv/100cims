@@ -15,6 +15,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { twMerge } from "tailwind-merge";
 
 import { useAuth } from "@/components/providers/auth-provider";
@@ -26,7 +27,7 @@ import {
 } from "@/components/ui/atoms";
 import {
   BlurredScreenHeader,
-  blurredScreenHeaderPaddingClassName,
+  BLURRED_SCREEN_HEADER_HEIGHT,
 } from "@/components/ui/molecules";
 import {
   CommentRow,
@@ -88,6 +89,12 @@ const useDebounced = <T,>(value: T, delayMs: number): T => {
 export default function MountainCommentsScreen() {
   const intl = useIntl();
   const router = useRouter();
+  // `useSafeAreaInsets().bottom` on a NativeTabs child already includes
+  // the tab bar height (iOS bumps it for UITabBarController children) —
+  // don't add the bar height again. +12 is just a small visual buffer
+  // above the tab bar's top edge.
+  const { bottom: bottomInset } = useSafeAreaInsets();
+  const fabBottomOffset = bottomInset + 12;
   // useGlobalSearchParams (not useLocalSearchParams) — see comment in summit.tsx.
   const { slug } = useGlobalSearchParams<{ slug: string }>();
   const { isAuthenticated } = useAuth();
@@ -134,7 +141,7 @@ export default function MountainCommentsScreen() {
       return;
     }
     router.push({
-      pathname: "/mountain/[slug]/comment",
+      pathname: "/mountain/[slug]/comments/new",
       params: { slug, ...params },
     });
   };
@@ -339,7 +346,10 @@ export default function MountainCommentsScreen() {
       </BlurredScreenHeader>
 
       {/* Pinned header: search + sort chips */}
-      <View className={`gap-3 px-6 pt-3 ${blurredScreenHeaderPaddingClassName()}`}>
+      <View
+        className="gap-3 px-6 pt-3"
+        style={{ paddingTop: BLURRED_SCREEN_HEADER_HEIGHT + 12 }}
+      >
         <SearchInput
           key={searchInputKey}
           onChangeText={setQuery}
@@ -520,12 +530,15 @@ export default function MountainCommentsScreen() {
         }}
       />
 
-      <TouchableOpacity
-        onPress={() => openComposer()}
-        className="absolute bottom-8 right-6 z-10 size-16 items-center justify-center rounded-full bg-primary shadow-lg"
-      >
-        <LucideIcon icon={Plus} size={28} color="#ffffff" />
-      </TouchableOpacity>
+      {items.length > 0 && (
+        <TouchableOpacity
+          onPress={() => openComposer()}
+          className="absolute right-6 z-10 size-16 items-center justify-center rounded-full bg-primary shadow-lg"
+          style={{ bottom: fabBottomOffset }}
+        >
+          <LucideIcon icon={Plus} size={28} color="#ffffff" />
+        </TouchableOpacity>
+      )}
     </ThemedView>
   );
 }

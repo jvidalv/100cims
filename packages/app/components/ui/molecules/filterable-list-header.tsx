@@ -52,7 +52,9 @@ interface FilterableListHeaderProps<
   T extends string = string,
   S extends string = string,
 > {
-  title: string | ReactNode;
+  /** Big heading on top. Omit when the screen renders its own header
+   *  (e.g. via BlurredScreenHeader) and only wants the search + chips. */
+  title?: string | ReactNode;
   count?: number;
   showCount?: boolean;
   showSearch?: boolean;
@@ -148,14 +150,16 @@ export function FilterableListHeader<
   return (
     <ThemedView className={twMerge("pb-2", className)}>
       {/* Title with optional count */}
-      <ThemedText className="mx-6 mb-2 text-4xl font-bold">
-        {title}{" "}
-        {showCount && count !== undefined && (
-          <ThemedText className="text-lg font-semibold text-muted-foreground">
-            {count}
-          </ThemedText>
-        )}
-      </ThemedText>
+      {title !== undefined && (
+        <ThemedText className="mx-6 mb-2 text-4xl font-bold">
+          {title}{" "}
+          {showCount && count !== undefined && (
+            <ThemedText className="text-lg font-semibold text-muted-foreground">
+              {count}
+            </ThemedText>
+          )}
+        </ThemedText>
+      )}
 
       {/* Search Input */}
       {showSearch && onSearchChange && (

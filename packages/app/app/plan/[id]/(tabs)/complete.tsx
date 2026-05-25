@@ -1,5 +1,5 @@
 import { format } from "date-fns/format";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useGlobalSearchParams, useRouter } from "expo-router";
 import { Camera, Check, Clock } from "lucide-react-native";
 import { useState } from "react";
 import { useIntl, FormattedMessage } from "react-intl";
@@ -44,7 +44,9 @@ const EMPTY_RATING: SummitRating = {
 export default function PlanCompleteScreen() {
   const intl = useIntl();
   const router = useRouter();
-  const { id } = useLocalSearchParams<{ id: string }>();
+  // useGlobalSearchParams (not useLocal-) — inside a NativeTabs eagerly-mounted
+  // child of [id], useLocalSearchParams doesn't bind the parent dynamic.
+  const { id } = useGlobalSearchParams<{ id: string }>();
   const { data: planData } = usePlanOne({ id });
   const { mutateAsync: updatePlan } = usePlanUpdate();
   const { mutateAsync: summitMountain } = useSummitPost(id);

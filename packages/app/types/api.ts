@@ -1124,6 +1124,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/protected/challenge/my-progress": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiProtectedChallengeMy-progress"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/protected/community-challenge/create": {
         parameters: {
             query?: never;
@@ -3109,6 +3125,8 @@ export interface operations {
                             totalEssentialMountains: string;
                             totalUsers: string;
                             peakImageUrl: (string | null) | null;
+                            centroidLatitude: (string | null) | null;
+                            centroidLongitude: (string | null) | null;
                         }[];
                     };
                     "multipart/form-data": {
@@ -3122,6 +3140,8 @@ export interface operations {
                             totalEssentialMountains: string;
                             totalUsers: string;
                             peakImageUrl: (string | null) | null;
+                            centroidLatitude: (string | null) | null;
+                            centroidLongitude: (string | null) | null;
                         }[];
                     };
                     "text/plain": {
@@ -3135,6 +3155,8 @@ export interface operations {
                             totalEssentialMountains: string;
                             totalUsers: string;
                             peakImageUrl: (string | null) | null;
+                            centroidLatitude: (string | null) | null;
+                            centroidLongitude: (string | null) | null;
                         }[];
                     };
                 };
@@ -3170,6 +3192,7 @@ export interface operations {
                             isOfficial: boolean;
                             isPublic: boolean;
                             totalMountains: number;
+                            totalEssentialMountains: number;
                             totalUsers: number;
                             mountains: {
                                 id: string;
@@ -3202,6 +3225,7 @@ export interface operations {
                             isOfficial: boolean;
                             isPublic: boolean;
                             totalMountains: number;
+                            totalEssentialMountains: number;
                             totalUsers: number;
                             mountains: {
                                 id: string;
@@ -3234,6 +3258,7 @@ export interface operations {
                             isOfficial: boolean;
                             isPublic: boolean;
                             totalMountains: number;
+                            totalEssentialMountains: number;
                             totalUsers: number;
                             mountains: {
                                 id: string;
@@ -4995,6 +5020,7 @@ export interface operations {
                                 id: string;
                                 title: string;
                                 status: "open" | "completed" | "canceled";
+                                planType: (("hike" | "trail" | "bike") | null) | null;
                                 isPrivate: boolean;
                                 isCreator: boolean;
                                 mountains: {
@@ -5030,6 +5056,7 @@ export interface operations {
                                 id: string;
                                 title: string;
                                 status: "open" | "completed" | "canceled";
+                                planType: (("hike" | "trail" | "bike") | null) | null;
                                 isPrivate: boolean;
                                 isCreator: boolean;
                                 mountains: {
@@ -5065,6 +5092,7 @@ export interface operations {
                                 id: string;
                                 title: string;
                                 status: "open" | "completed" | "canceled";
+                                planType: (("hike" | "trail" | "bike") | null) | null;
                                 isPrivate: boolean;
                                 isCreator: boolean;
                                 mountains: {
@@ -7319,6 +7347,72 @@ export interface operations {
             };
         };
     };
+    "getApiProtectedChallengeMy-progress": {
+        parameters: {
+            query: {
+                id: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            challengeId: string;
+                            totalMountains: number;
+                            totalEssentialMountains: number;
+                            summitedCount: number;
+                            summitedEssentialCount: number;
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            challengeId: string;
+                            totalMountains: number;
+                            totalEssentialMountains: number;
+                            summitedCount: number;
+                            summitedEssentialCount: number;
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            challengeId: string;
+                            totalMountains: number;
+                            totalEssentialMountains: number;
+                            summitedCount: number;
+                            summitedEssentialCount: number;
+                        };
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
     "postApiProtectedCommunity-challengeCreate": {
         parameters: {
             query?: never;
@@ -7493,6 +7587,8 @@ export interface operations {
                             totalUsers: string;
                             createdAt: string;
                             peakImageUrl: string | null;
+                            centroidLatitude: string | null;
+                            centroidLongitude: string | null;
                         }[];
                     };
                     "multipart/form-data": {
@@ -7511,6 +7607,8 @@ export interface operations {
                             totalUsers: string;
                             createdAt: string;
                             peakImageUrl: string | null;
+                            centroidLatitude: string | null;
+                            centroidLongitude: string | null;
                         }[];
                     };
                     "text/plain": {
@@ -7529,6 +7627,8 @@ export interface operations {
                             totalUsers: string;
                             createdAt: string;
                             peakImageUrl: string | null;
+                            centroidLatitude: string | null;
+                            centroidLongitude: string | null;
                         }[];
                     };
                 };

@@ -30,7 +30,7 @@ export default function TabsLayout() {
       <NativeTabs.Trigger name="calendar">
         <NativeTabs.Trigger.Icon sf="calendar" md="calendar_month" />
         <NativeTabs.Trigger.Label>
-          {intl.formatMessage({ defaultMessage: "Calendar" })}
+          {intl.formatMessage({ defaultMessage: "Events" })}
         </NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="shop">

@@ -3,8 +3,9 @@ import { Link, useRouter } from "expo-router";
 import { setStatusBarStyle } from "expo-status-bar";
 import { ArrowRight, Info, Mountain } from "lucide-react-native";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import {
+  Alert,
   FlatList,
   TouchableOpacity,
   useColorScheme,
@@ -26,8 +27,10 @@ import {
   ThemedText,
   ThemedView,
 } from "@/components/ui/atoms";
-import { BottomDrawer, ScreenHeader } from "@/components/ui/molecules";
-import { useBottomDrawer } from "@/components/ui/molecules/bottom-drawer";
+import {
+  BLURRED_SCREEN_HEADER_HEIGHT,
+  BlurredScreenHeader,
+} from "@/components/ui/molecules";
 import { Colors } from "@/constants/colors";
 import { useActiveChallenge } from "@/domains/challenge/challenge.api";
 import { useHiscoresGet } from "@/domains/hiscores/hiscores.api";
@@ -83,7 +86,17 @@ export default function HiscoresScreen() {
 
   const myRank = hiscoresData?.pages?.[0]?.pagination.myRank;
 
-  const [isOpen, setIsOpen] = useBottomDrawer();
+  const intl = useIntl();
+  const showPointsExplanation = () => {
+    Alert.alert(
+      intl.formatMessage({ defaultMessage: "How points work" }),
+      intl.formatMessage({
+        defaultMessage:
+          "One summit of 1000 meters equals 100 points. Essentials are worth x2 — summit them!",
+      }),
+    );
+  };
+
   const isVisibleOnHiscores = user?.visibleOnHiscores;
 
   const listRef = useRef<FlatList<HiscoreItem>>(null);
@@ -145,11 +158,22 @@ export default function HiscoresScreen() {
 
   return (
     <ThemedView className="flex-1">
-      <ScreenHeader />
+      <BlurredScreenHeader
+        rightElement={
+          <TouchableOpacity onPress={showPointsExplanation} hitSlop={16}>
+            <LucideIcon icon={Info} size={22} />
+          </TouchableOpacity>
+        }
+      >
+        <ThemedText numberOfLines={1} className="text-lg font-medium">
+          <FormattedMessage defaultMessage="Hiscores" />
+        </ThemedText>
+      </BlurredScreenHeader>
       <FlatList
         ref={listRef}
         data={restOfList}
         initialNumToRender={25}
+        contentContainerStyle={{ paddingTop: BLURRED_SCREEN_HEADER_HEIGHT }}
         onEndReached={() => {
           if (hasNextPage && !isFetchingNextPage) {
             fetchNextPage();
@@ -178,37 +202,6 @@ export default function HiscoresScreen() {
         }}
         ListHeaderComponent={
           <ThemedView className="pb-4">
-            <View className="flex-row items-center justify-between px-6">
-              <ThemedText className="text-4xl font-bold">
-                <FormattedMessage defaultMessage="Hiscores" />
-              </ThemedText>
-              <TouchableOpacity onPress={() => setIsOpen((o) => !o)}>
-                <LucideIcon icon={Info} size={22} muted />
-              </TouchableOpacity>
-              <BottomDrawer
-                isOpen={isOpen}
-                onRequestClose={() => setIsOpen(false)}
-              >
-                <View className="p-6">
-                  <ThemedText className="mb-4">
-                    <FormattedMessage defaultMessage="One summit of 1000 meters =" />{" "}
-                    <ThemedText className="text-primary">
-                      <FormattedMessage defaultMessage="100 points" />
-                    </ThemedText>
-                    .
-                  </ThemedText>
-                  <View className="flex-row items-center gap-2 rounded border border-border p-2">
-                    <ThemedText className="text-sm">🔥</ThemedText>
-                    <ThemedText>
-                      <ThemedText className="font-medium text-primary">
-                        <FormattedMessage defaultMessage="Essentials" />{" "}
-                      </ThemedText>
-                      <FormattedMessage defaultMessage="are worth x2. Summit them!" />
-                    </ThemedText>
-                  </View>
-                </View>
-              </BottomDrawer>
-            </View>
             {user && !isVisibleOnHiscores && (
               <Link href="/user/me" asChild>
                 <TouchableOpacity className="mx-4 mt-4 flex-row items-center justify-between rounded border-2 border-primary p-4">

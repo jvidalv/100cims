@@ -1,5 +1,6 @@
 export { AvatarGroup } from "./avatar-group";
 export { ChallengeListItem } from "./challenge-list-item";
+export { ChallengeRowMinimal } from "./challenge-row-minimal";
 export {
   MountainItemList,
   MountainItemListAsTouchable,
@@ -9,7 +10,7 @@ export { BottomDrawer } from "./bottom-drawer";
 export { ScreenHeader } from "./screen-header";
 export {
   BlurredScreenHeader,
-  blurredScreenHeaderPaddingClassName,
+  BLURRED_SCREEN_HEADER_HEIGHT,
 } from "./blurred-screen-header";
 export { UserSelectInput, type UserForSelectInput } from "./user-select-input";
 export {

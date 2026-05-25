@@ -1,4 +1,4 @@
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useGlobalSearchParams, useRouter } from "expo-router";
 import { Send } from "lucide-react-native";
 import { useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
@@ -11,8 +11,9 @@ import {
 } from "@/components/ui/atoms";
 import {
   ActionRow,
+  BlurredScreenHeader,
+  BLURRED_SCREEN_HEADER_HEIGHT,
   MountainRowMinimal,
-  ScreenHeader,
 } from "@/components/ui/molecules";
 import { useMountainOne } from "@/domains/mountain/mountain.api";
 import {
@@ -25,7 +26,11 @@ import { getFullName } from "@/domains/user/user.utils";
 export default function MountainCommentScreen() {
   const intl = useIntl();
   const router = useRouter();
-  const { slug, parentCommentId, editCommentId } = useLocalSearchParams<{
+  // useGlobalSearchParams (not useLocalSearchParams) for the same reason as
+  // the sibling tab screens — see comment in ../summit.tsx. The parent
+  // [slug] dynamic isn't always populated on useLocalSearchParams when the
+  // screen mounts inside a NativeTabs > Stack tree.
+  const { slug, parentCommentId, editCommentId } = useGlobalSearchParams<{
     slug: string;
     parentCommentId?: string;
     editCommentId?: string;
@@ -113,13 +118,20 @@ export default function MountainCommentScreen() {
 
   return (
     <ThemedView className="flex-1">
-      <ScreenHeader />
+      <BlurredScreenHeader>
+        <ThemedText numberOfLines={1} className="max-w-56 text-lg font-medium">
+          {title}
+        </ThemedText>
+      </BlurredScreenHeader>
       <ScrollView
         keyboardShouldPersistTaps="handled"
-        contentContainerClassName="gap-4 px-6 pb-10 pt-2"
+        contentContainerStyle={{
+          paddingTop: BLURRED_SCREEN_HEADER_HEIGHT,
+          paddingHorizontal: 24,
+          paddingBottom: 40,
+          gap: 16,
+        }}
       >
-        <ThemedText className="text-3xl font-bold">{title}</ThemedText>
-
         {mountain && (
           <MountainRowMinimal
             slug={mountain.slug}

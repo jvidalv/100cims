@@ -20,7 +20,10 @@ import {
   SearchInput,
   Skeleton,
 } from "@/components/ui/atoms";
-import { ScreenHeader } from "@/components/ui/molecules";
+import {
+  BLURRED_SCREEN_HEADER_HEIGHT,
+  BlurredScreenHeader,
+} from "@/components/ui/molecules";
 import { exportUserSummitsCsv } from "@/domains/summit/summit-export";
 import { useUserMe, useUserAllSummits } from "@/domains/user/user.api";
 import { parseLocalDateString } from "@/lib/dates";
@@ -161,7 +164,7 @@ export default function UserSummitsScreen() {
 
   return (
     <ThemedView className="flex-1">
-      <ScreenHeader
+      <BlurredScreenHeader
         rightElement={
           <TouchableOpacity
             accessibilityLabel={intl.formatMessage({
@@ -170,16 +173,22 @@ export default function UserSummitsScreen() {
             disabled={isExporting}
             hitSlop={16}
             onPress={handleExport}
-            className="py-4 pl-4 pr-6"
           >
             {isExporting ? (
               <ActivityIndicator />
             ) : (
-              <LucideIcon icon={Download} size={24} />
+              <LucideIcon icon={Download} size={22} />
             )}
           </TouchableOpacity>
         }
-      />
+      >
+        <ThemedText numberOfLines={1} className="text-lg font-medium">
+          <FormattedMessage
+            defaultMessage="My summits ({count})"
+            values={{ count: totalSummits ?? 0 }}
+          />
+        </ThemedText>
+      </BlurredScreenHeader>
       <FlatList
         data={items}
         initialNumToRender={25}
@@ -188,12 +197,6 @@ export default function UserSummitsScreen() {
         onEndReachedThreshold={0.5}
         ListHeaderComponent={
           <View className="px-6 pb-4">
-            <ThemedText className="mb-4 text-4xl font-bold">
-              <FormattedMessage defaultMessage="My summits" />{" "}
-              <ThemedText className="text-lg font-semibold text-muted-foreground">
-                {totalSummits}
-              </ThemedText>
-            </ThemedText>
             <SearchInput onChangeText={setSearchInput} />
             <View className="mt-3 flex-row gap-2">
               {sortOptions.map((option) => {
@@ -262,7 +265,10 @@ export default function UserSummitsScreen() {
           )
         }
         keyExtractor={keyExtractor}
-        contentContainerClassName="gap-4 pt-2"
+        contentContainerStyle={{
+          paddingTop: BLURRED_SCREEN_HEADER_HEIGHT,
+          gap: 16,
+        }}
         renderItem={renderItem}
       />
     </ThemedView>

@@ -263,9 +263,16 @@ export const useRemoveUserPerson = () => {
   });
 };
 
-export const useUserChallenges = ({ userId }: { userId: string }) => {
+export const useUserChallenges = ({
+  userId,
+  enabled = true,
+}: {
+  userId: string;
+  enabled?: boolean;
+}) => {
   const props = useQuery({
     queryKey: userKeys.challenges(userId),
+    enabled: enabled && userId.length > 0,
     queryFn: async () => {
       const { data, error } = await apiClient.GET(
         "/api/public/user/challenges",

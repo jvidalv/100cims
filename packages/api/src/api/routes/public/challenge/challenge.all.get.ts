@@ -37,6 +37,17 @@ export const challengeAllGetRoute = new Elysia().get(
           ORDER BY CAST(${mountainTable.height} AS FLOAT) DESC
           LIMIT 1
         )`,
+        // Mean lat/lng of the challenge's member mountains -- the rough
+        // "centre of gravity" used by the mobile "Closer" sort. Null when
+        // the challenge has no mountains linked yet. Cast to text so the
+        // numeric value serialises as a plain string, matching
+        // mountain.latitude / longitude.
+        centroidLatitude: sql<
+          string | null
+        >`AVG(${mountainTable.latitude})::text`,
+        centroidLongitude: sql<
+          string | null
+        >`AVG(${mountainTable.longitude})::text`,
       })
       .from(challengeTable)
       .leftJoin(

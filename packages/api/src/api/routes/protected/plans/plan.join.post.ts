@@ -1,10 +1,13 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, ne } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 
 import { db } from "@/db";
 import { planTable, planHasUsersTable, planUserLogTable } from "@/db/schema";
 import { sendPushLocalized } from "@/api/lib/push";
-import { pushPlanJoined } from "@/api/lib/push-translations";
+import {
+  pushPlanJoined,
+  pushPlanJoinedOther,
+} from "@/api/lib/push-translations";
 import { PUSH_TYPE, getUserDisplayName } from "@/api/lib/push-types";
 import { getUserFromRequest } from "@/api/routes/@shared/auth";
 import {
@@ -85,6 +88,30 @@ export const planJoinPostRoute = new Elysia().post(
       }),
       { type: PUSH_TYPE.PLAN_JOIN, planId: body.id },
     );
+
+    // Notify every other participant already in the plan — excluding the
+    // creator (already notified above) and the joiner (just self-joined).
+    const otherParticipants = await db
+      .select({ userId: planHasUsersTable.userId })
+      .from(planHasUsersTable)
+      .where(
+        and(
+          eq(planHasUsersTable.planId, body.id),
+          ne(planHasUsersTable.userId, targetPlan.creatorId),
+          ne(planHasUsersTable.userId, user.id),
+        ),
+      );
+
+    if (otherParticipants.length) {
+      void sendPushLocalized(
+        otherParticipants.map((p) => p.userId),
+        (locale) => ({
+          title: targetPlan.title,
+          body: pushPlanJoinedOther(locale, joinerName),
+        }),
+        { type: PUSH_TYPE.PLAN_JOIN_OTHER, planId: body.id },
+      );
+    }
 
     return { success: true };
   },

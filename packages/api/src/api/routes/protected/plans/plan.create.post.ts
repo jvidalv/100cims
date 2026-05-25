@@ -8,6 +8,7 @@ import {
   planUserLogTable,
 } from "@/db/schema";
 import { formatDateForPostgresFromISOString } from "@/api/lib/dates";
+import { notifyFriendsOfNewPlan } from "@/api/lib/notify-friends-of-new-plan";
 import { notifyUsersWithSavedMountains } from "@/api/lib/plan-saved-mountain-notify";
 import { getUserFromRequest } from "@/api/routes/@shared/auth";
 import { resolveChallengeId } from "@/api/routes/@shared/challenge";
@@ -86,6 +87,15 @@ export const planCreatePostRoute = new Elysia().post(
         planTitle: insertedPlan.title,
         creator: user,
         mountainIds: body.mountainIds,
+      });
+    }
+
+    if (!insertedPlan.isPrivate) {
+      void notifyFriendsOfNewPlan({
+        planId: insertedPlan.id,
+        planTitle: insertedPlan.title,
+        creator: user,
+        excludeUserIds: body.userIds,
       });
     }
 

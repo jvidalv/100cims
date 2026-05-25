@@ -19,7 +19,7 @@ import { ThemedDateInput } from "@/components/ui/atoms/themed-date-input";
 import {
   ActionRow,
   BlurredScreenHeader,
-  blurredScreenHeaderPaddingClassName,
+  BLURRED_SCREEN_HEADER_HEIGHT,
   PeopleList,
   SummitRatingFields,
 } from "@/components/ui/molecules";
@@ -148,18 +148,19 @@ export default function SummitMountainScreen() {
       </BlurredScreenHeader>
       <ScrollView
         className="flex-1"
-        contentContainerClassName={`pb-24 ${blurredScreenHeaderPaddingClassName()}`}
+        contentContainerClassName="pb-40"
+        contentContainerStyle={{ paddingTop: BLURRED_SCREEN_HEADER_HEIGHT }}
         keyboardShouldPersistTaps="handled"
       >
         <View className="gap-6 px-6 pt-2">
           <View className="gap-2">
-            <ThemedText className="text-lg font-bold">
+            <ThemedText className="text-lg font-semibold">
               <FormattedMessage defaultMessage="Date" />
             </ThemedText>
             <ThemedDateInput value={date} onDateValid={setDate} noFutureDates />
           </View>
           <View className="gap-2">
-            <ThemedText className="text-lg font-bold">
+            <ThemedText className="text-lg font-semibold">
               <FormattedMessage defaultMessage="Summit photo" />
             </ThemedText>
             <TouchableOpacity
@@ -205,7 +206,7 @@ export default function SummitMountainScreen() {
                     {isLoadingImage ? (
                       <ActivityIndicator className="opacity-50" />
                     ) : (
-                      <LucideIcon icon={Camera} size={32} />
+                      <LucideIcon icon={Camera} size={32} strokeWidth={1.5} />
                     )}
                   </View>
                 </View>
@@ -213,7 +214,7 @@ export default function SummitMountainScreen() {
             </TouchableOpacity>
           </View>
           <View className="gap-3">
-            <ThemedText className="text-lg font-bold">
+            <ThemedText className="text-lg font-semibold">
               <FormattedMessage defaultMessage="People" />
             </ThemedText>
             <PeopleList
@@ -229,7 +230,7 @@ export default function SummitMountainScreen() {
             difficulty={difficulty}
             onDifficultyChange={setDifficulty}
           />
-          <View className="mt-6 pb-4">
+          <View className="mt-6 pb-24">
             <ActionRow
               icon={Check}
               size="lg"

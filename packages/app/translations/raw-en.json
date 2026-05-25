@@ -23,8 +23,17 @@
   "///zLu": {
     "defaultMessage": "Challenges"
   },
+  "/3qO89": {
+    "defaultMessage": "My saved mountains ({count})"
+  },
+  "/7SgnZ": {
+    "defaultMessage": "Join the plan to see and write messages"
+  },
   "/9Fvcu": {
     "defaultMessage": "Very Hard"
+  },
+  "/GCoTA": {
+    "defaultMessage": "Clear"
   },
   "/LG2tT": {
     "defaultMessage": "Latitude must be between -90 and 90"
@@ -80,6 +89,9 @@
   "1MZdzG": {
     "defaultMessage": "Share on social"
   },
+  "1bFpet": {
+    "defaultMessage": "Most completed"
+  },
   "1ps8x4": {
     "defaultMessage": "Are you sure you want to delete this challenge? This action cannot be undone."
   },
@@ -119,8 +131,8 @@
   "3Ykujz": {
     "defaultMessage": "Safest for kids"
   },
-  "3a5wL8": {
-    "defaultMessage": "Active"
+  "3ZdGoj": {
+    "defaultMessage": "Closer"
   },
   "3cc4Ct": {
     "defaultMessage": "Light"
@@ -179,14 +191,14 @@
   "5lwgvM": {
     "defaultMessage": "Visible on people search?"
   },
+  "5mhKmC": {
+    "defaultMessage": "{percent}% completed"
+  },
   "6Jl56G": {
     "defaultMessage": "Safe for kids"
   },
   "6n4LpX": {
     "defaultMessage": "Easy"
-  },
-  "71GNdG": {
-    "defaultMessage": "are worth x2. Summit them!"
   },
   "72jGas": {
     "defaultMessage": "essential"
@@ -200,8 +212,8 @@
   "7JlauX": {
     "defaultMessage": "Explore"
   },
-  "7Ni8Cl": {
-    "defaultMessage": "No plans found for given status."
+  "7MTfrK": {
+    "defaultMessage": "Most active"
   },
   "7qOQpv": {
     "defaultMessage": "Select a date"
@@ -263,6 +275,9 @@
   "9yslhD": {
     "defaultMessage": "Yes, I'm sure"
   },
+  "A4HOMT": {
+    "defaultMessage": "Select meeting time"
+  },
   "A9uIjl": {
     "defaultMessage": "Share your ideas to improve the app!"
   },
@@ -305,6 +320,9 @@
   "AryDSl": {
     "defaultMessage": "Support the app"
   },
+  "As0/We": {
+    "defaultMessage": "Meeting time {time}"
+  },
   "B7WSNk": {
     "defaultMessage": "Reset image (admin)"
   },
@@ -335,9 +353,6 @@
   "CFPRDL": {
     "defaultMessage": "Create plan"
   },
-  "Coy6SH": {
-    "defaultMessage": "Calendar"
-  },
   "D0uMjm": {
     "defaultMessage": "Difficulty reflects the easiest route up."
   },
@@ -365,6 +380,9 @@
   "DtYaOc": {
     "defaultMessage": "Recent first"
   },
+  "DxLDGr": {
+    "defaultMessage": "My summits ({count})"
+  },
   "Dxd1uB": {
     "defaultMessage": "Shop"
   },
@@ -373,6 +391,9 @@
   },
   "E1EEy4": {
     "defaultMessage": "Error, try again or use another image."
+  },
+  "E80WrK": {
+    "defaultMessage": "Information"
   },
   "E92c/O": {
     "defaultMessage": "Last {count}"
@@ -461,6 +482,9 @@
   "Hsq7Fe": {
     "defaultMessage": "Delete challenge"
   },
+  "HtAUIW": {
+    "defaultMessage": "Back to today"
+  },
   "HucKse": {
     "defaultMessage": "You can now create your own challenges and also your mountains, other people can join these challenges!"
   },
@@ -472,6 +496,12 @@
   },
   "I5NMJ8": {
     "defaultMessage": "More"
+  },
+  "ID8Us+": {
+    "defaultMessage": "How points work"
+  },
+  "IUPPsb": {
+    "defaultMessage": "My challenges ({count}/{max})"
   },
   "IXIWgD": {
     "defaultMessage": "How to rate"
@@ -488,9 +518,6 @@
   "J9wo18": {
     "defaultMessage": "more mountains"
   },
-  "JJhyw5": {
-    "defaultMessage": "Select a time"
-  },
   "JLegne": {
     "defaultMessage": "Forcat"
   },
@@ -505,6 +532,9 @@
   },
   "JqiqNj": {
     "defaultMessage": "Something went wrong"
+  },
+  "Jrw8G7": {
+    "defaultMessage": "Modify"
   },
   "K/unOm": {
     "defaultMessage": "Your cart"
@@ -584,9 +614,6 @@
   "OggXKL": {
     "defaultMessage": "Vell"
   },
-  "Oj1HSZ": {
-    "defaultMessage": "No extra information added."
-  },
   "OlIql8": {
     "defaultMessage": "Moderate"
   },
@@ -614,6 +641,9 @@
   "Q0rG1w": {
     "defaultMessage": "My people"
   },
+  "Q5CLtp": {
+    "defaultMessage": "Plans"
+  },
   "Q8Qw5B": {
     "defaultMessage": "Description"
   },
@@ -628,6 +658,9 @@
   },
   "QZoli7": {
     "defaultMessage": "Edit challenge"
+  },
+  "QbGIBZ": {
+    "defaultMessage": "Your stats"
   },
   "Qh4l3L": {
     "defaultMessage": "Other participants"
@@ -647,17 +680,20 @@
   "S+o8nA": {
     "defaultMessage": "Delete message?"
   },
-  "SDgHvJ": {
-    "defaultMessage": "100 points"
-  },
   "SDwmRo": {
     "defaultMessage": "Higher first"
   },
   "SEtMn+": {
     "defaultMessage": "At least one mountain is required"
   },
+  "SQJto2": {
+    "defaultMessage": "Sign in"
+  },
   "SWMHO+": {
     "defaultMessage": "Go home"
+  },
+  "T0vl24": {
+    "defaultMessage": "My mountains ({count})"
   },
   "T4DiF1": {
     "defaultMessage": "Share summit image!"
@@ -692,6 +728,12 @@
   "U52Gl4": {
     "defaultMessage": "I want to be visible on the hiscores"
   },
+  "U78NhE": {
+    "defaultMessage": "Complete"
+  },
+  "UP7WWl": {
+    "defaultMessage": "{summited} of {total} essentials"
+  },
   "UXY08P": {
     "defaultMessage": "Start the conversation"
   },
@@ -700,6 +742,9 @@
   },
   "Uf3+S6": {
     "defaultMessage": "Help & Support"
+  },
+  "VHUGly": {
+    "defaultMessage": "One summit of 1000 meters equals 100 points. Essentials are worth x2 — summit them!"
   },
   "VKfWR3": {
     "defaultMessage": "Recommended"
@@ -718,6 +763,9 @@
   },
   "WIwKkx": {
     "defaultMessage": "Your profile"
+  },
+  "WTrOy3": {
+    "defaultMessage": "Chat"
   },
   "WXGcL+": {
     "defaultMessage": "Create challenge"
@@ -740,6 +788,9 @@
   "Xai36g": {
     "defaultMessage": "Cancel this plan?"
   },
+  "XjNXDk": {
+    "defaultMessage": "Sign in to join the plan and chat"
+  },
   "XqXMjU": {
     "defaultMessage": "View full thread"
   },
@@ -751,6 +802,9 @@
   },
   "YDCrG0": {
     "defaultMessage": "Your Apple email hides your address. Give us a real one so we can reach you."
+  },
+  "YQ7dY3": {
+    "defaultMessage": "Latest summits ({count})"
   },
   "YdQ8KR": {
     "defaultMessage": "No results, please change the search."
@@ -770,14 +824,17 @@
   "Z14ALL": {
     "defaultMessage": "Write a reply…"
   },
-  "ZPboiN": {
-    "defaultMessage": "Chat with others"
+  "ZPelWj": {
+    "defaultMessage": "Mountains ({count})"
   },
   "ZQv4i6": {
     "defaultMessage": "Based on {count} from summiters, this mountain is rated {label} for dogs."
   },
   "ZYxiR7": {
     "defaultMessage": "Remove from your people?"
+  },
+  "ZvKSfJ": {
+    "defaultMessage": "Events"
   },
   "ZyG8IL": {
     "defaultMessage": "Top comments"
@@ -821,9 +878,6 @@
   "aqHNbT": {
     "defaultMessage": "No comments match your search."
   },
-  "aqaOUn": {
-    "defaultMessage": "{count} of {max} challenges"
-  },
   "b1zuN9": {
     "defaultMessage": "Price"
   },
@@ -832,6 +886,9 @@
   },
   "bVfBOs": {
     "defaultMessage": "No comments yet"
+  },
+  "bW7B87": {
+    "defaultMessage": "New"
   },
   "bWST2F": {
     "defaultMessage": "Add to your people"
@@ -893,8 +950,8 @@
   "dcC0V9": {
     "defaultMessage": "Challenge name"
   },
-  "diwwOr": {
-    "defaultMessage": "Modify plan"
+  "e61Jf3": {
+    "defaultMessage": "Coming soon"
   },
   "eAxGGJ": {
     "defaultMessage": "Remove from your people"
@@ -956,6 +1013,9 @@
   "hP78XN": {
     "defaultMessage": "My challenges"
   },
+  "hR0gI9": {
+    "defaultMessage": "No more challenges to show."
+  },
   "hd9nqu": {
     "defaultMessage": "New challenge"
   },
@@ -974,12 +1034,6 @@
   "iV2iNU": {
     "defaultMessage": "Updating plan"
   },
-  "iZPMxC": {
-    "defaultMessage": "Creating a plan"
-  },
-  "icHbvn": {
-    "defaultMessage": "All summits"
-  },
   "ihTd0A": {
     "defaultMessage": "No summits match \"{query}\""
   },
@@ -988,6 +1042,9 @@
   },
   "jdJhOL": {
     "defaultMessage": "Phone number"
+  },
+  "jeHY2x": {
+    "defaultMessage": "No challenges match your search."
   },
   "jvo0vs": {
     "defaultMessage": "Save"
@@ -1205,8 +1262,8 @@
   "w04v+E": {
     "defaultMessage": "We hope it was amazing"
   },
-  "w6oJwY": {
-    "defaultMessage": "One summit of 1000 meters ="
+  "w59TnD": {
+    "defaultMessage": "{summited} of {total} mountains"
   },
   "wBMkI1": {
     "defaultMessage": "Mountain"

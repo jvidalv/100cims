@@ -26,8 +26,9 @@ import {
   tierColor,
 } from "@/components/ui/atoms";
 import {
+  BLURRED_SCREEN_HEADER_HEIGHT,
+  BlurredScreenHeader,
   MountainItemList,
-  ScreenHeader,
   FilterableListHeader,
   type Filter,
   type SettingsGroup,
@@ -385,18 +386,25 @@ export default function MountainsScreen() {
 
   return (
     <ThemedView className="flex-1">
-      <ScreenHeader />
-      <FilterableListHeader
-        title={<FormattedMessage defaultMessage="All summits" />}
-        count={filteredMountains?.length}
-        onSearchChange={setQuery}
-        filters={filters}
-        filtersSelected={filtersSelected}
-        onFiltersChange={handleFiltersChange}
-        settingsGroups={settingsGroups}
-        settingsSelected={settingsFilters}
-        onSettingsChange={setSettingsFilters}
-      />
+      <BlurredScreenHeader>
+        <ThemedText numberOfLines={1} className="text-lg font-medium">
+          <FormattedMessage
+            defaultMessage="Mountains ({count})"
+            values={{ count: filteredMountains?.length ?? 0 }}
+          />
+        </ThemedText>
+      </BlurredScreenHeader>
+      <View style={{ paddingTop: BLURRED_SCREEN_HEADER_HEIGHT }}>
+        <FilterableListHeader
+          onSearchChange={setQuery}
+          filters={filters}
+          filtersSelected={filtersSelected}
+          onFiltersChange={handleFiltersChange}
+          settingsGroups={settingsGroups}
+          settingsSelected={settingsFilters}
+          onSettingsChange={setSettingsFilters}
+        />
+      </View>
 
       {viewMode === "list" ? (
         <FlatList

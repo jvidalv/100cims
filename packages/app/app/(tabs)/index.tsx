@@ -169,7 +169,7 @@ const PlansSection = () => {
           ),
         )}
         {!isPending && !plans?.length && (
-          <Link href="/plan/create" asChild>
+          <Link href="/plans/create" asChild>
             <TouchableOpacity className="flex-row gap-4">
               <View
                 className="items-center justify-center bg-border"

@@ -1,7 +1,7 @@
 import { format } from "date-fns/format";
 import { isToday } from "date-fns/isToday";
 import { LinearGradient } from "expo-linear-gradient";
-import { useLocalSearchParams, Link, useRouter } from "expo-router";
+import { useGlobalSearchParams, Link, useRouter } from "expo-router";
 import {
   Activity,
   ArrowDown,
@@ -14,8 +14,6 @@ import {
   Clock,
   Footprints,
   Lock,
-  MessagesSquare,
-  Settings,
   Share as ShareIcon,
   SportShoe,
   Trash2,
@@ -53,7 +51,6 @@ import {
 } from "@/components/ui/molecules";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
 import { getMountainPts } from "@/domains/mountain/mountain.util";
-import { usePlanChatUnread } from "@/domains/plan/plan-chat.api";
 import { consumePlanCompletionImages } from "@/domains/plan/plan-completion-cache";
 import {
   useAdminDeletePlanMutation,
@@ -160,11 +157,11 @@ export default function PlanIdPage() {
   const router = useRouter();
   const { width: screenW, height: screenH } = useWindowDimensions();
 
-  const { id, from } = useLocalSearchParams<{ id: string; from?: string }>();
+  // useGlobalSearchParams (not useLocal-) — inside a NativeTabs eagerly-mounted
+  // child of [id], useLocalSearchParams doesn't bind the parent dynamic.
+  const { id, from } = useGlobalSearchParams<{ id: string; from?: string }>();
   const { data } = usePlanOne({ id });
   const { isAuthenticated } = useAuth();
-  const { data: chatsUnread } = usePlanChatUnread();
-  const hasUnreadMessages = chatsUnread?.includes(id);
   const { data: user } = useUserMe();
   const isAdmin = useIsAdmin();
   const { mutateAsync: joinPlan, isPending: isLoadingJoinPlan } =
@@ -402,7 +399,7 @@ export default function PlanIdPage() {
       height={mountainsWithImages?.length ? undefined : 160}
       headerClassName="flex items-center justify-center bg-primary"
       parallaxHeaderTitleClassName="text-3xl"
-      contentClassName="gap-8 px-6 py-6"
+      contentClassName="gap-8 px-6 pt-6 pb-32"
       headerImage={
         mountainsWithImages?.length ? (
           <View
@@ -477,7 +474,7 @@ export default function PlanIdPage() {
       }
     >
       <View>
-        <View className="mb-4 gap-2">
+        <View className="mb-4 gap-3">
           <View className="flex flex-row flex-wrap items-center gap-4">
             {isOpen && !isOngoing && (
               <View className="flex flex-row items-center gap-2">
@@ -524,29 +521,39 @@ export default function PlanIdPage() {
             )}
           </View>
           <View className="flex-row items-center gap-2">
-            <LucideIcon icon={Clock} size={20} />
-            <ThemedText className="text-lg font-medium">
-              {when}
-              {plan.startDate && plan.startTime ? ` · ${plan.startTime}` : ""}
-            </ThemedText>
-            {whenAbsolute && (
-              <ThemedText className="text-lg text-muted-foreground">
-                {whenAbsolute}
-              </ThemedText>
+            <LucideIcon icon={Calendar} size={20} />
+            {whenAbsolute ? (
+              <>
+                <ThemedText className="text-lg font-medium">
+                  {whenAbsolute}
+                </ThemedText>
+                <ThemedText className="text-lg text-muted-foreground">
+                  {when}
+                </ThemedText>
+              </>
+            ) : (
+              <ThemedText className="text-lg font-medium">{when}</ThemedText>
             )}
           </View>
+          {plan.startDate && plan.startTime && (
+            <View className="flex-row items-center gap-2">
+              <LucideIcon icon={Clock} size={20} />
+              <ThemedText className="text-lg font-medium">
+                <FormattedMessage
+                  defaultMessage="Meeting time {time}"
+                  values={{ time: plan.startTime }}
+                />
+              </ThemedText>
+            </View>
+          )}
         </View>
-        <View>
-          {plan.description ? (
+        {plan.description ? (
+          <View>
             <EnrichedThemedText className="text-muted-foreground">
               {plan.description}
             </EnrichedThemedText>
-          ) : (
-            <ThemedText className="text-muted-foreground">
-              <FormattedMessage defaultMessage="No extra information added." />
-            </ThemedText>
-          )}
-        </View>
+          </View>
+        ) : null}
       </View>
       <View className="gap-4">
         <ThemedText className="text-2xl font-semibold">
@@ -588,16 +595,9 @@ export default function PlanIdPage() {
             <FormattedMessage defaultMessage="Join plan" />
           </ActionRow>
         )}
-        {isOpen && isCreator && !!plan.startDate && (
-          <Link
-            href={{ pathname: "/plan/[id]/complete", params: { id } }}
-            asChild
-          >
-            <ActionRow icon={BadgeCheck} intent="emerald">
-              <FormattedMessage defaultMessage="Complete plan" />
-            </ActionRow>
-          </Link>
-        )}
+        {/* "Set plan date" stays as a contextual prompt — it's a CTA, not
+            duplicate navigation. Complete / Modify / Chat moved to the
+            bottom tab bar and the in-content rows were removed. */}
         {isOpen && isCreator && !plan.startDate && (
           <Link
             href={{ pathname: "/plan/[id]/edit", params: { id } }}
@@ -605,16 +605,6 @@ export default function PlanIdPage() {
           >
             <ActionRow icon={Calendar} intent="primary">
               <FormattedMessage defaultMessage="Set plan date" />
-            </ActionRow>
-          </Link>
-        )}
-        {isCreator && (
-          <Link
-            href={{ pathname: "/plan/[id]/edit", params: { id } }}
-            asChild
-          >
-            <ActionRow icon={Settings} intent="muted">
-              <FormattedMessage defaultMessage="Modify plan" />
             </ActionRow>
           </Link>
         )}
@@ -629,21 +619,6 @@ export default function PlanIdPage() {
         >
           <FormattedMessage defaultMessage="Share" />
         </ActionRow>
-        {hasJoined && (
-          <Link
-            href={{ pathname: "/plan/[id]/chat", params: { id } }}
-            asChild
-          >
-            <ActionRow
-              icon={MessagesSquare}
-              iconSize={20}
-              intent="blue"
-              badge={hasUnreadMessages}
-            >
-              <FormattedMessage defaultMessage="Chat with others" />
-            </ActionRow>
-          </Link>
-        )}
         {hasJoined && !isCreator && (
           <ActionRow
             onPress={() => handleLeave()}

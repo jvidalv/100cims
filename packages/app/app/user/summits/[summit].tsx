@@ -2,6 +2,7 @@ import { format } from "date-fns/format";
 import { Link, Redirect, useLocalSearchParams, useRouter } from "expo-router";
 import {
   Baby,
+  CalendarDays,
   Check,
   Dog,
   Flag,
@@ -39,10 +40,11 @@ import {
 } from "@/components/ui/atoms";
 import {
   ActionRow,
+  BLURRED_SCREEN_HEADER_HEIGHT,
+  BlurredScreenHeader,
   ImagePreviewModal,
   MountainItemList,
   PushPermissionDialog,
-  ScreenHeader,
   SharePreviewModal,
   useImagePreview,
 } from "@/components/ui/molecules";
@@ -217,14 +219,18 @@ const Content = () => {
   if (isPending || !data) {
     return (
       <ThemedView className="flex-1">
-        <ScreenHeader />
+        <BlurredScreenHeader>
+          <Skeleton className="h-4 w-32 rounded" />
+        </BlurredScreenHeader>
         <ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerClassName="pb-24 pt-2"
+          contentContainerStyle={{
+            paddingTop: BLURRED_SCREEN_HEADER_HEIGHT,
+            paddingBottom: 96,
+          }}
         >
           {/* Header — matches real: mb-4 bg-background px-6 pb-2 */}
           <View className="mb-4 bg-background px-6 pb-2">
-            <Skeleton className="h-9 w-3/4 rounded-md" />
             <Skeleton className="mt-1 h-7 w-32 rounded-md" />
           </View>
 
@@ -273,20 +279,18 @@ const Content = () => {
 
   return (
     <ThemedView className="flex-1">
-      <ScreenHeader />
+      <BlurredScreenHeader>
+        <ThemedText numberOfLines={1} className="text-lg font-medium">
+          {data.mountainName}
+        </ThemedText>
+      </BlurredScreenHeader>
       <ScrollView
-        stickyHeaderIndices={[0]}
         showsVerticalScrollIndicator={false}
-        contentContainerClassName="pb-24 pt-2"
+        contentContainerStyle={{
+          paddingTop: BLURRED_SCREEN_HEADER_HEIGHT,
+          paddingBottom: 96,
+        }}
       >
-        <View className="mb-4 bg-background px-6 pb-2">
-          <ThemedText className="text-3xl font-bold">
-            {data.mountainName}
-          </ThemedText>
-          <ThemedText className="text-lg font-semibold text-muted-foreground">
-            {format(parseLocalDateString(data.summitedAt), "dd MMM yyyy")}
-          </ThemedText>
-        </View>
         <Pressable
           className="overflow-hidden rounded"
           disabled={isSharing}
@@ -322,6 +326,22 @@ const Content = () => {
                 </TouchableOpacity>
               </Link>
             ))}
+          </View>
+        </View>
+        <View className="mt-6 gap-2 px-6">
+          <ThemedText className="mb-2 text-2xl font-semibold">
+            <FormattedMessage defaultMessage="Information" />
+          </ThemedText>
+          {/* Static row — not pressable; mirrors ActionRow's icon-in-circle
+              visual treatment so it sits at home next to the action rows
+              below. */}
+          <View className="flex-row items-center gap-2">
+            <View className="size-8 items-center justify-center rounded-full bg-muted">
+              <LucideIcon icon={CalendarDays} size={16} muted />
+            </View>
+            <ThemedText>
+              {format(parseLocalDateString(data.summitedAt), "dd MMM yyyy")}
+            </ThemedText>
           </View>
         </View>
         <View className="mt-6 gap-2 px-6">

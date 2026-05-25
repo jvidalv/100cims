@@ -1,7 +1,7 @@
 import { format } from "date-fns/format";
 import { isSameDay } from "date-fns/isSameDay";
 import * as Clipboard from "expo-clipboard";
-import { Link, useLocalSearchParams } from "expo-router";
+import { Link, useGlobalSearchParams } from "expo-router";
 import { CircleHelp, Send } from "lucide-react-native";
 import { useColorScheme } from "nativewind";
 import { useEffect, useRef, useState, useMemo } from "react";
@@ -16,9 +16,11 @@ import {
   Platform,
   ActionSheetIOS,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { twMerge } from "tailwind-merge";
 
 
+import { useAuth } from "@/components/providers/auth-provider";
 import {
   LucideIcon,
   Avatar,
@@ -29,7 +31,11 @@ import {
   Skeleton,
   BlurView,
 } from "@/components/ui/atoms";
-import { ScreenHeader } from "@/components/ui/molecules";
+import {
+  ActionRow,
+  BlurredScreenHeader,
+  BLURRED_SCREEN_HEADER_HEIGHT,
+} from "@/components/ui/molecules";
 import { pastelColors } from "@/constants/colors";
 import {
   usePlanChatMessages,
@@ -37,7 +43,7 @@ import {
   usePlanChatRead,
   usePlanChatDeleteMessage,
 } from "@/domains/plan/plan-chat.api";
-import { usePlanOne } from "@/domains/plan/plan.api";
+import { usePlanJoin, usePlanOne } from "@/domains/plan/plan.api";
 import { useUserMe } from "@/domains/user/user.api";
 import { useIsKeyboardVisible } from "@/hooks/use-is-keyboard-visible";
 
@@ -50,17 +56,23 @@ function getUserColor(userId: string) {
 }
 
 export default function PlanChatPage() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  // useGlobalSearchParams (not useLocal-) — inside a NativeTabs eagerly-mounted
+  // child of [id], useLocalSearchParams doesn't bind the parent dynamic.
+  const { id } = useGlobalSearchParams<{ id: string }>();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
+  const { bottom: bottomInset } = useSafeAreaInsets();
 
   const intl = useIntl();
   const inputRef = useRef<TextInput>(null);
   const [message, setMessage] = useState("");
 
   const { data: user } = useUserMe();
+  const { isAuthenticated } = useAuth();
   const { data: planData } = usePlanOne({ id });
   const plan = planData;
+  const hasJoined = !!user?.id && !!plan?.users.some((u) => u.id === user.id);
+  const { mutateAsync: joinPlan, isPending: isJoining } = usePlanJoin(id);
 
   const { data: messagesData, isPending: isPendingMessages } =
     usePlanChatMessages(id);
@@ -94,19 +106,71 @@ export default function PlanChatPage() {
 
   if (!plan) return null;
 
+  // Join gate — non-joined users (anonymous OR logged in but not a
+  // participant) see a CTA instead of the chat. Joining or signing in
+  // brings them into the chat in place.
+  if (!hasJoined) {
+    return (
+      <View className="relative flex-1">
+        <BlurredScreenHeader>{plan.title}</BlurredScreenHeader>
+        <View className="flex-1 items-center justify-center gap-6 px-6">
+          {/* Bigger, bolder empty-state copy. The icon adds visual weight
+              so the title doesn't sit alone on the screen. */}
+          <View className="size-20 items-center justify-center rounded-full bg-primary/10">
+            <LucideIcon icon={Send} size={36} primary />
+          </View>
+          <ThemedText className="text-center text-3xl font-bold tracking-tight">
+            {isAuthenticated
+              ? intl.formatMessage({
+                  defaultMessage: "Join the plan to see and write messages",
+                })
+              : intl.formatMessage({
+                  defaultMessage: "Sign in to join the plan and chat",
+                })}
+          </ThemedText>
+          {/* Button shrinks to its content rather than stretching full-width. */}
+          <View className="self-center">
+            {isAuthenticated ? (
+              <ActionRow
+                icon={Send}
+                intent="primary"
+                size="lg"
+                disabled={isJoining}
+                iconOverride={
+                  isJoining ? <ActivityIndicator size="sm" /> : undefined
+                }
+                onPress={() => {
+                  void joinPlan();
+                }}
+              >
+                <FormattedMessage defaultMessage="Join plan" />
+              </ActionRow>
+            ) : (
+              <Link href="/join" asChild>
+                <ActionRow icon={Send} intent="primary" size="lg">
+                  <FormattedMessage defaultMessage="Sign in" />
+                </ActionRow>
+              </Link>
+            )}
+          </View>
+        </View>
+      </View>
+    );
+  }
+
   return (
     <View className="relative flex-1">
-      <View className="border-b border-border bg-background pt-2">
-        <ScreenHeader
-          rightElement={
-            <Link href="/user/suggestions" className="pr-6">
-              <LucideIcon icon={CircleHelp} />
-            </Link>
-          }
-        >
-          {plan.title}
-        </ScreenHeader>
-      </View>
+      <BlurredScreenHeader
+        rightElement={
+          <Link href="/user/suggestions" asChild>
+            <TouchableOpacity hitSlop={16}>
+              <LucideIcon icon={CircleHelp} size={22} />
+            </TouchableOpacity>
+          </Link>
+        }
+      >
+        {plan.title}
+      </BlurredScreenHeader>
       <ThemedKeyboardAvoidingView>
         <ImageBackground
           source={
@@ -124,7 +188,10 @@ export default function PlanChatPage() {
             opacity: 0.05,
           }}
         />
-        <View className="relative flex-1">
+        <View
+          className="relative flex-1"
+          style={{ paddingTop: BLURRED_SCREEN_HEADER_HEIGHT }}
+        >
           {!isPendingMessages && !messages?.length && (
             <BlurView className="relative mx-6 mt-8 gap-1 overflow-hidden rounded border border-border p-4">
               <View className="absolute right-2 top-2">
@@ -179,12 +246,17 @@ export default function PlanChatPage() {
             }
           />
           <View
-            className={twMerge(
-              "border-t border-border bg-background px-4 pb-10 pt-2",
-              isKeyboardVisible && "pb-2",
-            )}
+            className="border-t border-border bg-background px-4 py-2"
+            // `useSafeAreaInsets().bottom` inside a NativeTabs screen
+            // already accounts for the tab bar height (iOS bumps it for
+            // children of a UITabBarController), so we don't add the bar
+            // height manually — that would double-count. When the keyboard
+            // is up the OS hides the bar, just a small inline gap.
+            // Note: keyboard-visible state overrides the className's pb-2
+            // (style wins over className), so it falls back to 8pt then.
+            style={{ paddingBottom: isKeyboardVisible ? 8 : bottomInset + 8 }}
           >
-            <View className="min-h-12 flex-row items-end gap-2 rounded-2xl border border-border bg-border/50 pl-4 py-1">
+            <View className="min-h-12 flex-row items-end gap-2 rounded-3xl bg-border/50 pl-4 pr-1.5 py-1.5">
               <TextInput
                 ref={inputRef}
                 className="flex-1 text-foreground text-base py-2"
@@ -202,8 +274,8 @@ export default function PlanChatPage() {
                 onPress={handleSend}
                 disabled={isSendingMessage}
                 className={twMerge(
-                  "h-10 w-12 items-center justify-center rounded mr-1 border bg-border border-border mb-0.5",
-                  !!message && "bg-emerald-500 border-emerald-500",
+                  "size-10 items-center justify-center rounded-full bg-border",
+                  !!message && "bg-primary",
                   isSendingMessage && "opacity-70",
                 )}
               >
