@@ -27,7 +27,16 @@ export function ActivityIndicator({
       }),
     );
     animation.start();
-    return () => animation.stop();
+    return () => {
+      // `animation.stop()` alone doesn't always detach native-thread
+      // listeners — if the indicator unmounts mid-tween, pending callbacks
+      // can fire `__callListeners` on the now-freed AnimatedValue and crash
+      // with `undefined is not a function`. Resetting clears the timing
+      // animation cleanly; removeAllListeners detaches JS subscribers.
+      animation.stop();
+      spinAnim.stopAnimation();
+      spinAnim.removeAllListeners();
+    };
   }, [spinAnim]);
 
   const spin = spinAnim.interpolate({

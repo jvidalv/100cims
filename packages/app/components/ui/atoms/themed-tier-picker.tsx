@@ -34,10 +34,13 @@ const ORANGE = { r: 245, g: 158, b: 11 };
 const GREEN = { r: 34, g: 197, b: 94 };
 const TRANSITION_MS = 180;
 
-// Reanimated can't interpolate hex strings, so we keep the rgb/rgba forms
-// here. Selected border tracks the theme's foreground color (black in light,
-// white in dark) to match the rest of the app's selected-emphasis treatment.
-const UNSELECTED_BORDER = "rgba(115, 115, 115, 0.4)";
+// Reanimated can't interpolate CSS variables, so we hold the resolved hex
+// per theme here. Selected border tracks the theme's foreground (black in
+// light, white in dark) for selected-emphasis; unselected mirrors
+// `--color-border` from `theme-provider.tsx` (light/dark variants) so the
+// pill border doesn't look like a stark white outline in dark mode.
+const UNSELECTED_BORDER_LIGHT = "#e5e7eb";
+const UNSELECTED_BORDER_DARK = "#1c1c1e";
 const SELECTED_BG = "rgba(115, 115, 115, 0.12)";
 const TRANSPARENT = "rgba(0, 0, 0, 0)";
 const FOREGROUND_LIGHT = "rgb(0, 0, 0)";
@@ -72,6 +75,15 @@ export const tierColor = (
   return `rgb(${color.r},${color.g},${color.b})`;
 };
 
+/**
+ * Add an alpha channel to an `rgb(r,g,b)` string produced by `tierColor`.
+ * The companion to `tierColor` for tinted backgrounds (e.g. a 15%-opaque
+ * pill behind a rating icon). Only valid on the `rgb(...)` form — passing
+ * a hex or an existing `rgba(...)` returns garbage.
+ */
+export const withAlpha = (rgb: string, alpha: number): string =>
+  rgb.replace("rgb(", "rgba(").replace(")", `, ${alpha})`);
+
 type PillProps = {
   label: string;
   selected: boolean;
@@ -82,11 +94,14 @@ type PillProps = {
 
 const Pill = ({ label, selected, onPress, dotColor, size }: PillProps) => {
   const { colorScheme } = useColorScheme();
-  const selectedBorder =
-    colorScheme === "dark" ? FOREGROUND_DARK : FOREGROUND_LIGHT;
+  const isDark = colorScheme === "dark";
+  const selectedBorder = isDark ? FOREGROUND_DARK : FOREGROUND_LIGHT;
+  const unselectedBorder = isDark
+    ? UNSELECTED_BORDER_DARK
+    : UNSELECTED_BORDER_LIGHT;
 
   const animatedStyle = useAnimatedStyle(() => ({
-    borderColor: withTiming(selected ? selectedBorder : UNSELECTED_BORDER, {
+    borderColor: withTiming(selected ? selectedBorder : unselectedBorder, {
       duration: TRANSITION_MS,
     }),
     backgroundColor: withTiming(selected ? SELECTED_BG : TRANSPARENT, {

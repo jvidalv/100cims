@@ -86,7 +86,13 @@ export const useThreadReplies = (
 export const useCreateMountainComment = (mountainId: string) => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (input: { body: string; parentCommentId?: string }) => {
+    mutationFn: async (input: {
+      body: string;
+      parentCommentId?: string;
+      // Up to 5 base64-encoded JPEGs. Backend uploads each to S3 and stores
+      // the resolved URLs on the new mountain_comment.images JSONB column.
+      images?: string[];
+    }) => {
       const { data, error } = await apiClient.POST(
         "/api/protected/mountain-comments/create",
         {
@@ -94,6 +100,7 @@ export const useCreateMountainComment = (mountainId: string) => {
             mountainId,
             body: input.body,
             parentCommentId: input.parentCommentId,
+            images: input.images,
           },
         },
       );
@@ -111,7 +118,14 @@ export const useCreateMountainComment = (mountainId: string) => {
 export const useUpdateMountainComment = (mountainId: string) => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (input: { id: string; body: string }) => {
+    mutationFn: async (input: {
+      id: string;
+      body: string;
+      // Mixed array of existing image URLs (kept) and new base64 JPEGs
+      // (uploaded server-side). Omit to leave images untouched; pass `[]`
+      // to remove all images.
+      images?: string[];
+    }) => {
       const { data, error } = await apiClient.POST(
         "/api/protected/mountain-comments/update",
         { body: input },

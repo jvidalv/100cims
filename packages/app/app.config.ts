@@ -122,11 +122,15 @@ const config: ExpoConfig & { newArchEnabled?: boolean } = {
     ],
     "expo-web-browser",
     [
-      "react-native-maps",
+      "@rnmapbox/maps",
       {
-        iosGoogleMapsApiKey: process.env.EXPO_PUBLIC_IOS_GOOGLE_MAPS_API_KEY,
-        androidGoogleMapsApiKey:
-          process.env.EXPO_PUBLIC_ANDROID_GOOGLE_MAPS_API_KEY,
+        // Build-time secret token with `DOWNLOADS:READ` scope. Used by the
+        // plugin to install the Mapbox iOS SDK from their private CDN. Local
+        // builds read from `packages/app/.env.local`; EAS Build needs this as
+        // a project secret via `eas secret:create`.
+        RNMapboxMapsDownloadToken: process.env.MAPBOX_DOWNLOADS_TOKEN,
+        // Pin native SDK versions to avoid surprise upgrades.
+        RNMapboxMapsVersion: "11.16.1",
       },
     ],
     [

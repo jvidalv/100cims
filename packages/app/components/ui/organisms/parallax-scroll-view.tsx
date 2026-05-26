@@ -1,8 +1,14 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { ChevronLeft } from "lucide-react-native";
-import { PropsWithChildren, ReactElement, ReactNode } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { PropsWithChildren, ReactElement, ReactNode, useRef } from "react";
+import {
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import Animated, {
   interpolate,
   SharedValue,
@@ -37,6 +43,16 @@ type Props = PropsWithChildren<{
     title: string;
     defaultTitleClassName: string;
   }) => ReactElement;
+  /**
+   * Fires once when the user approaches the bottom (within
+   * `onEndReachedThreshold` of remaining content). Used by the public user
+   * profile to drive infinite-scrolling summits — see
+   * `app/user/[user]/index.tsx`. Re-arms when the user scrolls back up out
+   * of the threshold, so a fresh page-load can trigger the next fire.
+   */
+  onEndReached?: () => void;
+  /** Fraction of viewport-from-bottom that counts as "the end". Default 0.5. */
+  onEndReachedThreshold?: number;
 }>;
 
 export default function ParallaxScrollView({
@@ -51,10 +67,36 @@ export default function ParallaxScrollView({
   parallaxHeaderTitleClassName,
   contentClassName,
   height = 300,
+  onEndReached,
+  onEndReachedThreshold = 0.5,
 }: Props) {
   const router = useRouter();
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useScrollOffset(scrollRef);
+  // Latches when we've fired `onEndReached` for the current visit to the
+  // bottom — prevents the callback from firing on every scroll event
+  // afterwards. Resets when the user scrolls back up out of the threshold,
+  // and gets cleared by a fresh page-load growing `contentSize` (the
+  // threshold moves down again).
+  const endReachedFiredRef = useRef(false);
+
+  const handleScroll = onEndReached
+    ? (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+        const { contentOffset, layoutMeasurement, contentSize } =
+          event.nativeEvent;
+        const distanceFromEnd =
+          contentSize.height - (contentOffset.y + layoutMeasurement.height);
+        const threshold = layoutMeasurement.height * onEndReachedThreshold;
+        if (distanceFromEnd <= threshold) {
+          if (!endReachedFiredRef.current) {
+            endReachedFiredRef.current = true;
+            onEndReached();
+          }
+        } else {
+          endReachedFiredRef.current = false;
+        }
+      }
+    : undefined;
 
   const parallaxFloatingElementsStyle = useAnimatedStyle(() => {
     if (scrollOffset.value < height - 100) {
@@ -84,6 +126,7 @@ export default function ParallaxScrollView({
         ref={scrollRef}
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
+        onScroll={handleScroll}
       >
         <AnimatedHeaderBackground
           headerClassName={headerClassName}

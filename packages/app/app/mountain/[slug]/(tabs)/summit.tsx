@@ -206,7 +206,12 @@ export default function SummitMountainScreen() {
                     {isLoadingImage ? (
                       <ActivityIndicator className="opacity-50" />
                     ) : (
-                      <LucideIcon icon={Camera} size={32} strokeWidth={1.5} />
+                      <LucideIcon
+                        icon={Camera}
+                        size={32}
+                        strokeWidth={1.5}
+                        color="white"
+                      />
                     )}
                   </View>
                 </View>

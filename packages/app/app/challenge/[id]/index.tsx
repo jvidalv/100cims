@@ -36,7 +36,10 @@ import {
   useChallengeDetail,
   useChallengeMyProgress,
 } from "@/domains/challenge/challenge.api";
-import { countryToEmoji } from "@/domains/challenge/challenge.model";
+import {
+  challengeCompletionPercent,
+  countryToEmoji,
+} from "@/domains/challenge/challenge.model";
 import { useIsAdmin, useUpdateUserMeMutation } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
 import { isIOS } from "@/lib/device";
@@ -334,13 +337,10 @@ export default function ChallengeDetailScreen() {
               defaultMessage="{percent}% completed"
               values={{
                 percent:
-                  myProgress.totalMountains > 0
-                    ? Math.round(
-                        (myProgress.summitedCount /
-                          myProgress.totalMountains) *
-                          100,
-                      )
-                    : 0,
+                  challengeCompletionPercent(
+                    myProgress.summitedCount,
+                    myProgress.totalMountains,
+                  ) ?? 0,
               }}
             />
           </ActionRow>

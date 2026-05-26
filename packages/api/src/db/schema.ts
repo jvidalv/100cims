@@ -4,6 +4,7 @@ import {
   boolean,
   check,
   integer,
+  jsonb,
   numeric,
   pgTable,
   real,
@@ -751,6 +752,13 @@ export const mountainCommentTable = pgTable(
     // enforces existence + same-mountain on insert.
     parentCommentId: uuid(),
     body: text().notNull(),
+    // JSONB array so each image can carry future metadata (caption,
+    // description) without another schema migration. v1 each element is
+    // `{ url: string }`.
+    images: jsonb()
+      .notNull()
+      .default(sql`'[]'::jsonb`)
+      .$type<{ url: string }[]>(),
     upvoteCount: integer().notNull().default(0),
     createdAt: timestamp().notNull().defaultNow(),
     updatedAt: timestamp().notNull().defaultNow(),

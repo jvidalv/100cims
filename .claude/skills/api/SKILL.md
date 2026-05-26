@@ -299,28 +299,25 @@ In both cases:
 
 ### Database Migration
 
-**🚫 NEVER run `drizzle-kit push` or `yarn api drizzle-kit push`. Ever. No exceptions.**
+The headline rules — never `drizzle-kit push`, never hand-author files in
+`drizzle/`, always ask the user before applying, snake_case identifiers in
+custom SQL — are in `AGENTS.md`. Operational details specific to this codebase:
 
-`push` syncs the DB to the current schema without writing a migration file and without updating `drizzle.__drizzle_migrations`. After a `push`:
-- No SQL file exists for the change → other environments and fresh clones can't reproduce it.
-- `db:migrate` will later try to re-apply the "missing" migration and crash on "column already exists", blocking every subsequent migration until someone manually hacks `drizzle.__drizzle_migrations`.
-- Any custom SQL you intended to append (data backfills, CHECK constraints, seed rows) is silently skipped.
-
-If you see yourself reaching for `push` — stop. Use `db:generate` + `db:migrate` instead. There is no scenario in this repo where `push` is correct.
-
-**CRITICAL — always ask the user before applying a migration.** Prepare the migration file locally and wait for explicit approval before running `db:migrate`. Never run schema-altering commands autonomously.
-
-1. Update `packages/api/src/db/schema.ts`. `drizzle.config.ts` sets `casing: "snake_case"`, so columns use the bare form `foo: integer()` / `bar: text()` and the DB column is auto-derived (`foo`, `bar`). Don't pass an explicit snake_case name argument (`integer("foo")`) — it duplicates the default and drifts from convention.
-2. Run `yarn api db:generate --name <slug>` to produce a versioned SQL file under `packages/api/src/db/drizzle/NNNN_*.sql`.
-3. Review and, if needed, append custom SQL (e.g. data backfills) to the generated file. For pure data-only migrations with no schema diff, use `yarn api db:generate --custom --name <slug>` — it produces an empty file that's pre-registered in the journal. Never hand-edit `meta/_journal.json` or hand-author the snapshot.
-4. **Ask the user** before running `yarn api db:migrate`.
-5. Verify in `psql` after the user applies it.
-
-**CRITICAL — hand-written SQL must reference snake_case column names, NOT the camelCase fields from `schema.ts`.** Drizzle's `text()` / `boolean()` / `uuid()` builders map TS field `imageUrl` to DB column `image_url` automatically (because of `casing: "snake_case"` in drizzle.config.ts). When you write `INSERT`/`UPDATE`/`WHERE` SQL inside a custom migration:
-
-- Reference real DB column names: `first_name`, `image_url`, `visible_on_hiscores`, `created_at`, `active_challenge_id`.
-- Do NOT quote camelCase identifiers like `"imageUrl"` — they don't exist as columns. drizzle-kit swallows the PG error and exits with just `error Command failed with exit code 1.`, which silently breaks every Railway build until reverted.
-- Sanity-check by reading an existing migration (`0001_seed-data.sql`, `0012_grant_josep_admin.sql`) or by querying `information_schema.columns WHERE table_name = '<table>'` before writing the SQL.
+- **drizzle.config.ts sets `casing: "snake_case"`**, so columns use the bare
+  form `foo: integer()` / `bar: text()` and the DB column is auto-derived
+  (`foo`, `bar`). Don't pass an explicit snake_case name argument like
+  `integer("foo")` — it duplicates the default and drifts from convention.
+- **Schema change flow**: edit `src/db/schema.ts` → `yarn api db:generate
+  --name <slug>` → review/augment the generated SQL → ask user → `yarn api
+  db:migrate`.
+- **Pure data migrations** (backfills, renames, deletes with no schema diff):
+  `yarn api db:generate --custom --name <slug>` produces an empty file
+  pre-registered in the journal.
+- **Cross-check custom SQL** against an existing migration (`0001_seed-data.sql`,
+  `0012_grant_josep_admin.sql`) or `information_schema.columns WHERE table_name
+  = '<table>'` before writing — drizzle-kit hides PG errors and exits with just
+  `error Command failed with exit code 1.`, which silently breaks Railway
+  builds until reverted.
 
 ### Image Upload to S3
 

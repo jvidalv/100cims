@@ -116,18 +116,48 @@ export default function CalendarScreen() {
     onDayPress(new Date());
   }, [onDayPress]);
 
+  const lastMonthIndex = months.length - 1;
+  const onNavigateMonth = useCallback(
+    (currentIndex: number, direction: "prev" | "next") => {
+      const target = direction === "next" ? currentIndex + 1 : currentIndex - 1;
+      if (target < 0 || target > lastMonthIndex) return;
+      listRef.current?.scrollToIndex({ index: target, animated: true });
+    },
+    [lastMonthIndex],
+  );
+
   const renderMonth: ListRenderItem<CalendarMonthData> = useCallback(
-    ({ item }) => (
-      <CalendarMonth
-        month={item}
-        height={pageHeight}
-        selectedDateKey={selectedDateKey}
-        eventTypesByDay={eventTypesByDay}
-        onDayPress={onDayPress}
-        onDayLongPress={onDayLongPress}
-      />
-    ),
-    [pageHeight, selectedDateKey, eventTypesByDay, onDayPress, onDayLongPress],
+    ({ item, index }) => {
+      // Flip the button at the last month so users at the end of the range
+      // get a way back without scrolling. The label is the adjacent month's
+      // own name (e.g. "June" when viewing May) — already locale-formatted.
+      const navDirection = index === lastMonthIndex ? "prev" : "next";
+      const adjacentIndex = navDirection === "next" ? index + 1 : index - 1;
+      const navLabel = months[adjacentIndex]?.label ?? "";
+      return (
+        <CalendarMonth
+          month={item}
+          height={pageHeight}
+          selectedDateKey={selectedDateKey}
+          eventTypesByDay={eventTypesByDay}
+          navDirection={navDirection}
+          navLabel={navLabel}
+          onDayPress={onDayPress}
+          onDayLongPress={onDayLongPress}
+          onNavigate={(direction) => onNavigateMonth(index, direction)}
+        />
+      );
+    },
+    [
+      months,
+      pageHeight,
+      selectedDateKey,
+      eventTypesByDay,
+      lastMonthIndex,
+      onDayPress,
+      onDayLongPress,
+      onNavigateMonth,
+    ],
   );
 
   const renderEvent: ListRenderItem<CalendarEvent> = useCallback(
@@ -199,13 +229,26 @@ export default function CalendarScreen() {
             // sits below events when the day has any, and right under the
             // date header when the list is empty. `Create plan` and `Back to
             // today` are conditional; `All plans` is always visible.
-            <View className="gap-2 px-6 pt-4">
+            // The divider + top margin only appear when there are events
+            // above — otherwise the line floats with nothing to separate.
+            <View
+              className={
+                selectedEvents.length > 0
+                  ? "mt-2 gap-2.5 border-t border-border px-6 pt-4"
+                  : "gap-2.5 px-6 pt-4"
+              }
+            >
               {!isSelectedPast && (
                 <ActionRow
                   icon={Plus}
                   intent="primary"
                   size="sm"
-                  onPress={() => router.push("/plans/create")}
+                  onPress={() =>
+                    router.push({
+                      pathname: "/plans/create",
+                      params: { date: selectedDateKey },
+                    })
+                  }
                 >
                   {intl.formatMessage({ defaultMessage: "Create plan" })}
                 </ActionRow>

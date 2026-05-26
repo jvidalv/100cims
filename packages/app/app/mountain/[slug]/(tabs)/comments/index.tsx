@@ -33,6 +33,10 @@ import {
   CommentRow,
   type CommentRowData,
 } from "@/components/ui/molecules/comment-row";
+import {
+  ImagePreviewModal,
+  useImagePreview,
+} from "@/components/ui/molecules/image-preview-modal";
 import { useMountainOne } from "@/domains/mountain/mountain.api";
 import {
   useDeleteMountainComment,
@@ -127,6 +131,9 @@ export default function MountainCommentsScreen() {
 
   const upvote = useUpvoteMountainComment(mountain?.id ?? "");
   const remove = useDeleteMountainComment(mountain?.id ?? "");
+  const { previewImage, isPreviewOpen, openPreview, closePreview } =
+    useImagePreview();
+  const onImagePress = (uri: string) => openPreview({ uri });
   const {
     data: loadedAllReplies,
     isFetching: isFetchingAllReplies,
@@ -171,11 +178,13 @@ export default function MountainCommentsScreen() {
           id: c.id,
           parentCommentId: c.parentCommentId,
           body: c.body,
+          images: c.images,
           upvoteCount: c.upvoteCount,
           viewerHasUpvoted: c.viewerHasUpvoted,
           createdAt: String(c.createdAt),
           user: c.user,
           parent: c.parent,
+          replyCount: c.replyCount,
         })),
       ),
     [data],
@@ -233,6 +242,7 @@ export default function MountainCommentsScreen() {
               id: r.id,
               parentCommentId: r.parentCommentId,
               body: r.body,
+              images: r.images,
               upvoteCount: r.upvoteCount,
               viewerHasUpvoted: r.viewerHasUpvoted,
               createdAt: String(r.createdAt),
@@ -475,6 +485,7 @@ export default function MountainCommentsScreen() {
                   }
                   onDelete={() => confirmDelete(row.comment.id)}
                   onOpenThread={searchMode ? clearSearch : undefined}
+                  onImagePress={onImagePress}
                 />
               </View>
             );
@@ -539,6 +550,11 @@ export default function MountainCommentsScreen() {
           <LucideIcon icon={Plus} size={28} color="#ffffff" />
         </TouchableOpacity>
       )}
+      <ImagePreviewModal
+        visible={isPreviewOpen}
+        imageSource={previewImage}
+        onClose={closePreview}
+      />
     </ThemedView>
   );
 }

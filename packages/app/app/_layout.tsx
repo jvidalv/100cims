@@ -16,7 +16,7 @@ import {
 } from "react-native-safe-area-context";
 
 import { QueryClientProvider } from "@/components/providers";
-import { AuthProvider } from "@/components/providers/auth-provider";
+import { AuthProvider, useAuth } from "@/components/providers/auth-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { ThemedLogo } from "@/components/ui/atoms";
 import { FloatingCartButton } from "@/components/ui/molecules";
@@ -31,6 +31,7 @@ import { setApiLocation, setAuthToken } from "@/lib/api-client";
 import { getJwt } from "@/lib/auth";
 import { isIpadOS } from "@/lib/device";
 import { getDateFnsLocale, getLocale, initLocale } from "@/lib/locale";
+import { silenceMapboxNoise } from "@/lib/silence-mapbox-noise";
 import ca from "@/translations/ca.json";
 import en from "@/translations/en.json";
 import es from "@/translations/es.json";
@@ -39,6 +40,10 @@ import "../global.css";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 void SplashScreen.preventAutoHideAsync();
+
+// Drop @rnmapbox/maps' known native-lifecycle red-boxes in dev. Tightly
+// scoped — never swallows our own errors. See lib/silence-mapbox-noise.ts.
+silenceMapboxNoise();
 
 const LoadingSkeleton = () => {
   return (
@@ -97,8 +102,13 @@ function Content() {
   );
 }
 
+// Single source of truth for the foreground-location permission prompt:
+// fire it once per session for authenticated users. Screen-level callers
+// (`useLocation()` without `prompt`) then just read the resolved location
+// without ever triggering the OS dialog themselves.
 function LocationSync() {
-  const { location } = useLocation();
+  const { isAuthenticated } = useAuth();
+  const { location } = useLocation({ prompt: isAuthenticated });
   useEffect(() => {
     if (location?.coords) {
       setApiLocation({

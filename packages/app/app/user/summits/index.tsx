@@ -129,8 +129,7 @@ export default function UserSummitsScreen() {
   );
 
   const [isExporting, setIsExporting] = useState(false);
-  const handleExport = useCallback(async () => {
-    if (isExporting) return;
+  const runExport = useCallback(async () => {
     setIsExporting(true);
     try {
       await exportUserSummitsCsv();
@@ -142,7 +141,29 @@ export default function UserSummitsScreen() {
     } finally {
       setIsExporting(false);
     }
-  }, [isExporting, intl]);
+  }, [intl]);
+  const handleExport = useCallback(() => {
+    if (isExporting) return;
+    Alert.alert(
+      intl.formatMessage({ defaultMessage: "Export your summits?" }),
+      intl.formatMessage({
+        defaultMessage:
+          "You'll get a CSV file — a spreadsheet you can open in Excel, Numbers or Google Sheets.",
+      }),
+      [
+        {
+          text: intl.formatMessage({ defaultMessage: "Cancel" }),
+          style: "cancel",
+        },
+        {
+          text: intl.formatMessage({ defaultMessage: "Export" }),
+          onPress: () => {
+            void runExport();
+          },
+        },
+      ],
+    );
+  }, [isExporting, intl, runExport]);
 
   const sortOptions = useMemo<{ value: SortOption; label: string }[]>(
     () => [

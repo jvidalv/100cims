@@ -23,19 +23,26 @@ export const CalendarDay = memo(
     const { date, inMonth } = cell;
     const today = isToday(date);
 
-    // Color the number to communicate today / selected / out-of-month, instead
-    // of drawing a circle behind it. Today wins over selected when both apply.
-    const numberClass = today
-      ? "font-bold text-primary"
-      : selected
-        ? "font-bold text-link"
+    // Color the number to communicate selected / today / out-of-month, instead
+    // of drawing a circle behind it. Selected wins over today when both apply,
+    // so tapping today swaps it to the blue selected color (clear feedback
+    // that the tap registered even though it's already the focused day).
+    // Selected stays bold; today only gets color (bold made the cell width
+    // shift slightly day-to-day, causing the grid to jitter).
+    const numberClass = selected
+      ? "font-bold text-link"
+      : today
+        ? "text-primary"
         : inMonth
           ? "text-foreground"
           : "text-muted-foreground opacity-40";
 
     return (
       <TouchableOpacity
-        className="h-full flex-1 items-center pt-1"
+        className={twMerge(
+          "h-full flex-1 items-center pt-1",
+          selected && "bg-link/10 dark:bg-link/30",
+        )}
         onPress={() => onPress(date)}
         onLongPress={() => onLongPress(date)}
       >

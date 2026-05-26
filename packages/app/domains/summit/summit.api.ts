@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 
 import { useAuth } from "@/components/providers/auth-provider";
 import { queryClient } from "@/components/providers/query-client-provider";
@@ -49,6 +49,33 @@ export const useSummitsGet = (
     ...queryOptions,
   });
 };
+
+/**
+ * Paginated infinite-query variant of `useSummitsGet` for a single mountain.
+ * 24 per page, ordered newest first. Used by the mountain detail "All
+ * summits" screen — the non-paginated `useSummitsGet` stays in place for
+ * the detail page's "Last N" preview.
+ */
+export const useMountainSummitsAll = ({
+  mountainId,
+}: {
+  mountainId: string;
+}) =>
+  useInfiniteQuery({
+    queryKey: summitKeys.byMountainAll(mountainId),
+    enabled: !!mountainId,
+    initialPageParam: 1,
+    queryFn: async ({ pageParam }) => {
+      const { data, error } = await apiClient.GET(
+        "/api/public/mountains/summits/all",
+        { params: { query: { mountainId, page: pageParam } } },
+      );
+      if (error) throw error;
+      return data.message;
+    },
+    getNextPageParam: (last) =>
+      last.pagination.hasMore ? last.pagination.page + 1 : undefined,
+  });
 
 export const useSummitGet = ({ summitId }: { summitId: string }) => {
   const { isAuthenticated } = useAuth();

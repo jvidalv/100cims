@@ -11,6 +11,8 @@ export const userKeys = {
   summitsAll: (query: string, sort: "recent" | "height") =>
     ["user", "summits", "all", query, sort] as const,
   summitsById: (userId: string) => ["user", "summits", userId] as const,
+  summitsByIdAll: (userId: string) =>
+    ["user", "summits", userId, "all"] as const,
   one: (userId: string) => ["user", "one", userId] as const,
   profile: (userId: string) => ["user", "profile", userId] as const,
   challenges: (userId: string) => ["user", "challenges", userId] as const,
@@ -56,6 +58,8 @@ export const summitKeys = {
   list: () => ["summit", "list"] as const,
   one: (id: string) => ["summit", id] as const,
   reactions: (summitId: string) => ["summit", "reactions", summitId] as const,
+  byMountainAll: (mountainId: string) =>
+    ["summit", "by-mountain", mountainId, "all"] as const,
 };
 
 // Plan keys
@@ -65,6 +69,8 @@ export const planKeys = {
   listInfinite: (params?: object) => ["plan", "list-infinite", params] as const,
   one: (id: string) => ["plan", id] as const,
   countNew: (userId?: string) => ["plan", "count-new", userId] as const,
+  byMountain: (mountainSlug: string) =>
+    ["plan", "by-mountain", mountainSlug] as const,
 };
 
 // Hiscores keys

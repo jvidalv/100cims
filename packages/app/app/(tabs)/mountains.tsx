@@ -1,11 +1,18 @@
-import { useLocalSearchParams, useRouter } from "expo-router";
+import {
+  Redirect,
+  useIsFocused,
+  useLocalSearchParams,
+} from "expo-router";
 import {
   ArrowDownUp,
   Baby,
   ChevronUp,
   CircleDashed,
+  CircleDot,
   Dog,
-  Map,
+  List,
+  LocateFixed,
+  Map as MapIcon,
   MapPin,
   Mountain,
   SearchX,
@@ -13,28 +20,33 @@ import {
   TrendingDown,
   TriangleAlert,
 } from "lucide-react-native";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { FlatList, Pressable, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { twMerge } from "tailwind-merge";
 
 
 import { useAuth } from "@/components/providers/auth-provider";
 import {
   LucideIcon,
+  SearchInput,
   ThemedText,
   ThemedView,
   tierColor,
 } from "@/components/ui/atoms";
 import {
-  BLURRED_SCREEN_HEADER_HEIGHT,
-  BlurredScreenHeader,
   MountainItemList,
-  FilterableListHeader,
-  type Filter,
+  MountainPreviewCard,
+  SettingsFilterModal,
   type SettingsGroup,
 } from "@/components/ui/molecules";
 import { Colors } from "@/constants/colors";
-import { MountainsMap } from "@/domains/mountain/components/mountains-map";
+import {
+  MountainsMap,
+  type MountainPreview,
+  type MountainsMapControl,
+} from "@/domains/mountain/components/mountains-map";
 import { useMountains } from "@/domains/mountain/mountain.api";
 import {
   difficultyTier,
@@ -46,7 +58,7 @@ import { useLocation } from "@/hooks/use-location";
 import { cleanText } from "@/lib";
 import { getDistanceInKm } from "@/lib/location";
 
-type FilterType = "map" | "essentials";
+type FilterType = "list" | "essentials";
 
 type SettingsFilter =
   | "alt-0-1000"
@@ -68,28 +80,54 @@ type SettingsFilter =
   | "family-safe"
   | "dog-safe";
 
+// NativeTabs eagerly mounts sibling tab screens at app launch — so this
+// component renders before the user has even visited Mountains. We split
+// the screen into two branches so the unauth path doesn't accidentally fire
+// any protected hooks (or a Redirect) while the tab is just sitting in the
+// background.
 export default function MountainsScreen() {
-  const intl = useIntl();
-  const router = useRouter();
   const { isAuthenticated } = useAuth();
+  if (!isAuthenticated) return <RedirectMountainsScreen />;
+  return <AuthedMountainsScreen />;
+}
+
+// Unauth branch: render nothing until the tab is actually focused, then
+// redirect. Firing the Redirect while mounted-but-unfocused would yank an
+// unauth user from Home over to /join. NativeTabs eagerly mounts sibling
+// tabs, so we need react-navigation's `useIsFocused` (real focus state) —
+// segment-based detection always reports false for non-root tabs.
+function RedirectMountainsScreen() {
+  const isFocused = useIsFocused();
+  if (!isFocused) return null;
+  return <Redirect href="/join" />;
+}
+
+function AuthedMountainsScreen() {
+  const intl = useIntl();
   const { view } = useLocalSearchParams<{ view?: string }>();
   const { data, isPending } = useMountains();
   const [query, setQuery] = useState("");
-  const [viewMode, setViewMode] = useState<"list" | "map">("list");
-  const [filtersSelected, setFiltersSelected] = useState<FilterType[]>(() => {
-    // If view=map query param is present, include "map" filter by default
-    if (view === "map") {
-      return ["map"];
-    }
-    return [];
-  });
+  // Initial view derived from the URL param so a `?view=list` deep-link
+  // doesn't briefly mount the heavyweight MapView before an effect corrects
+  // it. The legacy `?view=map` value is now redundant — map is the default.
+  const startsAsList = view === "list";
+  const [filtersSelected, setFiltersSelected] = useState<FilterType[]>(() =>
+    startsAsList ? ["list"] : [],
+  );
   const { data: userSummits } = useUserChallengeSummits();
-  const { location: userLocation } = useLocation({ prompt: true });
-  const [settingsFilters, setSettingsFilters] = useState<SettingsFilter[]>([
-    "closest-first",
-  ]);
+  // Read-only: the permission prompt lives in the root `LocationSync` so
+  // every authenticated screen sees the same already-resolved location
+  // without re-triggering the OS dialog.
+  const { location: userLocation } = useLocation();
+  // Don't pre-select "closest-first" when the map is the default view: that
+  // filter is disabled in map mode (see `disabled: isMapView`), so the chip
+  // would render as already-selected AND greyed-out on first launch.
+  const [settingsFilters, setSettingsFilters] = useState<SettingsFilter[]>(
+    startsAsList ? ["closest-first"] : [],
+  );
 
-  const isMapView = filtersSelected.includes("map");
+  const isMapView = !filtersSelected.includes("list");
+  const viewMode = isMapView ? "map" : "list";
 
   const settingsGroups: SettingsGroup<SettingsFilter>[] = useMemo(
     () => [
@@ -221,35 +259,30 @@ export default function MountainsScreen() {
     [intl, isMapView],
   );
 
-  // Sync view mode with filter selection
-  useEffect(() => {
-    setViewMode(isMapView ? "map" : "list");
-  }, [isMapView]);
-
   const handleFiltersChange = (newFilters: FilterType[]) => {
-    const isSelectingMap =
-      newFilters.includes("map") && !filtersSelected.includes("map");
-    if (isSelectingMap && !isAuthenticated) {
-      router.push("/join");
-      return;
-    }
     setFiltersSelected(newFilters);
   };
 
-  const filters: Filter<FilterType>[] = useMemo(
+  const filters = useMemo(
     () => [
       {
-        type: "map",
-        name: intl.formatMessage({ defaultMessage: "Map" }),
-        icon: Map,
-      },
-      {
-        type: "essentials",
+        type: "essentials" as const,
         name: intl.formatMessage({ defaultMessage: "Essentials" }),
         showDot: true,
       },
+      // The view-toggle chip reads as the destination, not the current state:
+      // in map mode it says "List" (tap to switch), in list mode it says
+      // "Map" (tap to switch back). Single chip toggles `filtersSelected`'s
+      // "list" entry, which drives `isMapView`.
+      {
+        type: "list" as const,
+        name: isMapView
+          ? intl.formatMessage({ defaultMessage: "List" })
+          : intl.formatMessage({ defaultMessage: "Map" }),
+        icon: isMapView ? List : MapIcon,
+      },
     ],
-    [intl],
+    [intl, isMapView],
   );
 
   const queriedMountains = useMemo(() => {
@@ -384,99 +417,277 @@ export default function MountainsScreen() {
     return userSummits?.summits?.map((s) => s.mountainSlug) || [];
   }, [userSummits]);
 
+  const [showSettings, setShowSettings] = useState(false);
+  // Preview state lives in the screen (not inside MountainsMap) so the card
+  // can be rendered as the final overlay — above the chip cluster — without
+  // a z-index fight inside the map's stacking context.
+  const [preview, setPreview] = useState<MountainPreview | null>(null);
+  const insets = useSafeAreaInsets();
+  // Imperative handle into MountainsMap so the recenter button — rendered in
+  // the screen-level bottom-right cluster, not inside the map — can drive
+  // the camera. Stays null until the map mounts.
+  const mapControlRef = useRef<MountainsMapControl | null>(null);
+
   return (
     <ThemedView className="flex-1">
-      <BlurredScreenHeader>
-        <ThemedText numberOfLines={1} className="text-lg font-medium">
-          <FormattedMessage
-            defaultMessage="Mountains ({count})"
-            values={{ count: filteredMountains?.length ?? 0 }}
-          />
-        </ThemedText>
-      </BlurredScreenHeader>
-      <View style={{ paddingTop: BLURRED_SCREEN_HEADER_HEIGHT }}>
-        <FilterableListHeader
-          onSearchChange={setQuery}
-          filters={filters}
-          filtersSelected={filtersSelected}
-          onFiltersChange={handleFiltersChange}
-          settingsGroups={settingsGroups}
-          settingsSelected={settingsFilters}
-          onSettingsChange={setSettingsFilters}
-        />
+      {/* In map mode the bar floats over the map (absolute + transparent) so
+          the map fills the full screen. In list mode the bar sits in normal
+          flow with the themed background, so the list content scrolls below
+          it. */}
+      <View
+        style={{ paddingTop: insets.top + 8 }}
+        className={twMerge(
+          "z-10 gap-2 px-4 pb-2",
+          isMapView
+            ? "absolute inset-x-0 top-0"
+            : "bg-background",
+        )}
+      >
+        {/* Row 1: search + Filters button on the same row, matched heights via
+            `py-4 + border-2` so they line up exactly. The search gets a solid
+            background since in map mode this whole bar is transparent and the
+            input would otherwise read as floating glyphs over terrain. */}
+        <View className="flex-row items-center gap-2">
+          <View className="flex-1">
+            <SearchInput
+              onChangeText={setQuery}
+              inputClassName="bg-background"
+            />
+          </View>
+          <Pressable
+            onPress={() => setShowSettings(true)}
+            className={twMerge(
+              "flex-row items-center gap-1.5 rounded border-2 px-3 py-4",
+              settingsFilters.length > 0
+                ? "border-primary bg-primary"
+                : "border-border bg-background",
+            )}
+            accessibilityLabel={intl.formatMessage({
+              defaultMessage: "Filters",
+            })}
+          >
+            <LucideIcon
+              icon={SlidersHorizontal}
+              size={20}
+              color={settingsFilters.length > 0 ? "white" : undefined}
+            />
+            <ThemedText
+              className={twMerge(
+                "font-medium",
+                settingsFilters.length > 0 && "text-white",
+              )}
+            >
+              <FormattedMessage defaultMessage="Filters" />
+            </ThemedText>
+            {settingsFilters.length > 0 && (
+              <View className="ml-0.5 size-5 items-center justify-center rounded-full bg-white">
+                <ThemedText className="text-xs font-bold text-primary">
+                  {settingsFilters.length}
+                </ThemedText>
+              </View>
+            )}
+          </Pressable>
+        </View>
+
       </View>
 
-      {viewMode === "list" ? (
-        <FlatList
-          data={filteredMountains}
-          initialNumToRender={10}
-          scrollEventThrottle={16}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-          getItemLayout={(_, index) => ({
-            length: 100,
-            offset: 100 * index,
-            index,
-          })}
-          ListFooterComponent={<View className="h-32" />}
-          ListEmptyComponent={
-            isPending || (data?.length ?? 0) === 0 ? null : (
-              <View className="items-center gap-3 px-6 pt-12">
-                <LucideIcon icon={SearchX} size={32} muted />
-                <ThemedText className="text-center text-muted-foreground">
-                  <FormattedMessage defaultMessage="No mountains match these filters." />
-                </ThemedText>
-                <Pressable
-                  onPress={() => {
-                    setSettingsFilters([]);
-                    setFiltersSelected((prev) =>
-                      prev.filter((f) => f === "map"),
-                    );
-                  }}
+      {/* Floating bottom-right cluster — visible in both modes so the user
+          can flip back and forth. In map mode the recenter button stacks
+          above the chips, aligned to the right edge so it sits over the
+          view-toggle chip. */}
+      <View
+        style={{ bottom: insets.bottom + 16 }}
+        className="absolute right-4 z-10 items-end gap-2"
+      >
+        {isMapView && userLocation && (
+          <Pressable
+            onPress={() => mapControlRef.current?.recenterOnUser()}
+            className="size-11 items-center justify-center rounded-full border-2 border-border bg-background"
+            accessibilityLabel={intl.formatMessage({
+              defaultMessage: "Center map on my location",
+            })}
+          >
+            <LucideIcon icon={LocateFixed} size={18} />
+          </Pressable>
+        )}
+        <View className="flex-row gap-2">
+          {filters.map(({ type, name, showDot, icon }) => {
+            // The view-toggle chip ("list") is not a filter — it always
+            // renders in the neutral chip style and just relabels itself.
+            // Only real filters (Essentials) flip to the primary style when
+            // active.
+            const isViewToggle = type === "list";
+            const isSelected = filtersSelected.includes(type);
+            const showActiveStyle = isSelected && !isViewToggle;
+            return (
+              <Pressable
+                key={type}
+                onPress={() => handleFiltersChange(
+                  isSelected
+                    ? filtersSelected.filter((f) => f !== type)
+                    : [...filtersSelected, type],
+                )}
+                className={twMerge(
+                  "flex-row items-center gap-1 rounded border-2 px-3 py-3",
+                  showActiveStyle
+                    ? "border-primary bg-primary"
+                    : "border-border bg-background",
+                )}
+              >
+                {showDot && (
+                  <LucideIcon
+                    icon={CircleDot}
+                    size={16}
+                    color={showActiveStyle ? "white" : undefined}
+                    primary={!showActiveStyle}
+                  />
+                )}
+                {icon && (
+                  <LucideIcon
+                    icon={icon}
+                    size={16}
+                    color={showActiveStyle ? "white" : undefined}
+                  />
+                )}
+                <ThemedText
+                  className={twMerge(
+                    "font-medium",
+                    showActiveStyle && "text-white",
+                  )}
                 >
-                  <ThemedText className="font-semibold text-primary">
-                    <FormattedMessage defaultMessage="Clear filters" />
+                  {name}
+                </ThemedText>
+              </Pressable>
+            );
+          })}
+        </View>
+      </View>
+
+      <SettingsFilterModal
+        visible={showSettings}
+        onClose={() => setShowSettings(false)}
+        groups={settingsGroups}
+        selected={settingsFilters}
+        onChange={setSettingsFilters}
+      />
+
+      {/* Keep both views mounted across mode switches so MountainsMap doesn't
+          tear down its native Mapbox view (which would lose camera state).
+          Toggling visibility with `display:none` collapses the view to 0×0,
+          which Mapbox interprets as a viewport resize on re-show — that
+          ends up zooming to max. Instead, both views render at full size
+          and we layer them with `zIndex`; the inactive view stays alive
+          AND keeps its real bounds. `pointerEvents=none` on the inactive
+          view stops it from intercepting taps. */}
+      <View className="flex-1">
+        <View
+          style={[
+            ABSOLUTE_FILL,
+            { zIndex: viewMode === "list" ? 1 : 0 },
+          ]}
+          pointerEvents={viewMode === "list" ? "auto" : "none"}
+        >
+          <FlatList
+            data={filteredMountains}
+            initialNumToRender={10}
+            scrollEventThrottle={16}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+            getItemLayout={(_, index) => ({
+              length: 100,
+              offset: 100 * index,
+              index,
+            })}
+            ListFooterComponent={<View className="h-32" />}
+            ListEmptyComponent={
+              isPending || (data?.length ?? 0) === 0 ? null : (
+                <View className="items-center gap-3 px-6 pt-12">
+                  <LucideIcon icon={SearchX} size={32} muted />
+                  <ThemedText className="text-center text-muted-foreground">
+                    <FormattedMessage defaultMessage="No mountains match these filters." />
                   </ThemedText>
-                </Pressable>
+                  <Pressable
+                    onPress={() => {
+                      setSettingsFilters([]);
+                      setFiltersSelected((prev) =>
+                        prev.filter((f) => f === "list"),
+                      );
+                    }}
+                  >
+                    <ThemedText className="font-semibold text-primary">
+                      <FormattedMessage defaultMessage="Clear filters" />
+                    </ThemedText>
+                  </Pressable>
+                </View>
+              )
+            }
+            keyExtractor={({ id }) => id}
+            renderItem={({
+              item: {
+                name,
+                slug,
+                essential,
+                location,
+                height,
+                latitude,
+                longitude,
+                imageUrl,
+              },
+            }) => (
+              <View className="px-6 py-2">
+                <MountainItemList
+                  name={name}
+                  location={location}
+                  imageUrl={imageUrl}
+                  essential={essential}
+                  slug={slug}
+                  latitude={latitude}
+                  longitude={longitude}
+                  height={height}
+                />
               </View>
-            )
-          }
-          keyExtractor={({ id }) => id}
-          renderItem={({
-            item: {
-              name,
-              slug,
-              essential,
-              location,
-              height,
-              latitude,
-              longitude,
-              imageUrl,
+            )}
+          />
+        </View>
+        <View
+          style={[
+            ABSOLUTE_FILL,
+            {
+              zIndex: viewMode === "map" ? 1 : 0,
+              // Fade the map behind the list so it reads as background
+              // context, not competing content. Still visible enough that
+              // you can see roughly where the listed peaks are.
+              opacity: viewMode === "map" ? 1 : 0.1,
             },
-          }) => (
-            <View className="px-6 py-2">
-              <MountainItemList
-                name={name}
-                location={location}
-                imageUrl={imageUrl}
-                essential={essential}
-                slug={slug}
-                latitude={latitude}
-                longitude={longitude}
-                height={height}
-              />
-            </View>
-          )}
-        />
-      ) : (
-        <MountainsMap
-          mountains={filteredMountains || []}
-          summitedSlugs={summitedSlugs}
-          userLocation={userLocation}
-          onMountainPress={(slug) => router.push(`/mountain/${slug}`)}
-          isLoading={isPending}
-        />
-      )}
+          ]}
+          pointerEvents={viewMode === "map" ? "auto" : "none"}
+        >
+          <MountainsMap
+            mountains={filteredMountains || []}
+            summitedSlugs={summitedSlugs}
+            userLocation={userLocation}
+            isLoading={isPending}
+            controlRef={mapControlRef}
+            onPreviewChange={setPreview}
+          />
+        </View>
+      </View>
+
+      {/* Preview card mounts as the LAST overlay so it paints on top of the
+          chip cluster (z-10) and the recenter button. Marker taps inside
+          MountainsMap call back into setPreview here. */}
+      <MountainPreviewCard
+        preview={preview}
+        onClose={() => setPreview(null)}
+      />
     </ThemedView>
   );
 }
+
+const ABSOLUTE_FILL = {
+  position: "absolute" as const,
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+};

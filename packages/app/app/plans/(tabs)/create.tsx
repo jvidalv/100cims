@@ -1,5 +1,5 @@
 import { nextSunday } from "date-fns/nextSunday";
-import { useRouter, Redirect } from "expo-router";
+import { useLocalSearchParams, useRouter, Redirect } from "expo-router";
 import { Check, Heart, Lock, MessageCircle, Users } from "lucide-react-native";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
@@ -19,9 +19,9 @@ import {
   Button,
   LucideIcon,
   SearchInput,
+  ThemedSwitch,
   ThemedText,
   ThemedTextInput,
-  ThemedToggleInput,
   ThemedView,
 } from "@/components/ui/atoms";
 import { ThemedCheckbox } from "@/components/ui/atoms/themed-checkbox";
@@ -45,7 +45,7 @@ import { useUserMe } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
 import { useIsKeyboardVisible } from "@/hooks/use-is-keyboard-visible";
 import { cleanText } from "@/lib";
-import { toLocalDateString } from "@/lib/dates";
+import { parseLocalDateString, toLocalDateString } from "@/lib/dates";
 import { getLocale } from "@/lib/locale";
 
 const StartStep = () => {
@@ -231,30 +231,41 @@ const DetailsStep = ({
       keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}
     >
-      <ThemedTextInput
-        label="Your activity"
-        value={values.title}
-        onChangeText={(title) => onDetailsChange({ ...values, title })}
-      />
-      <ThemedTextInput
-        label="Extra information about your plan"
-        multiline
-        value={values.description}
-        inputClassName="h-[140px]"
-        onChangeText={(description) =>
-          onDetailsChange({ ...values, description })
-        }
-      />
-      <PlanTypeChips
-        value={values.type}
-        onChange={(type) => onDetailsChange({ ...values, type })}
-      />
-      <ThemedToggleInput
-        label={intl.formatMessage({ defaultMessage: "Private plan" })}
-        checked={values.isPrivate}
-        onChecked={(isPrivate) => onDetailsChange({ ...values, isPrivate })}
-      />
       <View className="gap-4">
+        <ThemedText className="text-lg font-medium">
+          <FormattedMessage defaultMessage="Information" />
+        </ThemedText>
+        <ThemedTextInput
+          label="Your activity"
+          value={values.title}
+          onChangeText={(title) => onDetailsChange({ ...values, title })}
+        />
+        <PlanTypeChips
+          value={values.type}
+          onChange={(type) => onDetailsChange({ ...values, type })}
+        />
+        <ThemedTextInput
+          label="Extra information about your plan"
+          multiline
+          value={values.description}
+          inputClassName="h-[140px]"
+          onChangeText={(description) =>
+            onDetailsChange({ ...values, description })
+          }
+        />
+        <ThemedSwitch
+          label={intl.formatMessage({ defaultMessage: "Private plan" })}
+          description={intl.formatMessage({
+            defaultMessage: "Only invited members can see it",
+          })}
+          checked={values.isPrivate}
+          onChecked={(isPrivate) => onDetailsChange({ ...values, isPrivate })}
+        />
+      </View>
+      <View className="gap-4">
+        <ThemedText className="text-lg font-medium">
+          <FormattedMessage defaultMessage="Date" />
+        </ThemedText>
         <ThemedDateInput
           value={values.date}
           onDateValid={(date) => onDetailsChange({ ...values, date })}
@@ -346,13 +357,43 @@ export default function PlanCreatePage() {
   const router = useRouter();
   const intl = useIntl();
   const { isAuthenticated } = useAuth();
+  const { date: dateParam, mountainId: mountainIdParam } =
+    useLocalSearchParams<{ date?: string; mountainId?: string }>();
   const [step, setStep] = useState<Step>(stepOrder[0]);
 
-  const [date, setDate] = useState<Date | null | undefined>(nextSundayDate);
+  // When the create flow is opened from a specific calendar day, seed the
+  // date with that day instead of the default "next Sunday". Validate the
+  // shape strictly so a malformed deep-link (e.g. /plans/create?date=garbage)
+  // falls back to the default instead of poisoning the form with an invalid
+  // Date that would later crash format() on submit.
+  const [date, setDate] = useState<Date | null | undefined>(() => {
+    if (!dateParam || !/^\d{4}-\d{2}-\d{2}$/.test(dateParam)) {
+      return nextSundayDate;
+    }
+    const parsed = parseLocalDateString(dateParam);
+    return Number.isNaN(parsed.getTime()) ? nextSundayDate : parsed;
+  });
   const [startTime, setStartTime] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [mountains, setMountains] = useState<string[]>([]);
+  // Seed via initializer (not useEffect) so the mountain is pre-selected
+  // on first render — avoids an "empty → one selected" flash. Source: the
+  // `?mountainId=…` query param set by the "Create plan" action row on
+  // mountain detail.
+  const [mountains, setMountains] = useState<string[]>(() =>
+    mountainIdParam ? [mountainIdParam] : [],
+  );
+  // The initializer only runs on first mount, but this screen is a
+  // NativeTab and survives navigation (see the reset block on submit
+  // around line 494). When the user enters the create flow again from a
+  // different mountain's "Create plan" action, mountainIdParam changes
+  // but the state doesn't — without this effect the second mountain
+  // wouldn't be pre-selected. We only sync when the param arrives or
+  // changes; we don't reset to `[]` when it goes missing, so a user who
+  // entered without a preselect can still add mountains manually.
+  useEffect(() => {
+    if (mountainIdParam) setMountains([mountainIdParam]);
+  }, [mountainIdParam]);
   const [type, setType] = useState<PlanType>("hike");
   const [isPrivate, setIsPrivate] = useState(false);
   const [users, setUsers] = useState<PeoplePickerUser[]>([]);
@@ -452,6 +493,19 @@ export default function PlanCreatePage() {
 
       const planId = response?.id;
       if (planId) {
+        // The create screen is a NativeTab, not a pushed screen, so its
+        // state survives navigation. Reset every form field before leaving
+        // — otherwise the next "New" tap shows the just-submitted plan's
+        // data still pre-filled. router.dismiss() used to do this for free.
+        setStep(stepOrder[0]);
+        setTitle("");
+        setDescription("");
+        setDate(nextSundayDate);
+        setStartTime(null);
+        setMountains([]);
+        setType("hike");
+        setIsPrivate(false);
+        setUsers([]);
         // This screen is now a NativeTab, not a pushed screen, so dismiss()
         // would no-op. Navigate to the new plan's detail page and push it on
         // top of the tab stack (back-gesture returns to the Plans tab).

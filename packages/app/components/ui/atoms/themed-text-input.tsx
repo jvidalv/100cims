@@ -57,11 +57,22 @@ export const ThemedTextInput: FC<InputProps> = ({
   ).current;
 
   useEffect(() => {
-    Animated.timing(labelPosition, {
+    const animation = Animated.timing(labelPosition, {
       toValue: isFocused || internalValue ? 1 : 0,
       duration: 200,
       useNativeDriver: false,
-    }).start();
+    });
+    animation.start();
+    // Stop the tween + detach listeners on unmount. Without this, if the
+    // input unmounts mid-animation (filter toggle, screen swap, NativeTabs
+    // mount/unmount cycle), the next animation frame fires `__callListeners`
+    // on the now-freed AnimatedValue and crashes with
+    // `undefined is not a function` from AnimatedNode.js.
+    return () => {
+      animation.stop();
+      labelPosition.stopAnimation();
+      labelPosition.removeAllListeners();
+    };
   }, [value, isFocused, labelPosition, defaultValue, internalValue]);
 
   const style = {

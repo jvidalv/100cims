@@ -153,8 +153,8 @@ const RatingRow = ({
       : null;
   const bubbleClass =
     size === "sm"
-      ? "size-10 items-center justify-center rounded-full border-2 border-muted-foreground/50"
-      : "size-12 items-center justify-center rounded-full border-2 border-muted-foreground/50";
+      ? "size-10 items-center justify-center rounded-full border-2 border-border"
+      : "size-12 items-center justify-center rounded-full border-2 border-border";
   const iconSize = size === "sm" ? 20 : 24;
 
   return (

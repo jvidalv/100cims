@@ -164,14 +164,14 @@
   "4YNAwW": {
     "defaultMessage": "Searching all mountains"
   },
+  "4iwFM7": {
+    "defaultMessage": "Center map on my location"
+  },
   "4tflZQ": {
     "defaultMessage": "Delete plan?"
   },
   "4wpUNc": {
     "defaultMessage": "Or"
-  },
-  "53YYSH": {
-    "defaultMessage": "Cancel plan"
   },
   "5I/9L2": {
     "defaultMessage": "{name} is on your saved mountains list."
@@ -193,6 +193,9 @@
   },
   "5mhKmC": {
     "defaultMessage": "{percent}% completed"
+  },
+  "6338Oc": {
+    "defaultMessage": "Comments ({count})"
   },
   "6Jl56G": {
     "defaultMessage": "Safe for kids"
@@ -233,11 +236,17 @@
   "89eDMC": {
     "defaultMessage": "Picat"
   },
+  "8HDT+F": {
+    "defaultMessage": "Mark as summited again"
+  },
   "8N2GKa": {
     "defaultMessage": "Your cart is empty."
   },
   "8Rj4Wg": {
     "defaultMessage": "Copy message"
+  },
+  "8mRNBD": {
+    "defaultMessage": "Previous month"
   },
   "9+Ddtu": {
     "defaultMessage": "Next"
@@ -257,9 +266,6 @@
   "9MidH4": {
     "defaultMessage": "Challenge"
   },
-  "9RZWmW": {
-    "defaultMessage": "Participants will be notified."
-  },
   "9Syri2": {
     "defaultMessage": "Stay in the loop"
   },
@@ -274,6 +280,9 @@
   },
   "9yslhD": {
     "defaultMessage": "Yes, I'm sure"
+  },
+  "9zQ6b/": {
+    "defaultMessage": "Could not load image, try another one."
   },
   "A4HOMT": {
     "defaultMessage": "Select meeting time"
@@ -353,6 +362,9 @@
   "CFPRDL": {
     "defaultMessage": "Create plan"
   },
+  "CLLYQK": {
+    "defaultMessage": "Export your summits?"
+  },
   "D0uMjm": {
     "defaultMessage": "Difficulty reflects the easiest route up."
   },
@@ -398,6 +410,9 @@
   "E92c/O": {
     "defaultMessage": "Last {count}"
   },
+  "EFWGgA": {
+    "defaultMessage": "Maps"
+  },
   "EI6p6o": {
     "defaultMessage": "Mountain updated!"
   },
@@ -412,6 +427,9 @@
   },
   "Ep56/Z": {
     "defaultMessage": "Longitude must be between -180 and 180"
+  },
+  "Er08ho": {
+    "defaultMessage": "Only invited members can see it"
   },
   "F4gyn3": {
     "defaultMessage": "Clear filters"
@@ -446,6 +464,9 @@
   "G7O3x8": {
     "defaultMessage": "This removes the plan for everyone. Continue?"
   },
+  "GIFFBZ": {
+    "defaultMessage": "Add photo"
+  },
   "GQNYob": {
     "defaultMessage": "Share link"
   },
@@ -469,6 +490,9 @@
   },
   "H5v61s": {
     "defaultMessage": "Set plan date"
+  },
+  "HFQgWE": {
+    "defaultMessage": "You'll get a CSV file — a spreadsheet you can open in Excel, Numbers or Google Sheets."
   },
   "HMQOVv": {
     "defaultMessage": "Fresh new look. You can now edit summits, create community challenges, and add your own mountains. Share summits and your profile straight to social."
@@ -560,6 +584,9 @@
   "LwSvQR": {
     "defaultMessage": "Couldn't export your summits"
   },
+  "M6FEJy": {
+    "defaultMessage": "Mark as summited"
+  },
   "MJ2jZQ": {
     "defaultMessage": "Total"
   },
@@ -638,6 +665,12 @@
   "Pe0ogR": {
     "defaultMessage": "Theme"
   },
+  "PqmLVn": {
+    "defaultMessage": "Next month"
+  },
+  "PshMiu": {
+    "defaultMessage": "Open plans"
+  },
   "Q0rG1w": {
     "defaultMessage": "My people"
   },
@@ -689,8 +722,14 @@
   "SQJto2": {
     "defaultMessage": "Sign in"
   },
+  "SVwJTM": {
+    "defaultMessage": "Export"
+  },
   "SWMHO+": {
     "defaultMessage": "Go home"
+  },
+  "SyqyPU": {
+    "defaultMessage": "All summits ({count})"
   },
   "T0vl24": {
     "defaultMessage": "My mountains ({count})"
@@ -733,6 +772,9 @@
   },
   "UP7WWl": {
     "defaultMessage": "{summited} of {total} essentials"
+  },
+  "UV5XeF": {
+    "defaultMessage": "Map unavailable — missing access token."
   },
   "UXY08P": {
     "defaultMessage": "Start the conversation"
@@ -785,11 +827,11 @@
   "XYsvl5": {
     "defaultMessage": "Delete message"
   },
-  "Xai36g": {
-    "defaultMessage": "Cancel this plan?"
-  },
   "XjNXDk": {
     "defaultMessage": "Sign in to join the plan and chat"
+  },
+  "XpSkO/": {
+    "defaultMessage": "Still loading"
   },
   "XqXMjU": {
     "defaultMessage": "View full thread"
@@ -802,9 +844,6 @@
   },
   "YDCrG0": {
     "defaultMessage": "Your Apple email hides your address. Give us a real one so we can reach you."
-  },
-  "YQ7dY3": {
-    "defaultMessage": "Latest summits ({count})"
   },
   "YdQ8KR": {
     "defaultMessage": "No results, please change the search."
@@ -823,9 +862,6 @@
   },
   "Z14ALL": {
     "defaultMessage": "Write a reply…"
-  },
-  "ZPelWj": {
-    "defaultMessage": "Mountains ({count})"
   },
   "ZQv4i6": {
     "defaultMessage": "Based on {count} from summiters, this mountain is rated {label} for dogs."
@@ -1019,6 +1055,9 @@
   "hd9nqu": {
     "defaultMessage": "New challenge"
   },
+  "hkJuAZ": {
+    "defaultMessage": "Wikiloc"
+  },
   "hx5eQE": {
     "defaultMessage": "Edit mountain"
   },
@@ -1100,6 +1139,9 @@
   "nNIocP": {
     "defaultMessage": "{count} cims"
   },
+  "nOk9mh": {
+    "defaultMessage": "List"
+  },
   "nYqRsC": {
     "defaultMessage": "Create your first plan"
   },
@@ -1133,9 +1175,6 @@
   "p/Xd3M": {
     "defaultMessage": "Share with a friend"
   },
-  "pNTyiX": {
-    "defaultMessage": "Keep"
-  },
   "pONqz8": {
     "defaultMessage": "First name"
   },
@@ -1147,6 +1186,9 @@
   },
   "qR1oV/": {
     "defaultMessage": "Add mountain"
+  },
+  "qXIV9W": {
+    "defaultMessage": "Remove photo"
   },
   "qbkIE0": {
     "defaultMessage": "All plans"
@@ -1162,9 +1204,6 @@
   },
   "qq3cjt": {
     "defaultMessage": "You're not ranked yet. Summit a mountain to appear on the hiscores."
-  },
-  "qvc9uM": {
-    "defaultMessage": "This cannot be undone."
   },
   "r+6lRr": {
     "defaultMessage": "You haven't summited any mountains yet."
@@ -1204,6 +1243,9 @@
   },
   "rzCvRt": {
     "defaultMessage": "Family"
+  },
+  "sJCEnQ": {
+    "defaultMessage": "Hold on a moment, then try again."
   },
   "sp5kfQ": {
     "defaultMessage": "Trail"
@@ -1336,6 +1378,9 @@
   },
   "yTrowV": {
     "defaultMessage": "Got it!"
+  },
+  "yi0MYf": {
+    "defaultMessage": "Participants will be notified. This cannot be undone."
   },
   "ykQinU": {
     "defaultMessage": "Failed to delete challenge"
