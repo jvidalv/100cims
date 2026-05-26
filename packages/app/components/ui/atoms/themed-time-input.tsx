@@ -46,16 +46,20 @@ export const ThemedTimeInput = ({
   const [showPicker, setShowPicker] = useState(false);
   const [pickerDraft, setPickerDraft] = useState<Date | null>(null);
 
-  const handleChange = (event: { type: string }, selected?: Date) => {
-    if (event.type === "set" && selected) {
-      if (Platform.OS === "ios") {
-        setPickerDraft(selected);
-      } else {
-        onChange(formatHM(selected));
-      }
-    } else if (event.type === "dismissed") {
-      setShowPicker(false);
-    }
+  // Two distinct flows wired below:
+  //  - iOS spinner inside our BottomDrawer: every wheel tick fires
+  //    `onValueChange`; we stash a draft and commit on the Done button.
+  //  - Android default modal: a single confirm/cancel — `onValueChange`
+  //    fires on Done (commit + close), `onDismiss` fires on Cancel.
+  const handleIosValueChange = (_event: unknown, selected: Date) => {
+    setPickerDraft(selected);
+  };
+  const handleAndroidValueChange = (_event: unknown, selected: Date) => {
+    setShowPicker(false);
+    onChange(formatHM(selected));
+  };
+  const handleAndroidDismiss = () => {
+    setShowPicker(false);
   };
 
   const handleIosDone = () => {
@@ -106,7 +110,7 @@ export const ThemedTimeInput = ({
             value={pickerDraft ?? parseHM(value)}
             mode="time"
             display="spinner"
-            onChange={handleChange}
+            onValueChange={handleIosValueChange}
           />
           <Button
             intent="success"
@@ -122,12 +126,8 @@ export const ThemedTimeInput = ({
             value={parseHM(value)}
             mode="time"
             display="default"
-            onChange={(event, selected) => {
-              if (Platform.OS === "android") {
-                setShowPicker(false);
-              }
-              handleChange(event, selected);
-            }}
+            onValueChange={handleAndroidValueChange}
+            onDismiss={handleAndroidDismiss}
           />
         )
       )}

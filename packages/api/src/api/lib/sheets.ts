@@ -1,12 +1,14 @@
 import { google } from "googleapis";
 
+import { requireEnv } from "@/api/lib/env";
+
 const getAuth = () =>
   new google.auth.GoogleAuth({
     credentials: {
       client_email: process.env.SHEETS_CLIENT_EMAIL,
-      private_key: Buffer.from(process.env.SHEETS_PRIVATE_KEY!, "base64")
+      private_key: Buffer.from(requireEnv("SHEETS_PRIVATE_KEY"), "base64")
         .toString("utf-8")
-        ?.replace(/\\n/g, "\n"),
+        .replace(/\\n/g, "\n"),
     },
     scopes: ["https://www.googleapis.com/auth/spreadsheets"],
   });

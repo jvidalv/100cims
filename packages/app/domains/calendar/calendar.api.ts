@@ -4,38 +4,14 @@ import { useAuth } from "@/components/providers/auth-provider";
 import { Colors } from "@/constants/colors";
 import apiClient from "@/lib/api-client";
 import { calendarKeys } from "@/lib/query-keys";
+import type { paths } from "@/types/api";
 
+// Discriminated union derived from the API's OpenAPI schema. The mobile
+// rendering switches on `type`, so adding a new event variant on the
+// backend produces an exhaustiveness error here without needing a local
+// type to be kept in lockstep.
 export type CalendarEvent =
-  // Discriminated union — extend with new event types as they're added on the
-  // backend. The mobile rendering switches on `type`, so existing branches
-  // never change when a new event is appended.
-  | {
-      type: "summit";
-      date: string;
-      id: string;
-      mountainName: string;
-      mountainSlug: string;
-      mountainHeight: string;
-      mountainImageUrl: string | null;
-    }
-  | {
-      type: "plan";
-      date: string;
-      id: string;
-      title: string;
-      status: "open" | "completed" | "canceled";
-      planType: "hike" | "trail" | "bike" | null;
-      isPrivate: boolean;
-      isCreator: boolean;
-      imageUrl: string | null;
-      mountains: { imageUrl: string | null }[];
-      users: {
-        id: string;
-        firstName: string | null;
-        lastName: string | null;
-        imageUrl: string | null;
-      }[];
-    };
+  paths["/api/protected/user/calendar"]["get"]["responses"][200]["content"]["application/json"]["message"]["events"][number];
 
 export type CalendarEventType = CalendarEvent["type"];
 
@@ -70,7 +46,7 @@ export const useCalendarEvents = ({
         { params: { query: { from, to } } },
       );
       if (error) throw error;
-      return data.message.events as CalendarEvent[];
+      return data.message.events;
     },
   });
 };

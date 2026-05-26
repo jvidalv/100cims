@@ -1,5 +1,6 @@
 import { isToday } from "date-fns/isToday";
 import { Link } from "expo-router";
+import { memo } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { TouchableOpacity, View } from "react-native";
 
@@ -12,17 +13,12 @@ import { formatDayDistance, parseLocalDateString } from "@/lib/dates";
 
 import type { PlanType } from "@/domains/plan/plan.api";
 
-export const PlanItemList = ({
-  id,
-  title,
-  imageUrl,
-  startDate,
-  status,
-  type,
-  isPrivate,
-  mountains,
-  users,
-}: {
+// memo() pays off because we feed this row from a paginated cache that
+// preserves item identity across renders (`useInfiniteQuery` + `.flatMap`).
+// With a stable identity FlatList's renderItem now reuses the same React
+// fibers when the parent re-renders, fixing the "large list slow to
+// update" warning on long plan feeds.
+type PlanItemListProps = {
   id: string;
   title: string;
   /** Custom plan cover image. Takes precedence over the mountain collage. */
@@ -40,7 +36,19 @@ export const PlanItemList = ({
     lastName?: string | null;
     imageUrl?: string | null;
   }[];
-}) => {
+};
+
+const PlanItemListBase = ({
+  id,
+  title,
+  imageUrl,
+  startDate,
+  status,
+  type,
+  isPrivate,
+  mountains,
+  users,
+}: PlanItemListProps) => {
   const { data } = usePlanChatUnread();
   const hasUnreadMessages = data?.includes(id);
 
@@ -148,6 +156,8 @@ export const PlanItemList = ({
     </Link>
   );
 };
+
+export const PlanItemList = memo(PlanItemListBase);
 
 export const PlanItemListSkeleton = () => (
   <View className="flex flex-row items-center gap-4">

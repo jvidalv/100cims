@@ -45,7 +45,7 @@ export default function CommunityChallengeEditPage() {
   const { data: user } = useUserMe();
 
   const { data: challenge, isLoading } = useCommunityChallengeDetail(
-    { id: id! },
+    { id: id ?? "" },
     { enabled: !!id },
   );
 
@@ -76,7 +76,7 @@ export default function CommunityChallengeEditPage() {
   }, [challenge, formData, initializeFromChallenge]);
 
   const handleUpdate = async () => {
-    if (!formData) return;
+    if (!formData || !id) return;
 
     if (!formData.name.trim()) {
       return Alert.alert(
@@ -104,7 +104,7 @@ export default function CommunityChallengeEditPage() {
 
     try {
       await mutateAsync({
-        id: id!,
+        id,
         name: formData.name.trim(),
         description: formData.description.trim() || undefined,
         country: formData.country.trim(),

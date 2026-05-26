@@ -37,6 +37,8 @@ export default function MountainSlugLayout() {
     <NativeTabs
       disableTransparentOnScrollEdge
       tintColor={Colors.light.primary}
+      // Keep tab labels visible on Android (matches main tab bar).
+      labelVisibilityMode="labeled"
     >
       {/* `(details)` is a route GROUP — invisible in URLs, so this tab
           stays at `/mountain/[slug]` while letting "All summits" and any

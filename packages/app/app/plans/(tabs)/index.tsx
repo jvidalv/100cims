@@ -1,8 +1,13 @@
-import { Link } from "expo-router";
+import { Link, useIsFocused } from "expo-router";
 import { Backpack, CalendarDays, MapPin } from "lucide-react-native";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { ActivityIndicator, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  type ListRenderItem,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import Animated from "react-native-reanimated";
 import { twMerge } from "tailwind-merge";
 
@@ -76,11 +81,16 @@ export default function PlansScreen() {
     void askPushPermission();
   }, [isAuthenticated, askPushPermission]);
 
+  // NativeTabs eager-mounts the Plans list alongside the Create sub-tab,
+  // so an unguarded `markAsVisited()` would fire even when the user lands
+  // on /plans/create directly. Gate on focus so the visit is recorded
+  // only when this screen is actually on top.
+  const isFocused = useIsFocused();
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && isFocused) {
       markAsVisited();
     }
-  }, [isAuthenticated, markAsVisited]);
+  }, [isAuthenticated, isFocused, markAsVisited]);
 
   const rawPlans = data?.pages.flatMap((p) => p.items) ?? [];
 
@@ -126,6 +136,26 @@ export default function PlansScreen() {
         icon: Backpack,
       },
     ];
+
+  // Stable renderItem identity so PlanItemList instances aren't forced to
+  // re-mount on every parent render (the inline-arrow version triggered
+  // `VirtualizedList: large list slow to update`).
+  const renderItem = useCallback<ListRenderItem<(typeof plans)[number]>>(
+    ({ item }) => (
+      <PlanItemList
+        id={item.id}
+        title={item.title}
+        imageUrl={item.imageUrl}
+        status={item.status}
+        type={item.type}
+        startDate={item.startDate}
+        isPrivate={item.isPrivate}
+        mountains={item.mountains}
+        users={item.users}
+      />
+    ),
+    [],
+  );
 
   return (
     <ThemedView className="flex-1">
@@ -230,19 +260,7 @@ export default function PlansScreen() {
             <View className="h-32" />
           </>
         }
-        renderItem={({ item }) => (
-          <PlanItemList
-            id={item.id}
-            title={item.title}
-            imageUrl={item.imageUrl}
-            status={item.status}
-            type={item.type}
-            startDate={item.startDate}
-            isPrivate={item.isPrivate}
-            mountains={item.mountains?.map(({ imageUrl }) => ({ imageUrl }))}
-            users={item.users}
-          />
-        )}
+        renderItem={renderItem}
       />
       <PushPermissionDialog
         isOpen={isPushPromptOpen}

@@ -29,6 +29,10 @@ export default function PlansTabsLayout() {
       hidden={isOnCreate}
       disableTransparentOnScrollEdge
       tintColor={Colors.light.primary}
+      // Android default collapses inactive tab labels to icons (Material
+      // BottomNavigationView). "labeled" keeps every label visible and
+      // matches iOS. Same setting on the main `(tabs)/_layout.tsx`.
+      labelVisibilityMode="labeled"
     >
       <NativeTabs.Trigger name="index">
         <NativeTabs.Trigger.Icon sf="list.bullet" md="list" />

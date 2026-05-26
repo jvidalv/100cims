@@ -1,7 +1,7 @@
 import { format } from "date-fns/format";
-import { useRouter } from "expo-router";
+import { useIsFocused, useRouter } from "expo-router";
 import { Backpack, Calendar, Plus } from "lucide-react-native";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useIntl } from "react-intl";
 import {
   FlatList,
@@ -14,6 +14,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { CalendarEventRow, CalendarMonth } from "@/components/calendar";
+import { useAuth } from "@/components/providers/auth-provider";
 import { ThemedText, ThemedView } from "@/components/ui/atoms";
 import { ActionRow } from "@/components/ui/molecules";
 import {
@@ -21,6 +22,7 @@ import {
   type CalendarEventType,
   useCalendarEvents,
 } from "@/domains/calendar/calendar.api";
+import { useMarkPlansAsVisited } from "@/domains/plan/plan.api";
 import {
   buildCalendarRange,
   type CalendarMonthData,
@@ -40,6 +42,18 @@ export default function CalendarScreen() {
   const intl = useIntl();
   const router = useRouter();
   const { top: topInset } = useSafeAreaInsets();
+  // Mark new-plans badge as seen every time this tab gains focus. The badge
+  // (rendered on the calendar bottom-tab) is driven by `useNewPlansCount`
+  // which reads from the server; calling `mutate()` POSTs the visit and
+  // invalidates the count so the badge disappears immediately. The
+  // mutation no-ops when unauthenticated, but we still gate here to avoid
+  // a useless round trip on every tab focus before sign-in.
+  const { isAuthenticated } = useAuth();
+  const isFocused = useIsFocused();
+  const { mutate: markPlansVisited } = useMarkPlansAsVisited();
+  useEffect(() => {
+    if (isFocused && isAuthenticated) markPlansVisited();
+  }, [isFocused, isAuthenticated, markPlansVisited]);
   const months = useMemo(
     () => buildCalendarRange(MONTHS_BACK, MONTHS_FORWARD),
     [],
@@ -92,9 +106,15 @@ export default function CalendarScreen() {
 
   // Track the currently-visible month in a ref (not state) so we can skip
   // no-op animated scrolls without causing a re-render on every swipe. The
-  // initial value matches the FlatList's initialScrollIndex.
-  const visibleMonthIndexRef = useRef(MONTHS_BACK);
-  const onMomentumScrollEnd = useCallback(
+  // initial value must match the FlatList's actual starting index — on
+  // Android we work around the pagingEnabled+initialScrollIndex bug by
+  // starting at 0 and scrolling to MONTHS_BACK inside onListLayout, so the
+  // ref starts at 0 there and is corrected once that scroll fires.
+  const visibleMonthIndexRef = useRef(isAndroid ? 0 : MONTHS_BACK);
+  // Update on both momentum and drag-end: slow finger-released-at-rest swipes
+  // on Android don't always fire onMomentumScrollEnd, which would leave the
+  // ref stale and re-introduce the same-month-tap twitch this guards against.
+  const updateVisibleMonthFromScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
       if (pageHeight === 0) return;
       visibleMonthIndexRef.current = Math.round(
@@ -105,11 +125,15 @@ export default function CalendarScreen() {
   );
 
   // Android workaround for the `pagingEnabled` + `initialScrollIndex` bug.
+  // After the corrective scroll lands, the ref also has to catch up — it was
+  // initialized to 0 on Android (the actual starting index), so leave it stale
+  // and the first same-month tap would re-trigger the twitch.
   const onListLayoutOnce = useRef(false);
   const onListLayout = useCallback(() => {
     if (!isAndroid || onListLayoutOnce.current) return;
     onListLayoutOnce.current = true;
     listRef.current?.scrollToIndex({ index: MONTHS_BACK, animated: false });
+    visibleMonthIndexRef.current = MONTHS_BACK;
   }, []);
 
   // Tapping a day selects it and, only if the day belongs to a different
@@ -220,7 +244,8 @@ export default function CalendarScreen() {
             initialNumToRender={3}
             maxToRenderPerBatch={3}
             onLayout={onListLayout}
-            onMomentumScrollEnd={onMomentumScrollEnd}
+            onMomentumScrollEnd={updateVisibleMonthFromScroll}
+            onScrollEndDrag={updateVisibleMonthFromScroll}
             renderItem={renderMonth}
           />
         )}

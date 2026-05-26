@@ -41,22 +41,19 @@ const SILENT_PATTERNS: RegExp[] = [
 // catch noise no matter which shape RN's logger delivers it in.
 const extractMessages = (input: unknown): string[] => {
   if (typeof input === "string") return [input];
-  if (input && typeof input === "object") {
-    const out: string[] = [];
-    const obj = input as {
-      message?: unknown;
-      stack?: unknown;
-      toString?: () => string;
-    };
-    if (typeof obj.message === "string") out.push(obj.message);
-    if (typeof obj.stack === "string") out.push(obj.stack);
-    if (typeof obj.toString === "function") {
-      const s = obj.toString();
-      if (s && s !== "[object Object]") out.push(s);
-    }
-    return out;
+  if (!input || typeof input !== "object") return [];
+  const out: string[] = [];
+  if ("message" in input && typeof input.message === "string") {
+    out.push(input.message);
   }
-  return [];
+  if ("stack" in input && typeof input.stack === "string") {
+    out.push(input.stack);
+  }
+  const stringified = String(input);
+  if (stringified && stringified !== "[object Object]") {
+    out.push(stringified);
+  }
+  return out;
 };
 
 const isMapboxNoise = (input: unknown): boolean => {
@@ -70,13 +67,14 @@ const argsMatchNoise = (args: unknown[]): boolean => args.some(isMapboxNoise);
 // re-evaluates this module) doesn't re-wrap `console.error`/`console.warn`
 // on top of the existing wrappers — each cycle would otherwise stack a new
 // layer, growing closure depth until logs run through N nested wrappers.
-const MARKER = "__mapboxNoiseInstalled" as const;
-type GlobalWithMarker = typeof globalThis & { [MARKER]?: boolean };
+declare global {
+  // eslint-disable-next-line no-var
+  var __mapboxNoiseInstalled: boolean | undefined;
+}
 
 export const silenceMapboxNoise = () => {
-  const g = globalThis as GlobalWithMarker;
-  if (!__DEV__ || g[MARKER]) return;
-  g[MARKER] = true;
+  if (!__DEV__ || globalThis.__mapboxNoiseInstalled) return;
+  globalThis.__mapboxNoiseInstalled = true;
 
   // Hide the LogBox red/yellow overlays for these specific strings. LogBox's
   // matcher takes both substrings and RegExps.

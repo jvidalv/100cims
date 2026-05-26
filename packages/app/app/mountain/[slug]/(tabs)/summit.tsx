@@ -8,6 +8,7 @@ import { useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Alert, Image, ScrollView, TouchableOpacity, View } from "react-native";
 
+import { useAuth } from "@/components/providers/auth-provider";
 import { queryClient } from "@/components/providers/query-client-provider";
 import {
   ActivityIndicator,
@@ -43,6 +44,7 @@ export default function SummitMountainScreen() {
   // reads from the URL directly, so it works for both tab-bar taps and
   // in-page Link navigation.
   const { slug } = useGlobalSearchParams<{ slug: string }>();
+  const { isAuthenticated } = useAuth();
   const { mutateAsync, isPending } = useSummitPost(slug);
   const { data: mountains } = useMountains();
   const { data: user } = useUserMe();
@@ -73,8 +75,14 @@ export default function SummitMountainScreen() {
   const mountain = mountains?.find((mountain) => slug === mountain.slug);
 
   // Tabs mount eagerly, so this screen can render before useMountains /
-  // useUserMe have resolved. Distinguish loading (mountains still pending,
-  // show spinner) from "no such mountain" (404) and "not logged in" (redirect).
+  // useUserMe have resolved. Distinguish loading (still pending, show
+  // spinner), "not logged in" (redirect to /join), and "no such mountain"
+  // (404). `isAuthenticated` disambiguates: when it's false we KNOW
+  // `useUserMe` will never produce a user, so we short-circuit straight
+  // to /join instead of spinning forever.
+  if (!isAuthenticated) {
+    return <Redirect href="/join" />;
+  }
   if (!mountains || !user) {
     return (
       <ThemedView className="flex-1 items-center justify-center">
@@ -82,7 +90,6 @@ export default function SummitMountainScreen() {
       </ThemedView>
     );
   }
-
   if (!mountain) {
     return <Redirect href="/+not-found" />;
   }

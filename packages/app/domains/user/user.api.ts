@@ -118,12 +118,17 @@ export const useUserAllSummits = (
   });
 };
 
-export const useUserOneGet = ({ userId }: { userId: string }) => {
+export const useUserOneGet = ({
+  userId,
+}: {
+  userId: string | undefined;
+}) => {
   const props = useQuery({
-    queryKey: userKeys.one(userId),
+    queryKey: userKeys.one(userId ?? ""),
+    enabled: !!userId,
     queryFn: async () => {
       const { data, error } = await apiClient.GET("/api/public/user/one", {
-        params: { query: { userId } },
+        params: { query: { userId: userId ?? "" } },
       });
       if (error) throw error;
       return data.message;
@@ -161,14 +166,19 @@ export const useAnyUserSummits = ({
  * loading 500+ cards up front. The legacy `useAnyUserSummits` stays for
  * any caller still on the old non-paginated endpoint.
  */
-export const useAnyUserAllSummits = ({ userId }: { userId: string }) =>
+export const useAnyUserAllSummits = ({
+  userId,
+}: {
+  userId: string | undefined;
+}) =>
   useInfiniteQuery({
-    queryKey: userKeys.summitsByIdAll(userId),
+    queryKey: userKeys.summitsByIdAll(userId ?? ""),
+    enabled: !!userId,
     initialPageParam: 1,
     queryFn: async ({ pageParam }) => {
       const { data, error } = await apiClient.GET(
         "/api/public/user/summits/all",
-        { params: { query: { userId, page: pageParam } } },
+        { params: { query: { userId: userId ?? "", page: pageParam } } },
       );
       if (error) throw error;
       return data.message;
@@ -177,13 +187,18 @@ export const useAnyUserAllSummits = ({ userId }: { userId: string }) =>
       last.pagination.hasMore ? last.pagination.page + 1 : undefined,
   });
 
-export const useUserProfile = ({ userId }: { userId: string }) => {
+export const useUserProfile = ({
+  userId,
+}: {
+  userId: string | undefined;
+}) => {
   const props = useQuery({
-    queryKey: userKeys.profile(userId),
+    queryKey: userKeys.profile(userId ?? ""),
+    enabled: !!userId,
     queryFn: async () => {
       const { data, error } = await apiClient.GET(
         "/api/public/user/user-profile",
-        { params: { query: { userId } } },
+        { params: { query: { userId: userId ?? "" } } },
       );
       if (error) throw error;
       return data.message;

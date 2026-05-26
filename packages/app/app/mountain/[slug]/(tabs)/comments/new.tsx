@@ -94,9 +94,10 @@ export default function MountainCommentScreen() {
         selectionLimit: remaining,
       });
       if (!results) return;
-      const next = results
-        .filter((r) => r.optimized.base64)
-        .map((r) => ({ uri: r.picked.uri, value: r.optimized.base64! }));
+      const next = results.flatMap((r) => {
+        if (!r.optimized.base64) return [];
+        return [{ uri: r.picked.uri, value: r.optimized.base64 }];
+      });
       if (next.length === 0) return;
       setImages((prev) => [...prev, ...next].slice(0, MAX_IMAGES));
     } catch {

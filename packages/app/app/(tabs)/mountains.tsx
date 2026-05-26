@@ -51,6 +51,7 @@ import {
 import { useMountains } from "@/domains/mountain/mountain.api";
 import {
   difficultyTier,
+  isDifficultyTierKey,
   safetyTier,
   type DifficultyTierKey,
 } from "@/domains/mountain/rating-tiers";
@@ -387,7 +388,8 @@ function AuthedMountainsScreen() {
     const diffTiers = new Set<DifficultyTierKey>(
       settingsFilters
         .filter((f) => f.startsWith("diff-"))
-        .map((f) => f.slice("diff-".length) as DifficultyTierKey),
+        .map((f) => f.slice("diff-".length))
+        .filter(isDifficultyTierKey),
     );
     if (diffTiers.size > 0) {
       filtered = filtered.filter((m) => {

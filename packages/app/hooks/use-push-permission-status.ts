@@ -2,7 +2,7 @@ import * as Notifications from "expo-notifications";
 import { useEffect, useState } from "react";
 import { AppState } from "react-native";
 
-export type PushPermissionStatus = "granted" | "denied" | "undetermined";
+export type PushPermissionStatus = Notifications.PermissionStatus;
 
 /**
  * Reactive read of the OS push-notification permission. Re-checks whenever the
@@ -18,7 +18,7 @@ export const usePushPermissionStatus = (): PushPermissionStatus | null => {
     const read = async () => {
       const result = await Notifications.getPermissionsAsync();
       if (cancelled) return;
-      setStatus(result.status as PushPermissionStatus);
+      setStatus(result.status);
     };
 
     void read();

@@ -207,6 +207,15 @@ export function MountainsMap({
             ? `${m.name.slice(0, LABEL_NAME_MAX - 1)}…`
             : m.name;
         const label = `${truncatedName} (${m.height}m)`;
+        // Single-priority colour for the whole dot (fill + border share
+        // it). Summited wins outright — if you've climbed it, the dot is
+        // fully emerald regardless of essential-ness. Otherwise essential
+        // = red, default = gray.
+        const dotColor = isSummited
+          ? COLOR_SUMMITED
+          : m.essential
+            ? COLOR_ESSENTIAL
+            : COLOR_DEFAULT;
         return {
           type: "Feature",
           // Mapbox needs a stable id (number or string) for cluster math.
@@ -235,20 +244,8 @@ export function MountainsMap({
             // whether the cluster is fully completed.
             isSummitedNum: isSummited ? 1 : 0,
             label,
-            // Two independent color channels:
-            //  • `fillColor` encodes essential-ness only — essential peaks
-            //    are red, everything else is the neutral gray. Summited
-            //    status doesn't affect the fill.
-            //  • `strokeColor`: summited wins. So an essential summited peak
-            //    is red-filled with an emerald border, signalling both at
-            //    once. Essential not-yet-summited stays full red; summited
-            //    non-essential is gray + emerald; default is gray + gray.
-            fillColor: m.essential ? COLOR_ESSENTIAL : COLOR_DEFAULT,
-            strokeColor: isSummited
-              ? COLOR_SUMMITED
-              : m.essential
-                ? COLOR_ESSENTIAL
-                : COLOR_DEFAULT,
+            fillColor: dotColor,
+            strokeColor: dotColor,
           },
         };
       }),

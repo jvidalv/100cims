@@ -45,22 +45,26 @@ const encodeCursor = (c: Cursor): string =>
 const decodeCursor = (raw: string | undefined): Cursor | null => {
   if (!raw) return null;
   try {
-    const parsed = JSON.parse(
+    const parsed: unknown = JSON.parse(
       Buffer.from(raw, "base64url").toString("utf8"),
-    ) as unknown;
+    );
     if (typeof parsed !== "object" || parsed === null) return null;
-    if (
-      "createdAt" in parsed &&
-      "id" in parsed &&
-      typeof (parsed as NewestOldestCursor).createdAt === "string" &&
-      typeof (parsed as NewestOldestCursor).id === "string"
-    ) {
-      return parsed as Cursor;
+    if (!("createdAt" in parsed) || typeof parsed.createdAt !== "string") {
+      return null;
     }
+    if (!("id" in parsed) || typeof parsed.id !== "string") return null;
+    if ("upvoteCount" in parsed) {
+      if (typeof parsed.upvoteCount !== "number") return null;
+      return {
+        upvoteCount: parsed.upvoteCount,
+        createdAt: parsed.createdAt,
+        id: parsed.id,
+      };
+    }
+    return { createdAt: parsed.createdAt, id: parsed.id };
   } catch {
-    /* ignore */
+    return null;
   }
-  return null;
 };
 
 // `sql` helper builds the LEFT JOIN-free "has summited" check using EXISTS.

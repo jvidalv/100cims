@@ -92,6 +92,14 @@ function Content() {
             "plans" declaration would not match any child — see the [Layout
             children] warning. Routing still works through inference. */}
         <Stack.Screen name="+not-found" />
+        {/* /join lives at the root (not under a tab subtree) and presents
+            as a modal. We tried nesting it under (tabs)/(home)/ to keep
+            the bottom tab bar visible, but cross-tab `<Redirect href="/join" />`
+            from gated routes (shop, mountains, plans/create, …) then has
+            to cross NativeTabs subtree boundaries, which races
+            react-native-screens' snapshot logic and crashes Android with
+            `Canvas: trying to use a recycled bitmap`. Modal at the root
+            is the boring-and-correct shape. */}
         <Stack.Screen
           name="join"
           options={{ presentation: isIpadOS ? "fullScreenModal" : "modal" }}

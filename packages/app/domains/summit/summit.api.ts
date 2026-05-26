@@ -77,14 +77,18 @@ export const useMountainSummitsAll = ({
       last.pagination.hasMore ? last.pagination.page + 1 : undefined,
   });
 
-export const useSummitGet = ({ summitId }: { summitId: string }) => {
+export const useSummitGet = ({
+  summitId,
+}: {
+  summitId: string | undefined;
+}) => {
   const { isAuthenticated } = useAuth();
 
   const args = useQuery({
-    queryKey: summitKeys.one(summitId),
-    enabled: () => isAuthenticated,
+    queryKey: summitKeys.one(summitId ?? ""),
+    enabled: () => isAuthenticated && !!summitId,
     queryFn: async () => {
-      if (!isAuthenticated) return null;
+      if (!isAuthenticated || !summitId) return null;
       const { data, error } = await apiClient.GET("/api/protected/summit/one", {
         params: { query: { summitId } },
       });

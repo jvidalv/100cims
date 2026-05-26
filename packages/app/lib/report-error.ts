@@ -4,6 +4,8 @@ import * as Device from "expo-device";
 import * as Localization from "expo-localization";
 import { Platform } from "react-native";
 
+import { numberOrUndefined, stringOrUndefined } from "@/lib/type-guards";
+
 const DISCORD_CONTENT_LIMIT = 1900;
 const REQUEST_TIMEOUT_MS = 5000;
 const STACK_LINES = 8;
@@ -43,6 +45,26 @@ const truncateStack = (stack: string | undefined): string | undefined => {
   return stack.split("\n").slice(0, STACK_LINES).join("\n");
 };
 
+const toErrorWithStatus = (input: unknown): ErrorWithStatus => {
+  if (!input || typeof input !== "object") {
+    return { message: String(input) };
+  }
+  const out: ErrorWithStatus = {};
+  if ("message" in input) out.message = stringOrUndefined(input.message);
+  if ("name" in input) out.name = stringOrUndefined(input.name);
+  if ("stack" in input) out.stack = stringOrUndefined(input.stack);
+  if ("status" in input) out.status = numberOrUndefined(input.status);
+  if (
+    "response" in input &&
+    input.response &&
+    typeof input.response === "object" &&
+    "status" in input.response
+  ) {
+    out.response = { status: numberOrUndefined(input.response.status) };
+  }
+  return out;
+};
+
 export async function reportErrorToDiscord(params: {
   context: string;
   error: unknown;
@@ -51,10 +73,7 @@ export async function reportErrorToDiscord(params: {
   const url = process.env.EXPO_PUBLIC_DISCORD_ERROR_WEBHOOK;
   if (!url) return false;
 
-  const err: ErrorWithStatus =
-    params.error && typeof params.error === "object"
-      ? (params.error as ErrorWithStatus)
-      : { message: String(params.error) };
+  const err: ErrorWithStatus = toErrorWithStatus(params.error);
 
   const verdict = classifyError(err);
   const status = getStatus(err);

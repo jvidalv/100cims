@@ -1,13 +1,15 @@
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
+import { requireEnv } from "@/api/lib/env";
+
 export const IMAGE_CACHE_CONTROL = "public, max-age=31536000, immutable";
 
 export const getS3Client = () =>
   new S3Client({
-    region: process.env.AWS_BUCKET_REGION!,
+    region: requireEnv("AWS_BUCKET_REGION"),
     credentials: {
-      accessKeyId: process.env.MY_AWS_ACCESS_KEY!,
-      secretAccessKey: process.env.AWS_ACCESS_SECRET_KEY!,
+      accessKeyId: requireEnv("MY_AWS_ACCESS_KEY"),
+      secretAccessKey: requireEnv("AWS_ACCESS_SECRET_KEY"),
     },
   });
 

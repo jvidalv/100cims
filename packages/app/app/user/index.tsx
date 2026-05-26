@@ -99,17 +99,19 @@ export default function UserIndexScreen() {
           <ThemedText className="text-4xl font-bold">
             {data?.firstName}
           </ThemedText>
-          <Link
-            href={{ pathname: "/user/[user]", params: { user: data?.id! } }}
-            className="-mx-2 -mb-2 p-2"
-          >
-            <View className="flex-row items-center gap-1">
-              <ThemedText className="text-muted-foreground">
-                <FormattedMessage defaultMessage="Your profile" />
-              </ThemedText>
-              <LucideIcon icon={ArrowRight} size={12} muted />
-            </View>
-          </Link>
+          {data?.id && (
+            <Link
+              href={{ pathname: "/user/[user]", params: { user: data.id } }}
+              className="-mx-2 -mb-2 p-2"
+            >
+              <View className="flex-row items-center gap-1">
+                <ThemedText className="text-muted-foreground">
+                  <FormattedMessage defaultMessage="Your profile" />
+                </ThemedText>
+                <LucideIcon icon={ArrowRight} size={12} muted />
+              </View>
+            </Link>
+          )}
         </View>
         <View className="mb-4 rounded border-2 border-border">
           {items.map(({ icon, showDot, text, onPress }, index) => (

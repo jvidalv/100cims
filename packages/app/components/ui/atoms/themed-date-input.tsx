@@ -93,16 +93,20 @@ export const ThemedDateInput = ({
     }
   };
 
-  const handleDateChange = (event: { type: string }, selectedDate?: Date) => {
-    if (event.type === "set" && selectedDate) {
-      if (Platform.OS === "ios") {
-        setPickerDraft(selectedDate);
-      } else {
-        commitDate(selectedDate);
-      }
-    } else if (event.type === "dismissed") {
-      setShowPicker(false);
-    }
+  // Two distinct flows wired below:
+  //  - iOS spinner inside our BottomDrawer: every wheel tick fires
+  //    `onValueChange`; we stash a draft and commit on the Done button.
+  //  - Android default modal: a single confirm/cancel — `onValueChange`
+  //    fires on Done (commit + close), `onDismiss` fires on Cancel.
+  const handleIosValueChange = (_event: unknown, selectedDate: Date) => {
+    setPickerDraft(selectedDate);
+  };
+  const handleAndroidValueChange = (_event: unknown, selectedDate: Date) => {
+    setShowPicker(false);
+    commitDate(selectedDate);
+  };
+  const handleAndroidDismiss = () => {
+    setShowPicker(false);
   };
 
   const handleIosDone = () => {
@@ -158,7 +162,7 @@ export const ThemedDateInput = ({
             value={pickerDraft ?? (value || new Date())}
             mode="date"
             display="spinner"
-            onChange={handleDateChange}
+            onValueChange={handleIosValueChange}
             minimumDate={noPastDates ? new Date() : undefined}
             maximumDate={noFutureDates ? new Date() : undefined}
           />
@@ -176,13 +180,8 @@ export const ThemedDateInput = ({
             value={value || new Date()}
             mode="date"
             display="default"
-            onChange={(event, selectedDate) => {
-              // Android needs immediate close before processing
-              if (Platform.OS === "android") {
-                setShowPicker(false);
-              }
-              handleDateChange(event, selectedDate);
-            }}
+            onValueChange={handleAndroidValueChange}
+            onDismiss={handleAndroidDismiss}
             minimumDate={noPastDates ? new Date() : undefined}
             maximumDate={noFutureDates ? new Date() : undefined}
           />

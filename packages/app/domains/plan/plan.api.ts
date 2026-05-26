@@ -74,7 +74,7 @@ export const usePlansByMountain = (mountainSlug: string | undefined) => {
     queryFn: async () => {
       const { data, error } = await apiClient.GET(
         "/api/public/plans/by-mountain",
-        { params: { query: { mountainSlug: mountainSlug! } } },
+        { params: { query: { mountainSlug: mountainSlug ?? "" } } },
       );
       if (error) throw error;
       return data.message.events;
@@ -82,12 +82,13 @@ export const usePlansByMountain = (mountainSlug: string | undefined) => {
   });
 };
 
-export const usePlanOne = ({ id }: { id: string }) => {
+export const usePlanOne = ({ id }: { id: string | undefined }) => {
   return useQuery({
-    queryKey: planKeys.one(id),
+    queryKey: planKeys.one(id ?? ""),
+    enabled: !!id,
     queryFn: async () => {
       const { data, error } = await apiClient.GET("/api/public/plans/one", {
-        params: { query: { id } },
+        params: { query: { id: id ?? "" } },
       });
       if (error) throw error;
       return data.message;
@@ -100,11 +101,15 @@ export const useNewPlansCount = () => {
 
   return useQuery({
     queryKey: planKeys.countNew(user?.id),
+    // Skip the request entirely when there's no user — there's no userId
+    // to scope the count against, and unauth visitors don't have a badge.
+    enabled: !!user?.id,
     queryFn: async () => {
+      if (!user?.id) return null;
       const { data, error } = await apiClient.GET(
         "/api/public/plans/count-new",
         {
-          params: { query: user?.id ? { userId: user.id } : {} },
+          params: { query: { userId: user.id } },
         },
       );
       if (error) throw error;
@@ -119,9 +124,13 @@ export const useMarkPlansAsVisited = () => {
   return useMutation({
     mutationKey: ["plans", "mark-visited"],
     mutationFn: async () => {
+      // No-op when there's no signed-in user. Callers should also gate, but
+      // an explicit early return avoids the non-null assertion and keeps the
+      // mutation safe to call eagerly during tab focus / first-render races.
+      if (!user?.id) return null;
       const { data, error } = await apiClient.POST(
         "/api/public/plans/count-new",
-        { body: { userId: user!.id } },
+        { body: { userId: user.id } },
       );
       if (error) throw error;
       return data;
