@@ -5,13 +5,13 @@ import Mapbox, {
   ShapeSource,
   SymbolLayer,
 } from "@rnmapbox/maps";
+import { useColorScheme } from "nativewind";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { FormattedMessage } from "react-intl";
 import {
   ActivityIndicator,
   Keyboard,
   StyleSheet,
-  useColorScheme,
   View,
 } from "react-native";
 
@@ -144,7 +144,10 @@ export function MountainsMap({
   onPreviewChange,
   controlRef,
 }: MountainsMapProps) {
-  const colorScheme = useColorScheme();
+  // `useColorScheme` from nativewind (not react-native) so the map follows
+  // any manual theme override the user makes via NativeWind, matching the
+  // preview card and other themed components.
+  const { colorScheme } = useColorScheme();
   const cameraRef = useRef<CameraRef>(null);
   const shapeSourceRef = useRef<ShapeSourceRef>(null);
   const setPreview = useCallback(
@@ -165,12 +168,14 @@ export function MountainsMap({
     controlRef.current = {
       recenterOnUser: () => {
         if (!userLocation) return;
+        // Only pan to the user's coords; preserve whatever zoom they're at.
+        // Forcing zoom 9 would yank a user zoomed in to inspect a peak back
+        // out to a regional view — the opposite of what "where am I" means.
         cameraRef.current?.setCamera({
           centerCoordinate: [
             userLocation.coords.longitude,
             userLocation.coords.latitude,
           ],
-          zoomLevel: 9,
           animationDuration: 600,
         });
       },
@@ -259,19 +264,20 @@ export function MountainsMap({
     [mountains],
   );
 
-  // Imperative camera control: fit-to-bounds runs ONCE the first time we get
-  // a non-empty mountain set, and never again. Re-fitting on every filter
-  // change would yank the user away from wherever they've panned to — and,
-  // worse, would also fire while the map is hidden behind the list view
-  // (display:none keeps the component mounted but invisible), throwing away
-  // the camera state the user expects to find when they flip back.
-  const hasFittedRef = useRef(false);
+  // Imperative camera control. Re-fits on every `mountainsKey` change so
+  // narrowing the filter (search query, Essentials toggle, altitude band)
+  // re-frames the camera on the new set. The original implementation fitted
+  // only ONCE because re-fitting on every mountainsKey change yanked the
+  // camera mid-pan; in practice mountainsKey doesn't change while the user
+  // is panning (it changes when filter chips or the search input do), so
+  // the trade-off favours re-fitting. The hide-the-map (display:none)
+  // toggle in the parent doesn't change `mountainsKey`, so the effect
+  // doesn't fire while the map is hidden.
   useEffect(() => {
     const camera = cameraRef.current;
     if (!camera) return;
 
     if (mountains.length === 0) {
-      if (hasFittedRef.current) return;
       const fallback: [number, number] = userLocation
         ? [userLocation.coords.longitude, userLocation.coords.latitude]
         : FALLBACK_CENTER;
@@ -282,9 +288,6 @@ export function MountainsMap({
       });
       return;
     }
-
-    if (hasFittedRef.current) return;
-    hasFittedRef.current = true;
 
     const lats = mountains.map((m) => parseFloat(m.latitude));
     const lngs = mountains.map((m) => parseFloat(m.longitude));

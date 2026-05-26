@@ -37,22 +37,7 @@ import {
 import { useUserChallengeSummits } from "@/domains/user/user.api";
 import { shareDeeplink } from "@/lib/share";
 
-interface MountainPreview {
-  /** Slug is the only thing the marker tap reliably gives us — everything
-   *  else is fetched via `useMountainOne` so the card always shows fresh
-   *  data even if the GeoJSON marker properties drift. */
-  slug: string;
-  /** Best-effort properties cached from the marker tap. Used to render the
-   *  card immediately while `useMountainOne` resolves. */
-  fallback?: {
-    name: string;
-    height: string;
-    location: string;
-    imageUrl: string | null;
-    essential: boolean;
-    isSummited: boolean;
-  };
-}
+import type { MountainPreview } from "@/domains/mountain/components/mountains-map";
 
 interface Props {
   preview: MountainPreview | null;
@@ -247,14 +232,18 @@ const CardContents = ({
         >
           <FloatingIconButton
             icon={Eye}
-            accessibilityLabel="View mountain"
+            accessibilityLabel={intl.formatMessage({
+              defaultMessage: "View mountain",
+            })}
           />
         </Link>
         <FloatingIconButton
           icon={isSaved ? BookmarkCheck : Bookmark}
           onPress={handleToggleSave}
           disabled={!mountainId || isAdding || isRemoving}
-          accessibilityLabel="Save mountain"
+          accessibilityLabel={intl.formatMessage({
+            defaultMessage: "Save mountain",
+          })}
           // When saved, swap the chip background AND the icon to the same
           // emerald tone used elsewhere for completion/summit state, so the
           // toggle reads at a glance, not just by glyph swap.
@@ -263,7 +252,9 @@ const CardContents = ({
         <FloatingIconButton
           icon={ShareIcon}
           onPress={handleShare}
-          accessibilityLabel="Share mountain"
+          accessibilityLabel={intl.formatMessage({
+            defaultMessage: "Share mountain",
+          })}
         />
       </View>
       <TouchableOpacity
@@ -271,7 +262,7 @@ const CardContents = ({
         style={styles.floatingClose}
         className="bg-background/80"
         hitSlop={8}
-        accessibilityLabel="Close"
+        accessibilityLabel={intl.formatMessage({ defaultMessage: "Close" })}
       >
         <LucideIcon icon={X} size={16} />
       </TouchableOpacity>

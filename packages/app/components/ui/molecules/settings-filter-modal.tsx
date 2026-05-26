@@ -1,4 +1,4 @@
-import { Check, Trash2, X } from "lucide-react-native";
+import { Check, Trash2, X, type LucideIcon } from "lucide-react-native";
 import { useState } from "react";
 import { useIntl } from "react-intl";
 import {
@@ -17,7 +17,31 @@ import {
 } from "@/components/ui/atoms";
 import { ActionRow } from "@/components/ui/molecules/action-row";
 
-import type { SettingsGroup } from "@/components/ui/molecules/filterable-list-header";
+// Types live here now (formerly in `filterable-list-header.tsx`, which was
+// removed as dead code). `Filter` is kept too for the few callers that
+// render their own chip rows alongside the modal — same shape as before.
+export interface Filter<T extends string = string> {
+  type: T;
+  name: string;
+  onSelectDeselect?: T[];
+  showDot?: boolean;
+  icon?: LucideIcon;
+}
+
+export interface SettingsOption<T extends string = string> {
+  type: T;
+  name: string;
+  icon?: LucideIcon;
+  dotColor?: string;
+  disabled?: boolean;
+}
+
+export interface SettingsGroup<T extends string = string> {
+  title: string;
+  options: SettingsOption<T>[];
+  multiSelect?: boolean;
+  icon?: LucideIcon;
+}
 
 interface Props<S extends string> {
   visible: boolean;

@@ -379,6 +379,16 @@ function AuthedMountainsScreen() {
         });
         return distA - distB;
       });
+    } else if (
+      settingsFilters.includes("closest-first") &&
+      !userLocation
+    ) {
+      // closest-first picked but no location fix yet — fall back to a sensible
+      // default (height descending) so the list isn't in arbitrary server
+      // order. The user can re-tap closest-first once location resolves.
+      filtered = filtered.sort(
+        (a, b) => parseInt(b.height, 10) - parseInt(a.height, 10),
+      );
     } else if (settingsFilters.includes("higher-first")) {
       filtered = filtered.sort(
         (a, b) => parseInt(b.height) - parseInt(a.height),
