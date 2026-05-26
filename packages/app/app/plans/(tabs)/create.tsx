@@ -343,7 +343,6 @@ const DetailsStep = ({
           onChangeText={(whatsappGroupUrl) =>
             onDetailsChange({ ...values, whatsappGroupUrl })
           }
-          placeholder="https://chat.whatsapp.com/…"
           autoCapitalize="none"
           keyboardType="url"
           error={whatsappError}
@@ -354,7 +353,6 @@ const DetailsStep = ({
           onChangeText={(wikilocUrl) =>
             onDetailsChange({ ...values, wikilocUrl })
           }
-          placeholder="https://www.wikiloc.com/…"
           autoCapitalize="none"
           keyboardType="url"
           error={wikilocError}
@@ -365,7 +363,6 @@ const DetailsStep = ({
           onChangeText={(stravaUrl) =>
             onDetailsChange({ ...values, stravaUrl })
           }
-          placeholder="https://www.strava.com/…"
           autoCapitalize="none"
           keyboardType="url"
           error={stravaError}

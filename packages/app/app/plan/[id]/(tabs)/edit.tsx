@@ -346,7 +346,6 @@ export default function PlanEditPage() {
                 })}
                 value={whatsappGroupUrl}
                 onChangeText={setWhatsappGroupUrl}
-                placeholder="https://chat.whatsapp.com/…"
                 autoCapitalize="none"
                 keyboardType="url"
                 error={
@@ -361,7 +360,6 @@ export default function PlanEditPage() {
                 label={intl.formatMessage({ defaultMessage: "Wikiloc trail" })}
                 value={wikilocUrl}
                 onChangeText={setWikilocUrl}
-                placeholder="https://www.wikiloc.com/…"
                 autoCapitalize="none"
                 keyboardType="url"
                 error={
@@ -376,7 +374,6 @@ export default function PlanEditPage() {
                 label={intl.formatMessage({ defaultMessage: "Strava" })}
                 value={stravaUrl}
                 onChangeText={setStravaUrl}
-                placeholder="https://www.strava.com/…"
                 autoCapitalize="none"
                 keyboardType="url"
                 error={

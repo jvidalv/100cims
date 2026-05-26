@@ -11,7 +11,6 @@ import {
   BellOff,
   Bike,
   Calendar,
-  ChevronRight,
   CircleDot,
   Clock,
   Footprints,
@@ -453,22 +452,15 @@ export default function PlanIdPage() {
           onPress={() => {
             void Linking.openSettings();
           }}
-          className="flex-row items-center gap-3 rounded border border-border bg-amber-500/10 p-3"
+          className="items-start gap-2 rounded border border-amber-500 p-3"
           accessibilityLabel={intl.formatMessage({
-            defaultMessage:
-              "Notifications are disabled — tap to open Settings",
+            defaultMessage: "Enable notifications in Settings",
           })}
         >
           <LucideIcon icon={BellOff} size={20} color="#f59e0b" />
-          <View className="flex-1">
-            <ThemedText className="font-semibold">
-              <FormattedMessage defaultMessage="Notifications are off" />
-            </ThemedText>
-            <ThemedText className="text-sm text-muted-foreground">
-              <FormattedMessage defaultMessage="You won't be alerted when someone joins, comments, or completes this plan." />
-            </ThemedText>
-          </View>
-          <LucideIcon icon={ChevronRight} size={20} muted />
+          <ThemedText className="font-semibold text-amber-500">
+            <FormattedMessage defaultMessage="Notifications are off" />
+          </ThemedText>
         </TouchableOpacity>
       )}
       <View>
