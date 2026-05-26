@@ -1,7 +1,6 @@
 import { Link, useIsFocused } from "expo-router";
 import {
   ArrowRight,
-  Backpack,
   CircleDot,
   Moon,
   Mountain,
@@ -47,7 +46,7 @@ import {
   useRecommendedPeaks,
 } from "@/domains/mountain/mountain.api";
 import { usePlanChatUnread } from "@/domains/plan/plan-chat.api";
-import { useNewPlansCount, usePlans } from "@/domains/plan/plan.api";
+import { usePlans } from "@/domains/plan/plan.api";
 import { useSummitsGet } from "@/domains/summit/summit.api";
 import {
   useUnseenUpdates,
@@ -247,10 +246,6 @@ const PageHeader = ({
   const fullName = user ? getFullName(user) : "";
   const { isAuthenticated } = useAuth();
 
-  const { data: newPlansCount } = useNewPlansCount();
-
-  const hasNewPlans = !!newPlansCount?.count;
-
   const topLeftSectionStyle = useAnimatedStyle(() => {
     if (scrollOffset.value > 100) {
       return {
@@ -273,14 +268,6 @@ const PageHeader = ({
           <Link href="/hiscores" asChild>
             <TouchableOpacity className="size-10 items-center justify-center rounded-full border-2 border-border">
               <LucideIcon icon={Trophy} muted />
-            </TouchableOpacity>
-          </Link>
-          <Link href="/plans" asChild>
-            <TouchableOpacity className="relative size-10 items-center justify-center rounded-full border-2 border-border">
-              {hasNewPlans && (
-                <View className="absolute -right-0.5 -top-0.5 size-3 rounded-full bg-blue-500" />
-              )}
-              <LucideIcon icon={Backpack} muted />
             </TouchableOpacity>
           </Link>
           <Link href={isAuthenticated ? "/user" : "/join"} asChild>
