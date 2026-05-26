@@ -63,6 +63,7 @@ export const userCalendarGetRoute = new Elysia().get(
           type: planTable.type,
           isPrivate: planTable.isPrivate,
           creatorId: planTable.creatorId,
+          imageUrl: planTable.imageUrl,
         })
         .from(planTable)
         .leftJoin(
@@ -140,6 +141,7 @@ export const userCalendarGetRoute = new Elysia().get(
       planType: row.type,
       isPrivate: row.isPrivate,
       isCreator: row.creatorId === user.id,
+      imageUrl: row.imageUrl,
       mountains: planMountains
         .filter((m) => m.planId === row.id)
         .map(({ imageUrl }) => ({ imageUrl })),

@@ -11,11 +11,14 @@ import {
   planUserLogTable,
 } from "@/db/schema";
 import { formatDateForPostgresFromISOString } from "@/api/lib/dates";
+import { reportImageTooBig } from "@/api/lib/images";
+import { PlanImageError, resolvePlanImageUrl } from "@/api/lib/plan-images";
 import {
   findInvalidPlanLinkUrl,
   normalizePlanLinkUrl,
 } from "@/api/lib/plan-link-urls";
 import { getUserFromRequest } from "@/api/routes/@shared/auth";
+import { IMAGE_TO_BIG } from "@/api/routes/@shared/error-codes";
 import {
   SuccessResponse,
   ErrorFieldResponse,
@@ -64,6 +67,31 @@ export const planUpdatePostRoute = new Elysia().post(
       return { error: "INVALID_URL" as const, field: invalidField };
     }
 
+    // Resolve the (optional) new image up-front. `undefined` → leave alone;
+    // `null` → clear; string → either http URL (kept) or base64 (uploaded).
+    let imageUrl: string | null | undefined;
+    if (body.imageUrl === undefined) {
+      imageUrl = undefined;
+    } else {
+      try {
+        imageUrl = await resolvePlanImageUrl(body.imageUrl, body.id);
+      } catch (e) {
+        if (e instanceof PlanImageError && e.status === 400) {
+          if (body.imageUrl && !body.imageUrl.startsWith("http")) {
+            reportImageTooBig(request, {
+              route: "plans/update",
+              base64Data: body.imageUrl,
+              userId: user.id,
+            });
+          }
+          set.status = 500;
+          return { error: IMAGE_TO_BIG };
+        }
+        set.status = 500;
+        return { error: "Image upload failed" };
+      }
+    }
+
     const updated = await db.transaction(async (tx) => {
       const [plan] = await tx
         .update(planTable)
@@ -71,7 +99,7 @@ export const planUpdatePostRoute = new Elysia().post(
           title: body.title,
           description: body.description,
           status: body.status,
-          imageUrl: body.imageUrl ?? undefined,
+          imageUrl,
           routeUrl: body.routeUrl ?? undefined,
           whatsappGroupUrl,
           wikilocUrl,
@@ -165,7 +193,9 @@ export const planUpdatePostRoute = new Elysia().post(
       id: t.String(),
       title: t.Optional(t.String()),
       description: t.Optional(t.String()),
-      imageUrl: t.Optional(t.String()),
+      // Either an http(s) URL (kept), a raw base64 payload (uploaded), or
+      // null (clear). Omit to leave the column alone.
+      imageUrl: t.Optional(t.Nullable(t.String())),
       status: t.Optional(PlanStatusSchema),
       routeUrl: t.Optional(t.String()),
       startDate: t.Optional(t.String()),
@@ -182,6 +212,7 @@ export const planUpdatePostRoute = new Elysia().post(
       200: SuccessResponse(BasicPlanSchema),
       400: PlanLinkUrlErrorResponse,
       403: ErrorFieldResponse,
+      500: ErrorFieldResponse,
     },
   },
 );

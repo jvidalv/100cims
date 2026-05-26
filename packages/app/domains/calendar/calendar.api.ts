@@ -27,6 +27,7 @@ export type CalendarEvent =
       planType: "hike" | "trail" | "bike" | null;
       isPrivate: boolean;
       isCreator: boolean;
+      imageUrl: string | null;
       mountains: { imageUrl: string | null }[];
       users: {
         id: string;

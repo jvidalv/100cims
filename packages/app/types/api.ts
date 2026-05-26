@@ -1764,6 +1764,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/plans/{id}/member-log": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiAdminPlansByIdMember-log"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/plans/{id}/members/{userId}": {
         parameters: {
             query?: never;
@@ -4219,6 +4235,7 @@ export interface operations {
                                 status: "open" | "completed" | "canceled";
                                 planType: (("hike" | "trail" | "bike") | null) | null;
                                 isPrivate: boolean;
+                                imageUrl: ((string | null) | null) & ((string | null) | null);
                                 mountains: {
                                     imageUrl: (string | null) | null;
                                 }[];
@@ -4243,6 +4260,7 @@ export interface operations {
                                 status: "open" | "completed" | "canceled";
                                 planType: (("hike" | "trail" | "bike") | null) | null;
                                 isPrivate: boolean;
+                                imageUrl: ((string | null) | null) & ((string | null) | null);
                                 mountains: {
                                     imageUrl: (string | null) | null;
                                 }[];
@@ -4267,6 +4285,7 @@ export interface operations {
                                 status: "open" | "completed" | "canceled";
                                 planType: (("hike" | "trail" | "bike") | null) | null;
                                 isPrivate: boolean;
+                                imageUrl: ((string | null) | null) & ((string | null) | null);
                                 mountains: {
                                     imageUrl: (string | null) | null;
                                 }[];
@@ -5446,6 +5465,7 @@ export interface operations {
                                 planType: (("hike" | "trail" | "bike") | null) | null;
                                 isPrivate: boolean;
                                 isCreator: boolean;
+                                imageUrl: (string | null) | null;
                                 mountains: {
                                     imageUrl: (string | null) | null;
                                 }[];
@@ -5482,6 +5502,7 @@ export interface operations {
                                 planType: (("hike" | "trail" | "bike") | null) | null;
                                 isPrivate: boolean;
                                 isCreator: boolean;
+                                imageUrl: (string | null) | null;
                                 mountains: {
                                     imageUrl: (string | null) | null;
                                 }[];
@@ -5518,6 +5539,7 @@ export interface operations {
                                 planType: (("hike" | "trail" | "bike") | null) | null;
                                 isPrivate: boolean;
                                 isCreator: boolean;
+                                imageUrl: (string | null) | null;
                                 mountains: {
                                     imageUrl: (string | null) | null;
                                 }[];
@@ -7073,6 +7095,7 @@ export interface operations {
                     whatsappGroupUrl?: (string | null) | null;
                     wikilocUrl?: (string | null) | null;
                     stravaUrl?: (string | null) | null;
+                    imageUrl?: (string | null) | null;
                 };
                 "multipart/form-data": {
                     title: string;
@@ -7087,6 +7110,7 @@ export interface operations {
                     whatsappGroupUrl?: (string | null) | null;
                     wikilocUrl?: (string | null) | null;
                     stravaUrl?: (string | null) | null;
+                    imageUrl?: (string | null) | null;
                 };
                 "text/plain": {
                     title: string;
@@ -7101,6 +7125,7 @@ export interface operations {
                     whatsappGroupUrl?: (string | null) | null;
                     wikilocUrl?: (string | null) | null;
                     stravaUrl?: (string | null) | null;
+                    imageUrl?: (string | null) | null;
                 };
             };
         };
@@ -7182,6 +7207,28 @@ export interface operations {
                 };
             };
             400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        error: "INVALID_URL";
+                        field: "whatsappGroupUrl" | "wikilocUrl" | "stravaUrl";
+                    };
+                    "multipart/form-data": {
+                        /** @constant */
+                        error: "INVALID_URL";
+                        field: "whatsappGroupUrl" | "wikilocUrl" | "stravaUrl";
+                    };
+                    "text/plain": {
+                        /** @constant */
+                        error: "INVALID_URL";
+                        field: "whatsappGroupUrl" | "wikilocUrl" | "stravaUrl";
+                    };
+                };
+            };
+            500: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7212,7 +7259,7 @@ export interface operations {
                     id: string;
                     title?: string;
                     description?: string;
-                    imageUrl?: string;
+                    imageUrl?: (string | null) | null;
                     status?: "open" | "completed" | "canceled";
                     routeUrl?: string;
                     startDate?: string;
@@ -7229,7 +7276,7 @@ export interface operations {
                     id: string;
                     title?: string;
                     description?: string;
-                    imageUrl?: string;
+                    imageUrl?: (string | null) | null;
                     status?: "open" | "completed" | "canceled";
                     routeUrl?: string;
                     startDate?: string;
@@ -7246,7 +7293,7 @@ export interface operations {
                     id: string;
                     title?: string;
                     description?: string;
-                    imageUrl?: string;
+                    imageUrl?: (string | null) | null;
                     status?: "open" | "completed" | "canceled";
                     routeUrl?: string;
                     startDate?: string;
@@ -7344,6 +7391,28 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
+                        /** @constant */
+                        error: "INVALID_URL";
+                        field: "whatsappGroupUrl" | "wikilocUrl" | "stravaUrl";
+                    };
+                    "multipart/form-data": {
+                        /** @constant */
+                        error: "INVALID_URL";
+                        field: "whatsappGroupUrl" | "wikilocUrl" | "stravaUrl";
+                    };
+                    "text/plain": {
+                        /** @constant */
+                        error: "INVALID_URL";
+                        field: "whatsappGroupUrl" | "wikilocUrl" | "stravaUrl";
+                    };
+                };
+            };
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
                         error: string | boolean;
                     };
                     "multipart/form-data": {
@@ -7354,7 +7423,7 @@ export interface operations {
                     };
                 };
             };
-            403: {
+            500: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -12297,6 +12366,28 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
+                        /** @constant */
+                        error: "INVALID_URL";
+                        field: "whatsappGroupUrl" | "wikilocUrl" | "stravaUrl";
+                    };
+                    "multipart/form-data": {
+                        /** @constant */
+                        error: "INVALID_URL";
+                        field: "whatsappGroupUrl" | "wikilocUrl" | "stravaUrl";
+                    };
+                    "text/plain": {
+                        /** @constant */
+                        error: "INVALID_URL";
+                        field: "whatsappGroupUrl" | "wikilocUrl" | "stravaUrl";
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
                         error: string | boolean;
                     };
                     "multipart/form-data": {
@@ -12307,7 +12398,7 @@ export interface operations {
                     };
                 };
             };
-            404: {
+            500: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -12349,6 +12440,87 @@ export interface operations {
                     };
                     "text/plain": {
                         success: boolean;
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    "getApiAdminPlansByIdMember-log": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                userId: string;
+                                username: string;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                action: "joined" | "left";
+                                timestamp: Record<string, never> | string | number;
+                            }[];
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                userId: string;
+                                username: string;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                action: "joined" | "left";
+                                timestamp: Record<string, never> | string | number;
+                            }[];
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                userId: string;
+                                username: string;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                action: "joined" | "left";
+                                timestamp: Record<string, never> | string | number;
+                            }[];
+                        };
                     };
                 };
             };

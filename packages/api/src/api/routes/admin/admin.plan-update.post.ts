@@ -3,6 +3,7 @@ import { Elysia, t } from "elysia";
 
 import { db } from "@/db";
 import { planTable } from "@/db/schema";
+import { PlanImageError, resolvePlanImageUrl } from "@/api/lib/plan-images";
 import {
   findInvalidPlanLinkUrl,
   normalizePlanLinkUrl,
@@ -42,10 +43,26 @@ export const adminPlanUpdatePostRoute = new Elysia().post(
       return { error: "INVALID_URL" as const, field: invalidField };
     }
 
+    let imageUrl: string | null | undefined;
+    if (body.imageUrl === undefined) {
+      imageUrl = undefined;
+    } else {
+      try {
+        imageUrl = await resolvePlanImageUrl(body.imageUrl, params.id);
+      } catch (e) {
+        if (e instanceof PlanImageError) {
+          set.status = e.status;
+          return { error: e.message };
+        }
+        throw e;
+      }
+    }
+
     const [row] = await db
       .update(planTable)
       .set({
         ...body,
+        imageUrl,
         whatsappGroupUrl,
         wikilocUrl,
         stravaUrl,
@@ -67,6 +84,7 @@ export const adminPlanUpdatePostRoute = new Elysia().post(
       200: SimpleSuccessResponse,
       400: PlanLinkUrlErrorResponse,
       404: ErrorFieldResponse,
+      500: ErrorFieldResponse,
     },
   },
 );

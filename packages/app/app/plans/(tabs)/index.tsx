@@ -234,6 +234,7 @@ export default function PlansScreen() {
           <PlanItemList
             id={item.id}
             title={item.title}
+            imageUrl={item.imageUrl}
             status={item.status}
             type={item.type}
             startDate={item.startDate}

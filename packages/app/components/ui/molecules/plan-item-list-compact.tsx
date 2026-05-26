@@ -1,10 +1,11 @@
 import { isToday } from "date-fns/isToday";
 import { Link } from "expo-router";
 import { FormattedMessage, useIntl } from "react-intl";
-import { Image, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 
 import { ThemedText } from "@/components/ui/atoms";
 import { AvatarGroup } from "@/components/ui/molecules/avatar-group";
+import { PlanCoverBackground } from "@/components/ui/molecules/plan-cover-background";
 import { type CalendarEvent } from "@/domains/calendar/calendar.api";
 import { getFullName } from "@/domains/user/user.utils";
 import { parseLocalDateString } from "@/lib/dates";
@@ -17,6 +18,8 @@ type CalendarPlanEvent = Extract<CalendarEvent, { type: "plan" }>;
 
 type Props = Omit<CalendarPlanEvent, "type" | "date" | "isCreator"> & {
   startDate?: string | null;
+  /** Custom plan cover image. Takes precedence over the mountain thumbnail. */
+  imageUrl?: string | null;
 };
 
 /**
@@ -35,9 +38,11 @@ export const PlanItemListCompact = ({
   isPrivate,
   mountains,
   users,
+  imageUrl,
 }: Props) => {
   const intl = useIntl();
-  const firstImage = mountains?.find(({ imageUrl }) => imageUrl)?.imageUrl;
+  const coverImage =
+    imageUrl ?? mountains?.find(({ imageUrl }) => imageUrl)?.imageUrl;
 
   const isOpen = status === "open";
   const isOngoing =
@@ -56,21 +61,14 @@ export const PlanItemListCompact = ({
   return (
     <Link href={{ pathname: "/plan/[id]", params: { id } }} asChild>
       <TouchableOpacity className="flex-row items-center gap-3">
-        {firstImage ? (
-          <Image
-            source={{ uri: firstImage, cache: "force-cache" }}
-            className="size-10 rounded bg-gray-400 dark:bg-gray-500"
+        <View className="size-10 overflow-hidden rounded">
+          <PlanCoverBackground
+            customImageUrl={coverImage}
+            title={title}
+            withBottomGradient={false}
+            initialsSize="sm"
           />
-        ) : (
-          <View
-            className="size-10 items-center justify-center rounded"
-            style={{ backgroundColor: "#ffd097" }}
-          >
-            <ThemedText className="text-sm font-bold text-background">
-              {title.slice(0, 2).toUpperCase()}
-            </ThemedText>
-          </View>
-        )}
+        </View>
         <View className="flex-1">
           <View className="flex-row items-center gap-2">
             <ThemedText
