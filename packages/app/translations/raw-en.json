@@ -38,6 +38,9 @@
   "/LG2tT": {
     "defaultMessage": "Latitude must be between -90 and 90"
   },
+  "/TnNdL": {
+    "defaultMessage": "You won't be alerted when someone joins, comments, or completes this plan."
+  },
   "/V1GsM": {
     "defaultMessage": "Country/Region"
   },
@@ -785,6 +788,9 @@
   "T0vl24": {
     "defaultMessage": "My mountains ({count})"
   },
+  "T3FouJ": {
+    "defaultMessage": "Notifications are disabled — tap to open Settings"
+  },
   "T4DiF1": {
     "defaultMessage": "Share summit image!"
   },
@@ -1093,6 +1099,9 @@
   },
   "fVJK/6": {
     "defaultMessage": "Sharing plans with others is a great way to meet people with similar interests!"
+  },
+  "fbzr0S": {
+    "defaultMessage": "Notifications are off"
   },
   "fdCS5/": {
     "defaultMessage": "Reload"

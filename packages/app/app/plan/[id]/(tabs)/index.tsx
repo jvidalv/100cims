@@ -8,8 +8,10 @@ import {
   ArrowUp,
   BadgeCheck,
   Ban,
+  BellOff,
   Bike,
   Calendar,
+  ChevronRight,
   CircleDot,
   Clock,
   Footprints,
@@ -63,6 +65,7 @@ import {
 import { useIsAdmin, useUserMe } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
 import { useAskPushPermission } from "@/hooks/use-ask-push-permission";
+import { usePushPermissionStatus } from "@/hooks/use-push-permission-status";
 import {
   CONFETTI_COLORS,
   CONFETTI_EXPLOSION_SPEED,
@@ -224,6 +227,12 @@ export default function PlanIdPage() {
   const [shareUri, setShareUri] = useState<string | null>(null);
   const isCreator = user?.id === plan?.creatorId;
   const hasJoined = plan?.users.some((u) => u.id === user?.id);
+  // Push-permission status: the "you won't get notifications" banner only
+  // shows when the user has actively joined the plan AND has denied the OS
+  // permission. `undetermined` is silent (the pre-permission CTA elsewhere
+  // handles that case); we only nag once the user said no.
+  const pushStatus = usePushPermissionStatus();
+  const showPushDeniedBanner = hasJoined && pushStatus === "denied";
 
   const mountainsWithImages = plan?.mountains?.filter((m) => m.imageUrl);
   const when = plan?.startDate
@@ -439,6 +448,29 @@ export default function PlanIdPage() {
         />
       }
     >
+      {showPushDeniedBanner && (
+        <TouchableOpacity
+          onPress={() => {
+            void Linking.openSettings();
+          }}
+          className="flex-row items-center gap-3 rounded border border-border bg-amber-500/10 p-3"
+          accessibilityLabel={intl.formatMessage({
+            defaultMessage:
+              "Notifications are disabled — tap to open Settings",
+          })}
+        >
+          <LucideIcon icon={BellOff} size={20} color="#f59e0b" />
+          <View className="flex-1">
+            <ThemedText className="font-semibold">
+              <FormattedMessage defaultMessage="Notifications are off" />
+            </ThemedText>
+            <ThemedText className="text-sm text-muted-foreground">
+              <FormattedMessage defaultMessage="You won't be alerted when someone joins, comments, or completes this plan." />
+            </ThemedText>
+          </View>
+          <LucideIcon icon={ChevronRight} size={20} muted />
+        </TouchableOpacity>
+      )}
       <View>
         <View className="mb-4 gap-3">
           <View className="flex flex-row flex-wrap items-center gap-4">
