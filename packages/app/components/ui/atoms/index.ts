@@ -16,4 +16,11 @@ export { ThemedToggleInput } from "./themed-toggle-input";
 export { BlurView } from "./blur-view";
 export { EnrichedThemedText } from "./enriched-themed-text";
 export { ThemedLogo } from "./themed-logo";
-export { InstagramIcon, SocialIcons, TikTokIcon } from "./social-icons";
+export {
+  InstagramIcon,
+  SocialIcons,
+  StravaIcon,
+  TikTokIcon,
+  WhatsAppIcon,
+  WikilocIcon,
+} from "./social-icons";

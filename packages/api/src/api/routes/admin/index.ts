@@ -47,6 +47,7 @@ import { adminMountainsGetRoute } from "@/api/routes/admin/admin.mountains.get";
 import { adminPlanCreatePostRoute } from "@/api/routes/admin/admin.plan-create.post";
 import { adminPlanDeleteDeleteRoute } from "@/api/routes/admin/admin.plan-delete.delete";
 import { adminPlanDetailGetRoute } from "@/api/routes/admin/admin.plan-detail.get";
+import { adminPlanMemberLogGetRoute } from "@/api/routes/admin/admin.plan-member-log.get";
 import { adminPlanMemberRemoveDeleteRoute } from "@/api/routes/admin/admin.plan-member-remove.delete";
 import { adminPlanMountainAddPostRoute } from "@/api/routes/admin/admin.plan-mountain-add.post";
 import { adminPlanMountainRemoveDeleteRoute } from "@/api/routes/admin/admin.plan-mountain-remove.delete";
@@ -131,6 +132,7 @@ export const adminRoutes = new Elysia({ prefix: "/admin" })
   .use(adminPlanCreatePostRoute)
   .use(adminPlanUpdatePostRoute)
   .use(adminPlanDeleteDeleteRoute)
+  .use(adminPlanMemberLogGetRoute)
   .use(adminPlanMemberRemoveDeleteRoute)
   .use(adminPlanMountainAddPostRoute)
   .use(adminPlanMountainRemoveDeleteRoute)

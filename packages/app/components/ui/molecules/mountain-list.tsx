@@ -43,7 +43,7 @@ export const MountainList = ({ selected, onChange }: Props) => {
         className="flex-row items-center gap-3"
         onPress={openPicker}
       >
-        <View className="size-12 items-center justify-center rounded border-2 border-muted-foreground/50">
+        <View className="size-12 items-center justify-center rounded border-2 border-border">
           <LucideIcon icon={Pencil} size={20} muted />
         </View>
         <ThemedText className="text-lg font-medium">

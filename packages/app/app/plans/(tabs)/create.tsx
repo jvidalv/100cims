@@ -36,6 +36,13 @@ import {
 import { MountainItemListAsTouchable } from "@/components/ui/molecules/mountain-item-list";
 import { useMountains } from "@/domains/mountain/mountain.api";
 import {
+  invalidUrlMessage,
+  isInvalidUrlError,
+  isValidStravaUrl,
+  isValidWhatsappGroupUrl,
+  isValidWikilocUrl,
+} from "@/domains/plan/plan-link-urls";
+import {
   type PlanType,
   useMarkPlansAsVisited,
   usePlanCreate,
@@ -210,6 +217,9 @@ type DetailsValues = {
   startTime?: string | null;
   type: PlanType;
   isPrivate: boolean;
+  whatsappGroupUrl: string;
+  wikilocUrl: string;
+  stravaUrl: string;
 };
 
 const DetailsStep = ({
@@ -220,6 +230,18 @@ const DetailsStep = ({
   onDetailsChange: (values: DetailsValues) => void;
 }) => {
   const intl = useIntl();
+  const invalidUrl = intl.formatMessage({
+    defaultMessage: "Doesn't look like a valid link.",
+  });
+  const whatsappError = isValidWhatsappGroupUrl(values.whatsappGroupUrl)
+    ? undefined
+    : invalidUrl;
+  const wikilocError = isValidWikilocUrl(values.wikilocUrl)
+    ? undefined
+    : invalidUrl;
+  const stravaError = isValidStravaUrl(values.stravaUrl)
+    ? undefined
+    : invalidUrl;
   return (
     <ScrollView
       className="flex-1"
@@ -290,6 +312,44 @@ const DetailsStep = ({
             onChange={(startTime) => onDetailsChange({ ...values, startTime })}
           />
         )}
+      </View>
+      <View className="gap-4">
+        <ThemedText className="text-lg font-medium">
+          <FormattedMessage defaultMessage="Links" />
+        </ThemedText>
+        <ThemedTextInput
+          label={intl.formatMessage({ defaultMessage: "WhatsApp group" })}
+          value={values.whatsappGroupUrl}
+          onChangeText={(whatsappGroupUrl) =>
+            onDetailsChange({ ...values, whatsappGroupUrl })
+          }
+          placeholder="https://chat.whatsapp.com/…"
+          autoCapitalize="none"
+          keyboardType="url"
+          error={whatsappError}
+        />
+        <ThemedTextInput
+          label={intl.formatMessage({ defaultMessage: "Wikiloc trail" })}
+          value={values.wikilocUrl}
+          onChangeText={(wikilocUrl) =>
+            onDetailsChange({ ...values, wikilocUrl })
+          }
+          placeholder="https://www.wikiloc.com/…"
+          autoCapitalize="none"
+          keyboardType="url"
+          error={wikilocError}
+        />
+        <ThemedTextInput
+          label={intl.formatMessage({ defaultMessage: "Strava" })}
+          value={values.stravaUrl}
+          onChangeText={(stravaUrl) =>
+            onDetailsChange({ ...values, stravaUrl })
+          }
+          placeholder="https://www.strava.com/…"
+          autoCapitalize="none"
+          keyboardType="url"
+          error={stravaError}
+        />
       </View>
     </ScrollView>
   );
@@ -396,6 +456,9 @@ export default function PlanCreatePage() {
   }, [mountainIdParam]);
   const [type, setType] = useState<PlanType>("hike");
   const [isPrivate, setIsPrivate] = useState(false);
+  const [whatsappGroupUrl, setWhatsappGroupUrl] = useState("");
+  const [wikilocUrl, setWikilocUrl] = useState("");
+  const [stravaUrl, setStravaUrl] = useState("");
   const [users, setUsers] = useState<PeoplePickerUser[]>([]);
 
   const { data: me } = useUserMe();
@@ -457,6 +520,9 @@ export default function PlanCreatePage() {
     startTime,
     type,
     isPrivate,
+    whatsappGroupUrl,
+    wikilocUrl,
+    stravaUrl,
   }: DetailsValues) => {
     setTitle(title);
     setDescription(description || "");
@@ -464,6 +530,9 @@ export default function PlanCreatePage() {
     setStartTime(startTime ?? null);
     setType(type);
     setIsPrivate(isPrivate);
+    setWhatsappGroupUrl(whatsappGroupUrl);
+    setWikilocUrl(wikilocUrl);
+    setStravaUrl(stravaUrl);
   };
 
   const currentStepIndex = stepOrder.indexOf(step);
@@ -477,17 +546,65 @@ export default function PlanCreatePage() {
       );
     }
 
+    if (isStepDetails) {
+      // Mirror of the server validators; lets us short-circuit before the
+      // network round-trip. The server stays authoritative for clients on
+      // older mobile builds that don't have this check.
+      if (!isValidWhatsappGroupUrl(whatsappGroupUrl)) {
+        return Alert.alert(
+          intl.formatMessage({
+            defaultMessage:
+              "The WhatsApp group link doesn't look right. Must point to chat.whatsapp.com or wa.me.",
+          }),
+        );
+      }
+      if (!isValidWikilocUrl(wikilocUrl)) {
+        return Alert.alert(
+          intl.formatMessage({
+            defaultMessage:
+              "The Wikiloc link doesn't look right. Must point to wikiloc.com.",
+          }),
+        );
+      }
+      if (!isValidStravaUrl(stravaUrl)) {
+        return Alert.alert(
+          intl.formatMessage({
+            defaultMessage:
+              "The Strava link doesn't look right. Must point to strava.com.",
+          }),
+        );
+      }
+    }
+
     if (currentStepIndex === stepOrder.length - 1) {
-      const response = await mutateAsync({
-        title,
-        description,
-        startDate: date ? toLocalDateString(date) : undefined,
-        startTime: date && startTime ? startTime : undefined,
-        type,
-        mountainIds: mountains,
-        userIds: users.map((u) => u.id),
-        isPrivate,
-      });
+      let response;
+      try {
+        response = await mutateAsync({
+          title,
+          description,
+          startDate: date ? toLocalDateString(date) : undefined,
+          startTime: date && startTime ? startTime : undefined,
+          type,
+          mountainIds: mountains,
+          userIds: users.map((u) => u.id),
+          isPrivate,
+          whatsappGroupUrl: whatsappGroupUrl || null,
+          wikilocUrl: wikilocUrl || null,
+          stravaUrl: stravaUrl || null,
+        });
+      } catch (e) {
+        // Server validates URLs even when the client already ran its
+        // mirror — handles edge cases the client missed (drift between
+        // builds, copy-pasted whitespace, etc).
+        if (isInvalidUrlError(e)) {
+          return Alert.alert(invalidUrlMessage(e.field, intl));
+        }
+        return Alert.alert(
+          intl.formatMessage({
+            defaultMessage: "Something went wrong, try again later!",
+          }),
+        );
+      }
 
       void markAsVisited();
 
@@ -505,6 +622,9 @@ export default function PlanCreatePage() {
         setMountains([]);
         setType("hike");
         setIsPrivate(false);
+        setWhatsappGroupUrl("");
+        setWikilocUrl("");
+        setStravaUrl("");
         setUsers([]);
         // This screen is now a NativeTab, not a pushed screen, so dismiss()
         // would no-op. Navigate to the new plan's detail page and push it on
@@ -596,6 +716,9 @@ export default function PlanCreatePage() {
                 startTime,
                 type,
                 isPrivate,
+                whatsappGroupUrl,
+                wikilocUrl,
+                stravaUrl,
               }}
             />
           )}

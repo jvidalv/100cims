@@ -2,6 +2,7 @@ import { and, eq, ne } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 
 import { db } from "@/db";
+import { PLAN_USER_LOG_ACTIONS } from "@/db/enums";
 import { planTable, planHasUsersTable, planUserLogTable } from "@/db/schema";
 import { sendPushLocalized } from "@/api/lib/push";
 import {
@@ -68,7 +69,7 @@ export const planJoinPostRoute = new Elysia().post(
       await tx.insert(planUserLogTable).values({
         planId: body.id,
         userId: user.id,
-        action: "joined",
+        action: PLAN_USER_LOG_ACTIONS.JOINED,
       });
 
       await tx.insert(planHasUsersTable).values({

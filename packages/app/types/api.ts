@@ -3918,6 +3918,9 @@ export interface operations {
                             type: (("hike" | "trail" | "bike") | null) | null;
                             status: "open" | "completed" | "canceled";
                             routeUrl: (string | null) | null;
+                            whatsappGroupUrl: (string | null) | null;
+                            wikilocUrl: (string | null) | null;
+                            stravaUrl: (string | null) | null;
                             startDate: (string | null) | null;
                             startTime: (string | null) | null;
                             creatorId: string;
@@ -3953,6 +3956,9 @@ export interface operations {
                             type: (("hike" | "trail" | "bike") | null) | null;
                             status: "open" | "completed" | "canceled";
                             routeUrl: (string | null) | null;
+                            whatsappGroupUrl: (string | null) | null;
+                            wikilocUrl: (string | null) | null;
+                            stravaUrl: (string | null) | null;
                             startDate: (string | null) | null;
                             startTime: (string | null) | null;
                             creatorId: string;
@@ -3988,6 +3994,9 @@ export interface operations {
                             type: (("hike" | "trail" | "bike") | null) | null;
                             status: "open" | "completed" | "canceled";
                             routeUrl: (string | null) | null;
+                            whatsappGroupUrl: (string | null) | null;
+                            wikilocUrl: (string | null) | null;
+                            stravaUrl: (string | null) | null;
                             startDate: (string | null) | null;
                             startTime: (string | null) | null;
                             creatorId: string;
@@ -4050,6 +4059,9 @@ export interface operations {
                                 type: (("hike" | "trail" | "bike") | null) | null;
                                 status: "open" | "completed" | "canceled";
                                 routeUrl: (string | null) | null;
+                                whatsappGroupUrl: (string | null) | null;
+                                wikilocUrl: (string | null) | null;
+                                stravaUrl: (string | null) | null;
                                 startDate: (string | null) | null;
                                 startTime: (string | null) | null;
                                 creatorId: string;
@@ -4094,6 +4106,9 @@ export interface operations {
                                 type: (("hike" | "trail" | "bike") | null) | null;
                                 status: "open" | "completed" | "canceled";
                                 routeUrl: (string | null) | null;
+                                whatsappGroupUrl: (string | null) | null;
+                                wikilocUrl: (string | null) | null;
+                                stravaUrl: (string | null) | null;
                                 startDate: (string | null) | null;
                                 startTime: (string | null) | null;
                                 creatorId: string;
@@ -4138,6 +4153,9 @@ export interface operations {
                                 type: (("hike" | "trail" | "bike") | null) | null;
                                 status: "open" | "completed" | "canceled";
                                 routeUrl: (string | null) | null;
+                                whatsappGroupUrl: (string | null) | null;
+                                wikilocUrl: (string | null) | null;
+                                stravaUrl: (string | null) | null;
                                 startDate: (string | null) | null;
                                 startTime: (string | null) | null;
                                 creatorId: string;
@@ -4293,6 +4311,9 @@ export interface operations {
                             type: (("hike" | "trail" | "bike") | null) | null;
                             status: string;
                             routeUrl: (string | null) | null;
+                            whatsappGroupUrl: (string | null) | null;
+                            wikilocUrl: (string | null) | null;
+                            stravaUrl: (string | null) | null;
                             startDate: (string | null) | null;
                             startTime: (string | null) | null;
                             creatorId: string;
@@ -4328,6 +4349,9 @@ export interface operations {
                             type: (("hike" | "trail" | "bike") | null) | null;
                             status: string;
                             routeUrl: (string | null) | null;
+                            whatsappGroupUrl: (string | null) | null;
+                            wikilocUrl: (string | null) | null;
+                            stravaUrl: (string | null) | null;
                             startDate: (string | null) | null;
                             startTime: (string | null) | null;
                             creatorId: string;
@@ -4363,6 +4387,9 @@ export interface operations {
                             type: (("hike" | "trail" | "bike") | null) | null;
                             status: string;
                             routeUrl: (string | null) | null;
+                            whatsappGroupUrl: (string | null) | null;
+                            wikilocUrl: (string | null) | null;
+                            stravaUrl: (string | null) | null;
                             startDate: (string | null) | null;
                             startTime: (string | null) | null;
                             creatorId: string;
@@ -7043,6 +7070,9 @@ export interface operations {
                     userIds?: string[];
                     challengeId?: string;
                     isPrivate?: boolean;
+                    whatsappGroupUrl?: (string | null) | null;
+                    wikilocUrl?: (string | null) | null;
+                    stravaUrl?: (string | null) | null;
                 };
                 "multipart/form-data": {
                     title: string;
@@ -7054,6 +7084,9 @@ export interface operations {
                     userIds?: string[];
                     challengeId?: string;
                     isPrivate?: boolean;
+                    whatsappGroupUrl?: (string | null) | null;
+                    wikilocUrl?: (string | null) | null;
+                    stravaUrl?: (string | null) | null;
                 };
                 "text/plain": {
                     title: string;
@@ -7065,6 +7098,9 @@ export interface operations {
                     userIds?: string[];
                     challengeId?: string;
                     isPrivate?: boolean;
+                    whatsappGroupUrl?: (string | null) | null;
+                    wikilocUrl?: (string | null) | null;
+                    stravaUrl?: (string | null) | null;
                 };
             };
         };
@@ -7085,6 +7121,9 @@ export interface operations {
                             type: (("hike" | "trail" | "bike") | null) | null;
                             status: string;
                             routeUrl: (string | null) | null;
+                            whatsappGroupUrl: (string | null) | null;
+                            wikilocUrl: (string | null) | null;
+                            stravaUrl: (string | null) | null;
                             startDate: (string | null) | null;
                             startTime: (string | null) | null;
                             creatorId: string;
@@ -7105,6 +7144,9 @@ export interface operations {
                             type: (("hike" | "trail" | "bike") | null) | null;
                             status: string;
                             routeUrl: (string | null) | null;
+                            whatsappGroupUrl: (string | null) | null;
+                            wikilocUrl: (string | null) | null;
+                            stravaUrl: (string | null) | null;
                             startDate: (string | null) | null;
                             startTime: (string | null) | null;
                             creatorId: string;
@@ -7125,6 +7167,9 @@ export interface operations {
                             type: (("hike" | "trail" | "bike") | null) | null;
                             status: string;
                             routeUrl: (string | null) | null;
+                            whatsappGroupUrl: (string | null) | null;
+                            wikilocUrl: (string | null) | null;
+                            stravaUrl: (string | null) | null;
                             startDate: (string | null) | null;
                             startTime: (string | null) | null;
                             creatorId: string;
@@ -7133,6 +7178,22 @@ export interface operations {
                             challengeId: (string | null) | null;
                             isPrivate: boolean;
                         };
+                    };
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
                     };
                 };
             };
@@ -7160,6 +7221,9 @@ export interface operations {
                     mountainIds?: string[];
                     userIds?: string[];
                     isPrivate?: boolean;
+                    whatsappGroupUrl?: (string | null) | null;
+                    wikilocUrl?: (string | null) | null;
+                    stravaUrl?: (string | null) | null;
                 };
                 "multipart/form-data": {
                     id: string;
@@ -7174,6 +7238,9 @@ export interface operations {
                     mountainIds?: string[];
                     userIds?: string[];
                     isPrivate?: boolean;
+                    whatsappGroupUrl?: (string | null) | null;
+                    wikilocUrl?: (string | null) | null;
+                    stravaUrl?: (string | null) | null;
                 };
                 "text/plain": {
                     id: string;
@@ -7188,6 +7255,9 @@ export interface operations {
                     mountainIds?: string[];
                     userIds?: string[];
                     isPrivate?: boolean;
+                    whatsappGroupUrl?: (string | null) | null;
+                    wikilocUrl?: (string | null) | null;
+                    stravaUrl?: (string | null) | null;
                 };
             };
         };
@@ -7208,6 +7278,9 @@ export interface operations {
                             type: (("hike" | "trail" | "bike") | null) | null;
                             status: string;
                             routeUrl: (string | null) | null;
+                            whatsappGroupUrl: (string | null) | null;
+                            wikilocUrl: (string | null) | null;
+                            stravaUrl: (string | null) | null;
                             startDate: (string | null) | null;
                             startTime: (string | null) | null;
                             creatorId: string;
@@ -7228,6 +7301,9 @@ export interface operations {
                             type: (("hike" | "trail" | "bike") | null) | null;
                             status: string;
                             routeUrl: (string | null) | null;
+                            whatsappGroupUrl: (string | null) | null;
+                            wikilocUrl: (string | null) | null;
+                            stravaUrl: (string | null) | null;
                             startDate: (string | null) | null;
                             startTime: (string | null) | null;
                             creatorId: string;
@@ -7248,6 +7324,9 @@ export interface operations {
                             type: (("hike" | "trail" | "bike") | null) | null;
                             status: string;
                             routeUrl: (string | null) | null;
+                            whatsappGroupUrl: (string | null) | null;
+                            wikilocUrl: (string | null) | null;
+                            stravaUrl: (string | null) | null;
                             startDate: (string | null) | null;
                             startTime: (string | null) | null;
                             creatorId: string;
@@ -7256,6 +7335,22 @@ export interface operations {
                             challengeId: (string | null) | null;
                             isPrivate: boolean;
                         };
+                    };
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
                     };
                 };
             };
@@ -11932,6 +12027,9 @@ export interface operations {
                             description: (string | null) | null;
                             imageUrl: (string | null) | null;
                             routeUrl: (string | null) | null;
+                            whatsappGroupUrl: (string | null) | null;
+                            wikilocUrl: (string | null) | null;
+                            stravaUrl: (string | null) | null;
                             startDate: (string | null) | null;
                             startTime: (string | null) | null;
                             type: (("hike" | "trail" | "bike") | null) | null;
@@ -11988,6 +12086,9 @@ export interface operations {
                             description: (string | null) | null;
                             imageUrl: (string | null) | null;
                             routeUrl: (string | null) | null;
+                            whatsappGroupUrl: (string | null) | null;
+                            wikilocUrl: (string | null) | null;
+                            stravaUrl: (string | null) | null;
                             startDate: (string | null) | null;
                             startTime: (string | null) | null;
                             type: (("hike" | "trail" | "bike") | null) | null;
@@ -12044,6 +12145,9 @@ export interface operations {
                             description: (string | null) | null;
                             imageUrl: (string | null) | null;
                             routeUrl: (string | null) | null;
+                            whatsappGroupUrl: (string | null) | null;
+                            wikilocUrl: (string | null) | null;
+                            stravaUrl: (string | null) | null;
                             startDate: (string | null) | null;
                             startTime: (string | null) | null;
                             type: (("hike" | "trail" | "bike") | null) | null;
@@ -12133,6 +12237,9 @@ export interface operations {
                     startTime?: (string | null) | null;
                     imageUrl?: (string | null) | null;
                     routeUrl?: (string | null) | null;
+                    whatsappGroupUrl?: (string | null) | null;
+                    wikilocUrl?: (string | null) | null;
+                    stravaUrl?: (string | null) | null;
                     isPrivate?: boolean;
                 };
                 "multipart/form-data": {
@@ -12145,6 +12252,9 @@ export interface operations {
                     startTime?: (string | null) | null;
                     imageUrl?: (string | null) | null;
                     routeUrl?: (string | null) | null;
+                    whatsappGroupUrl?: (string | null) | null;
+                    wikilocUrl?: (string | null) | null;
+                    stravaUrl?: (string | null) | null;
                     isPrivate?: boolean;
                 };
                 "text/plain": {
@@ -12157,6 +12267,9 @@ export interface operations {
                     startTime?: (string | null) | null;
                     imageUrl?: (string | null) | null;
                     routeUrl?: (string | null) | null;
+                    whatsappGroupUrl?: (string | null) | null;
+                    wikilocUrl?: (string | null) | null;
+                    stravaUrl?: (string | null) | null;
                     isPrivate?: boolean;
                 };
             };
@@ -12175,6 +12288,22 @@ export interface operations {
                     };
                     "text/plain": {
                         success: boolean;
+                    };
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
                     };
                 };
             };

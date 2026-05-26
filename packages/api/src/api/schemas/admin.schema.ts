@@ -5,6 +5,7 @@ import {
   PlanSpeedSchema,
   PlanStatusSchema,
   PlanTypeSchema,
+  PlanUserLogActionSchema,
   ShopRequestStatusSchema,
 } from "@/api/schemas/enums";
 import { UnlockablesArraySchema } from "@/api/schemas/unlockables";
@@ -221,6 +222,21 @@ export const AdminPlanParticipantSchema = t.Object({
   isCreator: t.Boolean(),
 });
 
+export const AdminPlanMemberLogEntrySchema = t.Object({
+  id: t.String(),
+  userId: t.String(),
+  username: t.String(),
+  firstName: t.Nullable(t.String()),
+  lastName: t.Nullable(t.String()),
+  imageUrl: t.Nullable(t.String()),
+  action: PlanUserLogActionSchema,
+  timestamp: t.Date(),
+});
+
+export const AdminPlanMemberLogResponseSchema = t.Object({
+  items: t.Array(AdminPlanMemberLogEntrySchema),
+});
+
 export const AdminPlanMountainSchema = t.Object({
   mountainId: t.String(),
   name: t.String(),
@@ -247,6 +263,9 @@ export const AdminPlanDetailSchema = t.Object({
   description: t.Nullable(t.String()),
   imageUrl: t.Nullable(t.String()),
   routeUrl: t.Nullable(t.String()),
+  whatsappGroupUrl: t.Nullable(t.String()),
+  wikilocUrl: t.Nullable(t.String()),
+  stravaUrl: t.Nullable(t.String()),
   startDate: t.Nullable(t.String()),
   startTime: t.Nullable(t.String()),
   type: t.Nullable(PlanTypeSchema),
@@ -280,6 +299,9 @@ export const AdminPlanUpdateBodySchema = t.Object({
   startTime: t.Optional(t.Nullable(t.String())),
   imageUrl: t.Optional(t.Nullable(t.String())),
   routeUrl: t.Optional(t.Nullable(t.String())),
+  whatsappGroupUrl: t.Optional(t.Nullable(t.String())),
+  wikilocUrl: t.Optional(t.Nullable(t.String())),
+  stravaUrl: t.Optional(t.Nullable(t.String())),
   isPrivate: t.Optional(t.Boolean()),
 });
 

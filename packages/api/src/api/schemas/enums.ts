@@ -29,3 +29,8 @@ export const ShopRequestStatusSchema = t.Union([
   t.Literal("done"),
   t.Literal("cancelled"),
 ]);
+
+export const PlanUserLogActionSchema = t.Union([
+  t.Literal("joined"),
+  t.Literal("left"),
+]);

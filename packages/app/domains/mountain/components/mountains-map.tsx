@@ -80,10 +80,10 @@ const SINGLE_POINT_PADDING = 0.05;
 // `LABEL_MIN_ZOOM` is the zoom at which the per-marker name/height tag becomes
 // visible; below this the map is too dense for labels to read.
 const LABEL_NAME_MAX = 18;
-// Zoom at which the per-marker label appears. Tuned a bit above
-// cluster-dissolve (zoom 9) so labels only show once peaks have spread out
-// enough to read without crowding.
-const LABEL_MIN_ZOOM = 9;
+// Zoom at which the per-marker label appears. Set just below
+// cluster-dissolve (zoom 9) so labels start showing as soon as the cluster
+// disks split apart.
+const LABEL_MIN_ZOOM = 8;
 // Per-theme label colors. Dark slate on the light Standard basemap and
 // near-white on the dark-v11 basemap — picking one color for both turns
 // invisible on the opposite scheme.
