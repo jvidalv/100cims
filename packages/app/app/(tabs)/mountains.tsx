@@ -60,7 +60,7 @@ import { useLocation } from "@/hooks/use-location";
 import { cleanText } from "@/lib";
 import { getDistanceInKm } from "@/lib/location";
 
-type FilterType = "list" | "essentials" | "in-plans";
+type FilterType = "list" | "essentials";
 
 type SettingsFilter =
   | "alt-0-1000"
@@ -69,6 +69,7 @@ type SettingsFilter =
   | "alt-3000+"
   | "summited"
   | "not-summited"
+  | "in-plans"
   | "higher-first"
   | "closest-first"
   | "easiest-first"
@@ -122,10 +123,16 @@ function AuthedMountainsScreen() {
   // every authenticated screen sees the same already-resolved location
   // without re-triggering the OS dialog.
   const { location: userLocation } = useLocation();
-  // Upcoming-plans fetch for the "In my plans" filter chip. Only fires when
-  // the chip is selected and we know the user's id — keeps the screen
-  // cheap when the filter is unused.
-  const inPlansSelected = filtersSelected.includes("in-plans");
+  // Don't pre-select "closest-first" when the map is the default view: that
+  // filter is disabled in map mode (see `disabled: isMapView`), so the chip
+  // would render as already-selected AND greyed-out on first launch.
+  const [settingsFilters, setSettingsFilters] = useState<SettingsFilter[]>(
+    startsAsList ? ["closest-first"] : [],
+  );
+  // Upcoming-plans fetch for the "In my plans" filter option. Only fires
+  // when the option is selected and we know the user's id — keeps the
+  // screen cheap when the filter is unused.
+  const inPlansSelected = settingsFilters.includes("in-plans");
   const { data: myUpcomingPlans } = usePlans(
     me?.id
       ? { userId: me.id, status: "open", sort: "upcoming" }
@@ -143,12 +150,6 @@ function AuthedMountainsScreen() {
     }
     return set;
   }, [myUpcomingPlans]);
-  // Don't pre-select "closest-first" when the map is the default view: that
-  // filter is disabled in map mode (see `disabled: isMapView`), so the chip
-  // would render as already-selected AND greyed-out on first launch.
-  const [settingsFilters, setSettingsFilters] = useState<SettingsFilter[]>(
-    startsAsList ? ["closest-first"] : [],
-  );
 
   const isMapView = !filtersSelected.includes("list");
   const viewMode = isMapView ? "map" : "list";
@@ -268,6 +269,11 @@ function AuthedMountainsScreen() {
         multiSelect: true,
         options: [
           {
+            type: "in-plans",
+            name: intl.formatMessage({ defaultMessage: "In my plans" }),
+            icon: CalendarCheck,
+          },
+          {
             type: "family-safe",
             name: intl.formatMessage({ defaultMessage: "Safe for kids" }),
             icon: Baby,
@@ -293,14 +299,6 @@ function AuthedMountainsScreen() {
         type: "essentials" as const,
         name: intl.formatMessage({ defaultMessage: "Essentials" }),
         showDot: true,
-      },
-      // "In my plans" narrows the mountain set to peaks that appear in any
-      // open upcoming plan the user is in (created or joined). Useful pre-
-      // trip filter — "where am I going next?"
-      {
-        type: "in-plans" as const,
-        name: intl.formatMessage({ defaultMessage: "In my plans" }),
-        icon: CalendarCheck,
       },
       // The view-toggle chip reads as the destination, not the current state:
       // in map mode it says "List" (tap to switch), in list mode it says
