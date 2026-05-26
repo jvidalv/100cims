@@ -56,6 +56,9 @@ const SOURCE_ID = "mountains";
 const CLUSTER_LAYER_ID = "mountains-cluster";
 const CLUSTER_COUNT_LAYER_ID = "mountains-cluster-count";
 const UNCLUSTERED_LAYER_ID = "mountains-unclustered";
+// Labels live in their own ShapeSource so they don't bubble taps up to
+// the main mountains source. Same shape data — cheap.
+const LABEL_SOURCE_ID = "mountains-labels";
 const LABEL_LAYER_ID = "mountains-label";
 
 const USER_SOURCE_ID = "user-location";
@@ -336,12 +339,25 @@ export function MountainsMap({
     // was typing in the search input — otherwise the keyboard hides the
     // preview card that's about to slide up.
     Keyboard.dismiss();
-    const feature = event.features[0];
+    // Mapbox returns ALL features under the tap, in arbitrary order. At
+    // clustered zooms a tap on the cluster disk can sometimes return an
+    // unclustered feature first (e.g. when a label-source feature lives at
+    // the same coordinate), making `features[0].cluster` undefined and
+    // triggering the preview branch. Prefer the cluster feature whenever
+    // one is present in the hit-list — `point_count` is set ONLY on
+    // cluster features, never on raw points, so it's the safest signal.
+    const feature =
+      event.features.find(
+        (f) =>
+          f.properties &&
+          typeof f.properties === "object" &&
+          "point_count" in f.properties,
+      ) ?? event.features[0];
     const props = feature?.properties;
     if (!feature || !props || typeof props !== "object") return;
 
     // Cluster tap: zoom into the cluster so its members spread apart.
-    if (props.cluster === true) {
+    if ("point_count" in props) {
       const source = shapeSourceRef.current;
       const camera = cameraRef.current;
       if (!source || !camera) return;
@@ -496,14 +512,17 @@ export function MountainsMap({
               circleRadius: 7,
             }}
           />
-          {/* On-marker label: "Name (Xm)", visible from LABEL_MIN_ZOOM
-              upwards (clusters dissolve at zoom 9, labels appear once peaks
-              are spread out enough to read). Anchored at the BOTTOM of the
-              label so it sits ABOVE the dot, with a generous offset for
-              breathing room. Single solid color, no halo. */}
+        </ShapeSource>
+
+        {/* Labels live in a SEPARATE ShapeSource (no onPress, no cluster)
+            so tapping a label doesn't bubble up as a marker tap. Same
+            FeatureCollection — Mapbox doesn't deduplicate sources, but the
+            cost is just one more GeoJSON upload. Filter mirrors the dot
+            layer (clusters are dissolved at this zoom anyway) and lives
+            below the user-dot in z-order so it never paints over it. */}
+        <ShapeSource id={LABEL_SOURCE_ID} shape={featureCollection}>
           <SymbolLayer
             id={LABEL_LAYER_ID}
-            filter={["!", ["has", "point_count"]]}
             minZoomLevel={LABEL_MIN_ZOOM}
             style={{
               textField: ["get", "label"],
