@@ -6,6 +6,7 @@ import {
 import {
   ArrowDownUp,
   Baby,
+  CalendarCheck,
   ChevronUp,
   CircleDashed,
   CircleDot,
@@ -53,12 +54,13 @@ import {
   safetyTier,
   type DifficultyTierKey,
 } from "@/domains/mountain/rating-tiers";
-import { useUserChallengeSummits } from "@/domains/user/user.api";
+import { usePlans } from "@/domains/plan/plan.api";
+import { useUserChallengeSummits, useUserMe } from "@/domains/user/user.api";
 import { useLocation } from "@/hooks/use-location";
 import { cleanText } from "@/lib";
 import { getDistanceInKm } from "@/lib/location";
 
-type FilterType = "list" | "essentials";
+type FilterType = "list" | "essentials" | "in-plans";
 
 type SettingsFilter =
   | "alt-0-1000"
@@ -115,10 +117,32 @@ function AuthedMountainsScreen() {
     startsAsList ? ["list"] : [],
   );
   const { data: userSummits } = useUserChallengeSummits();
+  const { data: me } = useUserMe();
   // Read-only: the permission prompt lives in the root `LocationSync` so
   // every authenticated screen sees the same already-resolved location
   // without re-triggering the OS dialog.
   const { location: userLocation } = useLocation();
+  // Upcoming-plans fetch for the "In my plans" filter chip. Only fires when
+  // the chip is selected and we know the user's id — keeps the screen
+  // cheap when the filter is unused.
+  const inPlansSelected = filtersSelected.includes("in-plans");
+  const { data: myUpcomingPlans } = usePlans(
+    me?.id
+      ? { userId: me.id, status: "open", sort: "upcoming" }
+      : undefined,
+    { enabled: inPlansSelected && Boolean(me?.id) },
+  );
+  // Set of mountain slugs across all the user's upcoming open plans (created
+  // or joined — `userId` on /plans/all matches creator OR member). Memoised
+  // so the filtered-mountains memo doesn't rebuild the Set every render.
+  const myPlanMountainSlugs = useMemo(() => {
+    if (!myUpcomingPlans) return null;
+    const set = new Set<string>();
+    for (const plan of myUpcomingPlans) {
+      for (const m of plan.mountains ?? []) set.add(m.slug);
+    }
+    return set;
+  }, [myUpcomingPlans]);
   // Don't pre-select "closest-first" when the map is the default view: that
   // filter is disabled in map mode (see `disabled: isMapView`), so the chip
   // would render as already-selected AND greyed-out on first launch.
@@ -270,6 +294,14 @@ function AuthedMountainsScreen() {
         name: intl.formatMessage({ defaultMessage: "Essentials" }),
         showDot: true,
       },
+      // "In my plans" narrows the mountain set to peaks that appear in any
+      // open upcoming plan the user is in (created or joined). Useful pre-
+      // trip filter — "where am I going next?"
+      {
+        type: "in-plans" as const,
+        name: intl.formatMessage({ defaultMessage: "In my plans" }),
+        icon: CalendarCheck,
+      },
       // The view-toggle chip reads as the destination, not the current state:
       // in map mode it says "List" (tap to switch), in list mode it says
       // "Map" (tap to switch back). Single chip toggles `filtersSelected`'s
@@ -317,6 +349,19 @@ function AuthedMountainsScreen() {
 
     if (filtersSelected.includes("essentials")) {
       filtered = filtered.filter(({ essential }) => essential);
+    }
+
+    if (inPlansSelected) {
+      // Until the plans query resolves we filter to an empty set so the
+      // user sees a clean "no matches" rather than the unfiltered list
+      // momentarily. Once `myPlanMountainSlugs` lands, it intersects.
+      if (!myPlanMountainSlugs) {
+        filtered = [];
+      } else {
+        filtered = filtered.filter(({ slug }) =>
+          myPlanMountainSlugs.has(slug),
+        );
+      }
     }
 
     // Altitude filtering
@@ -420,7 +465,16 @@ function AuthedMountainsScreen() {
     }
 
     return filtered;
-  }, [queriedMountains, filtersSelected, userSummits?.summits, userLocation, settingsFilters, intl]);
+  }, [
+    queriedMountains,
+    filtersSelected,
+    userSummits?.summits,
+    userLocation,
+    settingsFilters,
+    intl,
+    inPlansSelected,
+    myPlanMountainSlugs,
+  ]);
 
   // Get summited mountain slugs for map
   const summitedSlugs = useMemo(() => {
