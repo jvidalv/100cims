@@ -18,6 +18,12 @@ const planLeft = {
   es: (name: string) => `${name} ha dejado tu plan`,
 } satisfies Record<AppLocale, (name: string) => string>;
 
+const planDeleted = {
+  en: "The plan was deleted by its creator",
+  ca: "El pla l'ha eliminat el creador",
+  es: "El plan ha sido eliminado por el creador",
+} satisfies Record<AppLocale, string>;
+
 const friendPlanCreated = {
   en: (name: string) => `${name} just created a plan`,
   ca: (name: string) => `${name} acaba de crear un pla`,
@@ -62,6 +68,9 @@ export const pushPlanJoinedOther = (locale: string | null, name: string) =>
 
 export const pushPlanLeft = (locale: string | null, name: string) =>
   planLeft[normalizeAppLocale(locale)](name);
+
+export const pushPlanDeleted = (locale: string | null) =>
+  planDeleted[normalizeAppLocale(locale)];
 
 export const pushFriendPlanCreated = (locale: string | null, name: string) =>
   friendPlanCreated[normalizeAppLocale(locale)](name);

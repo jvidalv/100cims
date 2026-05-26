@@ -21,7 +21,9 @@ const INTENT_STYLES: Record<
   { bg: string; text: string; iconColor?: string }
 > = {
   primary: {
-    bg: "bg-primary/10",
+    // `bg-primary/10` is too faint against the black dark-mode background;
+    // bump opacity in dark mode while staying in-palette.
+    bg: "bg-primary/10 dark:bg-primary/30",
     text: "text-primary",
     iconColor: Colors.light.primary,
   },
@@ -50,7 +52,8 @@ const INTENT_STYLES: Record<
     iconColor: "#eab308",
   },
   accent: {
-    bg: "bg-accent/10",
+    // Same reasoning as `primary` — `/10` opacity disappears against black.
+    bg: "bg-accent/10 dark:bg-accent/30",
     text: "text-accent",
     iconColor: Colors.light.accent,
   },

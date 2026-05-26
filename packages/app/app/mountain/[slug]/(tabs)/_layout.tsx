@@ -21,29 +21,30 @@ import { useTopMountainComments } from "@/domains/mountain-comments/mountain-com
 export default function MountainSlugLayout() {
   const intl = useIntl();
   // Reuse the same hooks the Details screen already calls — React Query
-  // dedupes them, so the badge is free (no extra network).
+  // dedupes them, so the count is free (no extra network).
   const { slug } = useGlobalSearchParams<{ slug: string }>();
   const { data: mountain } = useMountainOne({ mountainSlug: slug });
   const { data: topComments } = useTopMountainComments(mountain?.id);
   const commentCount = topComments?.total ?? 0;
-  // Cap the badge at 99+ — iOS tab badges look broken with 3+ digits.
-  const commentBadge =
+  // Label flips to "Comments (5)" / "Comments (+99)" when there are any.
+  // Cap at +99 so the tab label doesn't blow up on long counts.
+  const commentsLabel = intl.formatMessage({ defaultMessage: "Comments" });
+  const commentsLabelWithCount =
     commentCount === 0
-      ? undefined
-      : commentCount > 99
-        ? "99+"
-        : String(commentCount);
+      ? commentsLabel
+      : `${commentsLabel} (${commentCount > 99 ? "+99" : commentCount})`;
   return (
     <NativeTabs
       disableTransparentOnScrollEdge
       tintColor={Colors.light.primary}
-      // Badges use the brand primary (rose). Note: `badgeTextColor` only
-      // affects Android/Web — iOS always renders badge text in white.
-      badgeBackgroundColor={Colors.light.primary}
-      badgeTextColor="#FFFFFF"
     >
-      <NativeTabs.Trigger name="index">
-        <NativeTabs.Trigger.Icon sf="mountain.2.fill" md="terrain" />
+      {/* `(details)` is a route GROUP — invisible in URLs, so this tab
+          stays at `/mountain/[slug]` while letting "All summits" and any
+          future Details children live inside its stack. Trigger name
+          matches the folder name including parens. See
+          `.claude/skills/app/SKILL.md` NativeTabs gotchas. */}
+      <NativeTabs.Trigger name="(details)">
+        <NativeTabs.Trigger.Icon sf="info.circle.fill" md="info" />
         <NativeTabs.Trigger.Label>
           {intl.formatMessage({ defaultMessage: "Details" })}
         </NativeTabs.Trigger.Label>
@@ -59,12 +60,7 @@ export default function MountainSlugLayout() {
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="comments">
         <NativeTabs.Trigger.Icon sf="bubble.left.fill" md="chat_bubble" />
-        <NativeTabs.Trigger.Label>
-          {intl.formatMessage({ defaultMessage: "Comments" })}
-        </NativeTabs.Trigger.Label>
-        {commentBadge !== undefined && (
-          <NativeTabs.Trigger.Badge>{commentBadge}</NativeTabs.Trigger.Badge>
-        )}
+        <NativeTabs.Trigger.Label>{commentsLabelWithCount}</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );

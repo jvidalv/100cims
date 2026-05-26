@@ -37,6 +37,7 @@ export function TopMountainComments({ mountainId, isAuthenticated }: Props) {
               id: c.id,
               parentCommentId: c.parentCommentId,
               body: c.body,
+              images: c.images,
               upvoteCount: c.upvoteCount,
               viewerHasUpvoted: c.viewerHasUpvoted,
               createdAt: String(c.createdAt),

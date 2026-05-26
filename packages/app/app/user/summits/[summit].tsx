@@ -37,6 +37,7 @@ import {
   ThemedText,
   ThemedView,
   tierColor,
+  withAlpha,
 } from "@/components/ui/atoms";
 import {
   ActionRow,
@@ -332,17 +333,38 @@ const Content = () => {
           <ThemedText className="mb-2 text-2xl font-semibold">
             <FormattedMessage defaultMessage="Information" />
           </ThemedText>
-          {/* Static row — not pressable; mirrors ActionRow's icon-in-circle
-              visual treatment so it sits at home next to the action rows
-              below. */}
-          <View className="flex-row items-center gap-2">
-            <View className="size-8 items-center justify-center rounded-full bg-muted">
-              <LucideIcon icon={CalendarDays} size={16} muted />
-            </View>
-            <ThemedText>
-              {format(parseLocalDateString(data.summitedAt), "dd MMM yyyy")}
-            </ThemedText>
-          </View>
+          {/* Mirrors ActionRow's icon-in-circle visual so the Information
+              block reads as siblings of the Actions section below, just
+              non-pressable. Author's own rating value, or "Unknown" when
+              they didn't rate that axis. */}
+          <InformationRow
+            icon={CalendarDays}
+            value={format(parseLocalDateString(data.summitedAt), "dd MMM yyyy")}
+          />
+          {data.authorDifficulty !== null && (
+            <InformationRow
+              icon={TriangleAlert}
+              label={<FormattedMessage defaultMessage="Difficulty" />}
+              tint={tierColor(data.authorDifficulty - 1, 5, true)}
+              value={difficultyLabelFor(data.authorDifficulty, intl)}
+            />
+          )}
+          {data.authorFamilyFriendly !== null && (
+            <InformationRow
+              icon={Baby}
+              label={<FormattedMessage defaultMessage="Family" />}
+              tint={tierColor(data.authorFamilyFriendly === 5 ? 2 : 0, 3)}
+              value={safetyLabelFor(data.authorFamilyFriendly, intl)}
+            />
+          )}
+          {data.authorDogFriendly !== null && (
+            <InformationRow
+              icon={Dog}
+              label={<FormattedMessage defaultMessage="Dogs" />}
+              tint={tierColor(data.authorDogFriendly === 5 ? 2 : 0, 3)}
+              value={safetyLabelFor(data.authorDogFriendly, intl)}
+            />
+          )}
         </View>
         <View className="mt-6 gap-2 px-6">
           <ThemedText className="mb-2 text-2xl font-semibold">
@@ -437,41 +459,6 @@ const Content = () => {
             imageUrl={data.mountainImageUrl ?? null}
           />
         </View>
-        {(data.authorFamilyFriendly !== null ||
-          data.authorDogFriendly !== null ||
-          data.authorDifficulty !== null) && (
-          <View className="mt-6 gap-2 px-6">
-            <ThemedText className="mb-2 text-2xl font-semibold">
-              <FormattedMessage defaultMessage="Ratings" />
-            </ThemedText>
-            <View className="flex-row flex-wrap items-center gap-x-4 gap-y-2">
-              {data.authorDifficulty !== null && (
-                <ViewerRatingTag
-                  icon={TriangleAlert}
-                  label={difficultyLabelFor(data.authorDifficulty, intl)}
-                  color={tierColor(data.authorDifficulty - 1, 5, true)}
-                />
-              )}
-              {data.authorFamilyFriendly !== null && (
-                <ViewerRatingTag
-                  icon={Baby}
-                  label={safetyLabelFor(data.authorFamilyFriendly, intl)}
-                  color={tierColor(
-                    data.authorFamilyFriendly === 5 ? 2 : 0,
-                    3,
-                  )}
-                />
-              )}
-              {data.authorDogFriendly !== null && (
-                <ViewerRatingTag
-                  icon={Dog}
-                  label={safetyLabelFor(data.authorDogFriendly, intl)}
-                  color={tierColor(data.authorDogFriendly === 5 ? 2 : 0, 3)}
-                />
-              )}
-            </View>
-          </View>
-        )}
       </ScrollView>
       {/*
         Off-screen render for view-shot capture:
@@ -543,30 +530,56 @@ export default function SummitsSummitPage() {
   return <Content />;
 }
 
-const safetyLabelFor = (value: number, intl: ReturnType<typeof useIntl>) =>
+type IntlType = ReturnType<typeof useIntl>;
+
+const safetyLabelFor = (value: number, intl: IntlType) =>
   value === 5
     ? intl.formatMessage({ defaultMessage: "Safe" })
     : intl.formatMessage({ defaultMessage: "Unsafe" });
 
-const difficultyLabelFor = (value: number, intl: ReturnType<typeof useIntl>) => {
+// Kept local (not shared with `domains/mountain/rating-tiers.ts`) on purpose:
+// the rating input is a 3-tier scale (Easy / Moderate / Hard), while the
+// aggregate `difficultyTier` uses 4 (Easy / Moderate / Hard / Very Hard).
+const difficultyLabelFor = (value: number, intl: IntlType) => {
   if (value <= 2) return intl.formatMessage({ defaultMessage: "Easy" });
   if (value >= 4) return intl.formatMessage({ defaultMessage: "Hard" });
   return intl.formatMessage({ defaultMessage: "Moderate" });
 };
 
-function ViewerRatingTag({
+/**
+ * Static information row: icon-in-circle + optional axis label + value.
+ * Mirrors RatingActionRow on the mountain detail page so the Information
+ * block reads consistently across the app, just non-pressable. `tint` is
+ * the `rgb(...)` from `tierColor`; omit it to render muted (date and any
+ * "Unknown" rating). `label` is the axis name shown before the value
+ * (e.g. "Difficulty Easy"); omit it for value-only rows like the date.
+ */
+function InformationRow({
   icon,
   label,
-  color,
+  tint,
+  value,
 }: {
   icon: LucideIconType;
-  label: string;
-  color: string;
+  label?: React.ReactNode;
+  tint?: string;
+  value: string;
 }) {
   return (
     <View className="flex-row items-center gap-2">
-      <LucideIcon icon={icon} color={color} />
-      <ThemedText className="text-xl font-medium">{label}</ThemedText>
+      <View
+        className="size-8 items-center justify-center rounded-full bg-muted"
+        style={tint ? { backgroundColor: withAlpha(tint, 0.15) } : undefined}
+      >
+        <LucideIcon icon={icon} size={16} color={tint} muted={!tint} />
+      </View>
+      {label && <ThemedText className="font-medium">{label}</ThemedText>}
+      <ThemedText
+        className="font-medium"
+        style={tint ? { color: tint } : undefined}
+      >
+        {value}
+      </ThemedText>
     </View>
   );
 }

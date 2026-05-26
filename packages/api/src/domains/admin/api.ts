@@ -204,6 +204,32 @@ export const useAdminMountainDetail = (id: string) =>
     },
   });
 
+export const useAdminCommentsList = ({
+  page,
+  q,
+  sort,
+}: {
+  page: number;
+  q: string;
+  sort: string;
+}) =>
+  useQuery({
+    queryKey: adminKeys.comments({ page, q, sort }),
+    queryFn: async () => {
+      const { data, error } = await api.api.admin["mountain-comments"].get({
+        query: {
+          page,
+          pageSize: 25,
+          q: q || undefined,
+          sort: sort || undefined,
+        },
+      });
+      if (error) throw error;
+      return data.message;
+    },
+    placeholderData: (prev) => prev,
+  });
+
 export const useAdminMountainChallenges = (id: string) =>
   useQuery({
     queryKey: adminKeys.mountainChallenges(id),
@@ -293,9 +319,13 @@ export const useUpdateAdminMountainComment = (mountainId: string) => {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       void qc.invalidateQueries({
         queryKey: adminKeys.mountainComments(mountainId),
+      });
+      void qc.invalidateQueries({ queryKey: adminKeys.commentsList() });
+      void qc.invalidateQueries({
+        queryKey: adminKeys.commentDetail(variables.id),
       });
     },
   });
@@ -329,10 +359,66 @@ export const useDeleteAdminMountainComment = (mountainId: string) => {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (_data, commentId) => {
       void qc.invalidateQueries({
         queryKey: adminKeys.mountainComments(mountainId),
       });
+      void qc.invalidateQueries({ queryKey: adminKeys.commentsList() });
+      void qc.invalidateQueries({
+        queryKey: adminKeys.commentDetail(commentId),
+      });
+    },
+  });
+};
+
+/**
+ * Hooks for the cross-mountain admin Comments page. Same wire endpoints as
+ * `useUpdate/DeleteAdminMountainComment`, but routed for callers that don't
+ * have the mountain id in scope (the /admin/comments[/id] pages); invalidate
+ * the cross-mountain list + detail keys rather than a specific mountain.
+ */
+export const useAdminCommentDetail = (id: string) =>
+  useQuery({
+    queryKey: adminKeys.commentDetail(id),
+    queryFn: async () => {
+      const { data, error } = await api.api.admin["mountain-comments"]({
+        id,
+      }).get();
+      if (error) throw error;
+      return data.message;
+    },
+  });
+
+export const useUpdateAdminComment = (id: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: { body: string }) => {
+      const { data, error } = await api.api.admin[
+        "mountain-comments"
+      ].update.post({ id, body: input.body });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: adminKeys.commentDetail(id) });
+      void qc.invalidateQueries({ queryKey: adminKeys.commentsList() });
+    },
+  });
+};
+
+export const useDeleteAdminComment = (id: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      const { data, error } = await api.api.admin["mountain-comments"]({
+        id,
+      }).delete();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: adminKeys.commentsList() });
+      void qc.removeQueries({ queryKey: adminKeys.commentDetail(id) });
     },
   });
 };

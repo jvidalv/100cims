@@ -33,8 +33,10 @@ import { adminMerchGetRoute } from "@/api/routes/admin/admin.merch.get";
 import { adminMountainChallengesGetRoute } from "@/api/routes/admin/admin.mountain-challenges.get";
 import { adminMountainCommentCreatePostRoute } from "@/api/routes/admin/admin.mountain-comment-create.post";
 import { adminMountainCommentDeleteDeleteRoute } from "@/api/routes/admin/admin.mountain-comment-delete.delete";
+import { adminMountainCommentDetailGetRoute } from "@/api/routes/admin/admin.mountain-comment-detail.get";
 import { adminMountainCommentUpdatePostRoute } from "@/api/routes/admin/admin.mountain-comment-update.post";
 import { adminMountainCommentUpvotePostRoute } from "@/api/routes/admin/admin.mountain-comment-upvote.post";
+import { adminMountainCommentsListGetRoute } from "@/api/routes/admin/admin.mountain-comments-list.get";
 import { adminMountainCommentsGetRoute } from "@/api/routes/admin/admin.mountain-comments.get";
 import { adminMountainDeleteDeleteRoute } from "@/api/routes/admin/admin.mountain-delete.delete";
 import { adminMountainDetailGetRoute } from "@/api/routes/admin/admin.mountain-detail.get";
@@ -109,6 +111,8 @@ export const adminRoutes = new Elysia({ prefix: "/admin" })
   .use(adminMountainRatingsGetRoute)
   .use(adminMountainRatingDeleteDeleteRoute)
   .use(adminMountainCommentsGetRoute)
+  .use(adminMountainCommentsListGetRoute)
+  .use(adminMountainCommentDetailGetRoute)
   .use(adminMountainCommentCreatePostRoute)
   .use(adminMountainCommentUpdatePostRoute)
   .use(adminMountainCommentUpvotePostRoute)

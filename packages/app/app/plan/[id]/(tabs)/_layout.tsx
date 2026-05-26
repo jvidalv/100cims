@@ -32,6 +32,10 @@ export default function PlanTabsLayout() {
   const { data: plan } = usePlanOne({ id });
   const { data: user } = useUserMe();
   const isCreator = !!user?.id && user.id === plan?.creatorId;
+  // Complete is only meaningful for open plans that have a start date —
+  // matches the gating the old in-content "Complete plan" ActionRow had on
+  // index.tsx before the tab refactor.
+  const canComplete = isCreator && plan?.status === "open" && !!plan.startDate;
 
   // Chat tab gets a dot badge when this plan has unread messages. The hook
   // returns a list of plan IDs the user has unread messages in; we just
@@ -54,7 +58,7 @@ export default function PlanTabsLayout() {
           {intl.formatMessage({ defaultMessage: "Details" })}
         </NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="complete" hidden={!isCreator}>
+      <NativeTabs.Trigger name="complete" hidden={!canComplete}>
         <NativeTabs.Trigger.Icon
           sf="checkmark.circle.fill"
           md="check_circle"

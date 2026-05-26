@@ -1,10 +1,9 @@
-import { Link } from "expo-router";
+import { Link, useIsFocused } from "expo-router";
 import {
   ArrowRight,
   Backpack,
   CalendarDays,
   CircleDot,
-  Map,
   Moon,
   Mountain,
   Sun,
@@ -61,8 +60,6 @@ import {
   useUserChallengeSummits,
 } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
-import { useIsCurrentScreen } from "@/hooks/use-is-current-screen";
-import { useMapNotificationBadge } from "@/hooks/use-map-notification-badge";
 import { useOnAppActive } from "@/hooks/use-on-app-active";
 import { getInitials } from "@/lib/strings";
 
@@ -240,12 +237,8 @@ const ThemeToggleButton = () => {
 
 const PageHeader = ({
   scrollOffset,
-  showBadge,
-  markAsSeen,
 }: {
   scrollOffset: SharedValue<number>;
-  showBadge: boolean;
-  markAsSeen: () => void;
 }) => {
   const { data: plansUnread } = usePlanChatUnread();
   const hasUnreadMessages = !!plansUnread?.length;
@@ -284,22 +277,6 @@ const PageHeader = ({
           <Link href="/hiscores" asChild>
             <TouchableOpacity className="size-10 items-center justify-center rounded-full border-2 border-border">
               <LucideIcon icon={Trophy} muted />
-            </TouchableOpacity>
-          </Link>
-          <Link
-            href={{ pathname: "/mountains", params: { view: "map" } }}
-            asChild
-          >
-            <TouchableOpacity
-              onPress={() => {
-                void markAsSeen();
-              }}
-              className="relative size-10 items-center justify-center rounded-full border-2 border-border"
-            >
-              {showBadge && (
-                <View className="absolute -right-0.5 -top-0.5 size-3 rounded-full bg-yellow-400" />
-              )}
-              <LucideIcon icon={Map} muted />
             </TouchableOpacity>
           </Link>
           <Link href="/plans" asChild>
@@ -390,8 +367,7 @@ export default function IndexScreen() {
     !isUnauthorized && (isUserMeError || isMountainsError || isSummitsError);
   const fatalError = userMeError ?? mountainsError ?? summitsError;
 
-  const isCurrentRoute = useIsCurrentScreen("/");
-  const { showBadge, markAsSeen } = useMapNotificationBadge();
+  const isCurrentRoute = useIsFocused();
 
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -516,11 +492,7 @@ export default function IndexScreen() {
           }}
         />
       )}
-      <PageHeader
-        scrollOffset={scrollOffset}
-        showBadge={showBadge}
-        markAsSeen={markAsSeen}
-      />
+      <PageHeader scrollOffset={scrollOffset} />
       <Animated.ScrollView
         ref={scrollRef}
         contentContainerClassName="gap-8 px-6 pb-12"

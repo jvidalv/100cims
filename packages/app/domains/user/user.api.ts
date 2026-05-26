@@ -133,9 +133,16 @@ export const useUserOneGet = ({ userId }: { userId: string }) => {
   return props;
 };
 
-export const useAnyUserSummits = ({ userId }: { userId: string }) => {
+export const useAnyUserSummits = ({
+  userId,
+  enabled = true,
+}: {
+  userId: string;
+  enabled?: boolean;
+}) => {
   const props = useQuery({
     queryKey: userKeys.summitsById(userId),
+    enabled,
     queryFn: async () => {
       const { data, error } = await apiClient.GET("/api/public/user/summits", {
         params: { query: { userId } },
@@ -147,6 +154,28 @@ export const useAnyUserSummits = ({ userId }: { userId: string }) => {
 
   return props;
 };
+
+/**
+ * Paginated variant of `useAnyUserSummits` — fetches another user's summits
+ * 24 at a time. Used by the public profile (`/user/[user]`) to avoid
+ * loading 500+ cards up front. The legacy `useAnyUserSummits` stays for
+ * any caller still on the old non-paginated endpoint.
+ */
+export const useAnyUserAllSummits = ({ userId }: { userId: string }) =>
+  useInfiniteQuery({
+    queryKey: userKeys.summitsByIdAll(userId),
+    initialPageParam: 1,
+    queryFn: async ({ pageParam }) => {
+      const { data, error } = await apiClient.GET(
+        "/api/public/user/summits/all",
+        { params: { query: { userId, page: pageParam } } },
+      );
+      if (error) throw error;
+      return data.message;
+    },
+    getNextPageParam: (last) =>
+      last.pagination.hasMore ? last.pagination.page + 1 : undefined,
+  });
 
 export const useUserProfile = ({ userId }: { userId: string }) => {
   const props = useQuery({

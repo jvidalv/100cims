@@ -60,6 +60,28 @@ export const usePlansInfinite = (params?: {
   });
 };
 
+/**
+ * Open plans (status === "open") that include the given mountain. Sorted by
+ * start date ascending — soonest first. Response is shaped like the calendar
+ * plan-event so the existing `PlanItemListCompact` row consumes it as-is.
+ */
+export const usePlansByMountain = (mountainSlug: string | undefined) => {
+  return useQuery({
+    queryKey: mountainSlug
+      ? planKeys.byMountain(mountainSlug)
+      : (["noop"] as const),
+    enabled: !!mountainSlug,
+    queryFn: async () => {
+      const { data, error } = await apiClient.GET(
+        "/api/public/plans/by-mountain",
+        { params: { query: { mountainSlug: mountainSlug! } } },
+      );
+      if (error) throw error;
+      return data.message.events;
+    },
+  });
+};
+
 export const usePlanOne = ({ id }: { id: string }) => {
   return useQuery({
     queryKey: planKeys.one(id),

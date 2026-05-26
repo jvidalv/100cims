@@ -1,5 +1,6 @@
 import { and, eq, ne } from "drizzle-orm";
 import { Elysia } from "elysia";
+import { uuidv7 } from "uuidv7";
 
 import { db } from "@/db";
 import {
@@ -8,6 +9,11 @@ import {
   summitTable,
   userTable,
 } from "@/db/schema";
+import {
+  CommentImageError,
+  resolveCommentImage,
+} from "@/api/lib/comment-images";
+import { reportImageTooBig } from "@/api/lib/images";
 import { sendPushLocalized } from "@/api/lib/push";
 import {
   pushCommentReplyBody,
@@ -17,6 +23,7 @@ import {
 } from "@/api/lib/push-translations";
 import { PUSH_TYPE, getUserDisplayName } from "@/api/lib/push-types";
 import { getUserFromRequest } from "@/api/routes/@shared/auth";
+import { IMAGE_TO_BIG } from "@/api/routes/@shared/error-codes";
 import {
   ErrorFieldResponse,
   SuccessResponse,
@@ -54,37 +61,70 @@ export const mountainCommentCreatePostRoute = new Elysia().post(
       parentCommentId = parent.parentCommentId ?? parent.id;
     }
 
+    // Generate the comment id up-front so attachment S3 keys can include it.
+    // Images upload in parallel; on size failure we mirror the summit
+    // precedent: 500 + IMAGE_TO_BIG + Discord alert.
+    const commentId = uuidv7();
+    let images: { url: string }[] = [];
+    if (body.images && body.images.length > 0) {
+      try {
+        images = await Promise.all(
+          body.images.map((b64) => resolveCommentImage(b64, commentId)),
+        );
+      } catch (e) {
+        if (e instanceof CommentImageError && e.status === 400) {
+          const offending = body.images.find(
+            (b64) => !b64.startsWith("http") && b64.length > 0,
+          );
+          if (offending) {
+            reportImageTooBig(request, {
+              route: "mountain-comments/create",
+              base64Data: offending,
+              userId: viewer.id,
+            });
+          }
+          set.status = 500;
+          return { error: IMAGE_TO_BIG };
+        }
+        set.status = 500;
+        return { error: "Image upload failed" };
+      }
+    }
+
     const [inserted] = await db
       .insert(mountainCommentTable)
       .values({
+        id: commentId,
         mountainId: body.mountainId,
         userId: viewer.id,
         parentCommentId,
         body: body.body,
+        images,
       })
       .returning();
 
-    const [user] = await db
-      .select({
-        id: userTable.id,
-        username: userTable.username,
-        firstName: userTable.firstName,
-        lastName: userTable.lastName,
-        imageUrl: userTable.imageUrl,
-      })
-      .from(userTable)
-      .where(eq(userTable.id, viewer.id));
-
-    const [summit] = await db
-      .select({ id: summitTable.id })
-      .from(summitTable)
-      .where(
-        and(
-          eq(summitTable.userId, viewer.id),
-          eq(summitTable.mountainId, body.mountainId),
-        ),
-      )
-      .limit(1);
+    const [[user], [summit]] = await Promise.all([
+      db
+        .select({
+          id: userTable.id,
+          username: userTable.username,
+          firstName: userTable.firstName,
+          lastName: userTable.lastName,
+          imageUrl: userTable.imageUrl,
+        })
+        .from(userTable)
+        .where(eq(userTable.id, viewer.id)),
+      db
+        .select({ id: summitTable.id })
+        .from(summitTable)
+        .where(
+          and(
+            eq(summitTable.userId, viewer.id),
+            eq(summitTable.mountainId, body.mountainId),
+          ),
+        )
+        .limit(1),
+    ]);
 
     // Notify thread participants (only when this is a reply — top-level
     // comments don't ping anyone). `parentCommentId` here is the top-level
@@ -188,6 +228,7 @@ export const mountainCommentCreatePostRoute = new Elysia().post(
         mountainId: inserted.mountainId,
         parentCommentId: inserted.parentCommentId,
         body: inserted.body,
+        images: inserted.images,
         upvoteCount: inserted.upvoteCount,
         viewerHasUpvoted: false,
         createdAt: inserted.createdAt,

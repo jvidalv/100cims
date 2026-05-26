@@ -7,6 +7,7 @@ import { twMerge } from "tailwind-merge";
 import { ThemedText } from "@/components/ui/atoms";
 import { LucideIcon } from "@/components/ui/atoms/lucide-icon";
 import { pastelColors } from "@/constants/colors";
+import { challengeCompletionPercent } from "@/domains/challenge/challenge.model";
 
 type ChallengeListItemProps = {
   name: string;
@@ -40,10 +41,11 @@ export function ChallengeListItem({
   rightElement,
 }: ChallengeListItemProps) {
   const usersCount = totalUsers ? Number(totalUsers) : 0;
-  const totalMountainsNum = Number(totalMountains) || 0;
+  // Keep `summitedCount != null` as a separate guard: missing progress means
+  // "no badge", whereas progress of 0 still renders a 0% badge.
   const completionPercent =
-    summitedCount != null && totalMountainsNum > 0
-      ? Math.round((summitedCount / totalMountainsNum) * 100)
+    summitedCount != null
+      ? challengeCompletionPercent(summitedCount, Number(totalMountains))
       : null;
   return (
     <View className="gap-2">

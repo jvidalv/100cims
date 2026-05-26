@@ -32,6 +32,7 @@ export const mountainCommentTopGetRoute = new Elysia().use(JWT()).get(
         mountainId: mountainCommentTable.mountainId,
         parentCommentId: mountainCommentTable.parentCommentId,
         body: mountainCommentTable.body,
+        images: mountainCommentTable.images,
         upvoteCount: mountainCommentTable.upvoteCount,
         createdAt: mountainCommentTable.createdAt,
         updatedAt: mountainCommentTable.updatedAt,

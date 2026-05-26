@@ -15,7 +15,11 @@ export default function TabsLayout() {
       disableTransparentOnScrollEdge
       tintColor={Colors.light.primary}
     >
-      <NativeTabs.Trigger name="index">
+      {/* `(home)` is a route GROUP — invisible in URLs, so the dashboard
+          stays at "/" while letting Latest summits and any future Home
+          children live inside this tab's stack. Trigger name matches the
+          folder name including parens. */}
+      <NativeTabs.Trigger name="(home)">
         <NativeTabs.Trigger.Icon sf="house.fill" md="home" />
         <NativeTabs.Trigger.Label>
           {intl.formatMessage({ defaultMessage: "Home" })}

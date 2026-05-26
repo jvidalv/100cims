@@ -19,6 +19,7 @@ export {
   type SettingsGroup,
   type SettingsOption,
 } from "./filterable-list-header";
+export { SettingsFilterModal } from "./settings-filter-modal";
 export { PhoneNumberPromptDialog } from "./phone-number-prompt-dialog";
 export { PushPermissionDialog } from "./push-permission-dialog";
 export { UpdatesDialog, type Update } from "./updates-dialog";
@@ -31,6 +32,7 @@ export { PersonRow } from "./person-row";
 export { PeopleList } from "./people-list";
 export { PlanTypeChips } from "./plan-type-chips";
 export { MountainList } from "./mountain-list";
+export { MountainPreviewCard } from "./mountain-preview-card";
 export { MountainRow } from "./mountain-row";
 export { MountainRowMinimal } from "./mountain-row-minimal";
 export { ChallengeMountainList } from "./challenge-mountain-list";

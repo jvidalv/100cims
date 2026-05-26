@@ -1,6 +1,6 @@
 import { nextSunday } from "date-fns/nextSunday";
 import { useGlobalSearchParams, useRouter } from "expo-router";
-import { Ban, Check, Trash2, X } from "lucide-react-native";
+import { Check, Trash2, X } from "lucide-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { useIntl, FormattedMessage } from "react-intl";
 import {
@@ -17,9 +17,9 @@ import {
   ThemedKeyboardAvoidingView,
   ThemedText,
   ThemedDateInput,
+  ThemedSwitch,
   ThemedTextInput,
   ThemedTimeInput,
-  ThemedToggleInput,
 } from "@/components/ui/atoms";
 import { ThemedCheckbox } from "@/components/ui/atoms/themed-checkbox";
 import {
@@ -146,7 +146,9 @@ export default function PlanEditPage() {
   const handleDelete = () => {
     Alert.alert(
       intl.formatMessage({ defaultMessage: "Delete plan?" }),
-      intl.formatMessage({ defaultMessage: "This cannot be undone." }),
+      intl.formatMessage({
+        defaultMessage: "Participants will be notified. This cannot be undone.",
+      }),
       [
         {
           text: intl.formatMessage({ defaultMessage: "Cancel" }),
@@ -158,30 +160,6 @@ export default function PlanEditPage() {
           onPress: async () => {
             await deletePlan({ id });
             router.dismissTo("/plans");
-          },
-        },
-      ],
-    );
-  };
-
-  const handleCancel = () => {
-    Alert.alert(
-      intl.formatMessage({ defaultMessage: "Cancel this plan?" }),
-      intl.formatMessage({ defaultMessage: "Participants will be notified." }),
-      [
-        {
-          text: intl.formatMessage({ defaultMessage: "Keep" }),
-          style: "cancel",
-        },
-        {
-          text: intl.formatMessage({ defaultMessage: "Cancel plan" }),
-          style: "destructive",
-          onPress: async () => {
-            await updatePlan({
-              id,
-              status: "canceled",
-            });
-            router.dismiss();
           },
         },
       ],
@@ -201,25 +179,36 @@ export default function PlanEditPage() {
             keyboardShouldPersistTaps="handled"
             contentContainerClassName="gap-6 px-6 pt-6 pb-24"
           >
-            <ThemedTextInput
-              label={intl.formatMessage({ defaultMessage: "Activity title" })}
-              value={title}
-              onChangeText={setTitle}
-            />
-            <ThemedTextInput
-              label={intl.formatMessage({ defaultMessage: "Extra info" })}
-              multiline
-              value={description}
-              onChangeText={setDescription}
-              inputClassName="h-[120px]"
-            />
-            <ThemedToggleInput
-              label={intl.formatMessage({ defaultMessage: "Private plan" })}
-              checked={isPrivate}
-              onChecked={setIsPrivate}
-            />
-            <PlanTypeChips value={type} onChange={setType} />
             <View className="gap-4">
+              <ThemedText className="text-lg font-medium">
+                <FormattedMessage defaultMessage="Information" />
+              </ThemedText>
+              <ThemedTextInput
+                label={intl.formatMessage({ defaultMessage: "Activity title" })}
+                value={title}
+                onChangeText={setTitle}
+              />
+              <PlanTypeChips value={type} onChange={setType} />
+              <ThemedTextInput
+                label={intl.formatMessage({ defaultMessage: "Extra info" })}
+                multiline
+                value={description}
+                onChangeText={setDescription}
+                inputClassName="h-[120px]"
+              />
+              <ThemedSwitch
+                label={intl.formatMessage({ defaultMessage: "Private plan" })}
+                description={intl.formatMessage({
+                  defaultMessage: "Only invited members can see it",
+                })}
+                checked={isPrivate}
+                onChecked={setIsPrivate}
+              />
+            </View>
+            <View className="gap-4">
+              <ThemedText className="text-lg font-medium">
+                <FormattedMessage defaultMessage="Date" />
+              </ThemedText>
               <ThemedDateInput
                 value={date}
                 onDateValid={(date) => setDate(date)}
@@ -244,14 +233,14 @@ export default function PlanEditPage() {
               )}
             </View>
 
-            <View className="gap-3">
+            <View className="gap-4">
               <ThemedText className="text-lg font-medium">
                 <FormattedMessage defaultMessage="Mountains" />
               </ThemedText>
               <MountainList selected={mountains} onChange={setMountains} />
             </View>
 
-            <View className="gap-3">
+            <View className="gap-4">
               <ThemedText className="text-lg font-medium">
                 <FormattedMessage defaultMessage="Participants" />
               </ThemedText>
@@ -281,14 +270,6 @@ export default function PlanEditPage() {
                 onPress={() => router.dismiss()}
               >
                 <FormattedMessage defaultMessage="Close" />
-              </ActionRow>
-              <ActionRow
-                icon={Ban}
-                size="lg"
-                intent="danger"
-                onPress={handleCancel}
-              >
-                <FormattedMessage defaultMessage="Cancel" />
               </ActionRow>
               <ActionRow
                 icon={Trash2}

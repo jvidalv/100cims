@@ -5,6 +5,7 @@ import { Image, TouchableOpacity, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
 import { LucideIcon, ThemedText } from "@/components/ui/atoms";
+import { challengeCompletionPercent } from "@/domains/challenge/challenge.model";
 
 interface ChallengeRowMinimalProps {
   name: string;
@@ -50,12 +51,9 @@ export function ChallengeRowMinimal({
   rightElement,
 }: ChallengeRowMinimalProps) {
   const usersCount = totalUsers ? Number(totalUsers) : 0;
-  const totalMountainsNum = Number(totalMountains) || 0;
   const summited = summitedCount ?? 0;
   const completionPercent =
-    totalMountainsNum > 0
-      ? Math.round((summited / totalMountainsNum) * 100)
-      : 0;
+    challengeCompletionPercent(summited, Number(totalMountains)) ?? 0;
   // Tier the badge colouring so eye drifts straight to high-completion
   // challenges. 100% = primary fill, ≥1 = primary outline, 0 = muted.
   const badgeStyle =

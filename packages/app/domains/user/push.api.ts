@@ -72,6 +72,11 @@ const routeFromNotificationData = (data: unknown) => {
     return;
   }
 
+  if (type === "plan-deleted") {
+    router.push("/plans");
+    return;
+  }
+
   if (isPlanPushType(type)) {
     const planId = getStringField(data, "planId");
     if (planId) router.push(`/plan/${planId}`);

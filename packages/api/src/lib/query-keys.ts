@@ -29,6 +29,10 @@ export const adminKeys = {
     ["admin", "mountains", id, "ratings"] as const,
   mountainComments: (id: string) =>
     ["admin", "mountains", id, "comments"] as const,
+  commentsList: () => ["admin", "comments"] as const,
+  comments: (params: { page: number; q: string; sort: string }) =>
+    ["admin", "comments", params] as const,
+  commentDetail: (id: string) => ["admin", "comments", id] as const,
   summitsList: () => ["admin", "summits"] as const,
   summits: (params: { page: number; q: string; validated: string }) =>
     ["admin", "summits", params] as const,

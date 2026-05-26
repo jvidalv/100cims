@@ -1,12 +1,14 @@
 import * as Linking from "expo-linking";
-import { useGlobalSearchParams, useRouter } from "expo-router";
+import { Link, useGlobalSearchParams, useRouter } from "expo-router";
 import { setStatusBarStyle } from "expo-status-bar";
 import {
+  ArrowRight,
   ArrowUp,
   Baby,
   BadgeCheck,
   Bookmark,
   BookmarkCheck,
+  CalendarPlus,
   ChevronRight,
   CircleDot,
   Dog,
@@ -24,19 +26,26 @@ import { Alert, Image, TouchableOpacity, View } from "react-native";
 
 import { useAuth } from "@/components/providers/auth-provider";
 import { SummitCard } from "@/components/summit";
-import { LucideIcon, Skeleton, ThemedText } from "@/components/ui/atoms";
+import {
+  LucideIcon,
+  Skeleton,
+  ThemedText,
+  withAlpha,
+} from "@/components/ui/atoms";
 import {
   ActionRow,
   MountainRowMinimal,
   TopMountainComments,
   UpdatesDialog,
 } from "@/components/ui/molecules";
+import { PlanItemListCompact } from "@/components/ui/molecules/plan-item-list-compact";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
 import { useMountainOne, useMountains } from "@/domains/mountain/mountain.api";
 import {
   type RatingAxis,
   resolveRatingTier,
 } from "@/domains/mountain/rating-tiers";
+import { usePlansByMountain } from "@/domains/plan/plan.api";
 import {
   useIsMountainSaved,
   useSavedAddMutation,
@@ -81,9 +90,11 @@ export default function MountainScreen() {
 
   const mountain = localMountain || fetchedMountain;
 
-  const { location: userLocation, status: locationStatus } = useLocation({
-    prompt: true,
-  });
+  const { data: openPlans } = usePlansByMountain(slug);
+
+  // Permission prompt lives at the root (`LocationSync` in app/_layout.tsx);
+  // this screen just reads the resolved location and status.
+  const { location: userLocation, status: locationStatus } = useLocation();
 
   const distanceFromUser = useMemo(() => {
     if (!userLocation || !mountain) return null;
@@ -281,6 +292,18 @@ export default function MountainScreen() {
           <FormattedMessage defaultMessage="Share with your friends" />
         </ActionRow>
         <ActionRow
+          onPress={() =>
+            router.push({
+              pathname: "/plans/create",
+              params: { mountainId: mountain.id },
+            })
+          }
+          icon={CalendarPlus}
+          intent="muted"
+        >
+          <FormattedMessage defaultMessage="Create plan" />
+        </ActionRow>
+        <ActionRow
           onPress={() => {
             void Linking.openURL(
               `https://www.google.es/maps?q=${mountain.latitude},${mountain.longitude}`,
@@ -356,6 +379,28 @@ export default function MountainScreen() {
           );
         })}
       </View>
+      {openPlans && openPlans.length > 0 && (
+        <View className="gap-4">
+          <ThemedText className="text-2xl font-semibold">
+            <FormattedMessage defaultMessage="Open plans" />
+          </ThemedText>
+          <View className="gap-3">
+            {openPlans.map((plan) => (
+              <PlanItemListCompact
+                key={plan.id}
+                id={plan.id}
+                title={plan.title}
+                startDate={plan.date}
+                status={plan.status}
+                planType={plan.planType}
+                isPrivate={plan.isPrivate}
+                mountains={plan.mountains}
+                users={plan.users}
+              />
+            ))}
+          </View>
+        </View>
+      )}
       <View className="gap-4">
         <ThemedText className="text-2xl font-semibold">
           <FormattedMessage defaultMessage="Nearby summits" />
@@ -384,12 +429,32 @@ export default function MountainScreen() {
         isAuthenticated={isAuthenticated}
       />
       <View className="mb-32 gap-4">
-        <ThemedText className="text-2xl font-semibold">
-          <FormattedMessage
-            defaultMessage="Last {count}"
-            values={{ count: latestSummits?.length ?? 0 }}
-          />
-        </ThemedText>
+        <View className="flex-row items-center justify-between">
+          <ThemedText className="text-2xl font-semibold">
+            <FormattedMessage
+              defaultMessage="Last {count}"
+              values={{ count: latestSummits?.length ?? 0 }}
+            />
+          </ThemedText>
+          {/* "All →" mirrors the home dashboard's "More →" pattern
+              (`(tabs)/(home)/index.tsx`). Pushes onto the Details stack
+              so the mountain tab bar stays visible — works because
+              `(details)` is a route group with its own Stack layout. */}
+          <Link
+            href={{
+              pathname: "/mountain/[slug]/summits",
+              params: { slug },
+            }}
+            className="z-10 -mx-2 px-2"
+          >
+            <View className="flex-row items-center gap-1">
+              <ThemedText className="text-muted-foreground">
+                <FormattedMessage defaultMessage="All" />
+              </ThemedText>
+              <LucideIcon icon={ArrowRight} size={12} muted />
+            </View>
+          </Link>
+        </View>
         {isPendingLatestSummits && (
           <View className="flex-row flex-wrap">
             <View className="w-1/2 pr-1">
@@ -580,11 +645,7 @@ function RatingActionRow({
     >
       <View
         className="size-8 items-center justify-center rounded-full"
-        style={{
-          backgroundColor: iconColor
-            .replace("rgb(", "rgba(")
-            .replace(")", ", 0.15)"),
-        }}
+        style={{ backgroundColor: withAlpha(iconColor, 0.15) }}
       >
         <LucideIcon icon={icon} size={16} color={iconColor} />
       </View>

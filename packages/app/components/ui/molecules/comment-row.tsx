@@ -2,7 +2,7 @@ import { formatDistanceToNowStrict } from "date-fns";
 import { useRouter } from "expo-router";
 import { ArrowUp, Trash2 } from "lucide-react-native";
 import { FormattedMessage } from "react-intl";
-import { Alert, TouchableOpacity, View } from "react-native";
+import { Alert, Image, TouchableOpacity, View } from "react-native";
 
 import { Avatar, LucideIcon, ThemedText } from "@/components/ui/atoms";
 import { getDateFnsLocale } from "@/lib/locale";
@@ -11,6 +11,10 @@ export type CommentRowData = {
   id: string;
   parentCommentId: string | null;
   body: string;
+  // Up to 5 attachments — backend JSONB column on mountain_comment. Optional
+  // since the field is t.Optional() on the response schema (so older mobile
+  // builds with the previous types/api.ts don't crash on response parse).
+  images?: { url: string }[];
   upvoteCount: number;
   viewerHasUpvoted: boolean;
   createdAt: string;
@@ -50,6 +54,9 @@ type Props = {
   // Rendered when comment.parent is set (search results). Opens the full
   // thread for the parent; caller decides how (usually "clear search").
   onOpenThread?: () => void;
+  // Called when the user taps an attachment thumbnail. Caller is expected to
+  // mount a full-screen preview (e.g. ImagePreviewModal). Omit to disable.
+  onImagePress?: (uri: string) => void;
 };
 
 export function CommentRow({
@@ -60,6 +67,7 @@ export function CommentRow({
   onEdit,
   onDelete,
   onOpenThread,
+  onImagePress,
 }: Props) {
   const router = useRouter();
   const isMine = viewerId !== null && comment.user.id === viewerId;
@@ -144,6 +152,22 @@ export function CommentRow({
       <View className="rounded bg-muted/40 py-3">
         <ThemedText>{comment.body}</ThemedText>
       </View>
+      {comment.images && comment.images.length > 0 && (
+        <View className="flex-row flex-wrap gap-1 pt-1">
+          {comment.images.map((img) => (
+            <TouchableOpacity
+              key={img.url}
+              disabled={!onImagePress}
+              onPress={() => onImagePress?.(img.url)}
+            >
+              <Image
+                source={{ uri: img.url, cache: "force-cache" }}
+                className="size-20 rounded bg-muted"
+              />
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
       <View className="flex-row items-center gap-4 pt-1">
         <TouchableOpacity
           onPress={onUpvote}

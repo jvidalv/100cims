@@ -20,10 +20,7 @@ export default function SummitsScreen() {
     <ThemedView className="flex-1">
       <BlurredScreenHeader>
         <ThemedText numberOfLines={1} className="text-lg font-medium">
-          <FormattedMessage
-            defaultMessage="Latest summits ({count})"
-            values={{ count: summits?.length ?? 0 }}
-          />
+          <FormattedMessage defaultMessage="Latest summits" />
         </ThemedText>
       </BlurredScreenHeader>
       <ScrollView
