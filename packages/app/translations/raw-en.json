@@ -44,6 +44,9 @@
   "/VnDMl": {
     "defaultMessage": "Other"
   },
+  "/WXWuR": {
+    "defaultMessage": "Strava"
+  },
   "/awD4G": {
     "defaultMessage": "Used in {count} challenge"
   },
@@ -64,6 +67,9 @@
   },
   "05nKhi": {
     "defaultMessage": "Location is required"
+  },
+  "09igac": {
+    "defaultMessage": "No products match your search."
   },
   "0BUTMv": {
     "defaultMessage": "Search..."
@@ -91,6 +97,9 @@
   },
   "1bFpet": {
     "defaultMessage": "Most completed"
+  },
+  "1nalV/": {
+    "defaultMessage": "Share mountain"
   },
   "1ps8x4": {
     "defaultMessage": "Are you sure you want to delete this challenge? This action cannot be undone."
@@ -173,8 +182,14 @@
   "4wpUNc": {
     "defaultMessage": "Or"
   },
+  "5D+9E8": {
+    "defaultMessage": "WhatsApp group"
+  },
   "5I/9L2": {
     "defaultMessage": "{name} is on your saved mountains list."
+  },
+  "5PitCN": {
+    "defaultMessage": "Join this plan first"
   },
   "5YsvtF": {
     "defaultMessage": "Altitude"
@@ -365,6 +380,12 @@
   "CLLYQK": {
     "defaultMessage": "Export your summits?"
   },
+  "CUaVX3": {
+    "defaultMessage": "No products available."
+  },
+  "CnPG8j": {
+    "defaultMessage": "Featured"
+  },
   "D0uMjm": {
     "defaultMessage": "Difficulty reflects the easiest route up."
   },
@@ -418,6 +439,9 @@
   },
   "EIJT7Y": {
     "defaultMessage": "Danger zone"
+  },
+  "EL/qFv": {
+    "defaultMessage": "Save mountain"
   },
   "EPpeif": {
     "defaultMessage": "Share plan"
@@ -500,6 +524,9 @@
   "HV9rgD": {
     "defaultMessage": "Product not found"
   },
+  "HZcTDX": {
+    "defaultMessage": "Once you join, you'll be able to open the WhatsApp group."
+  },
   "HpQONe": {
     "defaultMessage": "Help & Suggestions"
   },
@@ -565,6 +592,9 @@
   },
   "K3r6DQ": {
     "defaultMessage": "Delete"
+  },
+  "K5MMUu": {
+    "defaultMessage": "Price ↑"
   },
   "KTlYr+": {
     "defaultMessage": "Deleting your account is permanent. All your summits and plans will be lost."
@@ -806,6 +836,9 @@
   "WIwKkx": {
     "defaultMessage": "Your profile"
   },
+  "WJ84tC": {
+    "defaultMessage": "Wikiloc trail"
+  },
   "WTrOy3": {
     "defaultMessage": "Chat"
   },
@@ -862,6 +895,9 @@
   },
   "Z14ALL": {
     "defaultMessage": "Write a reply…"
+  },
+  "Z6p8E/": {
+    "defaultMessage": "View mountain"
   },
   "ZQv4i6": {
     "defaultMessage": "Based on {count} from summiters, this mountain is rated {label} for dogs."
@@ -1079,6 +1115,9 @@
   "jAkDuA": {
     "defaultMessage": "Yes, report"
   },
+  "jPUO6p": {
+    "defaultMessage": "Price ↓"
+  },
   "jdJhOL": {
     "defaultMessage": "Phone number"
   },
@@ -1183,6 +1222,9 @@
   },
   "q6F4vK": {
     "defaultMessage": "Not authorized"
+  },
+  "qCcwo3": {
+    "defaultMessage": "Links"
   },
   "qR1oV/": {
     "defaultMessage": "Add mountain"

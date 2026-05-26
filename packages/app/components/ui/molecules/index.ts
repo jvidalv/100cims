@@ -14,12 +14,11 @@ export {
 } from "./blurred-screen-header";
 export { UserSelectInput, type UserForSelectInput } from "./user-select-input";
 export {
-  FilterableListHeader,
+  SettingsFilterModal,
   type Filter,
   type SettingsGroup,
   type SettingsOption,
-} from "./filterable-list-header";
-export { SettingsFilterModal } from "./settings-filter-modal";
+} from "./settings-filter-modal";
 export { PhoneNumberPromptDialog } from "./phone-number-prompt-dialog";
 export { PushPermissionDialog } from "./push-permission-dialog";
 export { UpdatesDialog, type Update } from "./updates-dialog";

@@ -66,11 +66,17 @@ const isMapboxNoise = (input: unknown): boolean => {
 
 const argsMatchNoise = (args: unknown[]): boolean => args.some(isMapboxNoise);
 
-let installed = false;
+// Stash the installed flag on globalThis so Metro Fast Refresh (which
+// re-evaluates this module) doesn't re-wrap `console.error`/`console.warn`
+// on top of the existing wrappers — each cycle would otherwise stack a new
+// layer, growing closure depth until logs run through N nested wrappers.
+const MARKER = "__mapboxNoiseInstalled" as const;
+type GlobalWithMarker = typeof globalThis & { [MARKER]?: boolean };
 
 export const silenceMapboxNoise = () => {
-  if (!__DEV__ || installed) return;
-  installed = true;
+  const g = globalThis as GlobalWithMarker;
+  if (!__DEV__ || g[MARKER]) return;
+  g[MARKER] = true;
 
   // Hide the LogBox red/yellow overlays for these specific strings. LogBox's
   // matcher takes both substrings and RegExps.
