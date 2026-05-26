@@ -8,9 +8,9 @@ import type {
   AdminMerchCreateBodySchema,
   AdminMerchUpdateBodySchema,
   AdminPlanCreateBodySchema,
+  AdminPlanUpdateBodySchema,
   AdminShopRequestUpdateBodySchema,
 } from "@/api/schemas/admin.schema";
-import type { PlanSpeed, PlanStatus, PlanType } from "@/db/enums";
 import { api } from "@/lib/api";
 import { adminKeys } from "@/lib/query-keys";
 
@@ -563,17 +563,19 @@ export const useAdminPlanDetail = (id: string) =>
     },
   });
 
-export type AdminPlanUpdateBody = {
-  title?: string;
-  description?: string | null;
-  status?: PlanStatus;
-  speed?: PlanSpeed;
-  type?: PlanType | null;
-  startDate?: string | null;
-  startTime?: string | null;
-  imageUrl?: string | null;
-  routeUrl?: string | null;
-};
+export const useAdminPlanMemberLog = (id: string) =>
+  useQuery({
+    queryKey: adminKeys.planMemberLog(id),
+    queryFn: async () => {
+      const { data, error } = await api.api.admin
+        .plans({ id })
+        ["member-log"].get();
+      if (error) throw error;
+      return data.message.items;
+    },
+  });
+
+export type AdminPlanUpdateBody = Static<typeof AdminPlanUpdateBodySchema>;
 
 export type AdminPlanCreateBody = Static<typeof AdminPlanCreateBodySchema>;
 
@@ -634,6 +636,7 @@ export const useRemoveAdminPlanMember = (planId: string) => {
     },
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: adminKeys.planDetail(planId) });
+      void qc.invalidateQueries({ queryKey: adminKeys.planMemberLog(planId) });
     },
   });
 };

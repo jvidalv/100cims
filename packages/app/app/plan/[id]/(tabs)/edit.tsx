@@ -35,6 +35,13 @@ import {
 } from "@/domains/mountain/mountain-picker-session";
 import { useMountains } from "@/domains/mountain/mountain.api";
 import {
+  invalidUrlMessage,
+  isInvalidUrlError,
+  isValidStravaUrl,
+  isValidWhatsappGroupUrl,
+  isValidWikilocUrl,
+} from "@/domains/plan/plan-link-urls";
+import {
   type PlanType,
   usePlanDelete,
   usePlanOne,
@@ -80,6 +87,11 @@ export default function PlanEditPage() {
   const [mountains, setMountains] = useState<MountainPickerMountain[]>([]);
   const [users, setUsers] = useState<PeoplePickerUser[]>([]);
   const [isPrivate, setIsPrivate] = useState(plan?.isPrivate ?? false);
+  const [whatsappGroupUrl, setWhatsappGroupUrl] = useState(
+    plan?.whatsappGroupUrl ?? "",
+  );
+  const [wikilocUrl, setWikilocUrl] = useState(plan?.wikilocUrl ?? "");
+  const [stravaUrl, setStravaUrl] = useState(plan?.stravaUrl ?? "");
 
   useEffect(() => {
     if (plan) {
@@ -89,6 +101,9 @@ export default function PlanEditPage() {
       setStartTime(plan.startTime ?? null);
       setType(toPlanType(plan.type) ?? "hike");
       setIsPrivate(plan.isPrivate ?? false);
+      setWhatsappGroupUrl(plan.whatsappGroupUrl ?? "");
+      setWikilocUrl(plan.wikilocUrl ?? "");
+      setStravaUrl(plan.stravaUrl ?? "");
 
       // Ensure the creator is always first. PeopleList locks index 0, and
       // PeopleList's split treats index 0 as "keep in the toggleable bucket
@@ -124,17 +139,55 @@ export default function PlanEditPage() {
       );
     }
 
-    const response = await updatePlan({
-      id,
-      title,
-      description,
-      startDate: date ? toLocalDateString(date) : undefined,
-      startTime: date ? startTime : null,
-      type,
-      mountainIds: seededMountains ? mountains.map((m) => m.id) : undefined,
-      userIds: users.map((u) => u.id),
-      isPrivate,
-    });
+    if (!isValidWhatsappGroupUrl(whatsappGroupUrl)) {
+      return Alert.alert(
+        intl.formatMessage({
+          defaultMessage:
+            "The WhatsApp group link doesn't look right. Must point to chat.whatsapp.com or wa.me.",
+        }),
+      );
+    }
+    if (!isValidWikilocUrl(wikilocUrl)) {
+      return Alert.alert(
+        intl.formatMessage({
+          defaultMessage:
+            "The Wikiloc link doesn't look right. Must point to wikiloc.com.",
+        }),
+      );
+    }
+    if (!isValidStravaUrl(stravaUrl)) {
+      return Alert.alert(
+        intl.formatMessage({
+          defaultMessage:
+            "The Strava link doesn't look right. Must point to strava.com.",
+        }),
+      );
+    }
+
+    let response;
+    try {
+      response = await updatePlan({
+        id,
+        title,
+        description,
+        startDate: date ? toLocalDateString(date) : undefined,
+        startTime: date ? startTime : null,
+        type,
+        mountainIds: seededMountains ? mountains.map((m) => m.id) : undefined,
+        userIds: users.map((u) => u.id),
+        isPrivate,
+        whatsappGroupUrl: whatsappGroupUrl || null,
+        wikilocUrl: wikilocUrl || null,
+        stravaUrl: stravaUrl || null,
+      });
+    } catch (e) {
+      if (isInvalidUrlError(e)) {
+        return Alert.alert(invalidUrlMessage(e.field, intl));
+      }
+      return Alert.alert(
+        intl.formatMessage({ defaultMessage: "Something went wrong" }),
+      );
+    }
 
     if (response.success) router.dismiss();
     else
@@ -231,6 +284,59 @@ export default function PlanEditPage() {
               {date && (
                 <ThemedTimeInput value={startTime} onChange={setStartTime} />
               )}
+            </View>
+
+            <View className="gap-4">
+              <ThemedText className="text-lg font-medium">
+                <FormattedMessage defaultMessage="Links" />
+              </ThemedText>
+              <ThemedTextInput
+                label={intl.formatMessage({
+                  defaultMessage: "WhatsApp group",
+                })}
+                value={whatsappGroupUrl}
+                onChangeText={setWhatsappGroupUrl}
+                placeholder="https://chat.whatsapp.com/…"
+                autoCapitalize="none"
+                keyboardType="url"
+                error={
+                  isValidWhatsappGroupUrl(whatsappGroupUrl)
+                    ? undefined
+                    : intl.formatMessage({
+                        defaultMessage: "Doesn't look like a valid link.",
+                      })
+                }
+              />
+              <ThemedTextInput
+                label={intl.formatMessage({ defaultMessage: "Wikiloc trail" })}
+                value={wikilocUrl}
+                onChangeText={setWikilocUrl}
+                placeholder="https://www.wikiloc.com/…"
+                autoCapitalize="none"
+                keyboardType="url"
+                error={
+                  isValidWikilocUrl(wikilocUrl)
+                    ? undefined
+                    : intl.formatMessage({
+                        defaultMessage: "Doesn't look like a valid link.",
+                      })
+                }
+              />
+              <ThemedTextInput
+                label={intl.formatMessage({ defaultMessage: "Strava" })}
+                value={stravaUrl}
+                onChangeText={setStravaUrl}
+                placeholder="https://www.strava.com/…"
+                autoCapitalize="none"
+                keyboardType="url"
+                error={
+                  isValidStravaUrl(stravaUrl)
+                    ? undefined
+                    : intl.formatMessage({
+                        defaultMessage: "Doesn't look like a valid link.",
+                      })
+                }
+              />
             </View>
 
             <View className="gap-4">

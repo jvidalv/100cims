@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { twMerge } from "tailwind-merge";
 
 import { useAuth } from "@/components/providers/auth-provider";
@@ -36,6 +37,7 @@ const capitalize = (s: string) =>
 export default function ShopProductScreen() {
   const router = useRouter();
   const intl = useIntl();
+  const insets = useSafeAreaInsets();
   const { isAuthenticated } = useAuth();
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const { data: merch, isPending } = useMerch();
@@ -184,7 +186,11 @@ export default function ShopProductScreen() {
       <ScreenHeader>{product.name}</ScreenHeader>
       <ScrollView
         className="flex-1"
-        contentContainerClassName="pb-10"
+        // `useSafeAreaInsets().bottom` already includes the NativeTabs tab
+        // bar height on iOS children of this tab subtree (see app SKILL.md),
+        // so we only add a small visual buffer on top — no manual tab-bar
+        // constant needed here, unlike the root-level FloatingCartButton.
+        contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
         showsVerticalScrollIndicator={false}
       >
         {galleryImages.length > 0 ? (

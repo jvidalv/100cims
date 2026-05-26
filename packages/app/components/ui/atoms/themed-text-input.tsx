@@ -28,6 +28,9 @@ type InputProps = {
   autoComplete?: TextInputProps["autoComplete"];
   textContentType?: TextInputProps["textContentType"];
   onChangeText?: (text: string) => void;
+  /** When non-empty, the border turns red and the message renders below
+   *  the input. The caller is responsible for clearing it (e.g. on change). */
+  error?: string | null;
 };
 
 export const ThemedTextInput: FC<InputProps> = ({
@@ -49,6 +52,7 @@ export const ThemedTextInput: FC<InputProps> = ({
   textContentType,
   onBlur,
   onFocus,
+  error,
 }) => {
   const [internalValue, setInternalValue] = useState(value || defaultValue);
   const [isFocused, setIsFocused] = useState(false);
@@ -115,6 +119,7 @@ export const ThemedTextInput: FC<InputProps> = ({
         className={twMerge(
           "w-full border-2 border-border rounded flex py-5 px-4 text-foreground focus:border-blue-500",
           disabled && "bg-gray-50 dark:bg-neutral-900 text-foreground/60",
+          error && "border-red-500 focus:border-red-500",
           inputClassName,
         )}
         style={{ fontSize: 16 }}
@@ -133,6 +138,11 @@ export const ThemedTextInput: FC<InputProps> = ({
           onBlur?.();
         }}
       />
+      {!!error && (
+        <Animated.Text className="mt-1 px-1 text-xs text-red-500">
+          {error}
+        </Animated.Text>
+      )}
     </View>
   );
 };

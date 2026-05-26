@@ -2,6 +2,7 @@ import { and, eq, inArray } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 
 import { db } from "@/db";
+import { PLAN_USER_LOG_ACTIONS } from "@/db/enums";
 import { PlanStatusSchema, PlanTypeSchema } from "@/api/schemas/enums";
 import {
   planTable,
@@ -10,12 +11,19 @@ import {
   planUserLogTable,
 } from "@/db/schema";
 import { formatDateForPostgresFromISOString } from "@/api/lib/dates";
+import {
+  findInvalidPlanLinkUrl,
+  normalizePlanLinkUrl,
+} from "@/api/lib/plan-link-urls";
 import { getUserFromRequest } from "@/api/routes/@shared/auth";
 import {
   SuccessResponse,
   ErrorFieldResponse,
 } from "@/api/schemas/common.schema";
-import { BasicPlanSchema } from "@/api/schemas/plan.schema";
+import {
+  BasicPlanSchema,
+  PlanLinkUrlErrorResponse,
+} from "@/api/schemas/plan.schema";
 
 export const planUpdatePostRoute = new Elysia().post(
   "/update",
@@ -33,6 +41,29 @@ export const planUpdatePostRoute = new Elysia().post(
       return { error: "Not authorized to update this plan" };
     }
 
+    const whatsappGroupUrl =
+      body.whatsappGroupUrl !== undefined
+        ? normalizePlanLinkUrl(body.whatsappGroupUrl)
+        : undefined;
+    const wikilocUrl =
+      body.wikilocUrl !== undefined
+        ? normalizePlanLinkUrl(body.wikilocUrl)
+        : undefined;
+    const stravaUrl =
+      body.stravaUrl !== undefined
+        ? normalizePlanLinkUrl(body.stravaUrl)
+        : undefined;
+
+    const invalidField = findInvalidPlanLinkUrl({
+      whatsappGroupUrl,
+      wikilocUrl,
+      stravaUrl,
+    });
+    if (invalidField) {
+      set.status = 400;
+      return { error: "INVALID_URL" as const, field: invalidField };
+    }
+
     const updated = await db.transaction(async (tx) => {
       const [plan] = await tx
         .update(planTable)
@@ -42,6 +73,9 @@ export const planUpdatePostRoute = new Elysia().post(
           status: body.status,
           imageUrl: body.imageUrl ?? undefined,
           routeUrl: body.routeUrl ?? undefined,
+          whatsappGroupUrl,
+          wikilocUrl,
+          stravaUrl,
           startDate: body.startDate
             ? formatDateForPostgresFromISOString(body.startDate)
             : undefined,
@@ -97,7 +131,7 @@ export const planUpdatePostRoute = new Elysia().post(
             toRemove.map((id) => ({
               planId: body.id,
               userId: id,
-              action: "left",
+              action: PLAN_USER_LOG_ACTIONS.LEFT,
             })),
           );
         }
@@ -115,7 +149,7 @@ export const planUpdatePostRoute = new Elysia().post(
             toAdd.map((id) => ({
               planId: body.id,
               userId: id,
-              action: "joined",
+              action: PLAN_USER_LOG_ACTIONS.JOINED,
             })),
           );
         }
@@ -140,9 +174,13 @@ export const planUpdatePostRoute = new Elysia().post(
       mountainIds: t.Optional(t.Array(t.String())),
       userIds: t.Optional(t.Array(t.String())),
       isPrivate: t.Optional(t.Boolean()),
+      whatsappGroupUrl: t.Optional(t.Nullable(t.String())),
+      wikilocUrl: t.Optional(t.Nullable(t.String())),
+      stravaUrl: t.Optional(t.Nullable(t.String())),
     }),
     response: {
       200: SuccessResponse(BasicPlanSchema),
+      400: PlanLinkUrlErrorResponse,
       403: ErrorFieldResponse,
     },
   },

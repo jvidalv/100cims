@@ -557,6 +557,9 @@
   "IXIWgD": {
     "defaultMessage": "How to rate"
   },
+  "IeKhkd": {
+    "defaultMessage": "The Strava link doesn't look right. Must point to strava.com."
+  },
   "IkgeEo": {
     "defaultMessage": "No mountains yet. Create mountains when adding them to a challenge."
   },
@@ -631,6 +634,9 @@
   },
   "N4mgpU": {
     "defaultMessage": "Delete (admin)"
+  },
+  "N5JSRZ": {
+    "defaultMessage": "Doesn't look like a valid link."
   },
   "NDV5Mq": {
     "defaultMessage": "Options"
@@ -710,6 +716,9 @@
   "Q8Qw5B": {
     "defaultMessage": "Description"
   },
+  "QCO2qW": {
+    "defaultMessage": "The Wikiloc link doesn't look right. Must point to wikiloc.com."
+  },
   "QJmOKA": {
     "defaultMessage": "Please pick a color before adding to cart."
   },
@@ -739,6 +748,9 @@
   },
   "RNnNfX": {
     "defaultMessage": "Member since {date}"
+  },
+  "Rif5+t": {
+    "defaultMessage": "The WhatsApp group link doesn't look right. Must point to chat.whatsapp.com or wa.me."
   },
   "S+o8nA": {
     "defaultMessage": "Delete message?"

@@ -4,6 +4,21 @@ import { PaginatedSchema } from "@/api/schemas/common.schema";
 import { PlanStatusSchema, PlanTypeSchema } from "@/api/schemas/enums";
 
 /**
+ * 400 payload returned by plan create/update when one of the link-URL
+ * fields is malformed. `error: "INVALID_URL"` lets old clients keep
+ * showing a generic message; `field` lets new clients highlight the
+ * offending input.
+ */
+export const PlanLinkUrlErrorResponse = t.Object({
+  error: t.Literal("INVALID_URL"),
+  field: t.Union([
+    t.Literal("whatsappGroupUrl"),
+    t.Literal("wikilocUrl"),
+    t.Literal("stravaUrl"),
+  ]),
+});
+
+/**
  * Schema for a user participating in a plan
  */
 export const PlanUserSchema = t.Object({
@@ -51,6 +66,9 @@ export const PlanSchema = t.Object({
   type: t.Nullable(PlanTypeSchema),
   status: PlanStatusSchema,
   routeUrl: t.Nullable(t.String()),
+  whatsappGroupUrl: t.Nullable(t.String()),
+  wikilocUrl: t.Nullable(t.String()),
+  stravaUrl: t.Nullable(t.String()),
   startDate: t.Nullable(t.String()),
   startTime: t.Nullable(t.String()),
   creatorId: t.String(),
@@ -74,6 +92,9 @@ export const PlanDetailSchema = t.Object({
   type: t.Nullable(PlanTypeSchema),
   status: t.String(),
   routeUrl: t.Nullable(t.String()),
+  whatsappGroupUrl: t.Nullable(t.String()),
+  wikilocUrl: t.Nullable(t.String()),
+  stravaUrl: t.Nullable(t.String()),
   startDate: t.Nullable(t.String()),
   startTime: t.Nullable(t.String()),
   creatorId: t.String(),
@@ -114,6 +135,9 @@ export const BasicPlanSchema = t.Object({
   type: t.Nullable(PlanTypeSchema),
   status: t.String(),
   routeUrl: t.Nullable(t.String()),
+  whatsappGroupUrl: t.Nullable(t.String()),
+  wikilocUrl: t.Nullable(t.String()),
+  stravaUrl: t.Nullable(t.String()),
   startDate: t.Nullable(t.String()),
   startTime: t.Nullable(t.String()),
   creatorId: t.String(),

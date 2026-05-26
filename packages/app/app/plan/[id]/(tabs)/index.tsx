@@ -1,6 +1,7 @@
 import { format } from "date-fns/format";
 import { isToday } from "date-fns/isToday";
 import { LinearGradient } from "expo-linear-gradient";
+import * as Linking from "expo-linking";
 import { useGlobalSearchParams, Link, useRouter } from "expo-router";
 import {
   Activity,
@@ -39,8 +40,11 @@ import {
   EnrichedThemedText,
   LucideIcon,
   Skeleton,
+  StravaIcon,
   ThemedText,
   ThemedView,
+  WhatsAppIcon,
+  WikilocIcon,
 } from "@/components/ui/atoms";
 import {
   ActionRow,
@@ -86,6 +90,35 @@ const PLAN_TYPE_META: Record<
   },
   bike: { icon: Bike, label: <FormattedMessage defaultMessage="Bike" /> },
 };
+
+/**
+ * Tappable row in the plan-detail header for an external link (WhatsApp,
+ * Wikiloc, Strava). `onBeforeOpen` gates the open — return `false` to abort
+ * (e.g. WhatsApp uses it to fire a "join first" alert for non-members).
+ */
+const PlanLinkRow = ({
+  icon,
+  label,
+  url,
+  onBeforeOpen,
+}: {
+  icon: React.ReactNode;
+  label: React.ReactNode;
+  url: string;
+  onBeforeOpen?: () => boolean;
+}) => (
+  <TouchableOpacity
+    className="flex-row items-center gap-2"
+    hitSlop={8}
+    onPress={() => {
+      if (onBeforeOpen && !onBeforeOpen()) return;
+      void Linking.openURL(url);
+    }}
+  >
+    {icon}
+    <ThemedText className="text-lg font-medium">{label}</ThemedText>
+  </TouchableOpacity>
+);
 
 const PlanTypeBadge = ({
   type,
@@ -545,6 +578,40 @@ export default function PlanIdPage() {
                 />
               </ThemedText>
             </View>
+          )}
+          {plan.whatsappGroupUrl && (
+            <PlanLinkRow
+              icon={<WhatsAppIcon size={20} />}
+              label={<FormattedMessage defaultMessage="WhatsApp group" />}
+              url={plan.whatsappGroupUrl}
+              onBeforeOpen={() => {
+                if (hasJoined) return true;
+                Alert.alert(
+                  intl.formatMessage({
+                    defaultMessage: "Join this plan first",
+                  }),
+                  intl.formatMessage({
+                    defaultMessage:
+                      "Once you join, you'll be able to open the WhatsApp group.",
+                  }),
+                );
+                return false;
+              }}
+            />
+          )}
+          {plan.wikilocUrl && (
+            <PlanLinkRow
+              icon={<WikilocIcon size={20} />}
+              label={<FormattedMessage defaultMessage="Wikiloc trail" />}
+              url={plan.wikilocUrl}
+            />
+          )}
+          {plan.stravaUrl && (
+            <PlanLinkRow
+              icon={<StravaIcon size={20} />}
+              label={<FormattedMessage defaultMessage="Strava" />}
+              url={plan.stravaUrl}
+            />
           )}
         </View>
         {plan.description ? (

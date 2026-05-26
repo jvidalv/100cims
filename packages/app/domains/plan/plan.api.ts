@@ -146,6 +146,9 @@ export const usePlanCreate = () => {
       mountainIds?: string[];
       userIds?: string[];
       isPrivate?: boolean;
+      whatsappGroupUrl?: string | null;
+      wikilocUrl?: string | null;
+      stravaUrl?: string | null;
     }) => {
       const { data, error } = await apiClient.POST(
         "/api/protected/plans/create",
@@ -175,6 +178,9 @@ export const usePlanUpdate = () => {
       userIds?: string[];
       status?: PlanStatus;
       isPrivate?: boolean;
+      whatsappGroupUrl?: string | null;
+      wikilocUrl?: string | null;
+      stravaUrl?: string | null;
     }) => {
       const { data, error } = await apiClient.POST(
         "/api/protected/plans/update",

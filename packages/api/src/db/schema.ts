@@ -21,6 +21,7 @@ import type {
   PlanSpeed,
   PlanStatus,
   PlanType,
+  PlanUserLogAction,
   ShopRequestStatus,
 } from "@/db/enums";
 
@@ -254,6 +255,9 @@ export const planTable = pgTable(
     speed: text().notNull().$type<PlanSpeed>(),
     status: text().default("open").notNull().$type<PlanStatus>(),
     routeUrl: text(),
+    whatsappGroupUrl: text(),
+    wikilocUrl: text(),
+    stravaUrl: text(),
     isPrivate: boolean().notNull().default(false),
     createdAt: timestamp().notNull().defaultNow(),
     updatedAt: timestamp().notNull().defaultNow(),
@@ -316,17 +320,21 @@ export const planMessageTable = pgTable(
   (table) => [index("plan_message_plan_id_idx").on(table.planId)],
 );
 
-export const planUserLogTable = pgTable("plan_user_log", {
-  id: uuid().primaryKey().defaultRandom(),
-  planId: uuid()
-    .references(() => planTable.id, { onDelete: "cascade" })
-    .notNull(),
-  userId: uuid()
-    .references(() => userTable.id, { onDelete: "cascade" })
-    .notNull(),
-  action: text().notNull(), // 'joined' | 'left'
-  timestamp: timestamp().notNull().defaultNow(),
-});
+export const planUserLogTable = pgTable(
+  "plan_user_log",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    planId: uuid()
+      .references(() => planTable.id, { onDelete: "cascade" })
+      .notNull(),
+    userId: uuid()
+      .references(() => userTable.id, { onDelete: "cascade" })
+      .notNull(),
+    action: text().notNull().$type<PlanUserLogAction>(),
+    timestamp: timestamp().notNull().defaultNow(),
+  },
+  (table) => [index("plan_user_log_plan_id_idx").on(table.planId)],
+);
 
 export const userRelations = relations(userTable, ({ many }) => ({
   summitHasUsers: many(summitHasUsersTable),

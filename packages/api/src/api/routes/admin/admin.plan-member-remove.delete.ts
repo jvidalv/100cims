@@ -2,6 +2,7 @@ import { and, eq } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 
 import { db } from "@/db";
+import { PLAN_USER_LOG_ACTIONS } from "@/db/enums";
 import { planHasUsersTable, planUserLogTable } from "@/db/schema";
 import {
   ErrorFieldResponse,
@@ -29,7 +30,7 @@ export const adminPlanMemberRemoveDeleteRoute = new Elysia().delete(
     await db.insert(planUserLogTable).values({
       planId: params.id,
       userId: params.userId,
-      action: "left",
+      action: PLAN_USER_LOG_ACTIONS.LEFT,
     });
 
     return { success: true };
