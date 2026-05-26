@@ -228,6 +228,12 @@ export function MountainsMap({
             slug: m.slug,
             imageUrl: m.imageUrl,
             isSummited,
+            // Numeric counterpart for cluster aggregation — Mapbox's
+            // `clusterProperties` accumulator only adds numbers, so we
+            // pre-cast the boolean. Summed across the cluster to compute
+            // `summitedCount`, which we compare to `point_count` to decide
+            // whether the cluster is fully completed.
+            isSummitedNum: isSummited ? 1 : 0,
             label,
             // Two independent color channels:
             //  • `fillColor` encodes essential-ness only — essential peaks
@@ -430,13 +436,31 @@ export function MountainsMap({
           // zoom levels.
           clusterRadius={18}
           clusterMaxZoomLevel={9}
+          // Aggregate `summitedCount` across each cluster — the second
+          // element is the per-feature value (`isSummitedNum`: 0/1), the
+          // third the reducer (`+`). At render time we compare it against
+          // `point_count` to color fully-completed clusters emerald.
+          clusterProperties={{
+            summitedCount: ["+", ["get", "isSummitedNum"]],
+          }}
           onPress={handlePress}
         >
           <CircleLayer
             id={CLUSTER_LAYER_ID}
             filter={["has", "point_count"]}
             style={{
-              circleColor: COLOR_CLUSTER,
+              // Emerald only when every mountain in the cluster is summited
+              // (sum of per-feature flags equals the cluster's `point_count`).
+              circleColor: [
+                "case",
+                [
+                  "==",
+                  ["get", "summitedCount"],
+                  ["get", "point_count"],
+                ],
+                COLOR_SUMMITED,
+                COLOR_CLUSTER,
+              ],
               circleStrokeColor: "#ffffff",
               circleStrokeWidth: 2,
               circleRadius: [
