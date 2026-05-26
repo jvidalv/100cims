@@ -1,4 +1,5 @@
 import { Elysia, t } from "elysia";
+import { uuidv7 } from "uuidv7";
 
 import { db } from "@/db";
 import { PLAN_USER_LOG_ACTIONS } from "@/db/enums";
@@ -9,7 +10,9 @@ import {
   planUserLogTable,
 } from "@/db/schema";
 import { formatDateForPostgresFromISOString } from "@/api/lib/dates";
+import { reportImageTooBig } from "@/api/lib/images";
 import { notifyFriendsOfNewPlan } from "@/api/lib/notify-friends-of-new-plan";
+import { PlanImageError, resolvePlanImageUrl } from "@/api/lib/plan-images";
 import {
   findInvalidPlanLinkUrl,
   normalizePlanLinkUrl,
@@ -17,7 +20,11 @@ import {
 import { notifyUsersWithSavedMountains } from "@/api/lib/plan-saved-mountain-notify";
 import { getUserFromRequest } from "@/api/routes/@shared/auth";
 import { resolveChallengeId } from "@/api/routes/@shared/challenge";
-import { SuccessResponse } from "@/api/schemas/common.schema";
+import { IMAGE_TO_BIG } from "@/api/routes/@shared/error-codes";
+import {
+  ErrorFieldResponse,
+  SuccessResponse,
+} from "@/api/schemas/common.schema";
 import { PlanTypeSchema } from "@/api/schemas/enums";
 import {
   BasicPlanSchema,
@@ -44,13 +51,37 @@ export const planCreatePostRoute = new Elysia().post(
       return { error: "INVALID_URL" as const, field: invalidField };
     }
 
+    // Generate the plan id up-front so the S3 key for any uploaded image
+    // can include it. Matches admin.plan-create.post.ts.
+    const planId = uuidv7();
+    let imageUrl: string | null;
+    try {
+      imageUrl = await resolvePlanImageUrl(body.imageUrl, planId);
+    } catch (e) {
+      if (e instanceof PlanImageError && e.status === 400) {
+        if (body.imageUrl && !body.imageUrl.startsWith("http")) {
+          reportImageTooBig(request, {
+            route: "plans/create",
+            base64Data: body.imageUrl,
+            userId: user.id,
+          });
+        }
+        set.status = 500;
+        return { error: IMAGE_TO_BIG };
+      }
+      set.status = 500;
+      return { error: "Image upload failed" };
+    }
+
     const insertedPlan = await db.transaction(async (tx) => {
       const [plan] = await tx
         .insert(planTable)
         .values({
+          id: planId,
           creatorId: user.id,
           title: body.title,
           description: body.description,
+          imageUrl,
           startDate: body.startDate
             ? formatDateForPostgresFromISOString(body.startDate)
             : null,
@@ -140,10 +171,14 @@ export const planCreatePostRoute = new Elysia().post(
       whatsappGroupUrl: t.Optional(t.Nullable(t.String())),
       wikilocUrl: t.Optional(t.Nullable(t.String())),
       stravaUrl: t.Optional(t.Nullable(t.String())),
+      // Either an http(s) URL (kept as-is) or a raw base64 payload (uploaded
+      // to S3 keyed by the new plan's id). Same shape as admin.plan-create.
+      imageUrl: t.Optional(t.Nullable(t.String())),
     }),
     response: {
       200: SuccessResponse(BasicPlanSchema),
       400: PlanLinkUrlErrorResponse,
+      500: ErrorFieldResponse,
     },
   },
 );

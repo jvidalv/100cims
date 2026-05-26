@@ -26,6 +26,7 @@ import {
   ActionRow,
   MountainList,
   PeopleList,
+  PlanCoverPicker,
   PlanTypeChips,
   ScreenHeader,
 } from "@/components/ui/molecules";
@@ -50,6 +51,7 @@ import {
 import { type PeoplePickerUser } from "@/domains/user/people-picker-session";
 import { getFullName } from "@/domains/user/user.utils";
 import { parseLocalDateString, toLocalDateString } from "@/lib/dates";
+import { IMAGE_TO_BIG } from "@/lib/error-codes";
 
 const PLAN_TYPES: readonly PlanType[] = ["hike", "trail", "bike"];
 const toPlanType = (value: string | null | undefined): PlanType | null => {
@@ -92,6 +94,17 @@ export default function PlanEditPage() {
   );
   const [wikilocUrl, setWikilocUrl] = useState(plan?.wikilocUrl ?? "");
   const [stravaUrl, setStravaUrl] = useState(plan?.stravaUrl ?? "");
+  // `imagePreview` shows what's currently on the row (URL for existing,
+  // local URI for a freshly-picked image). `imageBase64` is set only when
+  // the user picked something new — null/undefined means "leave alone";
+  // setting `imagePreview` to null without a base64 means "clear".
+  const [imagePreview, setImagePreview] = useState<string | null>(
+    plan?.imageUrl ?? null,
+  );
+  const [imageBase64, setImageBase64] = useState<string | null>(null);
+  // Distinguish "user cleared the existing image" (need to send null on
+  // submit) from "no change yet" (omit from body).
+  const [imageCleared, setImageCleared] = useState(false);
 
   useEffect(() => {
     if (plan) {
@@ -104,6 +117,9 @@ export default function PlanEditPage() {
       setWhatsappGroupUrl(plan.whatsappGroupUrl ?? "");
       setWikilocUrl(plan.wikilocUrl ?? "");
       setStravaUrl(plan.stravaUrl ?? "");
+      setImagePreview(plan.imageUrl ?? null);
+      setImageBase64(null);
+      setImageCleared(false);
 
       // Ensure the creator is always first. PeopleList locks index 0, and
       // PeopleList's split treats index 0 as "keep in the toggleable bucket
@@ -164,6 +180,15 @@ export default function PlanEditPage() {
       );
     }
 
+    // Submit the image only on actual user intent: a fresh pick sends the
+    // base64; an explicit clear sends null; otherwise omit and the server
+    // leaves the column alone.
+    const imageUrlForBody: string | null | undefined = imageBase64
+      ? imageBase64
+      : imageCleared
+        ? null
+        : undefined;
+
     let response;
     try {
       response = await updatePlan({
@@ -179,10 +204,20 @@ export default function PlanEditPage() {
         whatsappGroupUrl: whatsappGroupUrl || null,
         wikilocUrl: wikilocUrl || null,
         stravaUrl: stravaUrl || null,
+        imageUrl: imageUrlForBody,
       });
     } catch (e) {
       if (isInvalidUrlError(e)) {
         return Alert.alert(invalidUrlMessage(e.field, intl));
+      }
+      if (
+        e &&
+        typeof e === "object" &&
+        (e as { error?: string }).error === IMAGE_TO_BIG
+      ) {
+        return Alert.alert(
+          intl.formatMessage({ defaultMessage: "Image too big." }),
+        );
       }
       return Alert.alert(
         intl.formatMessage({ defaultMessage: "Something went wrong" }),
@@ -236,6 +271,21 @@ export default function PlanEditPage() {
               <ThemedText className="text-lg font-medium">
                 <FormattedMessage defaultMessage="Information" />
               </ThemedText>
+              <PlanCoverPicker
+                imagePreview={imagePreview}
+                onPicked={(preview, base64) => {
+                  setImagePreview(preview);
+                  setImageBase64(base64);
+                  setImageCleared(false);
+                }}
+                onCleared={() => {
+                  setImagePreview(null);
+                  setImageBase64(null);
+                  setImageCleared(true);
+                }}
+                mountains={mountains.map((m) => ({ imageUrl: m.imageUrl }))}
+                title={title ?? ""}
+              />
               <ThemedTextInput
                 label={intl.formatMessage({ defaultMessage: "Activity title" })}
                 value={title}

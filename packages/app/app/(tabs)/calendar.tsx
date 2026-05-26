@@ -7,6 +7,8 @@ import {
   FlatList,
   type LayoutChangeEvent,
   type ListRenderItem,
+  type NativeScrollEvent,
+  type NativeSyntheticEvent,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -88,6 +90,20 @@ export default function CalendarScreen() {
 
   const listRef = useRef<FlatList<CalendarMonthData>>(null);
 
+  // Track the currently-visible month in a ref (not state) so we can skip
+  // no-op animated scrolls without causing a re-render on every swipe. The
+  // initial value matches the FlatList's initialScrollIndex.
+  const visibleMonthIndexRef = useRef(MONTHS_BACK);
+  const onMomentumScrollEnd = useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      if (pageHeight === 0) return;
+      visibleMonthIndexRef.current = Math.round(
+        event.nativeEvent.contentOffset.y / pageHeight,
+      );
+    },
+    [pageHeight],
+  );
+
   // Android workaround for the `pagingEnabled` + `initialScrollIndex` bug.
   const onListLayoutOnce = useRef(false);
   const onListLayout = useCallback(() => {
@@ -96,17 +112,20 @@ export default function CalendarScreen() {
     listRef.current?.scrollToIndex({ index: MONTHS_BACK, animated: false });
   }, []);
 
-  // Tapping a day selects it and scrolls the FlatList to its month. If the
-  // day is already in the visible page the scrollToIndex is a no-op — cheap
-  // and avoids tracking the visible index in state.
+  // Tapping a day selects it and, only if the day belongs to a different
+  // month than the one currently in view, scrolls the FlatList. Calling
+  // `scrollToIndex` on the same page with `animated: true` triggers a tiny
+  // visible animation cycle (looks like a one-frame swipe-down twitch) even
+  // though the offset doesn't change — gate on the ref to avoid it.
   const onDayPress = useCallback(
     (date: Date) => {
       const key = toLocalDateString(date);
       setSelectedDateKey(key);
       const monthKey = key.slice(0, 7);
       const idx = months.findIndex((m) => m.key === monthKey);
-      if (idx >= 0) {
+      if (idx >= 0 && idx !== visibleMonthIndexRef.current) {
         listRef.current?.scrollToIndex({ index: idx, animated: true });
+        visibleMonthIndexRef.current = idx;
       }
     },
     [months],
@@ -201,6 +220,7 @@ export default function CalendarScreen() {
             initialNumToRender={3}
             maxToRenderPerBatch={3}
             onLayout={onListLayout}
+            onMomentumScrollEnd={onMomentumScrollEnd}
             renderItem={renderMonth}
           />
         )}

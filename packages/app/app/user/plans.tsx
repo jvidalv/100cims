@@ -112,6 +112,7 @@ export default function UserPlansScreen() {
           ({
             id,
             title,
+            imageUrl,
             status,
             type,
             startDate,
@@ -123,6 +124,7 @@ export default function UserPlansScreen() {
               key={id}
               id={id}
               title={title}
+              imageUrl={imageUrl}
               status={status}
               type={type}
               startDate={startDate}

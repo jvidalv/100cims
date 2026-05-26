@@ -149,6 +149,8 @@ export const usePlanCreate = () => {
       whatsappGroupUrl?: string | null;
       wikilocUrl?: string | null;
       stravaUrl?: string | null;
+      /** http(s) URL kept as-is, base64 uploaded to S3, or null to clear. */
+      imageUrl?: string | null;
     }) => {
       const { data, error } = await apiClient.POST(
         "/api/protected/plans/create",
@@ -181,6 +183,8 @@ export const usePlanUpdate = () => {
       whatsappGroupUrl?: string | null;
       wikilocUrl?: string | null;
       stravaUrl?: string | null;
+      /** http(s) URL kept as-is, base64 uploaded to S3, or null to clear. */
+      imageUrl?: string | null;
     }) => {
       const { data, error } = await apiClient.POST(
         "/api/protected/plans/update",

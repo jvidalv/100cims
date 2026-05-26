@@ -29,6 +29,7 @@ export { FloatingCartButton } from "./floating-cart-button";
 export { SharePulseBadge } from "./share-pulse-badge";
 export { PersonRow } from "./person-row";
 export { PeopleList } from "./people-list";
+export { PlanCoverPicker } from "./plan-cover-picker";
 export { PlanTypeChips } from "./plan-type-chips";
 export { MountainList } from "./mountain-list";
 export { MountainPreviewCard } from "./mountain-preview-card";

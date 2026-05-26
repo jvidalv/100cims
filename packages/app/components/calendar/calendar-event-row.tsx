@@ -67,6 +67,7 @@ export const CalendarEventRow = memo(({ event }: Props) => {
             <PlanItemListCompact
               id={event.id}
               title={event.title}
+              imageUrl={event.imageUrl}
               status={event.status}
               planType={event.planType}
               startDate={event.date}

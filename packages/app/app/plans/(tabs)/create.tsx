@@ -31,6 +31,7 @@ import {
   BlurredScreenHeader,
   BLURRED_SCREEN_HEADER_HEIGHT,
   PeopleList,
+  PlanCoverPicker,
   PlanTypeChips,
 } from "@/components/ui/molecules";
 import { MountainItemListAsTouchable } from "@/components/ui/molecules/mountain-item-list";
@@ -53,6 +54,7 @@ import { getFullName } from "@/domains/user/user.utils";
 import { useIsKeyboardVisible } from "@/hooks/use-is-keyboard-visible";
 import { cleanText } from "@/lib";
 import { parseLocalDateString, toLocalDateString } from "@/lib/dates";
+import { IMAGE_TO_BIG } from "@/lib/error-codes";
 import { getLocale } from "@/lib/locale";
 
 const StartStep = () => {
@@ -225,9 +227,20 @@ type DetailsValues = {
 const DetailsStep = ({
   values,
   onDetailsChange,
+  imagePreview,
+  onImagePicked,
+  onImageCleared,
+  coverMountains,
 }: {
   values: DetailsValues;
   onDetailsChange: (values: DetailsValues) => void;
+  imagePreview: string | null;
+  onImagePicked: (preview: string, base64: string) => void;
+  onImageCleared: () => void;
+  /** Picker's fallback uses the same logic as the row/detail: when no
+   *  custom photo is set, show the collage of selected mountains' images
+   *  (or initials when no mountains are picked yet). */
+  coverMountains: { imageUrl?: string | null }[];
 }) => {
   const intl = useIntl();
   const invalidUrl = intl.formatMessage({
@@ -257,6 +270,13 @@ const DetailsStep = ({
         <ThemedText className="text-lg font-medium">
           <FormattedMessage defaultMessage="Information" />
         </ThemedText>
+        <PlanCoverPicker
+          imagePreview={imagePreview}
+          onPicked={onImagePicked}
+          onCleared={onImageCleared}
+          mountains={coverMountains}
+          title={values.title}
+        />
         <ThemedTextInput
           label="Your activity"
           value={values.title}
@@ -459,6 +479,11 @@ export default function PlanCreatePage() {
   const [whatsappGroupUrl, setWhatsappGroupUrl] = useState("");
   const [wikilocUrl, setWikilocUrl] = useState("");
   const [stravaUrl, setStravaUrl] = useState("");
+  // `imagePreview` drives the on-screen preview; `imageBase64` is the
+  // payload sent at submit time. Stored separately so the preview can show
+  // immediately while base64 generation finishes.
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageBase64, setImageBase64] = useState<string | null>(null);
   const [users, setUsers] = useState<PeoplePickerUser[]>([]);
 
   const { data: me } = useUserMe();
@@ -494,6 +519,16 @@ export default function PlanCreatePage() {
   const isStepStart = step === "start";
 
   const { data } = useMountains();
+
+  // The cover picker mirrors the row/detail fallback (collage > initials),
+  // so its background tracks whichever mountains are currently selected.
+  const coverMountains = useMemo(() => {
+    if (!data) return [];
+    const selectedSet = new Set(mountains);
+    return data
+      .filter((m) => selectedSet.has(m.id))
+      .map((m) => ({ imageUrl: m.imageUrl }));
+  }, [data, mountains]);
 
   const handleOnMountainsChange = useCallback(
     (mountainsIds: string[]) => {
@@ -591,6 +626,7 @@ export default function PlanCreatePage() {
           whatsappGroupUrl: whatsappGroupUrl || null,
           wikilocUrl: wikilocUrl || null,
           stravaUrl: stravaUrl || null,
+          imageUrl: imageBase64,
         });
       } catch (e) {
         // Server validates URLs even when the client already ran its
@@ -598,6 +634,15 @@ export default function PlanCreatePage() {
         // builds, copy-pasted whitespace, etc).
         if (isInvalidUrlError(e)) {
           return Alert.alert(invalidUrlMessage(e.field, intl));
+        }
+        if (
+          e &&
+          typeof e === "object" &&
+          (e as { error?: string }).error === IMAGE_TO_BIG
+        ) {
+          return Alert.alert(
+            intl.formatMessage({ defaultMessage: "Image too big." }),
+          );
         }
         return Alert.alert(
           intl.formatMessage({
@@ -625,6 +670,8 @@ export default function PlanCreatePage() {
         setWhatsappGroupUrl("");
         setWikilocUrl("");
         setStravaUrl("");
+        setImagePreview(null);
+        setImageBase64(null);
         setUsers([]);
         // This screen is now a NativeTab, not a pushed screen, so dismiss()
         // would no-op. Navigate to the new plan's detail page and push it on
@@ -719,6 +766,16 @@ export default function PlanCreatePage() {
                 whatsappGroupUrl,
                 wikilocUrl,
                 stravaUrl,
+              }}
+              imagePreview={imagePreview}
+              coverMountains={coverMountains}
+              onImagePicked={(preview, base64) => {
+                setImagePreview(preview);
+                setImageBase64(base64);
+              }}
+              onImageCleared={() => {
+                setImagePreview(null);
+                setImageBase64(null);
               }}
             />
           )}

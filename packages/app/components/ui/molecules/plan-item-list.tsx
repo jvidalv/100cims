@@ -1,11 +1,11 @@
 import { isToday } from "date-fns/isToday";
-import { LinearGradient } from "expo-linear-gradient";
 import { Link } from "expo-router";
 import { FormattedMessage, useIntl } from "react-intl";
-import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 
 import { Skeleton, ThemedText } from "@/components/ui/atoms";
 import { AvatarGroup } from "@/components/ui/molecules/avatar-group";
+import { PlanCoverBackground } from "@/components/ui/molecules/plan-cover-background";
 import { usePlanChatUnread } from "@/domains/plan/plan-chat.api";
 import { getFullName } from "@/domains/user/user.utils";
 import { formatDayDistance, parseLocalDateString } from "@/lib/dates";
@@ -15,6 +15,7 @@ import type { PlanType } from "@/domains/plan/plan.api";
 export const PlanItemList = ({
   id,
   title,
+  imageUrl,
   startDate,
   status,
   type,
@@ -24,6 +25,8 @@ export const PlanItemList = ({
 }: {
   id: string;
   title: string;
+  /** Custom plan cover image. Takes precedence over the mountain collage. */
+  imageUrl?: string | null;
   startDate?: string | null;
   status: "open" | "completed" | "canceled";
   type?: PlanType | null;
@@ -82,91 +85,16 @@ export const PlanItemList = ({
           />
         </View>
         <View className="relative">
-          {mountainsWithImages?.length ? (
-            <View
-              className="relative flex flex-row overflow-hidden rounded"
-              style={{ width: 100, height: 100 }}
-            >
-              {mountainsWithImages.slice(0, 4).map(({ imageUrl }, i, arr) => {
-                const count = arr.length;
-
-                if (count === 1) {
-                  return (
-                    <Image
-                      key={imageUrl}
-                      source={{ uri: imageUrl!, cache: "force-cache" }}
-                      className="absolute bg-neutral-300 dark:bg-neutral-800"
-                      style={{ width: "100%", height: "100%" }}
-                    />
-                  );
-                }
-
-                if (count === 2) {
-                  return (
-                    <Image
-                      key={imageUrl}
-                      source={{ uri: imageUrl!, cache: "force-cache" }}
-                      className=" bg-neutral-300 dark:bg-neutral-800"
-                      style={{
-                        width: "50%",
-                        height: "100%",
-                      }}
-                    />
-                  );
-                }
-
-                const hasOnlyThree = arr?.length === 3;
-                const isLast = i === arr?.length - 1;
-                const half = "50%";
-                const positionStyle =
-                  i === 0
-                    ? { top: 0, left: 0 }
-                    : i === 1
-                      ? { top: 0, right: 0 }
-                      : i === 2
-                        ? { bottom: 0, left: 0 }
-                        : { bottom: 0, right: 0 };
-
-                return (
-                  <Image
-                    key={imageUrl}
-                    source={{ uri: imageUrl!, cache: "force-cache" }}
-                    className="absolute bg-neutral-300 dark:bg-neutral-800"
-                    style={{
-                      width: hasOnlyThree && isLast ? "100%" : half,
-                      height: half,
-                      ...positionStyle,
-                    }}
-                  />
-                );
-              })}
-              <View className="absolute bottom-0 size-full">
-                <LinearGradient
-                  colors={[
-                    "transparent",
-                    "transparent",
-                    "transparent",
-                    "rgba(0,0,0,0.4)",
-                  ]}
-                  style={StyleSheet.absoluteFill}
-                />
-              </View>
-            </View>
-          ) : (
-            <View
-              className="items-center justify-center bg-neutral-300 dark:bg-neutral-800"
-              style={{
-                width: 100,
-                height: 100,
-                borderRadius: 6,
-                backgroundColor: "#ffd097",
-              }}
-            >
-              <ThemedText className="text-4xl text-background">
-                {title.slice(0, 2).toUpperCase()}
-              </ThemedText>
-            </View>
-          )}
+          <View
+            className="overflow-hidden rounded"
+            style={{ width: 100, height: 100 }}
+          >
+            <PlanCoverBackground
+              customImageUrl={imageUrl}
+              mountains={mountainsWithImages}
+              title={title}
+            />
+          </View>
           {hasUnreadMessages && (
             <View className="absolute -right-1 -top-1 size-4 rounded-full bg-primary" />
           )}

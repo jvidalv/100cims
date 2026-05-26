@@ -390,6 +390,7 @@ export default function MountainScreen() {
                 key={plan.id}
                 id={plan.id}
                 title={plan.title}
+                imageUrl={plan.imageUrl}
                 startDate={plan.date}
                 status={plan.status}
                 planType={plan.planType}

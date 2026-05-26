@@ -26,6 +26,9 @@ export const CalendarPlanEventSchema = t.Object({
   planType: t.Nullable(PlanTypeSchema),
   isPrivate: t.Boolean(),
   isCreator: t.Boolean(),
+  /** Custom plan cover image. Takes precedence over the mountain collage
+   *  in PlanItemListCompact. */
+  imageUrl: t.Nullable(t.String()),
   // Shaped to match PlanItemList's expected props so the mobile row can drop
   // it in unchanged. Mountains carry only imageUrl (the home-page collage).
   mountains: t.Array(

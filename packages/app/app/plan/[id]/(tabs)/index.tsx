@@ -1,6 +1,5 @@
 import { format } from "date-fns/format";
 import { isToday } from "date-fns/isToday";
-import { LinearGradient } from "expo-linear-gradient";
 import * as Linking from "expo-linking";
 import { useGlobalSearchParams, Link, useRouter } from "expo-router";
 import {
@@ -23,8 +22,6 @@ import { useEffect, useRef, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
   Alert,
-  Image,
-  StyleSheet,
   TouchableOpacity,
   useWindowDimensions,
   View,
@@ -53,6 +50,7 @@ import {
   SharePreviewModal,
   SharePulseBadge,
 } from "@/components/ui/molecules";
+import { PlanCoverBackground } from "@/components/ui/molecules/plan-cover-background";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
 import { getMountainPts } from "@/domains/mountain/mountain.util";
 import { consumePlanCompletionImages } from "@/domains/plan/plan-completion-cache";
@@ -429,81 +427,16 @@ export default function PlanIdPage() {
     <>
     <ParallaxScrollView
       title={plan.title}
-      height={mountainsWithImages?.length ? undefined : 160}
+      height={plan.imageUrl || mountainsWithImages?.length ? undefined : 160}
       headerClassName="flex items-center justify-center bg-primary"
       parallaxHeaderTitleClassName="text-3xl"
       contentClassName="gap-8 px-6 pt-6 pb-32"
       headerImage={
-        mountainsWithImages?.length ? (
-          <View
-            className="relative flex size-full flex-row overflow-hidden"
-            style={{ flex: 1 }}
-          >
-            {mountainsWithImages.slice(0, 4).map(({ imageUrl }, i, arr) => {
-              const count = arr.length;
-              if (count === 1) {
-                return (
-                  <Image
-                    key={imageUrl}
-                    source={{ uri: imageUrl!, cache: "force-cache" }}
-                    className="absolute bg-neutral-300 dark:bg-neutral-800"
-                    style={{ width: "100%", height: "100%" }}
-                  />
-                );
-              }
-              if (count === 2) {
-                return (
-                  <Image
-                    key={imageUrl}
-                    source={{ uri: imageUrl!, cache: "force-cache" }}
-                    className="bg-neutral-300 dark:bg-neutral-800"
-                    style={{ width: "50%", height: "100%" }}
-                  />
-                );
-              }
-              const hasOnlyThree = arr.length === 3;
-              const isLast = i === arr.length - 1;
-              const half = "50%";
-              const positionStyle =
-                i === 0
-                  ? { top: 0, left: 0 }
-                  : i === 1
-                    ? { top: 0, right: 0 }
-                    : i === 2
-                      ? { bottom: 0, left: 0 }
-                      : { bottom: 0, right: 0 };
-
-              return (
-                <Image
-                  key={imageUrl}
-                  source={{ uri: imageUrl!, cache: "force-cache" }}
-                  className="absolute bg-neutral-300 dark:bg-neutral-800"
-                  style={{
-                    width: hasOnlyThree && isLast ? "100%" : half,
-                    height: half,
-                    ...positionStyle,
-                  }}
-                />
-              );
-            })}
-            <View className="absolute bottom-0 size-full">
-              <LinearGradient
-                colors={[
-                  "transparent",
-                  "transparent",
-                  "transparent",
-                  "rgba(0,0,0,0.4)",
-                ]}
-                style={StyleSheet.absoluteFill}
-              />
-            </View>
-          </View>
-        ) : (
-          <View
-            className="size-full flex-1 items-center justify-center bg-neutral-300 dark:bg-neutral-800"
-            style={{ backgroundColor: "#ffd097" }}
-          />
-        )
+        <PlanCoverBackground
+          customImageUrl={plan.imageUrl}
+          mountains={mountainsWithImages}
+          title={plan.title}
+        />
       }
     >
       <View>

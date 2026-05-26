@@ -31,6 +31,9 @@ const PlanByMountainEventSchema = t.Composite([
     date: t.Nullable(
       t.String({ description: "YYYY-MM-DD plan start date, or null" }),
     ),
+    /** Custom plan cover image — takes precedence over the mountain
+     *  thumbnail in PlanItemListCompact. */
+    imageUrl: t.Nullable(t.String()),
   }),
 ]);
 
@@ -52,6 +55,7 @@ export const planByMountainGetRoute = new Elysia().use(JWT()).get(
         status: planTable.status,
         planType: planTable.type,
         isPrivate: planTable.isPrivate,
+        imageUrl: planTable.imageUrl,
       })
       .from(planTable)
       .innerJoin(
@@ -139,6 +143,7 @@ export const planByMountainGetRoute = new Elysia().use(JWT()).get(
       status: p.status,
       planType: p.planType,
       isPrivate: p.isPrivate,
+      imageUrl: p.imageUrl,
       mountains: mountainsByPlan.get(p.id) ?? [],
       users: usersByPlan.get(p.id) ?? [],
     }));

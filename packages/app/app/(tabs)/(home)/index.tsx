@@ -145,6 +145,7 @@ const PlansSection = () => {
           ({
             id,
             title,
+            imageUrl,
             status,
             type,
             startDate,
@@ -156,6 +157,7 @@ const PlansSection = () => {
               key={id}
               id={id}
               title={title}
+              imageUrl={imageUrl}
               status={status}
               type={type}
               startDate={startDate}
