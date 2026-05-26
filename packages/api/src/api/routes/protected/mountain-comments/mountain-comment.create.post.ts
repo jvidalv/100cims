@@ -126,6 +126,11 @@ export const mountainCommentCreatePostRoute = new Elysia().post(
         .limit(1),
     ]);
 
+    if (!user) {
+      set.status = 404;
+      return { error: "Viewer user not found" };
+    }
+
     // Notify thread participants (only when this is a reply — top-level
     // comments don't ping anyone). `parentCommentId` here is the top-level
     // ancestor; `body.parentCommentId` is the exact comment the user tapped
@@ -164,7 +169,7 @@ export const mountainCommentCreatePostRoute = new Elysia().post(
               ),
             );
 
-          const actorName = getUserDisplayName(user!);
+          const actorName = getUserDisplayName(user);
           const directReplyRecipient =
             directReplyParent && directReplyParent.userId !== viewer.id
               ? directReplyParent.userId
@@ -233,7 +238,7 @@ export const mountainCommentCreatePostRoute = new Elysia().post(
         viewerHasUpvoted: false,
         createdAt: inserted.createdAt,
         updatedAt: inserted.updatedAt,
-        user: { ...user!, hasSummitedThisMountain: !!summit },
+        user: { ...user, hasSummitedThisMountain: !!summit },
       },
     };
   },

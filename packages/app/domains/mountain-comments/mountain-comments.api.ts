@@ -30,7 +30,7 @@ export const useMountainComments = (
         {
           params: {
             query: {
-              mountainId: mountainId!,
+              mountainId: mountainId ?? "",
               cursor: pageParam,
               q: params.q || undefined,
               sort: params.sort,
@@ -75,7 +75,7 @@ export const useThreadReplies = (
     queryFn: async () => {
       const { data, error } = await apiClient.GET(
         "/api/public/mountain-comments/replies",
-        { params: { query: { parentCommentId: parentCommentId! } } },
+        { params: { query: { parentCommentId: parentCommentId ?? "" } } },
       );
       if (error) throw error;
       return data.message;

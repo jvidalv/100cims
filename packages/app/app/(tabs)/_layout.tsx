@@ -1,10 +1,18 @@
 import { NativeTabs } from "expo-router/unstable-native-tabs";
 import { useIntl } from "react-intl";
 
+import { useAuth } from "@/components/providers/auth-provider";
 import { Colors } from "@/constants/colors";
+import { useNewPlansCount } from "@/domains/plan/plan.api";
 
 export default function TabsLayout() {
   const intl = useIntl();
+  // Server-backed "new plans since you last visited" count. Drives the
+  // badge on the calendar bottom-tab. Mutated to 0 when the user opens
+  // /calendar or /plans (see those screens).
+  const { isAuthenticated } = useAuth();
+  const { data: newPlansData } = useNewPlansCount();
+  const newPlansCount = isAuthenticated ? (newPlansData?.count ?? 0) : 0;
   return (
     // `disableTransparentOnScrollEdge` keeps the bar's blurred material when
     // the user scrolls to the very bottom of a list. Without it, iOS 18 and
@@ -14,6 +22,12 @@ export default function TabsLayout() {
     <NativeTabs
       disableTransparentOnScrollEdge
       tintColor={Colors.light.primary}
+      // Force labels visible on every tab — Android's default
+      // `labelVisibilityMode="auto"` hides the label on unselected tabs
+      // once you have >3 tabs (Material BottomNavigationView behavior),
+      // leaving 4 icons + 1 labeled selected one. "labeled" matches iOS,
+      // and makes the bottom bar self-explanatory regardless of platform.
+      labelVisibilityMode="labeled"
     >
       {/* `(home)` is a route GROUP — invisible in URLs, so the dashboard
           stays at "/" while letting Latest summits and any future Home
@@ -36,6 +50,11 @@ export default function TabsLayout() {
         <NativeTabs.Trigger.Label>
           {intl.formatMessage({ defaultMessage: "Events" })}
         </NativeTabs.Trigger.Label>
+        {newPlansCount > 0 && (
+          <NativeTabs.Trigger.Badge>
+            {String(newPlansCount)}
+          </NativeTabs.Trigger.Badge>
+        )}
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="shop">
         <NativeTabs.Trigger.Icon sf="bag.fill" md="shopping_bag" />

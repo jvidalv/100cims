@@ -256,7 +256,15 @@ export default function JoinScreen() {
         <TouchableOpacity
           className="mt-4"
           onPress={() => {
-            router.back();
+            // `dismissTo("/")` instead of `router.back()` — this screen is
+            // often reached via `<Redirect href="/join" />` from gated
+            // routes (shop, plans/create, challenges/community, mountains,
+            // etc.) where the redirect REPLACES the gated route in the
+            // stack. `back()` from here can pop back to that gated route
+            // and immediately re-redirect to /join, leaving the user
+            // stuck. `dismissTo("/")` lands on the app root regardless of
+            // entry path (the route under the modal at the time of dismiss).
+            router.dismissTo("/");
           }}
         >
           <ThemedText className="text-center text-muted-foreground">

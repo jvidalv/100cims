@@ -5,9 +5,14 @@ import { queryClient } from "@/components/providers/query-client-provider";
 import apiClient from "@/lib/api-client";
 
 export const usePlanChatRead = () => {
+  const { isAuthenticated } = useAuth();
   return useMutation({
     mutationKey: ["plan-chat", "read"],
     mutationFn: async (planId: string) => {
+      // Endpoint is protected — skip the request for unauth users instead of
+      // letting it round-trip to a 401. Callers (chat screen) fire this on
+      // mount/unmount regardless of auth state.
+      if (!isAuthenticated) return null;
       const { data, error } = await apiClient.POST(
         "/api/protected/plans/chat/read",
         { body: { planId } },
@@ -58,7 +63,13 @@ export const usePlanChatMessages = (planId: string) => {
       if (error) throw error;
       return data.message.map((msg) => ({
         ...msg,
-        createdAt: new Date(msg.createdAt as string | number),
+        // OpenAPI schema includes a `Record<string, never>` variant from a
+        // TypeBox quirk, but the server always returns a string or number.
+        createdAt: new Date(
+          typeof msg.createdAt === "string" || typeof msg.createdAt === "number"
+            ? msg.createdAt
+            : 0,
+        ),
       }));
     },
     refetchInterval: 2500,

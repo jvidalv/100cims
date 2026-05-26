@@ -1,6 +1,7 @@
 import type { IntlShape } from "react-intl";
 
 import { tierColor } from "@/components/ui/atoms/themed-tier-picker";
+import { makeTupleGuard } from "@/lib/type-guards";
 
 export type SafetyTierKey = "unsafe" | "mixed" | "safe";
 export type SafetyTierPosition = 0 | 1 | 2;
@@ -32,7 +33,14 @@ export const safetyTier = (avg: number, intl: IntlShape): SafetyTier => {
   };
 };
 
-export type DifficultyTierKey = "easy" | "moderate" | "hard" | "very-hard";
+export const DIFFICULTY_TIER_KEYS = [
+  "easy",
+  "moderate",
+  "hard",
+  "very-hard",
+] as const;
+export type DifficultyTierKey = (typeof DIFFICULTY_TIER_KEYS)[number];
+export const isDifficultyTierKey = makeTupleGuard(DIFFICULTY_TIER_KEYS);
 export type DifficultyTierPosition = 0 | 2 | 3 | 4;
 export type DifficultyTier = {
   key: DifficultyTierKey;

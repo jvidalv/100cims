@@ -121,9 +121,9 @@ export const ChallengeList = ({ variant }: Props) => {
 
   const isCommunity = variant === "community";
   const activeChallengeId = activeChallenge?.id;
-  const rawChallenges = (
-    isCommunity ? communityChallenges : officialChallenges
-  ) as ChallengeRow[] | undefined;
+  const rawChallenges: ChallengeRow[] | undefined = isCommunity
+    ? communityChallenges
+    : officialChallenges;
   const isPendingList = isCommunity ? isPendingCommunity : isPendingOfficial;
 
   const closerAvailable = userLocation != null;

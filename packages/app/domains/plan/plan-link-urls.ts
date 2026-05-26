@@ -69,12 +69,12 @@ export const isInvalidUrlError = (
   e: unknown,
 ): e is { error: "INVALID_URL"; field: PlanLinkUrlField } => {
   if (!e || typeof e !== "object") return false;
-  const obj = e as Record<string, unknown>;
+  if (!("error" in e) || e.error !== "INVALID_URL") return false;
+  if (!("field" in e)) return false;
   return (
-    obj.error === "INVALID_URL" &&
-    (obj.field === "whatsappGroupUrl" ||
-      obj.field === "wikilocUrl" ||
-      obj.field === "stravaUrl")
+    e.field === "whatsappGroupUrl" ||
+    e.field === "wikilocUrl" ||
+    e.field === "stravaUrl"
   );
 };
 

@@ -10,7 +10,6 @@ const RANGES = ["week", "month", "6months", "year", "all"] as const;
 type Range = (typeof RANGES)[number];
 
 const METRICS = ["new-users", "summits", "plans"] as const;
-type Metric = (typeof METRICS)[number];
 
 const TABLE_BY_METRIC = {
   "new-users": userTable,
@@ -45,8 +44,7 @@ const sinceForRange = (range: Range): Date | null => {
 export const adminStatsTimeseriesGetRoute = new Elysia().get(
   "/stats/timeseries",
   async ({ query }) => {
-    const metric = query.metric as Metric;
-    const range = query.range as Range;
+    const { metric, range } = query;
     const bucket = BUCKET_BY_RANGE[range];
     const since = sinceForRange(range);
 
@@ -72,8 +70,8 @@ export const adminStatsTimeseriesGetRoute = new Elysia().get(
   },
   {
     query: t.Object({
-      metric: t.Union(METRICS.map((m) => t.Literal(m))),
-      range: t.Union(RANGES.map((r) => t.Literal(r))),
+      metric: t.UnionEnum(METRICS),
+      range: t.UnionEnum(RANGES),
     }),
     response: SuccessResponse(AdminStatsTimeseriesResponseSchema),
   },

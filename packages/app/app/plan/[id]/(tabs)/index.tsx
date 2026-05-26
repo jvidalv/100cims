@@ -11,6 +11,7 @@ import {
   BellOff,
   Bike,
   Calendar,
+  ChevronRight,
   CircleDot,
   Clock,
   Footprints,
@@ -447,22 +448,6 @@ export default function PlanIdPage() {
         />
       }
     >
-      {showPushDeniedBanner && (
-        <TouchableOpacity
-          onPress={() => {
-            void Linking.openSettings();
-          }}
-          className="items-start gap-2 rounded border border-amber-500 p-3"
-          accessibilityLabel={intl.formatMessage({
-            defaultMessage: "Enable notifications in Settings",
-          })}
-        >
-          <LucideIcon icon={BellOff} size={20} color="#f59e0b" />
-          <ThemedText className="font-semibold text-amber-500">
-            <FormattedMessage defaultMessage="Notifications are off" />
-          </ThemedText>
-        </TouchableOpacity>
-      )}
       <View>
         <View className="mb-4 gap-3">
           <View className="flex flex-row flex-wrap items-center gap-4">
@@ -643,6 +628,25 @@ export default function PlanIdPage() {
         >
           <FormattedMessage defaultMessage="Share" />
         </ActionRow>
+        {showPushDeniedBanner && (
+          <ActionRow
+            icon={BellOff}
+            intent="gold"
+            onPress={() => {
+              void Linking.openSettings();
+            }}
+            accessibilityLabel={intl.formatMessage({
+              defaultMessage: "Enable notifications in Settings",
+            })}
+            trailing={
+              <View className="ml-auto">
+                <LucideIcon icon={ChevronRight} size={20} muted />
+              </View>
+            }
+          >
+            <FormattedMessage defaultMessage="Notifications are off" />
+          </ActionRow>
+        )}
         {hasJoined && !isCreator && (
           <ActionRow
             onPress={() => handleLeave()}

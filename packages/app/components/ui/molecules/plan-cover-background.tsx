@@ -49,18 +49,21 @@ export const PlanCoverBackground = ({
     );
   }
 
-  const withImages = mountains?.filter(({ imageUrl }) => imageUrl) ?? [];
-  if (withImages.length > 0) {
+  const imageUrls =
+    mountains
+      ?.map((m) => m.imageUrl)
+      .filter((url): url is string => !!url) ?? [];
+  if (imageUrls.length > 0) {
     return (
       <>
         <View className="flex-row" style={StyleSheet.absoluteFill}>
-          {withImages.slice(0, 4).map(({ imageUrl }, i, arr) => {
+          {imageUrls.slice(0, 4).map((imageUrl, i, arr) => {
             const count = arr.length;
             if (count === 1) {
               return (
                 <Image
                   key={imageUrl}
-                  source={{ uri: imageUrl!, cache: "force-cache" }}
+                  source={{ uri: imageUrl, cache: "force-cache" }}
                   className="absolute bg-neutral-300 dark:bg-neutral-800"
                   style={{ width: "100%", height: "100%" }}
                 />
@@ -70,7 +73,7 @@ export const PlanCoverBackground = ({
               return (
                 <Image
                   key={imageUrl}
-                  source={{ uri: imageUrl!, cache: "force-cache" }}
+                  source={{ uri: imageUrl, cache: "force-cache" }}
                   className="bg-neutral-300 dark:bg-neutral-800"
                   style={{ width: "50%", height: "100%" }}
                 />
@@ -91,7 +94,7 @@ export const PlanCoverBackground = ({
             return (
               <Image
                 key={imageUrl}
-                source={{ uri: imageUrl!, cache: "force-cache" }}
+                source={{ uri: imageUrl, cache: "force-cache" }}
                 className="absolute bg-neutral-300 dark:bg-neutral-800"
                 style={{
                   width: hasOnlyThree && isLast ? "100%" : "50%",

@@ -69,8 +69,9 @@ export default function PlanCompleteScreen() {
     try {
       setIsHandlingImages(mountainId);
       const result = await pickAndOptimizeImage();
-      if (result?.optimized.base64) {
-        setImages((prev) => ({ ...prev, [mountainId]: result.optimized.base64! }));
+      const base64 = result?.optimized.base64;
+      if (base64) {
+        setImages((prev) => ({ ...prev, [mountainId]: base64 }));
       }
     } catch (error) {
       logError(error, "plan/complete/image");

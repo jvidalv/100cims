@@ -17,6 +17,8 @@ export default function ChallengesTabsLayout() {
     <NativeTabs
       disableTransparentOnScrollEdge
       tintColor={Colors.light.primary}
+      // Keep tab labels visible on Android (matches main tab bar).
+      labelVisibilityMode="labeled"
     >
       <NativeTabs.Trigger name="official">
         <NativeTabs.Trigger.Icon sf="flag.fill" md="flag" />

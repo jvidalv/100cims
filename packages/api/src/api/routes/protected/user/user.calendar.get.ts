@@ -90,37 +90,38 @@ export const userCalendarGetRoute = new Elysia().get(
     // parallel. PlanItemList on the mobile side expects both. Drizzle's
     // `inArray(col, [])` would emit `IN ()`, which Postgres rejects as a
     // syntax error — so the empty case has to short-circuit before the query.
+    // Wrap each fetch in a thunk so the per-row types come from the select
+    // builder itself (no casts needed for the empty short-circuit).
     const planIds = planRows.map((p) => p.id);
-    const planMountainsQuery = db
-      .select({
-        planId: planHasMountainsTable.planId,
-        imageUrl: mountainTable.imageUrl,
-      })
-      .from(planHasMountainsTable)
-      .innerJoin(
-        mountainTable,
-        eq(planHasMountainsTable.mountainId, mountainTable.id),
-      )
-      .where(inArray(planHasMountainsTable.planId, planIds));
-    const planUsersQuery = db
-      .select({
-        planId: planHasUsersTable.planId,
-        userId: userTable.id,
-        firstName: userTable.firstName,
-        lastName: userTable.lastName,
-        imageUrl: userTable.imageUrl,
-      })
-      .from(planHasUsersTable)
-      .innerJoin(userTable, eq(planHasUsersTable.userId, userTable.id))
-      .where(inArray(planHasUsersTable.planId, planIds));
+    const fetchPlanMountains = () =>
+      db
+        .select({
+          planId: planHasMountainsTable.planId,
+          imageUrl: mountainTable.imageUrl,
+        })
+        .from(planHasMountainsTable)
+        .innerJoin(
+          mountainTable,
+          eq(planHasMountainsTable.mountainId, mountainTable.id),
+        )
+        .where(inArray(planHasMountainsTable.planId, planIds));
+    const fetchPlanUsers = () =>
+      db
+        .select({
+          planId: planHasUsersTable.planId,
+          userId: userTable.id,
+          firstName: userTable.firstName,
+          lastName: userTable.lastName,
+          imageUrl: userTable.imageUrl,
+        })
+        .from(planHasUsersTable)
+        .innerJoin(userTable, eq(planHasUsersTable.userId, userTable.id))
+        .where(inArray(planHasUsersTable.planId, planIds));
 
     const [planMountains, planUsers] =
       planIds.length > 0
-        ? await Promise.all([planMountainsQuery, planUsersQuery])
-        : [
-            [] as Awaited<typeof planMountainsQuery>,
-            [] as Awaited<typeof planUsersQuery>,
-          ];
+        ? await Promise.all([fetchPlanMountains(), fetchPlanUsers()])
+        : [[], []];
 
     const summitEvents = summitRows.map((row) => ({
       type: "summit" as const,

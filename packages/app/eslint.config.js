@@ -45,6 +45,12 @@ module.exports = defineConfig([
       ],
 
       "no-empty-pattern": "error",
+
+      // Ban non-null assertions (`x!`) project-wide. They paper over
+      // narrowing problems instead of fixing them — use an early return, an
+      // explicit type guard, `??`, or restructure so TS sees the value as
+      // defined.
+      "@typescript-eslint/no-non-null-assertion": "error",
     },
   },
 ]);

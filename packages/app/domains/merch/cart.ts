@@ -41,12 +41,14 @@ const sanitize = (raw: unknown): CartItem[] => {
   const out: CartItem[] = [];
   for (const item of raw) {
     if (!item || typeof item !== "object") continue;
-    const obj = item as Record<string, unknown>;
-    if (typeof obj.slug !== "string") continue;
-    const qty = typeof obj.qty === "number" && obj.qty > 0 ? obj.qty : 1;
-    const size = isCartSize(obj.size) ? obj.size : undefined;
-    const color = typeof obj.color === "string" ? obj.color : undefined;
-    out.push({ slug: obj.slug, qty, size, color });
+    if (!("slug" in item) || typeof item.slug !== "string") continue;
+    const qtyRaw = "qty" in item ? item.qty : undefined;
+    const qty = typeof qtyRaw === "number" && qtyRaw > 0 ? qtyRaw : 1;
+    const sizeRaw = "size" in item ? item.size : undefined;
+    const size = isCartSize(sizeRaw) ? sizeRaw : undefined;
+    const colorRaw = "color" in item ? item.color : undefined;
+    const color = typeof colorRaw === "string" ? colorRaw : undefined;
+    out.push({ slug: item.slug, qty, size, color });
   }
   return out;
 };

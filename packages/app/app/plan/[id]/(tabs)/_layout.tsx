@@ -48,6 +48,8 @@ export default function PlanTabsLayout() {
     <NativeTabs
       disableTransparentOnScrollEdge
       tintColor={Colors.light.primary}
+      // Keep tab labels visible on Android (matches main tab bar).
+      labelVisibilityMode="labeled"
       // Brand-primary dot — matches the mountain detail Comments badge.
       badgeBackgroundColor={Colors.light.primary}
       badgeTextColor="#FFFFFF"

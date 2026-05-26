@@ -3,39 +3,22 @@ import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/components/providers/auth-provider";
 import apiClient from "@/lib/api-client";
 import { hiscoresKeys } from "@/lib/query-keys";
+import type { paths } from "@/types/api";
 
 const PAGE_SIZE = 50;
 
-export type HiscoreEntry = {
-  userId: string;
-  firstName: string | null;
-  lastName: string | null;
-  imageUrl: string | null;
-  summitsCount: string;
-  uniquePeaksCount: string;
-  essentialPeaksCount: string;
-  totalScore: number;
-};
+type HiscoresAllMessage =
+  paths["/api/public/hiscores/all"]["get"]["responses"][200]["content"]["application/json"]["message"];
 
-export type RankedHiscoreEntry = HiscoreEntry & { rank: number };
+type HiscoresAroundMeMessage =
+  paths["/api/public/hiscores/around-me"]["get"]["responses"][200]["content"]["application/json"]["message"];
 
-type PaginatedHiscores = {
-  items: HiscoreEntry[];
-  pagination: {
-    page: number;
-    pageSize: number;
-    totalItems: number;
-    totalPages: number;
-    hasMore: boolean;
-    myRank?: number | null;
-  };
-};
-
-type AroundMeResponse = {
-  myRank: number | null;
-  totalRanked: number;
-  items: RankedHiscoreEntry[];
-};
+// The /all endpoint historically returned a bare array; the paginated envelope
+// was added later. openapi-typescript expresses the union; pick the envelope
+// branch for the (entry-type) extraction used by the rest of the app.
+type HiscoresPaginated = Exclude<HiscoresAllMessage, readonly unknown[]>;
+export type HiscoreEntry = HiscoresPaginated["items"][number];
+export type RankedHiscoreEntry = HiscoresAroundMeMessage["items"][number];
 
 export const useHiscoresGet = () => {
   return useInfiniteQuery({
@@ -46,8 +29,13 @@ export const useHiscoresGet = () => {
         params: { query: { page: pageParam, limit: PAGE_SIZE } },
       });
       if (error) throw error;
-      // New app always passes page param, so response is always paginated
-      return data.message as PaginatedHiscores;
+      // The endpoint returns a bare array when no `page` param is passed and
+      // a paginated envelope when one is. We always pass `page`, but the
+      // schema still carries the union.
+      if (Array.isArray(data.message)) {
+        throw new Error("hiscores endpoint returned non-paginated response");
+      }
+      return data.message;
     },
     getNextPageParam: (lastPage) => {
       if (lastPage.pagination.hasMore) {
@@ -63,7 +51,7 @@ export const useHiscoresAroundMeGet = () => {
   return useQuery({
     queryKey: hiscoresKeys.aroundMe(),
     enabled: isAuthenticated,
-    queryFn: async (): Promise<AroundMeResponse> => {
+    queryFn: async () => {
       const { data, error } = await apiClient.GET(
         "/api/public/hiscores/around-me",
         {},
