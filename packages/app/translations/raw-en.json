@@ -86,6 +86,9 @@
   "0duFmF": {
     "defaultMessage": "Be the first to share tips, warnings or recent conditions."
   },
+  "0tTY6A": {
+    "defaultMessage": "Remove cover photo?"
+  },
   "1F6Xt8": {
     "defaultMessage": "Edit summit"
   },
@@ -136,6 +139,9 @@
   },
   "3Sssqr": {
     "defaultMessage": "Most upvoted"
+  },
+  "3VsE5J": {
+    "defaultMessage": "The plan will fall back to its mountain images."
   },
   "3Ykujz": {
     "defaultMessage": "Safest for kids"
@@ -749,6 +755,9 @@
   "RNnNfX": {
     "defaultMessage": "Member since {date}"
   },
+  "RZdKSM": {
+    "defaultMessage": "Remove cover photo"
+  },
   "Rif5+t": {
     "defaultMessage": "The WhatsApp group link doesn't look right. Must point to chat.whatsapp.com or wa.me."
   },
@@ -781,6 +790,9 @@
   },
   "T4VxQN": {
     "defaultMessage": "Loading…"
+  },
+  "T8aJHS": {
+    "defaultMessage": "Pick a cover photo"
   },
   "T9bZ8o": {
     "defaultMessage": "Edit mountains"
@@ -980,6 +992,9 @@
   "bWST2F": {
     "defaultMessage": "Add to your people"
   },
+  "bab3Ah": {
+    "defaultMessage": "Tap to replace"
+  },
   "bbPfn0": {
     "defaultMessage": "Longitude"
   },
@@ -988,6 +1003,9 @@
   },
   "bhN9Hq": {
     "defaultMessage": "Delete your account"
+  },
+  "bsRl2D": {
+    "defaultMessage": "Tap to add (optional)"
   },
   "c1AKgx": {
     "defaultMessage": "Missing information."
@@ -1126,6 +1144,9 @@
   },
   "ihTd0A": {
     "defaultMessage": "No summits match \"{query}\""
+  },
+  "j1qOou": {
+    "defaultMessage": "Cover photo"
   },
   "jAkDuA": {
     "defaultMessage": "Yes, report"
