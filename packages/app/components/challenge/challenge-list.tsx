@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/atoms";
 import {
   ActionRow,
-  BLURRED_SCREEN_HEADER_HEIGHT,
+  useBlurredScreenHeaderHeight,
   ChallengeRowMinimal,
 } from "@/components/ui/molecules";
 import {
@@ -76,6 +76,7 @@ type ChallengeRow = {
 export const ChallengeList = ({ variant }: Props) => {
   const router = useRouter();
   const intl = useIntl();
+  const blurredHeaderHeight = useBlurredScreenHeaderHeight();
   const { isAuthenticated } = useAuth();
   const { data: activeChallenge } = useActiveChallenge();
   const { data: officialChallenges, isPending: isPendingOfficial } =
@@ -217,7 +218,7 @@ export const ChallengeList = ({ variant }: Props) => {
           sort pills. Only the rows below it scroll. */}
       <View
         className="gap-3 px-6 pb-3"
-        style={{ paddingTop: BLURRED_SCREEN_HEADER_HEIGHT }}
+        style={{ paddingTop: blurredHeaderHeight }}
       >
         <SearchInput onChangeText={setSearchInput} />
 

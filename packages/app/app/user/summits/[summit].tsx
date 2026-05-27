@@ -34,7 +34,7 @@ import {
 import { Image } from "@/components/ui/atoms/image";
 import {
   ActionRow,
-  BLURRED_SCREEN_HEADER_HEIGHT,
+  useBlurredScreenHeaderHeight,
   BlurredScreenHeader,
   ImagePreviewModal,
   MountainItemList,
@@ -69,6 +69,7 @@ import { getInitials } from "@/lib/strings";
 const Content = () => {
   const intl = useIntl();
   const router = useRouter();
+  const blurredHeaderHeight = useBlurredScreenHeaderHeight();
   const { width: screenW, height: screenH } = useWindowDimensions();
   const { summit, from } = useLocalSearchParams<{
     summit: string;
@@ -219,7 +220,7 @@ const Content = () => {
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
-            paddingTop: BLURRED_SCREEN_HEADER_HEIGHT,
+            paddingTop: blurredHeaderHeight,
             paddingBottom: 96,
           }}
         >
@@ -281,7 +282,7 @@ const Content = () => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
-          paddingTop: BLURRED_SCREEN_HEADER_HEIGHT,
+          paddingTop: blurredHeaderHeight,
           paddingBottom: 96,
         }}
       >

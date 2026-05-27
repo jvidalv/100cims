@@ -649,7 +649,16 @@ function AuthedMountainsScreen() {
         <View
           style={[
             ABSOLUTE_FILL,
-            { zIndex: viewMode === "list" ? 1 : 0 },
+            {
+              zIndex: viewMode === "list" ? 1 : 0,
+              // Hide the list entirely while in map mode. The map renders at
+              // zIndex 1 on top, but until Mapbox finishes its native init
+              // the map View is transparent — leaving the (fully-rendered)
+              // list visible through it on Android at first launch. Fading
+              // the list to 0 matches the symmetric treatment the map gets
+              // when behind the list (see opacity below).
+              opacity: viewMode === "list" ? 1 : 0,
+            },
           ]}
           pointerEvents={viewMode === "list" ? "auto" : "none"}
         >

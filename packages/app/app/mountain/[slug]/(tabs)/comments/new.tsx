@@ -14,7 +14,7 @@ import { Image } from "@/components/ui/atoms/image";
 import {
   ActionRow,
   BlurredScreenHeader,
-  BLURRED_SCREEN_HEADER_HEIGHT,
+  useBlurredScreenHeaderHeight,
   MountainRowMinimal,
 } from "@/components/ui/molecules";
 import { useMountainOne } from "@/domains/mountain/mountain.api";
@@ -31,6 +31,7 @@ const MAX_IMAGES = 5;
 export default function MountainCommentScreen() {
   const intl = useIntl();
   const router = useRouter();
+  const blurredHeaderHeight = useBlurredScreenHeaderHeight();
   // useGlobalSearchParams (not useLocalSearchParams) for the same reason as
   // the sibling tab screens — see comment in ../summit.tsx. The parent
   // [slug] dynamic isn't always populated on useLocalSearchParams when the
@@ -184,7 +185,7 @@ export default function MountainCommentScreen() {
       <ScrollView
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{
-          paddingTop: BLURRED_SCREEN_HEADER_HEIGHT,
+          paddingTop: blurredHeaderHeight,
           paddingHorizontal: 24,
           paddingBottom: 40,
           gap: 16,

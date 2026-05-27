@@ -22,7 +22,7 @@ import { twMerge } from "tailwind-merge";
 import { BlurView, ThemedText } from "@/components/ui/atoms";
 import { LucideIcon } from "@/components/ui/atoms/lucide-icon";
 import { ThemedView } from "@/components/ui/atoms/themed-view";
-import { BLURRED_SCREEN_HEADER_HEIGHT } from "@/components/ui/molecules/blurred-screen-header";
+import { useBlurredScreenHeaderHeight } from "@/components/ui/molecules/blurred-screen-header";
 import { hasDynamicIsland, isAndroid } from "@/lib/device";
 
 const DEFAULT_BLURRED_HEADER_CLASSNAME = "font-medium text-lg max-w-56";
@@ -71,6 +71,7 @@ export default function ParallaxScrollView({
   onEndReachedThreshold = 0.5,
 }: Props) {
   const router = useRouter();
+  const blurredHeaderHeight = useBlurredScreenHeaderHeight();
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useScrollOffset(scrollRef);
   // Latches when we've fired `onEndReached` for the current visit to the
@@ -189,11 +190,11 @@ export default function ParallaxScrollView({
         </TouchableOpacity>
       </Animated.View>
       <Animated.View
-        // Height comes from BLURRED_SCREEN_HEADER_HEIGHT so the collapsed
+        // Height matches `useBlurredScreenHeaderHeight()` so the collapsed
         // parallax header stays the exact same size as the standalone
         // BlurredScreenHeader used on Summit / Comments — single source of
         // truth for the band height across all three tabs.
-        style={[headerElementsStyle, { height: BLURRED_SCREEN_HEADER_HEIGHT }]}
+        style={[headerElementsStyle, { height: blurredHeaderHeight }]}
         className="absolute top-0 w-full flex-1"
       >
         <Header title={title} rightElement={headerRightElement}>

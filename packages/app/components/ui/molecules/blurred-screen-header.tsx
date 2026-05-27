@@ -6,26 +6,33 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { BlurView, ThemedText } from "@/components/ui/atoms";
 import { LucideIcon } from "@/components/ui/atoms/lucide-icon";
-import { hasDynamicIsland } from "@/lib/device";
 
-// Header total height in points. Tweak these freely — they're plain numbers
-// fed straight to the View's style prop, no NativeWind/Tailwind compilation
-// involved.
-const HEADER_HEIGHT = 96;
-const HEADER_HEIGHT_DYNAMIC_ISLAND = 120;
-// Vertical space between the system status bar and the title row.
-const TITLE_ROW_TOP_GAP = 8;
+// Height of the title row + a bit of breathing room below it. Sized to fit
+// the back-arrow TouchableOpacity (28pt icon + py-4 = 60pt) plus the row's
+// own `pb-3`. The header's total height becomes `insets.top + ROW_AREA`,
+// so Android with a ~24dp status bar gets a ~76dp band instead of the
+// iOS-tuned 96; iPhone-notch lands at 44+52=96 which matches the old
+// constant exactly. The row pins to the bottom of the band via `mt-auto`,
+// so the title sits flush with the bottom edge on every platform.
+const ROW_AREA = 52;
 
 /**
- * Pixel value (number) matching the header's total height. Consumers use it
- * as `paddingTop` (via the `style` prop) on the first content element so it
- * clears the absolute-positioned bar.
+ * Hook returning the header's total height in points (status-bar inset +
+ * title row). Consumers use it as `paddingTop` (via the `style` prop) on
+ * the first content element below the absolute-positioned bar.
  *
- *     <View style={{ paddingTop: BLURRED_SCREEN_HEADER_HEIGHT, ... }} />
+ *     const headerHeight = useBlurredScreenHeaderHeight();
+ *     <ScrollView contentContainerStyle={{ paddingTop: headerHeight, ... }} />
+ *
+ * Implemented as a hook rather than a constant because the status bar
+ * height varies per platform: ~44pt on iPhone notch, ~54pt on Dynamic
+ * Island, ~24dp on Android. Hardcoding any one of those leaves the others
+ * with either clipped content (too short) or a tab-bar-sized gap (too tall).
  */
-export const BLURRED_SCREEN_HEADER_HEIGHT = hasDynamicIsland
-  ? HEADER_HEIGHT_DYNAMIC_ISLAND
-  : HEADER_HEIGHT;
+export const useBlurredScreenHeaderHeight = (): number => {
+  const insets = useSafeAreaInsets();
+  return insets.top + ROW_AREA;
+};
 
 /**
  * Blurred top header for screens that need a translucent bar at the top —
@@ -33,7 +40,7 @@ export const BLURRED_SCREEN_HEADER_HEIGHT = hasDynamicIsland
  * echo the collapsed state of `ParallaxScrollView`'s header.
  *
  * Absolute-positioned; consumers pad their content with
- * `BLURRED_SCREEN_HEADER_HEIGHT` so the first item sits below the bar.
+ * `useBlurredScreenHeaderHeight()` so the first item sits below the bar.
  *
  * API mirrors `ScreenHeader` (children = title, optional `rightElement`).
  */
@@ -42,37 +49,23 @@ export const BlurredScreenHeader = ({
   rightElement,
 }: PropsWithChildren<{ rightElement?: ReactNode }>) => {
   const router = useRouter();
-  // Position the title row a fixed gap below the system status bar instead
-  // of `mt-auto` pinning it to the bottom of a fixed-height container. The
-  // old layout assumed iOS-sized status bars (~44pt notch) and left a
-  // tab-bar-sized gap on Android, where the status bar is ~24dp.
-  const insets = useSafeAreaInsets();
+  const height = useBlurredScreenHeaderHeight();
 
   return (
     <View
       className="absolute top-0 w-full flex-1"
-      // Height + stacking via style props — plain numbers, no NativeWind
-      // compilation gotchas. zIndex/elevation keep this above later
-      // absolute siblings on iOS / Android respectively.
-      style={{
-        height: BLURRED_SCREEN_HEADER_HEIGHT,
-        zIndex: 10,
-        elevation: 10,
-      }}
+      style={{ height, zIndex: 10, elevation: 10 }}
     >
       <BlurView className="flex-1">
-        <View
-          className="flex-row items-center justify-between"
-          style={{ paddingTop: insets.top + TITLE_ROW_TOP_GAP }}
-        >
+        <View className="mt-auto flex-row items-center justify-between">
           <TouchableOpacity
             onPress={router.back}
             hitSlop={16}
-            className="w-1/5 py-4 pl-6 pr-4"
+            className="-mt-3 w-1/5 py-4 pl-6 pr-4"
           >
             <LucideIcon size={28} icon={ChevronLeft} />
           </TouchableOpacity>
-          <View className="mx-auto text-center">
+          <View className="mx-auto pb-3 text-center">
             {/* Plain string children get the standard header title styling
                 automatically; pass a node to fully control the rendering. */}
             {typeof children === "string" ? (

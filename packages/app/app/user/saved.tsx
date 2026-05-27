@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/atoms";
 import { Image } from "@/components/ui/atoms/image";
 import {
-  BLURRED_SCREEN_HEADER_HEIGHT,
+  useBlurredScreenHeaderHeight,
   BlurredScreenHeader,
 } from "@/components/ui/molecules";
 import { useSavedGet, type SavedMountain } from "@/domains/saved/saved.api";
@@ -79,6 +79,7 @@ const SavedRow = memo(function SavedRow({
 });
 
 export default function UserSavedScreen() {
+  const blurredHeaderHeight = useBlurredScreenHeaderHeight();
   const { data: me } = useUserMe();
   const { data, isPending } = useSavedGet();
   const { data: userSummits } = useUserChallengeSummits();
@@ -114,7 +115,7 @@ export default function UserSavedScreen() {
         initialNumToRender={25}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
-        contentContainerStyle={{ paddingTop: BLURRED_SCREEN_HEADER_HEIGHT }}
+        contentContainerStyle={{ paddingTop: blurredHeaderHeight }}
         ListEmptyComponent={
           isPending ? (
             <View className="px-6">

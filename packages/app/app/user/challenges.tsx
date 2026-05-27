@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/atoms";
 import {
   ActionRow,
-  BLURRED_SCREEN_HEADER_HEIGHT,
+  useBlurredScreenHeaderHeight,
   BlurredScreenHeader,
   ChallengeRowMinimal,
 } from "@/components/ui/molecules";
@@ -33,6 +33,7 @@ import {
 export default function UserChallengesScreen() {
   const router = useRouter();
   const intl = useIntl();
+  const blurredHeaderHeight = useBlurredScreenHeaderHeight();
   const { isAuthenticated } = useAuth();
 
   const { data: challenges, isPending: isPendingChallenges } =
@@ -116,7 +117,7 @@ export default function UserChallengesScreen() {
 
       <ScrollView
         contentContainerStyle={{
-          paddingTop: BLURRED_SCREEN_HEADER_HEIGHT,
+          paddingTop: blurredHeaderHeight,
           paddingHorizontal: 24,
           paddingBottom: 112,
           gap: 12,

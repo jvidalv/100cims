@@ -5,13 +5,14 @@ import { View, ScrollView } from "react-native";
 import { SummitCard } from "@/components/summit";
 import { Skeleton, ThemedText, ThemedView } from "@/components/ui/atoms";
 import {
-  BLURRED_SCREEN_HEADER_HEIGHT,
+  useBlurredScreenHeaderHeight,
   BlurredScreenHeader,
 } from "@/components/ui/molecules";
 import { useSummitsGet } from "@/domains/summit/summit.api";
 
 export default function SummitsScreen() {
   const router = useRouter();
+  const blurredHeaderHeight = useBlurredScreenHeaderHeight();
   const { data: summits, isPending: isPendingSummits } = useSummitsGet({
     limit: 100,
   });
@@ -25,7 +26,7 @@ export default function SummitsScreen() {
       </BlurredScreenHeader>
       <ScrollView
         contentContainerStyle={{
-          paddingTop: BLURRED_SCREEN_HEADER_HEIGHT,
+          paddingTop: blurredHeaderHeight,
           paddingHorizontal: 16,
           flexDirection: "row",
           flexWrap: "wrap",

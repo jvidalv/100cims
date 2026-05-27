@@ -458,9 +458,6 @@
   "Ep56/Z": {
     "defaultMessage": "Longitude must be between -180 and 180"
   },
-  "Er08ho": {
-    "defaultMessage": "Only invited members can see it"
-  },
   "F4gyn3": {
     "defaultMessage": "Clear filters"
   },
@@ -727,9 +724,6 @@
   },
   "QJmOKA": {
     "defaultMessage": "Please pick a color before adding to cart."
-  },
-  "QSnZL6": {
-    "defaultMessage": "Private plan"
   },
   "QVgzSj": {
     "defaultMessage": "About the app"

@@ -7,7 +7,9 @@ import {
   Alert,
   FlatList,
   Keyboard,
+  Pressable,
   ScrollView,
+  Switch,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
@@ -19,7 +21,6 @@ import {
   Button,
   LucideIcon,
   SearchInput,
-  ThemedSwitch,
   ThemedText,
   ThemedTextInput,
   ThemedView,
@@ -29,12 +30,13 @@ import { ThemedDateInput } from "@/components/ui/atoms/themed-date-input";
 import { ThemedTimeInput } from "@/components/ui/atoms/themed-time-input";
 import {
   BlurredScreenHeader,
-  BLURRED_SCREEN_HEADER_HEIGHT,
+  useBlurredScreenHeaderHeight,
   PeopleList,
   PlanCoverPicker,
   PlanTypeChips,
 } from "@/components/ui/molecules";
 import { MountainItemListAsTouchable } from "@/components/ui/molecules/mountain-item-list";
+import { Colors } from "@/constants/colors";
 import { useMountains } from "@/domains/mountain/mountain.api";
 import {
   invalidUrlMessage,
@@ -58,8 +60,9 @@ import { IMAGE_TO_BIG } from "@/lib/error-codes";
 import { getLocale } from "@/lib/locale";
 
 const StartStep = () => {
+  const blurredHeaderHeight = useBlurredScreenHeaderHeight();
   return (
-    <View className="flex-1" style={{ paddingTop: BLURRED_SCREEN_HEADER_HEIGHT + 16 }}>
+    <View className="flex-1" style={{ paddingTop: blurredHeaderHeight + 16 }}>
       <View className="gap-2">
         <View className="gap-1 rounded border border-border p-4">
           <View className="flex-row items-center gap-2">
@@ -118,6 +121,7 @@ const MountainsStep = memo(
     value: string[];
     onMountainsChange: (mountains: string[]) => void;
   }) => {
+    const blurredHeaderHeight = useBlurredScreenHeaderHeight();
     const { data } = useMountains();
     const [query, setQuery] = useState("");
 
@@ -151,7 +155,7 @@ const MountainsStep = memo(
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{
-            paddingTop: BLURRED_SCREEN_HEADER_HEIGHT + 16,
+            paddingTop: blurredHeaderHeight + 16,
           }}
           getItemLayout={(_, index) => ({
             length: 100,
@@ -243,6 +247,7 @@ const DetailsStep = ({
   coverMountains: { imageUrl?: string | null }[];
 }) => {
   const intl = useIntl();
+  const blurredHeaderHeight = useBlurredScreenHeaderHeight();
   const invalidUrl = intl.formatMessage({
     defaultMessage: "Doesn't look like a valid link.",
   });
@@ -261,7 +266,7 @@ const DetailsStep = ({
       contentContainerStyle={{
         gap: 24,
         paddingBottom: 32,
-        paddingTop: BLURRED_SCREEN_HEADER_HEIGHT + 16,
+        paddingTop: blurredHeaderHeight + 16,
       }}
       keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}
@@ -295,14 +300,23 @@ const DetailsStep = ({
             onDetailsChange({ ...values, description })
           }
         />
-        <ThemedSwitch
-          label={intl.formatMessage({ defaultMessage: "Private plan" })}
-          description={intl.formatMessage({
-            defaultMessage: "Only invited members can see it",
-          })}
-          checked={values.isPrivate}
-          onChecked={(isPrivate) => onDetailsChange({ ...values, isPrivate })}
-        />
+        <Pressable
+          onPress={() =>
+            onDetailsChange({ ...values, isPrivate: !values.isPrivate })
+          }
+          className="flex-row items-center justify-between"
+        >
+          <ThemedText className="text-lg text-foreground">
+            <FormattedMessage defaultMessage="Private" />
+          </ThemedText>
+          <Switch
+            value={values.isPrivate}
+            onValueChange={(isPrivate) =>
+              onDetailsChange({ ...values, isPrivate })
+            }
+            trackColor={{ true: Colors.light.primary }}
+          />
+        </Pressable>
       </View>
       <View className="gap-4">
         <ThemedText className="text-lg font-medium">
@@ -379,10 +393,11 @@ const PeopleStep = ({
   value: PeoplePickerUser[];
   onPeopleChange: (users: PeoplePickerUser[]) => void;
 }) => {
+  const blurredHeaderHeight = useBlurredScreenHeaderHeight();
   return (
     <View
       className="flex-1"
-      style={{ paddingTop: BLURRED_SCREEN_HEADER_HEIGHT + 16 }}
+      style={{ paddingTop: blurredHeaderHeight + 16 }}
     >
       <PeopleList
         selected={value}
@@ -738,7 +753,7 @@ export default function PlanCreatePage() {
         <View className="flex-1 px-6 pb-4">
           {/*
             Steps own their internal scrollers; each one pads its scrollable
-            content with BLURRED_SCREEN_HEADER_HEIGHT + 16 so the first item
+            content with useBlurredScreenHeaderHeight() + 16 so the first item
             sits below the absolute blurred header without shrinking the
             scroller itself. Wrapper has no paddingTop so MountainsStep's
             sticky search header anchors at the visual top correctly.

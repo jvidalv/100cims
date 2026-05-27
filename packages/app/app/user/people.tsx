@@ -10,7 +10,7 @@ import {
   ThemedView,
 } from "@/components/ui/atoms";
 import {
-  BLURRED_SCREEN_HEADER_HEIGHT,
+  useBlurredScreenHeaderHeight,
   BlurredScreenHeader,
   PersonRow,
 } from "@/components/ui/molecules";
@@ -19,6 +19,7 @@ import { SITE_URL } from "@/lib/app-links";
 
 export default function UserPeopleScreen() {
   const intl = useIntl();
+  const blurredHeaderHeight = useBlurredScreenHeaderHeight();
   const { data, isPending } = useUserPeople();
   const { mutate: unlock } = useUnlockableUnlock();
 
@@ -43,7 +44,7 @@ export default function UserPeopleScreen() {
       </BlurredScreenHeader>
       <ScrollView
         contentContainerStyle={{
-          paddingTop: BLURRED_SCREEN_HEADER_HEIGHT,
+          paddingTop: blurredHeaderHeight,
           paddingHorizontal: 24,
           paddingBottom: 112,
           gap: 12,

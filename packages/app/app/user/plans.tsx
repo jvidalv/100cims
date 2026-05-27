@@ -8,7 +8,7 @@ import { twMerge } from "tailwind-merge";
 import { LucideIcon, ThemedText, ThemedView } from "@/components/ui/atoms";
 import {
   ActionRow,
-  BLURRED_SCREEN_HEADER_HEIGHT,
+  useBlurredScreenHeaderHeight,
   BlurredScreenHeader,
 } from "@/components/ui/molecules";
 import {
@@ -21,6 +21,7 @@ import { useUserMe } from "@/domains/user/user.api";
 export default function UserPlansScreen() {
   const intl = useIntl();
   const router = useRouter();
+  const blurredHeaderHeight = useBlurredScreenHeaderHeight();
   const { data: me } = useUserMe();
   const [status, setStatus] = useState<PlanStatus>("open");
   const { data, isPending: isPendingPlans } = usePlans(
@@ -49,7 +50,7 @@ export default function UserPlansScreen() {
       </BlurredScreenHeader>
       <View
         className="mb-4 flex-row gap-1 px-6"
-        style={{ paddingTop: BLURRED_SCREEN_HEADER_HEIGHT }}
+        style={{ paddingTop: blurredHeaderHeight }}
       >
         {statuses.map(({ type: pillStatus, name }) => {
           const isSelected = status === pillStatus;

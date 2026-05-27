@@ -22,7 +22,7 @@ import {
   Avatar,
 } from "@/components/ui/atoms";
 import {
-  BLURRED_SCREEN_HEADER_HEIGHT,
+  useBlurredScreenHeaderHeight,
   BlurredScreenHeader,
 } from "@/components/ui/molecules";
 import { LanguagePicker } from "@/components/user/language-picker";
@@ -44,6 +44,7 @@ type Tab = "details" | "privacy" | "theme" | "account";
 
 export default function UserMeScreen() {
   const router = useRouter();
+  const blurredHeaderHeight = useBlurredScreenHeaderHeight();
   const { logout } = useAuth();
   const intl = useIntl();
   const { refetch: refetchHiscores } = useHiscoresGet();
@@ -220,7 +221,7 @@ export default function UserMeScreen() {
       </BlurredScreenHeader>
       <View
         className="px-6"
-        style={{ paddingTop: BLURRED_SCREEN_HEADER_HEIGHT }}
+        style={{ paddingTop: blurredHeaderHeight }}
       >
         <View className="relative mb-6 items-center justify-center">
           <TouchableOpacity onPress={pickImage} className="relative">
