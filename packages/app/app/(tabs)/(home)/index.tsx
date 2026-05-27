@@ -9,14 +9,7 @@ import {
 } from "lucide-react-native";
 import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import {
-  Appearance,
-  Image,
-  RefreshControl,
-  TouchableOpacity,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Appearance, RefreshControl, TouchableOpacity, useColorScheme, View } from "react-native";
 import Animated, {
   SharedValue,
   useAnimatedRef,
@@ -28,6 +21,7 @@ import { twMerge } from "tailwind-merge";
 
 import { useAuth } from "@/components/providers/auth-provider";
 import { Avatar, BlurView, LucideIcon, Skeleton } from "@/components/ui/atoms";
+import { Image } from "@/components/ui/atoms/image";
 import { ThemedText } from "@/components/ui/atoms/themed-text";
 import { ThemedView } from "@/components/ui/atoms/themed-view";
 import {

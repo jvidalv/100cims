@@ -2,14 +2,9 @@ import { setDefaultOptions } from "date-fns/setDefaultOptions";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import React, {
-  useEffect,
-  PropsWithChildren,
-  useState,
-  useMemo,
-} from "react";
+import { useEffect, PropsWithChildren, useState, useMemo } from "react";
 import { IntlProvider } from "react-intl";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import {
   initialWindowMetrics,
   SafeAreaProvider,
@@ -84,7 +79,19 @@ function Content() {
   return (
     <>
       {!isDataReady && <LoadingSkeleton />}
-      <Stack screenOptions={{ headerShown: false }}>
+      {/* `freezeOnBlur: false` on Android only — react-native-screens'
+          default freeze-blurred-screen optimization snapshots the outgoing
+          screen as a Bitmap for the slide transition, and on Android that
+          bitmap gets `.recycle()`'d before the pop animation finishes,
+          crashing with `Canvas: trying to use a recycled bitmap`. Disabling
+          freeze on Android sidesteps the snapshot path. iOS uses a
+          different transition mechanism and is unaffected. */}
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          freezeOnBlur: Platform.OS === "android" ? false : undefined,
+        }}
+      >
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="challenges" />
         {/* No <Stack.Screen name="plans" />: plans/ contains only the (tabs)/

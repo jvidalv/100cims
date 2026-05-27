@@ -2,9 +2,10 @@ import { format } from "date-fns";
 import { LinearGradient } from "expo-linear-gradient";
 import { forwardRef, ReactNode } from "react";
 import { FormattedMessage } from "react-intl";
-import { Image, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 import { Avatar, ThemedText } from "@/components/ui/atoms";
+import { Image } from "@/components/ui/atoms/image";
 import { Colors } from "@/constants/colors";
 import { formatUsersLine, getFullName } from "@/domains/user/user.utils";
 import { parseLocalDateString } from "@/lib/dates";

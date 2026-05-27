@@ -6,7 +6,8 @@ import {
 import { Camera, Check, Clock } from "lucide-react-native";
 import { useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { Alert, Image, ScrollView, TouchableOpacity, View } from "react-native";
+import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
+
 
 import { useAuth } from "@/components/providers/auth-provider";
 import { queryClient } from "@/components/providers/query-client-provider";
@@ -16,6 +17,7 @@ import {
   ThemedText,
   ThemedView,
 } from "@/components/ui/atoms";
+import { Image } from "@/components/ui/atoms/image";
 import { ThemedDateInput } from "@/components/ui/atoms/themed-date-input";
 import {
   ActionRow,

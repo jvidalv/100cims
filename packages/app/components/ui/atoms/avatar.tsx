@@ -1,8 +1,9 @@
-import React, { FC, useState } from "react";
-import { StyleProp, View, ViewStyle, Image } from "react-native";
+import { FC, useState } from "react";
+import { StyleProp, View, ViewStyle } from "react-native";
 import { twMerge } from "tailwind-merge";
 import { tv } from "tailwind-variants";
 
+import { Image } from "@/components/ui/atoms/image";
 import { ThemedText } from "@/components/ui/atoms/themed-text";
 
 export type AvatarSize = "xs" | "sm" | "md" | "lg" | "xl";

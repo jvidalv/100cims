@@ -3,7 +3,7 @@ import { useGlobalSearchParams, useRouter } from "expo-router";
 import { Camera, Check, Clock } from "lucide-react-native";
 import { useState } from "react";
 import { useIntl, FormattedMessage } from "react-intl";
-import { Alert, ScrollView, TouchableOpacity, View, Image } from "react-native";
+import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
 import { queryClient } from "@/components/providers/query-client-provider";
@@ -15,6 +15,7 @@ import {
   ThemedView,
   LucideIcon,
 } from "@/components/ui/atoms";
+import { Image } from "@/components/ui/atoms/image";
 import {
   ActionRow,
   ScreenHeader,

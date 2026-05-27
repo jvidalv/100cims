@@ -1,8 +1,9 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { forwardRef } from "react";
-import { Image, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 import { ThemedText } from "@/components/ui/atoms";
+import { Image } from "@/components/ui/atoms/image";
 import { Colors } from "@/constants/colors";
 
 const CARD_W = 360;

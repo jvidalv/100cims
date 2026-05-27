@@ -1,7 +1,9 @@
 import { useColorScheme } from "nativewind";
-import { Image, ImageProps } from "react-native";
+import { type ComponentProps } from "react";
 
-type Props = Omit<ImageProps, "source">;
+import { Image } from "@/components/ui/atoms/image";
+
+type Props = Omit<ComponentProps<typeof Image>, "source">;
 
 export const ThemedLogo = (props: Props) => {
   const { colorScheme } = useColorScheme();

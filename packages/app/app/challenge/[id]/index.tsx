@@ -16,7 +16,8 @@ import {
 import { useColorScheme } from "nativewind";
 import { useEffect } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { Alert, TouchableOpacity, Image, View } from "react-native";
+import { Alert, TouchableOpacity, View } from "react-native";
+
 
 
 import { useAuth } from "@/components/providers/auth-provider";
@@ -28,6 +29,7 @@ import {
   Skeleton,
   ThemedView,
 } from "@/components/ui/atoms";
+import { Image } from "@/components/ui/atoms/image";
 import { ActionRow, MountainItemList } from "@/components/ui/molecules";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
 import {

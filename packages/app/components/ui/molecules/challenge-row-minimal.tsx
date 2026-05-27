@@ -1,10 +1,11 @@
 import { Globe, Lock, Mountain, Pencil, Trash2, Users } from "lucide-react-native";
 import { ReactNode } from "react";
 import { FormattedMessage } from "react-intl";
-import { Image, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
 import { LucideIcon, ThemedText } from "@/components/ui/atoms";
+import { Image } from "@/components/ui/atoms/image";
 import { challengeCompletionPercent } from "@/domains/challenge/challenge.model";
 
 interface ChallengeRowMinimalProps {

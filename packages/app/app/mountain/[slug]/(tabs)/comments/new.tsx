@@ -2,14 +2,7 @@ import { useGlobalSearchParams, useRouter } from "expo-router";
 import { Camera, Send, X } from "lucide-react-native";
 import { useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import {
-  ActivityIndicator,
-  Alert,
-  Image,
-  ScrollView,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, Alert, ScrollView, TouchableOpacity, View } from "react-native";
 
 import {
   LucideIcon,
@@ -17,6 +10,7 @@ import {
   ThemedTextInput,
   ThemedView,
 } from "@/components/ui/atoms";
+import { Image } from "@/components/ui/atoms/image";
 import {
   ActionRow,
   BlurredScreenHeader,

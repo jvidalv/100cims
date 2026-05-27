@@ -3,14 +3,7 @@ import { Link, Redirect } from "expo-router";
 import { Download } from "lucide-react-native";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import {
-  ActivityIndicator,
-  Alert,
-  FlatList,
-  Image,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, Alert, FlatList, TouchableOpacity, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
 import {
@@ -20,6 +13,7 @@ import {
   SearchInput,
   Skeleton,
 } from "@/components/ui/atoms";
+import { Image } from "@/components/ui/atoms/image";
 import {
   BLURRED_SCREEN_HEADER_HEIGHT,
   BlurredScreenHeader,

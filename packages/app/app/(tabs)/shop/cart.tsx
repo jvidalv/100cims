@@ -12,7 +12,7 @@ import {
 } from "lucide-react-native";
 import { useCallback, useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { Alert, Image, ScrollView, TouchableOpacity, View } from "react-native";
+import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
 import Animated, {
   FadeIn,
   FadeInDown,
@@ -27,6 +27,7 @@ import {
   ThemedText,
   ThemedTextInput,
 } from "@/components/ui/atoms";
+import { Image } from "@/components/ui/atoms/image";
 import {
   ActionRow,
   PhoneNumberPromptDialog,
