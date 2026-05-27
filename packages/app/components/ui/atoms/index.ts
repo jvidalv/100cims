@@ -1,5 +1,6 @@
 export { Button } from "./button";
 export { Avatar, AvatarSize } from "./avatar";
+export { Image } from "./image";
 export { Skeleton } from "./skeleton";
 export { ThemedView } from "./themed-view";
 export { ThemedText } from "./themed-text";

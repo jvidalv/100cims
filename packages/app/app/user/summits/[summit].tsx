@@ -15,15 +15,7 @@ import {
 } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import {
-  Alert,
-  Image,
-  Pressable,
-  ScrollView,
-  TouchableOpacity,
-  useWindowDimensions,
-  View,
-} from "react-native";
+import { Alert, Pressable, ScrollView, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import ConfettiCannon from "react-native-confetti-cannon";
 
 
@@ -39,6 +31,7 @@ import {
   tierColor,
   withAlpha,
 } from "@/components/ui/atoms";
+import { Image } from "@/components/ui/atoms/image";
 import {
   ActionRow,
   BLURRED_SCREEN_HEADER_HEIGHT,

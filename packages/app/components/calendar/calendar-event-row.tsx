@@ -1,8 +1,9 @@
 import { Link } from "expo-router";
 import { memo } from "react";
-import { Image, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 
 import { ThemedText } from "@/components/ui/atoms";
+import { Image } from "@/components/ui/atoms/image";
 import { PlanItemListCompact } from "@/components/ui/molecules/plan-item-list-compact";
 import {
   CALENDAR_EVENT_DOT_COLOR,

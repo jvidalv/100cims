@@ -1,10 +1,11 @@
 import { Mountain, Pencil, Trash2, Users } from "lucide-react-native";
 import { ReactNode } from "react";
 import { FormattedMessage } from "react-intl";
-import { Image, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
 import { ThemedText } from "@/components/ui/atoms";
+import { Image } from "@/components/ui/atoms/image";
 import { LucideIcon } from "@/components/ui/atoms/lucide-icon";
 import { pastelColors } from "@/constants/colors";
 import { challengeCompletionPercent } from "@/domains/challenge/challenge.model";

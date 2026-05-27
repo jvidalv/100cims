@@ -2,9 +2,10 @@ import { formatDistanceToNowStrict } from "date-fns";
 import { useRouter } from "expo-router";
 import { ArrowUp, Trash2 } from "lucide-react-native";
 import { FormattedMessage } from "react-intl";
-import { Alert, Image, TouchableOpacity, View } from "react-native";
+import { Alert, TouchableOpacity, View } from "react-native";
 
 import { Avatar, LucideIcon, ThemedText } from "@/components/ui/atoms";
+import { Image } from "@/components/ui/atoms/image";
 import { getDateFnsLocale } from "@/lib/locale";
 
 export type CommentRowData = {

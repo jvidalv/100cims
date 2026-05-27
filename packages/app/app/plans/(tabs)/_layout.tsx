@@ -1,6 +1,7 @@
 import { usePathname } from "expo-router";
 import { NativeTabs } from "expo-router/unstable-native-tabs";
 import { useIntl } from "react-intl";
+import { Platform } from "react-native";
 
 import { Colors } from "@/constants/colors";
 
@@ -19,6 +20,13 @@ import { Colors } from "@/constants/colors";
  * bottom action buttons (Continue / Back) aren't obscured by the tab bar.
  * `hidden` on NativeTabs (NOT on a Trigger) doesn't remount the navigator,
  * so form state survives showing/hiding the bar.
+ *
+ * iOS only — on Android, hiding the bar leaves a system-reserved blank
+ * region where it used to sit (the inset doesn't collapse), so the create
+ * screen renders with a large white hole at the bottom. iOS collapses the
+ * inset and the screen claims the full height, which is what we want. So
+ * we keep the bar visible on Android; the form's action buttons sit above
+ * it instead.
  */
 export default function PlansTabsLayout() {
   const intl = useIntl();
@@ -26,7 +34,7 @@ export default function PlansTabsLayout() {
   const isOnCreate = pathname === "/plans/create";
   return (
     <NativeTabs
-      hidden={isOnCreate}
+      hidden={Platform.OS === "ios" && isOnCreate}
       disableTransparentOnScrollEdge
       tintColor={Colors.light.primary}
       // Android default collapses inactive tab labels to icons (Material

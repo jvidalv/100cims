@@ -9,7 +9,7 @@ import {
 } from "lucide-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { Image, ScrollView, TouchableOpacity, View } from "react-native";
+import { ScrollView, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { twMerge } from "tailwind-merge";
 
@@ -21,6 +21,7 @@ import {
   ThemedText,
   ThemedView,
 } from "@/components/ui/atoms";
+import { Image } from "@/components/ui/atoms/image";
 import { ProductPrice } from "@/components/ui/molecules";
 import { Colors } from "@/constants/colors";
 import { useMerch } from "@/domains/merch/merch.api";

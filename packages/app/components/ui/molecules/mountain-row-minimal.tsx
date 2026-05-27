@@ -1,8 +1,9 @@
 import { Link } from "expo-router";
-import { Image, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
 import { ThemedText } from "@/components/ui/atoms";
+import { Image } from "@/components/ui/atoms/image";
 
 interface MountainRowMinimalProps {
   slug: string;

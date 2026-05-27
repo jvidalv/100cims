@@ -2,7 +2,7 @@ import { Link, Redirect } from "expo-router";
 import { Bookmark } from "lucide-react-native";
 import { memo, useCallback, useMemo } from "react";
 import { FormattedMessage } from "react-intl";
-import { FlatList, Image, TouchableOpacity, View } from "react-native";
+import { FlatList, TouchableOpacity, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
 import {
@@ -11,6 +11,7 @@ import {
   ThemedText,
   ThemedView,
 } from "@/components/ui/atoms";
+import { Image } from "@/components/ui/atoms/image";
 import {
   BLURRED_SCREEN_HEADER_HEIGHT,
   BlurredScreenHeader,

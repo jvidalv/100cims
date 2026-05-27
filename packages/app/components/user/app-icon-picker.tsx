@@ -2,10 +2,11 @@ import { getAppIcon, setAppIcon } from "@howincodes/expo-dynamic-app-icon";
 import { Lock } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { Alert, Image, Platform, TouchableOpacity, View } from "react-native";
+import { Alert, Platform, TouchableOpacity, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
 import { LucideIcon, ThemedText } from "@/components/ui/atoms";
+import { Image } from "@/components/ui/atoms/image";
 import {
   APP_ICONS,
   AppIconId,

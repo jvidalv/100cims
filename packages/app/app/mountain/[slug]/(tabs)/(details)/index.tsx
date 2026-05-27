@@ -21,7 +21,8 @@ import {
 import { useColorScheme } from "nativewind";
 import { useEffect, useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { Alert, Image, TouchableOpacity, View } from "react-native";
+import { Alert, TouchableOpacity, View } from "react-native";
+
 
 
 import { useAuth } from "@/components/providers/auth-provider";
@@ -32,6 +33,7 @@ import {
   ThemedText,
   withAlpha,
 } from "@/components/ui/atoms";
+import { Image } from "@/components/ui/atoms/image";
 import {
   ActionRow,
   MountainRowMinimal,

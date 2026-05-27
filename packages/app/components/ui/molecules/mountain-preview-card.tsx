@@ -14,18 +14,12 @@ import {
 } from "lucide-react-native";
 import { useColorScheme } from "nativewind";
 import { FormattedMessage, useIntl } from "react-intl";
-import {
-  Alert,
-  Image,
-  Linking,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Alert, Linking, StyleSheet, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { twMerge } from "tailwind-merge";
 
 import { BlurView, LucideIcon, ThemedText } from "@/components/ui/atoms";
+import { Image } from "@/components/ui/atoms/image";
 import { ActionRow } from "@/components/ui/molecules/action-row";
 import { useMountainOne } from "@/domains/mountain/mountain.api";
 import { useTopMountainComments } from "@/domains/mountain-comments/mountain-comments.api";

@@ -2,15 +2,7 @@ import { useRouter } from "expo-router";
 import { Camera, Plus, X } from "lucide-react-native";
 import { useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import {
-  Alert,
-  Image,
-  Keyboard,
-  ScrollView,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
-} from "react-native";
+import { Alert, Keyboard, ScrollView, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 
 import {
   LucideIcon,
@@ -18,6 +10,7 @@ import {
   ThemedTextInput,
   ThemedView,
 } from "@/components/ui/atoms";
+import { Image } from "@/components/ui/atoms/image";
 import { ThemedToggleInput } from "@/components/ui/atoms/themed-toggle-input";
 import { ActionRow, ScreenHeader } from "@/components/ui/molecules";
 import { appendNewMountainToSession } from "@/domains/mountain/challenge-mountain-picker-session";

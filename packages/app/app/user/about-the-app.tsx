@@ -1,8 +1,9 @@
 import { Link } from "expo-router";
 import { FormattedMessage } from "react-intl";
-import { Image, ScrollView, View } from "react-native";
+import { ScrollView, View } from "react-native";
 
 import { SocialIcons, ThemedText, ThemedView } from "@/components/ui/atoms";
+import { Image } from "@/components/ui/atoms/image";
 import {
   BLURRED_SCREEN_HEADER_HEIGHT,
   BlurredScreenHeader,

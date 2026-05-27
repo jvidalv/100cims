@@ -28,6 +28,13 @@ export default function TabsLayout() {
       // leaving 4 icons + 1 labeled selected one. "labeled" matches iOS,
       // and makes the bottom bar self-explanatory regardless of platform.
       labelVisibilityMode="labeled"
+      // Suppress the Android Material ripple on tab taps. The default is
+      // the brand primary (rose) which flashes loud on every tap; iOS has
+      // no equivalent and feels instant. Transparent gives Android the
+      // same instant-tap feel. The selected-tab pill indicator
+      // (`disableIndicator`) is intentionally left enabled to keep the
+      // Material selection affordance.
+      rippleColor="transparent"
     >
       {/* `(home)` is a route GROUP — invisible in URLs, so the dashboard
           stays at "/" while letting Latest summits and any future Home

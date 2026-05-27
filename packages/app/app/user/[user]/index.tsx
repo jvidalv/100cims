@@ -13,7 +13,8 @@ import {
 } from "lucide-react-native";
 import { useMemo, useRef, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { Alert, Image, View } from "react-native";
+import { Alert, View } from "react-native";
+
 
 import { useAuth } from "@/components/providers/auth-provider";
 import { SummitCard } from "@/components/summit";
@@ -23,6 +24,7 @@ import {
   Skeleton,
   ThemedText,
 } from "@/components/ui/atoms";
+import { Image } from "@/components/ui/atoms/image";
 import {
   ActionRow,
   PersonRow,

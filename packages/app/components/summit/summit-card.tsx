@@ -1,8 +1,9 @@
 import { format } from "date-fns/format";
-import { Image, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
 import { ThemedText } from "@/components/ui/atoms";
+import { Image } from "@/components/ui/atoms/image";
 import { AvatarGroup } from "@/components/ui/molecules";
 import { getFullName } from "@/domains/user/user.utils";
 import { parseLocalDateString } from "@/lib/dates";

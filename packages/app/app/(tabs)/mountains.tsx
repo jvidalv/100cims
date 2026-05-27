@@ -58,6 +58,7 @@ import {
 import { usePlans } from "@/domains/plan/plan.api";
 import { useUserChallengeSummits, useUserMe } from "@/domains/user/user.api";
 import { useLocation } from "@/hooks/use-location";
+import { useNativeTabBarInset } from "@/hooks/use-native-tab-bar-inset";
 import { cleanText } from "@/lib";
 import { getDistanceInKm } from "@/lib/location";
 
@@ -487,6 +488,7 @@ function AuthedMountainsScreen() {
   // a z-index fight inside the map's stacking context.
   const [preview, setPreview] = useState<MountainPreview | null>(null);
   const insets = useSafeAreaInsets();
+  const tabBarInset = useNativeTabBarInset();
   // Imperative handle into MountainsMap so the recenter button — rendered in
   // the screen-level bottom-right cluster, not inside the map — can drive
   // the camera. Stays null until the map mounts.
@@ -560,7 +562,7 @@ function AuthedMountainsScreen() {
           above the chips, aligned to the right edge so it sits over the
           view-toggle chip. */}
       <View
-        style={{ bottom: insets.bottom + 16 }}
+        style={{ bottom: tabBarInset + 16 }}
         className="absolute right-4 z-10 items-end gap-2"
       >
         {isMapView && userLocation && (

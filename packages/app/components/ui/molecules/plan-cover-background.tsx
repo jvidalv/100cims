@@ -1,7 +1,8 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { Image, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 import { ThemedText } from "@/components/ui/atoms";
+import { Image } from "@/components/ui/atoms/image";
 import { getInitials } from "@/lib/strings";
 
 type Props = {
