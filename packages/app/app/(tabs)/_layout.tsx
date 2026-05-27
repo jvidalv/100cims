@@ -22,6 +22,10 @@ export default function TabsLayout() {
     <NativeTabs
       disableTransparentOnScrollEdge
       tintColor={Colors.light.primary}
+      // Brand the calendar badge with the app's primary (rose) instead of
+      // the platform default (red). Applies to every tab's badge — only
+      // calendar has one today.
+      badgeBackgroundColor={Colors.light.primary}
       // Force labels visible on every tab — Android's default
       // `labelVisibilityMode="auto"` hides the label on unselected tabs
       // once you have >3 tabs (Material BottomNavigationView behavior),
