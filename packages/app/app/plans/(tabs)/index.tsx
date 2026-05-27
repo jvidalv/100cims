@@ -15,7 +15,7 @@ import { useAuth } from "@/components/providers/auth-provider";
 import { LucideIcon, ThemedText, ThemedView } from "@/components/ui/atoms";
 import {
   BlurredScreenHeader,
-  BLURRED_SCREEN_HEADER_HEIGHT,
+  useBlurredScreenHeaderHeight,
   PushPermissionDialog,
 } from "@/components/ui/molecules";
 import {
@@ -41,6 +41,7 @@ const NO_MOUNTAIN_DISTANCE = Number.POSITIVE_INFINITY;
 
 export default function PlansScreen() {
   const intl = useIntl();
+  const blurredHeaderHeight = useBlurredScreenHeaderHeight();
   const { isAuthenticated } = useAuth();
   const { data: user } = useUserMe();
   const [filter, setFilter] = useState<Filter>("coming-soon");
@@ -168,7 +169,7 @@ export default function PlansScreen() {
         data={plans}
         keyExtractor={(item) => item.id}
         contentContainerStyle={{
-          paddingTop: BLURRED_SCREEN_HEADER_HEIGHT,
+          paddingTop: blurredHeaderHeight,
           paddingHorizontal: 24,
           gap: 12,
         }}

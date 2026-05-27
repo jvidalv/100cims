@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/atoms";
 import { Image } from "@/components/ui/atoms/image";
 import {
-  BLURRED_SCREEN_HEADER_HEIGHT,
+  useBlurredScreenHeaderHeight,
   BlurredScreenHeader,
 } from "@/components/ui/molecules";
 import { exportUserSummitsCsv } from "@/domains/summit/summit-export";
@@ -91,6 +91,7 @@ const SummitRow = memo(function SummitRow({
 
 export default function UserSummitsScreen() {
   const intl = useIntl();
+  const blurredHeaderHeight = useBlurredScreenHeaderHeight();
   const { data: me } = useUserMe();
 
   const [searchInput, setSearchInput] = useState("");
@@ -281,7 +282,7 @@ export default function UserSummitsScreen() {
         }
         keyExtractor={keyExtractor}
         contentContainerStyle={{
-          paddingTop: BLURRED_SCREEN_HEADER_HEIGHT,
+          paddingTop: blurredHeaderHeight,
           gap: 16,
         }}
         renderItem={renderItem}

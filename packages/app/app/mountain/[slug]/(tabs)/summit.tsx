@@ -22,7 +22,7 @@ import { ThemedDateInput } from "@/components/ui/atoms/themed-date-input";
 import {
   ActionRow,
   BlurredScreenHeader,
-  BLURRED_SCREEN_HEADER_HEIGHT,
+  useBlurredScreenHeaderHeight,
   PeopleList,
   SummitRatingFields,
 } from "@/components/ui/molecules";
@@ -39,6 +39,7 @@ import { userKeys } from "@/lib/query-keys";
 export default function SummitMountainScreen() {
   const intl = useIntl();
   const router = useRouter();
+  const blurredHeaderHeight = useBlurredScreenHeaderHeight();
   // NOTE: useGlobalSearchParams, not useLocalSearchParams. Inside a NativeTabs
   // navigator that lives under [slug], eagerly-mounted tab screens don't
   // receive the dynamic [slug] via useLocalSearchParams — it stays undefined
@@ -158,7 +159,7 @@ export default function SummitMountainScreen() {
       <ScrollView
         className="flex-1"
         contentContainerClassName="pb-40"
-        contentContainerStyle={{ paddingTop: BLURRED_SCREEN_HEADER_HEIGHT }}
+        contentContainerStyle={{ paddingTop: blurredHeaderHeight }}
         keyboardShouldPersistTaps="handled"
       >
         <View className="gap-6 px-6 pt-2">

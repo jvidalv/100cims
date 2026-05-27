@@ -5,11 +5,12 @@ import { ScrollView, View } from "react-native";
 import { SocialIcons, ThemedText, ThemedView } from "@/components/ui/atoms";
 import { Image } from "@/components/ui/atoms/image";
 import {
-  BLURRED_SCREEN_HEADER_HEIGHT,
+  useBlurredScreenHeaderHeight,
   BlurredScreenHeader,
 } from "@/components/ui/molecules";
 
 export default function AboutTheAppScreen() {
+  const blurredHeaderHeight = useBlurredScreenHeaderHeight();
   return (
     <ThemedView className="flex-1">
       <BlurredScreenHeader>
@@ -20,7 +21,7 @@ export default function AboutTheAppScreen() {
       <ScrollView
         className="flex-1"
         contentContainerStyle={{
-          paddingTop: BLURRED_SCREEN_HEADER_HEIGHT,
+          paddingTop: blurredHeaderHeight,
           paddingHorizontal: 24,
           paddingBottom: 48,
         }}

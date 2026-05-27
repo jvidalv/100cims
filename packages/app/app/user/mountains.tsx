@@ -12,7 +12,7 @@ import {
   ThemedView,
 } from "@/components/ui/atoms";
 import {
-  BLURRED_SCREEN_HEADER_HEIGHT,
+  useBlurredScreenHeaderHeight,
   BlurredScreenHeader,
   MountainItemListAsTouchable,
 } from "@/components/ui/molecules";
@@ -27,6 +27,7 @@ import { MountainWithChallengeCount } from "@/types/mountain";
  */
 export default function UserMountainsScreen() {
   const router = useRouter();
+  const blurredHeaderHeight = useBlurredScreenHeaderHeight();
   const { isAuthenticated } = useAuth();
   const { data: mountains, isLoading } = useMyMountains();
 
@@ -72,14 +73,14 @@ export default function UserMountainsScreen() {
       {isLoading ? (
         <View
           className="flex-1 items-center justify-center"
-          style={{ paddingTop: BLURRED_SCREEN_HEADER_HEIGHT }}
+          style={{ paddingTop: blurredHeaderHeight }}
         >
           <ActivityIndicator />
         </View>
       ) : !mountains?.length ? (
         <View
           className="px-6"
-          style={{ paddingTop: BLURRED_SCREEN_HEADER_HEIGHT }}
+          style={{ paddingTop: blurredHeaderHeight }}
         >
           <View className="relative rounded border-2 border-border p-4">
             <View className="absolute right-2 top-2">
@@ -99,7 +100,7 @@ export default function UserMountainsScreen() {
           keyExtractor={(item) => item.id}
           renderItem={renderMountain}
           contentContainerStyle={{
-            paddingTop: BLURRED_SCREEN_HEADER_HEIGHT,
+            paddingTop: blurredHeaderHeight,
             paddingBottom: 112,
           }}
           showsVerticalScrollIndicator={false}

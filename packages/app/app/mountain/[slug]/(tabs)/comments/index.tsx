@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/atoms";
 import {
   BlurredScreenHeader,
-  BLURRED_SCREEN_HEADER_HEIGHT,
+  useBlurredScreenHeaderHeight,
 } from "@/components/ui/molecules";
 import {
   CommentRow,
@@ -98,6 +98,7 @@ export default function MountainCommentsScreen() {
   // don't add the bar height again. +12 is just a small visual buffer
   // above the tab bar's top edge.
   const { bottom: bottomInset } = useSafeAreaInsets();
+  const blurredHeaderHeight = useBlurredScreenHeaderHeight();
   const fabBottomOffset = bottomInset + 12;
   // useGlobalSearchParams (not useLocalSearchParams) — see comment in summit.tsx.
   const { slug } = useGlobalSearchParams<{ slug: string }>();
@@ -358,7 +359,7 @@ export default function MountainCommentsScreen() {
       {/* Pinned header: search + sort chips */}
       <View
         className="gap-3 px-6 pt-3"
-        style={{ paddingTop: BLURRED_SCREEN_HEADER_HEIGHT + 12 }}
+        style={{ paddingTop: blurredHeaderHeight + 12 }}
       >
         <SearchInput
           key={searchInputKey}

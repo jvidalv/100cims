@@ -34,7 +34,7 @@ import {
 import {
   ActionRow,
   BlurredScreenHeader,
-  BLURRED_SCREEN_HEADER_HEIGHT,
+  useBlurredScreenHeaderHeight,
 } from "@/components/ui/molecules";
 import { pastelColors } from "@/constants/colors";
 import {
@@ -62,6 +62,7 @@ export default function PlanChatPage() {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const { bottom: bottomInset } = useSafeAreaInsets();
+  const blurredHeaderHeight = useBlurredScreenHeaderHeight();
 
   const intl = useIntl();
   const inputRef = useRef<TextInput>(null);
@@ -190,7 +191,7 @@ export default function PlanChatPage() {
         />
         <View
           className="relative flex-1"
-          style={{ paddingTop: BLURRED_SCREEN_HEADER_HEIGHT }}
+          style={{ paddingTop: blurredHeaderHeight }}
         >
           {!isPendingMessages && !messages?.length && (
             <BlurView className="relative mx-6 mt-8 gap-1 overflow-hidden rounded border border-border p-4">

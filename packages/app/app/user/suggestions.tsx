@@ -12,13 +12,14 @@ import {
   ThemedView,
 } from "@/components/ui/atoms";
 import {
-  BLURRED_SCREEN_HEADER_HEIGHT,
+  useBlurredScreenHeaderHeight,
   BlurredScreenHeader,
 } from "@/components/ui/molecules";
 import { useSubmitSuggestionMutation } from "@/domains/user/user.api";
 
 export default function SuggestionsScreen() {
   const intl = useIntl();
+  const blurredHeaderHeight = useBlurredScreenHeaderHeight();
   const { mutateAsync: submitSuggestion, isPending } =
     useSubmitSuggestionMutation();
   const [suggestion, setSuggestion] = useState("");
@@ -44,7 +45,7 @@ export default function SuggestionsScreen() {
       </BlurredScreenHeader>
       <View
         className="flex-1 px-6"
-        style={{ paddingTop: BLURRED_SCREEN_HEADER_HEIGHT }}
+        style={{ paddingTop: blurredHeaderHeight }}
       >
         <ThemedTextInput
           className="mb-6"

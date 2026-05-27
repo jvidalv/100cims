@@ -8,6 +8,8 @@ import {
   View,
   ScrollView,
   Keyboard,
+  Pressable,
+  Switch,
   TouchableWithoutFeedback,
 } from "react-native";
 
@@ -17,7 +19,6 @@ import {
   ThemedKeyboardAvoidingView,
   ThemedText,
   ThemedDateInput,
-  ThemedSwitch,
   ThemedTextInput,
   ThemedTimeInput,
 } from "@/components/ui/atoms";
@@ -30,6 +31,7 @@ import {
   PlanTypeChips,
   ScreenHeader,
 } from "@/components/ui/molecules";
+import { Colors } from "@/constants/colors";
 import {
   type MountainPickerMountain,
   toPickerMountain,
@@ -299,14 +301,19 @@ export default function PlanEditPage() {
                 onChangeText={setDescription}
                 inputClassName="h-[120px]"
               />
-              <ThemedSwitch
-                label={intl.formatMessage({ defaultMessage: "Private plan" })}
-                description={intl.formatMessage({
-                  defaultMessage: "Only invited members can see it",
-                })}
-                checked={isPrivate}
-                onChecked={setIsPrivate}
-              />
+              <Pressable
+                onPress={() => setIsPrivate(!isPrivate)}
+                className="flex-row items-center justify-between"
+              >
+                <ThemedText className="text-lg text-foreground">
+                  <FormattedMessage defaultMessage="Private" />
+                </ThemedText>
+                <Switch
+                  value={isPrivate}
+                  onValueChange={setIsPrivate}
+                  trackColor={{ true: Colors.light.primary }}
+                />
+              </Pressable>
             </View>
             <View className="gap-4">
               <ThemedText className="text-lg font-medium">

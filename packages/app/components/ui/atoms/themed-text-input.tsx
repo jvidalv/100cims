@@ -9,6 +9,14 @@ import {
 import { ReturnKeyType } from "react-native/Libraries/Components/TextInput/TextInput";
 import { twMerge } from "tailwind-merge";
 
+import { isAndroid } from "@/lib/device";
+
+// Android's TextInput baseline sits lower than iOS's due to
+// `includeFontPadding`, so a label positioned at the same `top` as iOS reads
+// lower than the visible placeholder text. Nudge the resting position up on
+// Android to recenter against the placeholder.
+const LABEL_RESTING_TOP = isAndroid ? 13 : 19;
+
 type InputProps = {
   label?: string;
   value?: string | null;
@@ -82,7 +90,7 @@ export const ThemedTextInput: FC<InputProps> = ({
   const style = {
     top: labelPosition.interpolate({
       inputRange: [0, 1],
-      outputRange: [19, -9],
+      outputRange: [LABEL_RESTING_TOP, -9],
     }),
     fontSize: labelPosition.interpolate({
       inputRange: [0, 1],

@@ -28,8 +28,8 @@ import {
   ThemedView,
 } from "@/components/ui/atoms";
 import {
-  BLURRED_SCREEN_HEADER_HEIGHT,
   BlurredScreenHeader,
+  useBlurredScreenHeaderHeight,
 } from "@/components/ui/molecules";
 import { Colors } from "@/constants/colors";
 import { useActiveChallenge } from "@/domains/challenge/challenge.api";
@@ -54,6 +54,7 @@ const MEDAL_RING_COLORS = ["#FFD700", "#C0C0C0", "#CD7F32"] as const;
 export default function HiscoresScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme();
+  const blurredHeaderHeight = useBlurredScreenHeaderHeight();
   const { data: user } = useUserMe();
   const {
     data: hiscoresData,
@@ -173,7 +174,7 @@ export default function HiscoresScreen() {
         ref={listRef}
         data={restOfList}
         initialNumToRender={25}
-        contentContainerStyle={{ paddingTop: BLURRED_SCREEN_HEADER_HEIGHT }}
+        contentContainerStyle={{ paddingTop: blurredHeaderHeight }}
         onEndReached={() => {
           if (hasNextPage && !isFetchingNextPage) {
             fetchNextPage();

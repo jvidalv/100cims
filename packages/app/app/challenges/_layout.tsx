@@ -11,7 +11,7 @@ import { BlurredScreenHeader } from "@/components/ui/molecules";
  *
  * The header is absolute-positioned so child screens' scroll content slides
  * behind the translucent bar — each tab's scroll view is responsible for
- * its own `paddingTop: BLURRED_SCREEN_HEADER_HEIGHT`.
+ * its own `paddingTop: useBlurredScreenHeaderHeight()`.
  */
 export default function ChallengesLayout() {
   return (

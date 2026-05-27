@@ -10,7 +10,7 @@ export { BottomDrawer } from "./bottom-drawer";
 export { ScreenHeader } from "./screen-header";
 export {
   BlurredScreenHeader,
-  BLURRED_SCREEN_HEADER_HEIGHT,
+  useBlurredScreenHeaderHeight,
 } from "./blurred-screen-header";
 export { UserSelectInput, type UserForSelectInput } from "./user-select-input";
 export {
