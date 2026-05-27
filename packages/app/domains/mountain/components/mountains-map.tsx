@@ -6,7 +6,7 @@ import Mapbox, {
   SymbolLayer,
 } from "@rnmapbox/maps";
 import { useColorScheme } from "nativewind";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FormattedMessage } from "react-intl";
 import {
   ActivityIndicator,
@@ -64,6 +64,17 @@ const LABEL_LAYER_ID = "mountains-label";
 const USER_SOURCE_ID = "user-location";
 const USER_HALO_LAYER_ID = "user-location-halo";
 const USER_DOT_LAYER_ID = "user-location-dot";
+
+// Brief tap-feedback ring rendered at the coordinate of the last-tapped
+// mountain dot. Mapbox interpolates `circleRadius` / `circleOpacity`
+// between renders via the layer's *Transition properties, so flipping the
+// state value triggers a smooth grow + fade-out without us touching
+// `Animated` (which would also need a paint-on-every-frame `setState`).
+const TAP_PULSE_SOURCE_ID = "mountain-tap-pulse";
+const TAP_PULSE_LAYER_ID = "mountain-tap-pulse-layer";
+const TAP_PULSE_DURATION_MS = 400;
+const TAP_PULSE_START_RADIUS = 7;
+const TAP_PULSE_END_RADIUS = 22;
 // Standard iOS Maps blue dot — Apple uses #007AFF for the centre disc and a
 // translucent variant for the surrounding halo.
 const COLOR_USER_DOT = "#007AFF";
@@ -193,6 +204,40 @@ export function MountainsMap({
       isMountedRef.current = false;
     };
   }, []);
+
+  // Tap-feedback ring. `pulseCoord` holds the [lng, lat] of the most-recent
+  // marker tap; we toggle `pulseActive` between two states (start small +
+  // opaque, then end larger + transparent) on render frames the user sees,
+  // and Mapbox interpolates between them over TAP_PULSE_DURATION_MS via the
+  // layer's transitions. After the animation has completed we clear the
+  // source so the (invisible) circle isn't kept around in the GPU pipeline.
+  const [pulseCoord, setPulseCoord] = useState<[number, number] | null>(null);
+  const [pulseColor, setPulseColor] = useState<string>(COLOR_DEFAULT);
+  const [pulseActive, setPulseActive] = useState(false);
+  useEffect(() => {
+    if (!pulseCoord) return;
+    // Frame 1: source mounted with start values (small + visible). Then
+    // flip to the end values after a short delay so the native side has
+    // committed the initial layer style and the *Transition props have
+    // something to interpolate from. `requestAnimationFrame` alone wasn't
+    // enough — Mapbox's RN bridge appears to batch consecutive style
+    // updates within a microtask, so the start state never reaches native.
+    const flip = setTimeout(() => setPulseActive(true), 16);
+    const clear = setTimeout(
+      () => {
+        setPulseCoord(null);
+        setPulseActive(false);
+      },
+      TAP_PULSE_DURATION_MS + 16,
+    );
+    if (__DEV__) {
+      console.log("[mountains-map] pulse mount", pulseCoord);
+    }
+    return () => {
+      clearTimeout(flip);
+      clearTimeout(clear);
+    };
+  }, [pulseCoord]);
 
   // Build a GeoJSON FeatureCollection of all mountains. Mapbox does the
   // clustering natively from this source so we don't pay React render cost
@@ -386,11 +431,29 @@ export function MountainsMap({
     const slug = typeof props.slug === "string" ? props.slug : null;
     if (!slug) return;
 
-    // Open the floating preview card. Fallback fields are pulled from the
-    // marker's GeoJSON properties so the card renders instantly; the card
-    // itself fires `useMountainOne` to enrich with full data + cache-warm
-    // the detail page in case the user taps through.
-    setPreview({
+    // Fire the tap-feedback ring before the preview state update so the
+    // pulse paints in the same frame as the tap. Reset (null → coord)
+    // re-triggers the effect even on rapid repeat taps of the same dot.
+    // Pulse color = the dot's own color (set per-feature in the
+    // FeatureCollection memo) so emerald/red/gray dots ripple in their
+    // own shade instead of clashing with a fixed brand color.
+    if (feature.geometry.type === "Point") {
+      const [lng, lat] = feature.geometry.coordinates;
+      const dotColor =
+        typeof props.fillColor === "string" ? props.fillColor : COLOR_DEFAULT;
+      setPulseActive(false);
+      setPulseColor(dotColor);
+      setPulseCoord([lng, lat]);
+    }
+
+    // Defer the preview-card state update to the next macrotask. The card
+    // mounts in the parent and triggers `useMountainOne` plus a full
+    // parent re-render of the map subtree — together that work blocks the
+    // JS thread long enough that an in-the-same-tick state flip for the
+    // pulse paints ~1s late on Android. Pushing the preview to a 0ms
+    // timeout lets React commit the pulse update first, paint the pulse
+    // in the next frame, and only then mount the preview.
+    const previewPayload: MountainPreview = {
       slug,
       fallback: {
         name: typeof props.name === "string" ? props.name : "",
@@ -401,7 +464,8 @@ export function MountainsMap({
         essential: props.essential === true,
         isSummited: props.isSummited === true,
       },
-    });
+    };
+    setTimeout(() => setPreview(previewPayload), 0);
   };
 
   // No token = no map. Render an explicit error surface in production so the
@@ -513,6 +577,44 @@ export function MountainsMap({
             }}
           />
         </ShapeSource>
+
+        {/* Tap-feedback ring: a single-feature source that mounts on marker
+            tap and unmounts ~400ms later. The layer reads `circleRadius` and
+            `circleOpacity` from React state, and Mapbox's *Transition props
+            tween between values whenever they change. Result: tap → ring
+            grows + fades on the GPU side, no JS-thread Animated loop. The
+            source key on `pulseCoord?.join(",")` forces a remount on rapid
+            repeat taps so the animation restarts cleanly. */}
+        {pulseCoord && (
+          <ShapeSource
+            key={pulseCoord.join(",")}
+            id={TAP_PULSE_SOURCE_ID}
+            shape={{
+              type: "Feature",
+              geometry: { type: "Point", coordinates: pulseCoord },
+              properties: {},
+            }}
+          >
+            <CircleLayer
+              id={TAP_PULSE_LAYER_ID}
+              style={{
+                circleColor: pulseColor,
+                circleRadius: pulseActive
+                  ? TAP_PULSE_END_RADIUS
+                  : TAP_PULSE_START_RADIUS,
+                circleOpacity: pulseActive ? 0 : 0.6,
+                circleRadiusTransition: {
+                  duration: TAP_PULSE_DURATION_MS,
+                  delay: 0,
+                },
+                circleOpacityTransition: {
+                  duration: TAP_PULSE_DURATION_MS,
+                  delay: 0,
+                },
+              }}
+            />
+          </ShapeSource>
+        )}
 
         {/* Labels live in a SEPARATE ShapeSource (no onPress, no cluster)
             so tapping a label doesn't bubble up as a marker tap. Same

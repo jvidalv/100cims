@@ -27,16 +27,20 @@ import {
 import { Image } from "@/components/ui/atoms/image";
 import {
   ActionRow,
+  ChallengeRowMinimal,
   PersonRow,
   SharePreviewModal,
 } from "@/components/ui/molecules";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
 import { UserShareCard } from "@/components/user";
+import { useChallengeDetail } from "@/domains/challenge/challenge.api";
+import { countryToEmoji } from "@/domains/challenge/challenge.model";
 import {
   useAddUserPerson,
   useAnyUserAllSummits,
   useAnyUserSummits,
   useRemoveUserPerson,
+  useUserChallenges,
   useUserMe,
   useUserOneGet,
   useUserPeople,
@@ -55,6 +59,18 @@ export default function UserScreen() {
   const { user: userId } = useLocalSearchParams<{ user: string }>();
   const { data: user } = useUserOneGet({ userId });
   const { data: userDetails } = useUserProfile({ userId });
+  const activeChallengeId = user?.activeChallengeId ?? "";
+  const { data: activeChallenge } = useChallengeDetail({
+    id: activeChallengeId,
+  });
+  // Per-challenge summit counts for the profile user — used to compute the
+  // completion % on the active-challenge row, matching /challenges.
+  const { data: userChallenges } = useUserChallenges({
+    userId,
+    enabled: !!activeChallengeId,
+  });
+  const activeChallengeSummitedCount =
+    userChallenges?.find((c) => c.id === activeChallengeId)?.summitCount ?? 0;
 
   const isMe = me?.id === userId;
 
@@ -344,6 +360,33 @@ export default function UserScreen() {
               }
             />
           ))}
+        </View>
+      )}
+      {activeChallenge && (
+        <View className="mb-6 gap-2 px-6">
+          <ThemedText className="text-2xl font-semibold">
+            <FormattedMessage defaultMessage="Current challenge" />
+          </ThemedText>
+          <ChallengeRowMinimal
+            name={activeChallenge.name}
+            emoji={
+              activeChallenge.emoji ?? countryToEmoji(activeChallenge.country)
+            }
+            peakImageUrl={
+              activeChallenge.mountains[0]?.imageUrl ??
+              activeChallenge.imageUrl ??
+              null
+            }
+            totalMountains={String(activeChallenge.totalMountains)}
+            totalUsers={String(activeChallenge.totalUsers)}
+            summitedCount={activeChallengeSummitedCount}
+            onPress={() =>
+              router.push({
+                pathname: "/challenge/[id]",
+                params: { id: activeChallenge.id },
+              })
+            }
+          />
         </View>
       )}
       <View className="relative flex-row items-center justify-between">
