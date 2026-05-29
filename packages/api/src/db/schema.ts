@@ -18,6 +18,7 @@ import {
 
 import type {
   CouponDiscountType,
+  PlanMemberRole,
   PlanSpeed,
   PlanStatus,
   PlanType,
@@ -259,6 +260,18 @@ export const planTable = pgTable(
     wikilocUrl: text(),
     stravaUrl: text(),
     isPrivate: boolean().notNull().default(false),
+    // Admin-curated flag. Off by default; toggled by admins via
+    // /admin/plans/:id and surfaced later for sort/filter in the app.
+    featured: boolean().notNull().default(false),
+    // Whether participating in this plan requires payment. Off by default;
+    // no money flow is wired up yet — the column is informational and the
+    // admin form just exposes it as a checkbox.
+    paid: boolean().notNull().default(false),
+    // Optional hosting organization. Nullable so most plans stay unaffiliated;
+    // `set null` keeps the plan alive if the org is later deleted.
+    organizationId: uuid().references(() => organizationTable.id, {
+      onDelete: "set null",
+    }),
     createdAt: timestamp().notNull().defaultNow(),
     updatedAt: timestamp().notNull().defaultNow(),
   },
@@ -297,6 +310,10 @@ export const planHasUsersTable = pgTable(
       .notNull(),
     joinedAt: timestamp().notNull().defaultNow(),
     willBringDogs: boolean().notNull().default(false),
+    // `member` = regular participant; `organizer` = plan-level admin
+    // (e.g. plan creator, club staff). Defaults to `member` so existing
+    // rows and new joiners pre-promotion stay non-privileged.
+    role: text().notNull().default("member").$type<PlanMemberRole>(),
   },
   (table) => [
     index("plan_has_users_plan_id_idx").on(table.planId),
@@ -796,5 +813,47 @@ export const mountainCommentUpvoteTable = pgTable(
       table.userId,
     ),
     index("mountain_comment_upvote_comment_id_idx").on(table.commentId),
+  ],
+);
+
+// Hiking clubs, guide companies, collectives — any group hosting plans.
+// Admin-managed: there's no user-facing creation flow yet. Plans link via
+// the nullable `plan.organization_id` (set-null cascade), so deleting an
+// org leaves its plans alive but unaffiliated.
+export const organizationTable = pgTable("organization", {
+  id: uuid().primaryKey().defaultRandom(),
+  name: text().notNull(),
+  description: text(),
+  websiteUrl: text(),
+  imageUrl: text(),
+  createdAt: timestamp().notNull().defaultNow(),
+  updatedAt: timestamp().notNull().defaultNow(),
+});
+
+// Many-to-many membership between users and organizations — flat list, no
+// per-membership role. The organizer/member distinction lives on
+// plan_has_users instead (a plan can have organizers from any org or none).
+// UUID PK + uniqueIndex matches the project's join-table convention (see
+// plan_has_users, plan_has_mountains) — composite PKs would be tidier SQL
+// but inconsistent with the rest of the codebase.
+export const organizationMemberTable = pgTable(
+  "organization_member",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    organizationId: uuid()
+      .references(() => organizationTable.id, { onDelete: "cascade" })
+      .notNull(),
+    userId: uuid()
+      .references(() => userTable.id, { onDelete: "cascade" })
+      .notNull(),
+    joinedAt: timestamp().notNull().defaultNow(),
+  },
+  (table) => [
+    index("organization_member_org_id_idx").on(table.organizationId),
+    index("organization_member_user_id_idx").on(table.userId),
+    uniqueIndex("organization_member_org_user_unq_idx").on(
+      table.organizationId,
+      table.userId,
+    ),
   ],
 );

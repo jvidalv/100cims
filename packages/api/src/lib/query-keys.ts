@@ -58,4 +58,8 @@ export const adminKeys = {
   shopRequestDetail: (id: string) => ["admin", "shop-requests", id] as const,
   campaignStats: (slug: string) =>
     ["admin", "campaigns", slug, "stats"] as const,
+  organizationsList: () => ["admin", "organizations"] as const,
+  organizations: (params: { page: number; q: string }) =>
+    ["admin", "organizations", params] as const,
+  organizationDetail: (id: string) => ["admin", "organizations", id] as const,
 };

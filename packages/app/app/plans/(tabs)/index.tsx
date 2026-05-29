@@ -99,7 +99,7 @@ export default function PlansScreen() {
   // mountain in each plan. Falls back to API order if we don't have user
   // coordinates yet (permission denied or still loading). React Compiler
   // memoizes this transformation automatically.
-  const plans = (() => {
+  const filteredPlans = (() => {
     if (filter !== "closer" || !userLocation?.coords || !allMountains) {
       return rawPlans;
     }
@@ -118,6 +118,13 @@ export default function PlansScreen() {
     };
     return [...rawPlans].sort((a, b) => distanceOf(a) - distanceOf(b));
   })();
+
+  // Featured plans float to the top regardless of which secondary sort the
+  // user picked. Stable sort preserves the within-bucket order from above
+  // (either API order or distance-sorted).
+  const plans = [...filteredPlans].sort(
+    (a, b) => Number(b.featured ?? false) - Number(a.featured ?? false),
+  );
 
   const filters: { value: Filter; label: string; icon: typeof CalendarDays }[] =
     [
@@ -151,6 +158,7 @@ export default function PlansScreen() {
         type={item.type}
         startDate={item.startDate}
         isPrivate={item.isPrivate}
+        featured={item.featured}
         mountains={item.mountains}
         users={item.users}
       />

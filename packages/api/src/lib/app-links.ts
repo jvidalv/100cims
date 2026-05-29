@@ -17,6 +17,11 @@ export const INSTAGRAM_URL = "https://instagram.com/fescims";
 
 export const TIKTOK_URL = "https://tiktok.com/@fescims";
 
+export const YOUTUBE_URL = "https://www.youtube.com/@fescims";
+
+export const WHATSAPP_COMMUNITY_URL =
+  "https://chat.whatsapp.com/ILaALMt70nW9ym6DdG2rFL";
+
 export type Platform = "ios" | "android" | "other";
 
 export const detectPlatform = (userAgent: string): Platform => {

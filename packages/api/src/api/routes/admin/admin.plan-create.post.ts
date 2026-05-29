@@ -60,6 +60,11 @@ export const adminPlanCreatePostRoute = new Elysia().post(
         status: "open",
         challengeId: body.challengeId ?? DEFAULT_CHALLENGE_ID,
         isPrivate: body.isPrivate ?? false,
+        featured: body.featured ?? false,
+        paid: body.paid ?? false,
+        // Treat empty string as "unaffiliated", matching admin.plan-update's
+        // normalization. Sending "" straight at a uuid FK column would 500.
+        organizationId: body.organizationId ? body.organizationId : null,
       });
 
       await tx.insert(planHasUsersTable).values({

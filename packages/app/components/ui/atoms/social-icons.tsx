@@ -6,6 +6,7 @@ import {
   INSTAGRAM_URL,
   TIKTOK_URL,
   WHATSAPP_COMMUNITY_URL,
+  YOUTUBE_URL,
 } from "@/lib/app-links";
 
 type Props = {
@@ -88,6 +89,12 @@ export const WhatsAppIcon = ({ size = 24, color = "#6B7280" }: Props) => (
   </Svg>
 );
 
+export const YouTubeIcon = ({ size = 24, color = "#6B7280" }: Props) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill={color}>
+    <Path d="M21.58 7.19a2.51 2.51 0 0 0-1.77-1.77C18.25 5 12 5 12 5s-6.25 0-7.81.42A2.51 2.51 0 0 0 2.42 7.19 26.27 26.27 0 0 0 2 12a26.27 26.27 0 0 0 .42 4.81 2.51 2.51 0 0 0 1.77 1.77C5.75 19 12 19 12 19s6.25 0 7.81-.42a2.51 2.51 0 0 0 1.77-1.77A26.27 26.27 0 0 0 22 12a26.27 26.27 0 0 0-.42-4.81zM10 15V9l5.2 3-5.2 3z" />
+  </Svg>
+);
+
 export const SocialIcons = ({ size = 24, color }: Props) => (
   <View className="flex-row items-center gap-4">
     <TouchableOpacity
@@ -103,6 +110,13 @@ export const SocialIcons = ({ size = 24, color }: Props) => (
       hitSlop={8}
     >
       <TikTokIcon size={size} color={color} />
+    </TouchableOpacity>
+    <TouchableOpacity
+      onPress={() => Linking.openURL(YOUTUBE_URL)}
+      accessibilityLabel="YouTube"
+      hitSlop={8}
+    >
+      <YouTubeIcon size={size} color={color} />
     </TouchableOpacity>
     <TouchableOpacity
       onPress={() => Linking.openURL(WHATSAPP_COMMUNITY_URL)}

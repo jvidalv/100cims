@@ -26,6 +26,9 @@ export const CalendarPlanEventSchema = t.Object({
   planType: t.Nullable(PlanTypeSchema),
   isPrivate: t.Boolean(),
   isCreator: t.Boolean(),
+  // Drives the golden star on the calendar grid for days that have at
+  // least one featured plan. Additive so old mobile clients ignore it.
+  featured: t.Boolean(),
   /** Custom plan cover image. Takes precedence over the mountain collage
    *  in PlanItemListCompact. */
   imageUrl: t.Nullable(t.String()),

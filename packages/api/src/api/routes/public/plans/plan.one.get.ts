@@ -8,6 +8,7 @@ import {
   userTable,
   planHasMountainsTable,
   mountainTable,
+  organizationTable,
 } from "@/db/schema";
 import { JWT } from "@/api/routes/@shared/jwt";
 import {
@@ -15,6 +16,10 @@ import {
   getOptionalUserId,
 } from "@/api/routes/@shared/optional-auth";
 import { canReadPlan } from "@/api/routes/@shared/plan-access";
+import {
+  assemblePlanOrganization,
+  planOrganizationSelection,
+} from "@/api/routes/@shared/plan-organization";
 import { SuccessResponse, ErrorResponse } from "@/api/schemas/common.schema";
 import { PlanDetailSchema } from "@/api/schemas/plan.schema";
 
@@ -42,8 +47,16 @@ export const planOneGetRoute = new Elysia().use(JWT()).get(
         createdAt: planTable.createdAt,
         updatedAt: planTable.updatedAt,
         isPrivate: planTable.isPrivate,
+        featured: planTable.featured,
+        // Org-on-plan LEFT JOIN columns — assembled into the nested
+        // `organization` field below via `assemblePlanOrganization`.
+        ...planOrganizationSelection,
       })
       .from(planTable)
+      .leftJoin(
+        organizationTable,
+        eq(planTable.organizationId, organizationTable.id),
+      )
       .where(eq(planTable.id, query.id))
       .limit(1)
       .execute();
@@ -70,6 +83,7 @@ export const planOneGetRoute = new Elysia().use(JWT()).get(
           lastName: userTable.lastName,
           imageUrl: userTable.imageUrl,
           willBringDogs: planHasUsersTable.willBringDogs,
+          role: planHasUsersTable.role,
         })
         .from(planHasUsersTable)
         .innerJoin(userTable, eq(planHasUsersTable.userId, userTable.id))
@@ -93,16 +107,24 @@ export const planOneGetRoute = new Elysia().use(JWT()).get(
         .where(eq(planHasMountainsTable.planId, query.id)),
     ]);
 
+    const {
+      organizationId,
+      organizationName,
+      organizationImageUrl,
+      ...planFields
+    } = plan[0];
+
     return {
       success: true,
       message: {
-        ...plan[0],
+        ...planFields,
         users: users.map((u) => ({
           id: u.userId,
           firstName: u.firstName,
           lastName: u.lastName,
           imageUrl: u.imageUrl,
           willBringDogs: u.willBringDogs,
+          role: u.role,
         })),
         mountains: mountains.map((m) => ({
           id: m.mountainId,
@@ -113,6 +135,11 @@ export const planOneGetRoute = new Elysia().use(JWT()).get(
           height: m.height,
           essential: m.essential,
         })),
+        organization: assemblePlanOrganization({
+          organizationId,
+          organizationName,
+          organizationImageUrl,
+        }),
       },
     };
   },

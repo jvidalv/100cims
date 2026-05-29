@@ -73,6 +73,7 @@ export const CalendarEventRow = memo(({ event }: Props) => {
               planType={event.planType}
               startDate={event.date}
               isPrivate={event.isPrivate}
+              featured={event.featured}
               mountains={event.mountains}
               users={event.users}
             />

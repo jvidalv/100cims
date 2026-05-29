@@ -283,7 +283,7 @@ const DetailsStep = ({
           title={values.title}
         />
         <ThemedTextInput
-          label="Your activity"
+          label={intl.formatMessage({ defaultMessage: "Activity title" })}
           value={values.title}
           onChangeText={(title) => onDetailsChange({ ...values, title })}
         />
@@ -292,7 +292,7 @@ const DetailsStep = ({
           onChange={(type) => onDetailsChange({ ...values, type })}
         />
         <ThemedTextInput
-          label="Extra information about your plan"
+          label={intl.formatMessage({ defaultMessage: "Extra info" })}
           multiline
           value={values.description}
           inputClassName="h-[140px]"

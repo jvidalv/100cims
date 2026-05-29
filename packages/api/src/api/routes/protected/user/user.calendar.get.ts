@@ -62,6 +62,7 @@ export const userCalendarGetRoute = new Elysia().get(
           status: planTable.status,
           type: planTable.type,
           isPrivate: planTable.isPrivate,
+          featured: planTable.featured,
           creatorId: planTable.creatorId,
           imageUrl: planTable.imageUrl,
         })
@@ -141,6 +142,7 @@ export const userCalendarGetRoute = new Elysia().get(
       status: row.status,
       planType: row.type,
       isPrivate: row.isPrivate,
+      featured: row.featured,
       isCreator: row.creatorId === user.id,
       imageUrl: row.imageUrl,
       mountains: planMountains

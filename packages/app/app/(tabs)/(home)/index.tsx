@@ -122,7 +122,17 @@ const PlansSection = () => {
     sort: "upcoming",
   });
 
-  const plans = data;
+  // Featured-first within the upcoming-sorted window. Server returns plans
+  // sorted by start date ascending; we re-sort here so featured plans
+  // float to the top of the visible list without changing the server's
+  // ordering semantics (other consumers may not want featured-first).
+  // Slice avoids mutating the React Query cache.
+  const plans = useMemo(() => {
+    if (!data) return data;
+    return [...data].sort(
+      (a, b) => Number(b.featured ?? false) - Number(a.featured ?? false),
+    );
+  }, [data]);
   return (
     <View>
       <View className="gap-3">
@@ -142,6 +152,7 @@ const PlansSection = () => {
             type,
             startDate,
             isPrivate,
+            featured,
             mountains,
             users,
           }) => (
@@ -154,6 +165,7 @@ const PlansSection = () => {
               type={type}
               startDate={startDate}
               isPrivate={isPrivate}
+              featured={featured}
               mountains={mountains?.map(({ imageUrl }) => ({ imageUrl }))}
               users={users}
             />

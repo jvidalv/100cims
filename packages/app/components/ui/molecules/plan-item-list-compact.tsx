@@ -36,6 +36,7 @@ export const PlanItemListCompact = ({
   status,
   planType,
   isPrivate,
+  featured,
   mountains,
   users,
   imageUrl,
@@ -119,6 +120,14 @@ export const PlanItemListCompact = ({
                 style={{ lineHeight: 14 }}
               >
                 <FormattedMessage defaultMessage="Canceled" />
+              </ThemedText>
+            )}
+            {featured && (
+              <ThemedText
+                className="text-sm font-semibold text-amber-500"
+                style={{ lineHeight: 14 }}
+              >
+                <FormattedMessage defaultMessage="Featured" />
               </ThemedText>
             )}
             {planTypeLabel && (

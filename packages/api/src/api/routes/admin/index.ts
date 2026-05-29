@@ -44,11 +44,19 @@ import { adminMountainRatingDeleteDeleteRoute } from "@/api/routes/admin/admin.m
 import { adminMountainRatingsGetRoute } from "@/api/routes/admin/admin.mountain-ratings.get";
 import { adminMountainUpdatePostRoute } from "@/api/routes/admin/admin.mountain-update.post";
 import { adminMountainsGetRoute } from "@/api/routes/admin/admin.mountains.get";
+import { adminOrganizationCreatePostRoute } from "@/api/routes/admin/admin.organization-create.post";
+import { adminOrganizationDeleteDeleteRoute } from "@/api/routes/admin/admin.organization-delete.delete";
+import { adminOrganizationDetailGetRoute } from "@/api/routes/admin/admin.organization-detail.get";
+import { adminOrganizationMemberAddPostRoute } from "@/api/routes/admin/admin.organization-member-add.post";
+import { adminOrganizationMemberRemoveDeleteRoute } from "@/api/routes/admin/admin.organization-member-remove.delete";
+import { adminOrganizationUpdatePostRoute } from "@/api/routes/admin/admin.organization-update.post";
+import { adminOrganizationsGetRoute } from "@/api/routes/admin/admin.organizations.get";
 import { adminPlanCreatePostRoute } from "@/api/routes/admin/admin.plan-create.post";
 import { adminPlanDeleteDeleteRoute } from "@/api/routes/admin/admin.plan-delete.delete";
 import { adminPlanDetailGetRoute } from "@/api/routes/admin/admin.plan-detail.get";
 import { adminPlanMemberLogGetRoute } from "@/api/routes/admin/admin.plan-member-log.get";
 import { adminPlanMemberRemoveDeleteRoute } from "@/api/routes/admin/admin.plan-member-remove.delete";
+import { adminPlanMemberRolePatchRoute } from "@/api/routes/admin/admin.plan-member-role.patch";
 import { adminPlanMountainAddPostRoute } from "@/api/routes/admin/admin.plan-mountain-add.post";
 import { adminPlanMountainRemoveDeleteRoute } from "@/api/routes/admin/admin.plan-mountain-remove.delete";
 import { adminPlanUpdatePostRoute } from "@/api/routes/admin/admin.plan-update.post";
@@ -134,8 +142,16 @@ export const adminRoutes = new Elysia({ prefix: "/admin" })
   .use(adminPlanDeleteDeleteRoute)
   .use(adminPlanMemberLogGetRoute)
   .use(adminPlanMemberRemoveDeleteRoute)
+  .use(adminPlanMemberRolePatchRoute)
   .use(adminPlanMountainAddPostRoute)
   .use(adminPlanMountainRemoveDeleteRoute)
+  .use(adminOrganizationsGetRoute)
+  .use(adminOrganizationDetailGetRoute)
+  .use(adminOrganizationCreatePostRoute)
+  .use(adminOrganizationUpdatePostRoute)
+  .use(adminOrganizationDeleteDeleteRoute)
+  .use(adminOrganizationMemberAddPostRoute)
+  .use(adminOrganizationMemberRemoveDeleteRoute)
   .use(adminMerchGetRoute)
   .use(adminMerchDetailGetRoute)
   .use(adminMerchCreatePostRoute)

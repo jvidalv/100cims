@@ -1,0 +1,1 @@
+ALTER TABLE "plan" ADD COLUMN "paid" boolean DEFAULT false NOT NULL;

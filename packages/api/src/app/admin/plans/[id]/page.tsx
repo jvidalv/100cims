@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/select";
 import { SearchPicker } from "@/app/admin/_lib/search-picker";
 import { useMountainSearch } from "@/app/admin/_lib/use-mountain-search";
+import { useOrganizationSearch } from "@/app/admin/_lib/use-organization-search";
 import {
   type AdminPlanUpdateBody,
   useAddAdminPlanMountain,
@@ -38,6 +39,7 @@ import {
   useRemoveAdminPlanMember,
   useRemoveAdminPlanMountain,
   useUpdateAdminPlan,
+  useUpdateAdminPlanMemberRole,
 } from "@/domains/admin/api";
 import { PLAN_USER_LOG_ACTIONS } from "@/db/enums";
 import {
@@ -73,6 +75,15 @@ type Form = {
   whatsappGroupUrl: string;
   wikilocUrl: string;
   stravaUrl: string;
+  isPrivate: boolean;
+  featured: boolean;
+  paid: boolean;
+  // Empty string = unaffiliated. The route normalizes "" → null before
+  // hitting the DB, so we send the form value through untouched.
+  // `organizationName` is for display only — never sent to the API; it
+  // lets the chip render the current org without re-fetching it.
+  organizationId: string;
+  organizationName: string;
 };
 
 const emptyForm: Form = {
@@ -88,6 +99,11 @@ const emptyForm: Form = {
   whatsappGroupUrl: "",
   wikilocUrl: "",
   stravaUrl: "",
+  isPrivate: false,
+  featured: false,
+  paid: false,
+  organizationId: "",
+  organizationName: "",
 };
 
 export default function AdminPlanDetailPage({
@@ -102,6 +118,7 @@ export default function AdminPlanDetailPage({
   const update = useUpdateAdminPlan(id);
   const deletePlan = useDeleteAdminPlan(id);
   const removeMember = useRemoveAdminPlanMember(id);
+  const updatePlanMemberRole = useUpdateAdminPlanMemberRole(id);
   const addMountain = useAddAdminPlanMountain(id);
   const removeMountain = useRemoveAdminPlanMountain(id);
 
@@ -124,13 +141,21 @@ export default function AdminPlanDetailPage({
       whatsappGroupUrl: detail.data.whatsappGroupUrl ?? "",
       wikilocUrl: detail.data.wikilocUrl ?? "",
       stravaUrl: detail.data.stravaUrl ?? "",
+      isPrivate: detail.data.isPrivate,
+      featured: detail.data.featured,
+      paid: detail.data.paid,
+      organizationId: detail.data.organizationId ?? "",
+      organizationName: detail.data.organizationName ?? "",
     };
     setForm(next);
     setInitial(next);
   }, [detail.data, update.isPending]);
 
   const dirty = (Object.keys(form) as (keyof Form)[]).some(
-    (k) => form[k] !== initial[k],
+    // `organizationName` is display-only (never sent to the API) so changes
+    // to it shouldn't enable Save on their own. `organizationId` drives
+    // affiliation; the name follows.
+    (k) => k !== "organizationName" && form[k] !== initial[k],
   );
 
   const onSave = () => {
@@ -155,6 +180,15 @@ export default function AdminPlanDetailPage({
       body.wikilocUrl = form.wikilocUrl || null;
     if (form.stravaUrl !== initial.stravaUrl)
       body.stravaUrl = form.stravaUrl || null;
+    if (form.isPrivate !== initial.isPrivate) body.isPrivate = form.isPrivate;
+    if (form.featured !== initial.featured) body.featured = form.featured;
+    if (form.paid !== initial.paid) body.paid = form.paid;
+    if (form.organizationId !== initial.organizationId) {
+      // Send "" so the route normalizes to null. Sending null directly is
+      // also fine but the type narrows to string|null vs string, which
+      // would require widening the form's organizationId field.
+      body.organizationId = form.organizationId;
+    }
 
     update.mutate(body, {
       onSuccess: () => toast.success("Saved"),
@@ -400,6 +434,109 @@ export default function AdminPlanDetailPage({
             />
           </div>
           <div className="md:col-span-2 space-y-1">
+            <Label>Organization</Label>
+            {form.organizationId ? (
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-2 rounded border px-3 py-1.5 text-sm">
+                  <span className="font-medium">
+                    {form.organizationName || form.organizationId}
+                  </span>
+                </span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() =>
+                    setForm((f) => ({
+                      ...f,
+                      organizationId: "",
+                      organizationName: "",
+                    }))
+                  }
+                >
+                  Unaffiliate
+                </Button>
+              </div>
+            ) : (
+              <SearchPicker
+                placeholder="Pick an organization to host this plan…"
+                emptyLabel="No organizations match."
+                useResults={useOrganizationSearch}
+                onPick={(org) =>
+                  setForm((f) => ({
+                    ...f,
+                    organizationId: org.id,
+                    organizationName: org.name,
+                  }))
+                }
+                renderOption={(org) => (
+                  <div className="flex w-full items-center gap-3">
+                    {org.imageUrl ? (
+                      <img
+                        src={org.imageUrl}
+                        alt=""
+                        className="size-8 rounded object-cover shrink-0"
+                      />
+                    ) : (
+                      <div className="size-8 rounded bg-muted flex items-center justify-center text-base shrink-0">
+                        🏔️
+                      </div>
+                    )}
+                    <span className="font-medium truncate">{org.name}</span>
+                  </div>
+                )}
+              />
+            )}
+          </div>
+          <div className="space-y-1">
+            <Label>Private</Label>
+            <label className="flex items-center gap-2 h-9 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={form.isPrivate}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, isPrivate: e.target.checked }))
+                }
+                className="size-4 rounded border-input"
+              />
+              <span className="text-sm text-muted-foreground">
+                Only invited members can see it
+              </span>
+            </label>
+          </div>
+          <div className="space-y-1">
+            <Label>Featured</Label>
+            <label className="flex items-center gap-2 h-9 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={form.featured}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, featured: e.target.checked }))
+                }
+                className="size-4 rounded border-input"
+              />
+              <span className="text-sm text-muted-foreground">
+                Show this plan in the featured list
+              </span>
+            </label>
+          </div>
+          <div className="space-y-1">
+            <Label>Paid</Label>
+            <label className="flex items-center gap-2 h-9 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={form.paid}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, paid: e.target.checked }))
+                }
+                className="size-4 rounded border-input"
+              />
+              <span className="text-sm text-muted-foreground">
+                Joining this plan requires payment
+              </span>
+            </label>
+          </div>
+          <div className="md:col-span-2 space-y-1">
             <Label>Image URL</Label>
             <Input
               value={form.imageUrl}
@@ -554,6 +691,34 @@ export default function AdminPlanDetailPage({
                   {m.willBringDogs && (
                     <span className="text-xs text-muted-foreground">🐕</span>
                   )}
+                  <Select
+                    value={m.role}
+                    onValueChange={(v) => {
+                      if (v === "member" || v === "organizer") {
+                        updatePlanMemberRole.mutate(
+                          { userId: m.userId, role: v },
+                          {
+                            onSuccess: () => toast.success("Role updated"),
+                            onError: (err) =>
+                              toast.error(
+                                err instanceof Error
+                                  ? err.message
+                                  : "Role update failed",
+                              ),
+                          },
+                        );
+                      }
+                    }}
+                    disabled={updatePlanMemberRole.isPending}
+                  >
+                    <SelectTrigger className="w-32">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="member">Member</SelectItem>
+                      <SelectItem value="organizer">Organizer</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <span className="text-xs text-muted-foreground">
                     {formatDate(m.joinedAt)}
                   </span>

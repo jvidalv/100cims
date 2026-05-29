@@ -9,6 +9,9 @@ interface Props {
   icon: LucideIconType;
   size?: number;
   color?: string;
+  /** Fill color for the icon's interior shape. Lucide icons are stroked
+   *  by default; passing `fill` is how you get a filled star, heart, etc. */
+  fill?: string;
   muted?: boolean;
   primary?: boolean;
   success?: boolean;
@@ -21,6 +24,7 @@ export function LucideIcon({
   icon: Icon,
   size = 24,
   color,
+  fill,
   muted,
   primary,
   success,
@@ -42,6 +46,7 @@ export function LucideIcon({
     <Icon
       size={size}
       color={tint}
+      fill={fill}
       strokeWidth={strokeWidth}
       className={className}
       style={style}

@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Building2,
   Camera,
   Clock,
   Compass,
@@ -48,6 +49,7 @@ const NAV_ITEMS = [
   { href: "/admin/summits", label: "Summits", icon: Camera },
   { href: "/admin/comments", label: "Comments", icon: MessageSquare },
   { href: "/admin/plans", label: "Plans", icon: Compass },
+  { href: "/admin/organizations", label: "Organizations", icon: Building2 },
   { href: "/admin/merch", label: "Merch", icon: ShoppingBag },
   { href: "/admin/shop-requests", label: "Shop requests", icon: Inbox },
   { href: "/admin/coupons", label: "Coupons", icon: Ticket },

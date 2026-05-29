@@ -24,3 +24,6 @@ export const SHOP_REQUEST_STATUSES = [
   "cancelled",
 ] as const;
 export type ShopRequestStatus = (typeof SHOP_REQUEST_STATUSES)[number];
+
+export const PLAN_MEMBER_ROLES = ["member", "organizer"] as const;
+export type PlanMemberRole = (typeof PLAN_MEMBER_ROLES)[number];

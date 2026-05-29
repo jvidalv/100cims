@@ -8,6 +8,7 @@ import {
   userTable,
   planHasMountainsTable,
   mountainTable,
+  organizationTable,
 } from "@/db/schema";
 import { JWT } from "@/api/routes/@shared/jwt";
 import {
@@ -15,6 +16,10 @@ import {
   getOptionalUserId,
 } from "@/api/routes/@shared/optional-auth";
 import { planVisibilitySql } from "@/api/routes/@shared/plan-access";
+import {
+  assemblePlanOrganization,
+  planOrganizationSelection,
+} from "@/api/routes/@shared/plan-organization";
 import { SuccessResponse } from "@/api/schemas/common.schema";
 import { PaginatedPlansSchema } from "@/api/schemas/plan.schema";
 
@@ -64,10 +69,14 @@ export const planAllPaginatedGetRoute = new Elysia().use(JWT()).get(
       updatedAt: planTable.updatedAt,
       challengeId: planTable.challengeId,
       isPrivate: planTable.isPrivate,
+      featured: planTable.featured,
+      // Org-on-plan LEFT JOIN columns — collapsed via
+      // `assemblePlanOrganization` per row below.
+      ...planOrganizationSelection,
     };
 
-    const buildBase = () =>
-      query?.userId
+    const buildBase = () => {
+      const base = query?.userId
         ? db
             .select(selection)
             .from(planTable)
@@ -75,8 +84,14 @@ export const planAllPaginatedGetRoute = new Elysia().use(JWT()).get(
               planHasUsersTable,
               eq(planHasUsersTable.planId, planTable.id),
             )
-            .$dynamic()
-        : db.select(selection).from(planTable).$dynamic();
+        : db.select(selection).from(planTable);
+      return base
+        .leftJoin(
+          organizationTable,
+          eq(planTable.organizationId, organizationTable.id),
+        )
+        .$dynamic();
+    };
 
     const buildCountBase = () =>
       query?.userId
@@ -114,6 +129,7 @@ export const planAllPaginatedGetRoute = new Elysia().use(JWT()).get(
               lastName: userTable.lastName,
               imageUrl: userTable.imageUrl,
               willBringDogs: planHasUsersTable.willBringDogs,
+              role: planHasUsersTable.role,
             })
             .from(planHasUsersTable)
             .innerJoin(userTable, eq(planHasUsersTable.userId, userTable.id))
@@ -148,6 +164,7 @@ export const planAllPaginatedGetRoute = new Elysia().use(JWT()).get(
         lastName: string | null;
         imageUrl: string | null;
         willBringDogs: boolean;
+        role: "member" | "organizer";
       }[]
     >();
     for (const u of users) {
@@ -159,6 +176,7 @@ export const planAllPaginatedGetRoute = new Elysia().use(JWT()).get(
         lastName: u.lastName,
         imageUrl: u.imageUrl,
         willBringDogs: u.willBringDogs,
+        role: u.role,
       });
       usersByPlan.set(u.planId, list);
     }
@@ -188,11 +206,24 @@ export const planAllPaginatedGetRoute = new Elysia().use(JWT()).get(
       mountainsByPlan.set(m.planId, list);
     }
 
-    const items = plans.map((plan) => ({
-      ...plan,
-      users: usersByPlan.get(plan.id) ?? [],
-      mountains: mountainsByPlan.get(plan.id) ?? [],
-    }));
+    const items = plans.map((plan) => {
+      const {
+        organizationId,
+        organizationName,
+        organizationImageUrl,
+        ...planFields
+      } = plan;
+      return {
+        ...planFields,
+        users: usersByPlan.get(plan.id) ?? [],
+        mountains: mountainsByPlan.get(plan.id) ?? [],
+        organization: assemblePlanOrganization({
+          organizationId,
+          organizationName,
+          organizationImageUrl,
+        }),
+      };
+    });
 
     const totalItems = Number(countResult[0]?.count ?? 0);
     const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));

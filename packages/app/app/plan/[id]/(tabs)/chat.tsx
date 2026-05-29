@@ -238,7 +238,7 @@ export default function PlanChatPage() {
                 [
                   { text: intl.formatMessage({ defaultMessage: "Cancel" }) },
                   {
-                    text: "Delete",
+                    text: intl.formatMessage({ defaultMessage: "Delete" }),
                     style: "destructive",
                     onPress: () => deleteMessage(id),
                   },

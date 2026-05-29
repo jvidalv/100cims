@@ -27,6 +27,8 @@ type PlanItemListProps = {
   status: "open" | "completed" | "canceled";
   type?: PlanType | null;
   isPrivate?: boolean;
+  /** Admin-curated. Shown as a golden badge next to the status pill. */
+  featured?: boolean;
   mountains?: {
     imageUrl?: string | null;
   }[];
@@ -46,6 +48,7 @@ const PlanItemListBase = ({
   status,
   type,
   isPrivate,
+  featured,
   mountains,
   users,
 }: PlanItemListProps) => {
@@ -129,6 +132,13 @@ const PlanItemListBase = ({
                 <ThemedText className="font-semibold text-neutral-500">
                   <FormattedMessage defaultMessage="Canceled" />
                 </ThemedText>
+              )}
+              {featured && (
+                <View className="self-center rounded-full bg-amber-400/15 px-2 py-0.5">
+                  <ThemedText className="text-xs font-semibold uppercase tracking-wide text-amber-500">
+                    <FormattedMessage defaultMessage="Featured" />
+                  </ThemedText>
+                </View>
               )}
             </View>
             <ThemedText

@@ -83,15 +83,24 @@ export default function CalendarScreen() {
     range ?? { from: "", to: "" },
   );
 
-  const { eventTypesByDay, eventsByDay } = useMemo(() => {
+  const { eventTypesByDay, eventsByDay, featuredDays } = useMemo(() => {
     const types: Record<string, CalendarEventType[]> = {};
     const list: Record<string, CalendarEvent[]> = {};
+    // Set of date keys that contain at least one featured plan. Drives the
+    // golden star on the calendar grid. We only look at plan events
+    // because `featured` is plan-specific (summits don't carry it).
+    const featured = new Set<string>();
     for (const event of events ?? []) {
       (list[event.date] ??= []).push(event);
       const seen = (types[event.date] ??= []);
       if (!seen.includes(event.type)) seen.push(event.type);
+      if (event.type === "plan" && event.featured) featured.add(event.date);
     }
-    return { eventTypesByDay: types, eventsByDay: list };
+    return {
+      eventTypesByDay: types,
+      eventsByDay: list,
+      featuredDays: featured,
+    };
   }, [events]);
 
   // Default selection = today. Tapping a day swaps it.
@@ -183,6 +192,7 @@ export default function CalendarScreen() {
           height={pageHeight}
           selectedDateKey={selectedDateKey}
           eventTypesByDay={eventTypesByDay}
+          featuredDays={featuredDays}
           navDirection={navDirection}
           navLabel={navLabel}
           onDayPress={onDayPress}
@@ -196,6 +206,7 @@ export default function CalendarScreen() {
       pageHeight,
       selectedDateKey,
       eventTypesByDay,
+      featuredDays,
       lastMonthIndex,
       onDayPress,
       onDayLongPress,
