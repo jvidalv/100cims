@@ -40,7 +40,7 @@ import {
   useRecommendedPeaks,
 } from "@/domains/mountain/mountain.api";
 import { usePlanChatUnread } from "@/domains/plan/plan-chat.api";
-import { usePlans } from "@/domains/plan/plan.api";
+import { useFeaturedPlans, usePlans } from "@/domains/plan/plan.api";
 import { useSummitsGet } from "@/domains/summit/summit.api";
 import {
   useUnseenUpdates,
@@ -116,23 +116,28 @@ const MountainsDone = ({
 };
 
 const PlansSection = () => {
-  const { data, isPending } = usePlans({
+  const { data: upcoming, isPending: isPendingUpcoming } = usePlans({
     limit: 3,
     status: "open",
     sort: "upcoming",
   });
+  const { data: featured, isPending: isPendingFeatured } = useFeaturedPlans({
+    limit: 3,
+  });
 
-  // Featured-first within the upcoming-sorted window. Server returns plans
-  // sorted by start date ascending; we re-sort here so featured plans
-  // float to the top of the visible list without changing the server's
-  // ordering semantics (other consumers may not want featured-first).
-  // Slice avoids mutating the React Query cache.
+  // Featured plans render above the upcoming window. A featured plan
+  // that also falls inside the upcoming-3 window would otherwise appear
+  // twice — dedupe by id, keeping the featured one (it ships with the
+  // gold star). Both queries share `PlanItemList`'s prop shape so the
+  // concat is a clean drop-in. Memoized so unrelated parent re-renders
+  // (focus/scroll/chat-unread ticks) don't churn `PlanItemList` children.
   const plans = useMemo(() => {
-    if (!data) return data;
-    return [...data].sort(
-      (a, b) => Number(b.featured ?? false) - Number(a.featured ?? false),
-    );
-  }, [data]);
+    const featuredIds = new Set(featured?.map((p) => p.id) ?? []);
+    const upcomingOnly =
+      upcoming?.filter((p) => !featuredIds.has(p.id)) ?? [];
+    return [...(featured ?? []), ...upcomingOnly];
+  }, [featured, upcoming]);
+  const isPending = isPendingUpcoming || isPendingFeatured;
   return (
     <View>
       <View className="gap-3">

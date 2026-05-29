@@ -6,9 +6,14 @@ import { Linking, TouchableOpacity, View } from "react-native";
 import { useAuth } from "@/components/providers/auth-provider";
 import {
   ActivityIndicator,
+  InstagramIcon,
   LucideIcon,
   Skeleton,
+  StravaIcon,
   ThemedText,
+  TikTokIcon,
+  WhatsAppIcon,
+  YouTubeIcon,
 } from "@/components/ui/atoms";
 import { Image } from "@/components/ui/atoms/image";
 import { PersonRow } from "@/components/ui/molecules";
@@ -28,18 +33,60 @@ export default function OrganizationScreen() {
     return <Redirect href="/join" />;
   }
 
-  const handleOpenWebsite = async () => {
-    const url = organization?.websiteUrl;
+  const openUrl = async (url: string | null | undefined) => {
     if (!url) return;
+    // Admins paste `instagram.com/foo` or `wa.me/...` without a scheme more
+    // often than they remember `https://`. Prefix one if missing so
+    // `canOpenURL` doesn't bounce the tap silently.
+    const normalized = /^[a-z]+:\/\//i.test(url) ? url : `https://${url}`;
     // `canOpenURL` rejects malformed URLs cleanly. Without this, Android
     // returns a rejected promise from `openURL` with no ACTION_VIEW
     // handler — fires an unhandled-rejection warning the first time an
     // admin pastes a non-URL into the org form.
-    const canOpen = await Linking.canOpenURL(url).catch(() => false);
+    const canOpen = await Linking.canOpenURL(normalized).catch(() => false);
     if (canOpen) {
-      void Linking.openURL(url);
+      void Linking.openURL(normalized);
     }
   };
+  const handleOpenWebsite = () => openUrl(organization?.websiteUrl);
+
+  // Translators see "Open Instagram", "Open TikTok", etc. — proper nouns
+  // stay verbatim, but the verb is localised so VoiceOver/TalkBack reads
+  // the button in the user's locale.
+  const openLabel = (network: string) =>
+    intl.formatMessage(
+      { defaultMessage: "Open {network}" },
+      { network },
+    );
+  const socials = organization
+    ? [
+        {
+          url: organization.instagramUrl,
+          Icon: InstagramIcon,
+          label: openLabel("Instagram"),
+        },
+        {
+          url: organization.tiktokUrl,
+          Icon: TikTokIcon,
+          label: openLabel("TikTok"),
+        },
+        {
+          url: organization.whatsappUrl,
+          Icon: WhatsAppIcon,
+          label: openLabel("WhatsApp"),
+        },
+        {
+          url: organization.youtubeUrl,
+          Icon: YouTubeIcon,
+          label: openLabel("YouTube"),
+        },
+        {
+          url: organization.stravaUrl,
+          Icon: StravaIcon,
+          label: openLabel("Strava"),
+        },
+      ].filter((s) => !!s.url)
+    : [];
 
   return (
     <ParallaxScrollView
@@ -79,6 +126,20 @@ export default function OrganizationScreen() {
             <ThemedText className="text-muted-foreground">
               {organization.description}
             </ThemedText>
+          )}
+          {socials.length > 0 && (
+            <View className="mt-2 flex-row items-center gap-5">
+              {socials.map(({ url, Icon, label }) => (
+                <TouchableOpacity
+                  key={label}
+                  onPress={() => openUrl(url)}
+                  accessibilityLabel={label}
+                  hitSlop={8}
+                >
+                  <Icon size={28} />
+                </TouchableOpacity>
+              ))}
+            </View>
           )}
         </View>
       ) : (

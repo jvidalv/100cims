@@ -1,4 +1,6 @@
-import { organizationTable } from "@/db/schema";
+import { desc, sql } from "drizzle-orm";
+
+import { organizationTable, planHasUsersTable } from "@/db/schema";
 
 /**
  * Drizzle column refs for the org-on-plan LEFT JOIN. Spread into a
@@ -35,3 +37,15 @@ export const assemblePlanOrganization = (plan: {
     imageUrl: plan.organizationImageUrl,
   };
 };
+
+/**
+ * Deterministic participant order shared by every plan-list endpoint:
+ * organizers first, then most-recently-joined within each role. Keeps the
+ * mobile UI consistent (AvatarGroup, plan-detail list, calendar rows) and
+ * removes the need for any client-side resort.
+ */
+export const planParticipantsOrderBy = () =>
+  [
+    desc(sql`${planHasUsersTable.role} = 'organizer'`),
+    desc(planHasUsersTable.joinedAt),
+  ] as const;

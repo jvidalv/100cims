@@ -15,6 +15,7 @@ import {
   getOptionalUserId,
 } from "@/api/routes/@shared/optional-auth";
 import { planVisibilitySql } from "@/api/routes/@shared/plan-access";
+import { planParticipantsOrderBy } from "@/api/routes/@shared/plan-organization";
 import { CalendarPlanEventSchema } from "@/api/schemas/calendar.schema";
 import { SuccessResponse } from "@/api/schemas/common.schema";
 
@@ -92,7 +93,8 @@ export const planByMountainGetRoute = new Elysia().use(JWT()).get(
         })
         .from(planHasUsersTable)
         .innerJoin(userTable, eq(planHasUsersTable.userId, userTable.id))
-        .where(inArray(planHasUsersTable.planId, planIds)),
+        .where(inArray(planHasUsersTable.planId, planIds))
+        .orderBy(...planParticipantsOrderBy()),
 
       db
         .select({
@@ -118,6 +120,7 @@ export const planByMountainGetRoute = new Elysia().use(JWT()).get(
       }[]
     >();
     for (const u of users) {
+      if (!u.planId) continue;
       const list = usersByPlan.get(u.planId) ?? [];
       list.push({
         id: u.userId,

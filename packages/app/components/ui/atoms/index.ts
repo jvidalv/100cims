@@ -16,6 +16,7 @@ export { ThemedTierPicker, tierColor, withAlpha } from "./themed-tier-picker";
 export { ThemedToggleInput } from "./themed-toggle-input";
 export { BlurView } from "./blur-view";
 export { EnrichedThemedText } from "./enriched-themed-text";
+export { FeaturedStar } from "./featured-star";
 export { ThemedLogo } from "./themed-logo";
 export {
   InstagramIcon,

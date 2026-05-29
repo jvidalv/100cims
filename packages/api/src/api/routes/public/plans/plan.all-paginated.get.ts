@@ -19,6 +19,7 @@ import { planVisibilitySql } from "@/api/routes/@shared/plan-access";
 import {
   assemblePlanOrganization,
   planOrganizationSelection,
+  planParticipantsOrderBy,
 } from "@/api/routes/@shared/plan-organization";
 import { SuccessResponse } from "@/api/schemas/common.schema";
 import { PaginatedPlansSchema } from "@/api/schemas/plan.schema";
@@ -134,6 +135,9 @@ export const planAllPaginatedGetRoute = new Elysia().use(JWT()).get(
             .from(planHasUsersTable)
             .innerJoin(userTable, eq(planHasUsersTable.userId, userTable.id))
             .where(inArray(planHasUsersTable.planId, planIds))
+            // Organizers first, joinedAt DESC. Shared helper — see
+            // `planParticipantsOrderBy`.
+            .orderBy(...planParticipantsOrderBy())
         : Promise.resolve([]),
 
       planIds.length

@@ -4,7 +4,7 @@ import { memo } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { TouchableOpacity, View } from "react-native";
 
-import { Skeleton, ThemedText } from "@/components/ui/atoms";
+import { FeaturedStar, Skeleton, ThemedText } from "@/components/ui/atoms";
 import { AvatarGroup } from "@/components/ui/molecules/avatar-group";
 import { PlanCoverBackground } from "@/components/ui/molecules/plan-cover-background";
 import { usePlanChatUnread } from "@/domains/plan/plan-chat.api";
@@ -112,7 +112,8 @@ const PlanItemListBase = ({
         </View>
         <View className="flex-1 justify-center">
           <View className="items-start gap-1">
-            <View className="flex-row gap-2">
+            <View className="flex-row items-center gap-2">
+              {featured && <FeaturedStar />}
               {isOpen && !isOngoing && (
                 <ThemedText className="font-semibold text-blue-500">
                   <FormattedMessage defaultMessage="Open" />
@@ -132,13 +133,6 @@ const PlanItemListBase = ({
                 <ThemedText className="font-semibold text-neutral-500">
                   <FormattedMessage defaultMessage="Canceled" />
                 </ThemedText>
-              )}
-              {featured && (
-                <View className="self-center rounded-full bg-amber-400/15 px-2 py-0.5">
-                  <ThemedText className="text-xs font-semibold uppercase tracking-wide text-amber-500">
-                    <FormattedMessage defaultMessage="Featured" />
-                  </ThemedText>
-                </View>
               )}
             </View>
             <ThemedText
