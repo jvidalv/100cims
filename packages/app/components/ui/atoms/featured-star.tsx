@@ -18,9 +18,30 @@ import { Colors } from "@/constants/colors";
  * Renders `<Star>` directly (not via `LucideIcon`) so the theme-aware tint
  * resolution and `useColorScheme()` subscription don't fire on every render
  * just to be thrown away.
+ *
+ * `decorative={true}` opts out of the default "Featured" accessibilityLabel —
+ * use it on the calendar grid where the day number + event-type dots already
+ * carry the semantic content and an extra per-day "Featured" announcement
+ * would be noise.
  */
-export const FeaturedStar = ({ size = 16 }: { size?: number }) => {
+type Props = {
+  size?: number;
+  decorative?: boolean;
+};
+
+export const FeaturedStar = ({ size = 16, decorative = false }: Props) => {
   const intl = useIntl();
+  if (decorative) {
+    return (
+      <Star
+        size={size}
+        color={Colors.light.featured}
+        fill={Colors.light.featured}
+        accessibilityElementsHidden
+        importantForAccessibility="no"
+      />
+    );
+  }
   const label = intl.formatMessage({ defaultMessage: "Featured" });
   return (
     <Star

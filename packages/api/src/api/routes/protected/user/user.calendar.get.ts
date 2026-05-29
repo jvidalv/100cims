@@ -2,6 +2,7 @@ import { and, asc, eq, gte, inArray, lte, or, sql } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 
 import { getUserFromRequest } from "@/api/routes/@shared/auth";
+import { planParticipantsOrderBy } from "@/api/routes/@shared/plan-organization";
 import { CalendarResponseSchema } from "@/api/schemas/calendar.schema";
 import { SuccessResponse } from "@/api/schemas/common.schema";
 import { db } from "@/db";
@@ -117,7 +118,11 @@ export const userCalendarGetRoute = new Elysia().get(
         })
         .from(planHasUsersTable)
         .innerJoin(userTable, eq(planHasUsersTable.userId, userTable.id))
-        .where(inArray(planHasUsersTable.planId, planIds));
+        .where(inArray(planHasUsersTable.planId, planIds))
+        // Shared with every other plan-list endpoint via
+        // `planParticipantsOrderBy` — keeps the calendar AvatarGroup in
+        // the same organizer-first order as plan rows everywhere else.
+        .orderBy(...planParticipantsOrderBy());
 
     const [planMountains, planUsers] =
       planIds.length > 0
