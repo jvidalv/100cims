@@ -388,6 +388,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/public/plans/featured": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiPublicPlansFeatured"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/public/plans/one": {
         parameters: {
             query?: never;
@@ -4444,6 +4460,161 @@ export interface operations {
             };
         };
     };
+    getApiPublicPlansFeatured: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            title: string;
+                            description: (string | null) | null;
+                            imageUrl: (string | null) | null;
+                            speed: (string | null) | null;
+                            type: (("hike" | "trail" | "bike") | null) | null;
+                            status: "open" | "completed" | "canceled";
+                            routeUrl: (string | null) | null;
+                            whatsappGroupUrl: (string | null) | null;
+                            wikilocUrl: (string | null) | null;
+                            stravaUrl: (string | null) | null;
+                            startDate: (string | null) | null;
+                            startTime: (string | null) | null;
+                            creatorId: string;
+                            createdAt: Record<string, never> | string | number;
+                            updatedAt: Record<string, never> | string | number;
+                            challengeId: (string | null) | null;
+                            isPrivate: boolean;
+                            featured: boolean;
+                            users: {
+                                id: string;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                willBringDogs: boolean;
+                                role: "member" | "organizer";
+                            }[];
+                            mountains: {
+                                id: string;
+                                name: string;
+                                slug: string;
+                                imageUrl: (string | null) | null;
+                                location: string;
+                                height: string;
+                            }[];
+                            organization: ({
+                                id: string;
+                                name: string;
+                                imageUrl: (string | null) | null;
+                            } | null) | null;
+                        }[];
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            title: string;
+                            description: (string | null) | null;
+                            imageUrl: (string | null) | null;
+                            speed: (string | null) | null;
+                            type: (("hike" | "trail" | "bike") | null) | null;
+                            status: "open" | "completed" | "canceled";
+                            routeUrl: (string | null) | null;
+                            whatsappGroupUrl: (string | null) | null;
+                            wikilocUrl: (string | null) | null;
+                            stravaUrl: (string | null) | null;
+                            startDate: (string | null) | null;
+                            startTime: (string | null) | null;
+                            creatorId: string;
+                            createdAt: Record<string, never> | string | number;
+                            updatedAt: Record<string, never> | string | number;
+                            challengeId: (string | null) | null;
+                            isPrivate: boolean;
+                            featured: boolean;
+                            users: {
+                                id: string;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                willBringDogs: boolean;
+                                role: "member" | "organizer";
+                            }[];
+                            mountains: {
+                                id: string;
+                                name: string;
+                                slug: string;
+                                imageUrl: (string | null) | null;
+                                location: string;
+                                height: string;
+                            }[];
+                            organization: ({
+                                id: string;
+                                name: string;
+                                imageUrl: (string | null) | null;
+                            } | null) | null;
+                        }[];
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            title: string;
+                            description: (string | null) | null;
+                            imageUrl: (string | null) | null;
+                            speed: (string | null) | null;
+                            type: (("hike" | "trail" | "bike") | null) | null;
+                            status: "open" | "completed" | "canceled";
+                            routeUrl: (string | null) | null;
+                            whatsappGroupUrl: (string | null) | null;
+                            wikilocUrl: (string | null) | null;
+                            stravaUrl: (string | null) | null;
+                            startDate: (string | null) | null;
+                            startTime: (string | null) | null;
+                            creatorId: string;
+                            createdAt: Record<string, never> | string | number;
+                            updatedAt: Record<string, never> | string | number;
+                            challengeId: (string | null) | null;
+                            isPrivate: boolean;
+                            featured: boolean;
+                            users: {
+                                id: string;
+                                firstName: (string | null) | null;
+                                lastName: (string | null) | null;
+                                imageUrl: (string | null) | null;
+                                willBringDogs: boolean;
+                                role: "member" | "organizer";
+                            }[];
+                            mountains: {
+                                id: string;
+                                name: string;
+                                slug: string;
+                                imageUrl: (string | null) | null;
+                                location: string;
+                                height: string;
+                            }[];
+                            organization: ({
+                                id: string;
+                                name: string;
+                                imageUrl: (string | null) | null;
+                            } | null) | null;
+                        }[];
+                    };
+                };
+            };
+        };
+    };
     getApiPublicPlansOne: {
         parameters: {
             query: {
@@ -4713,6 +4884,11 @@ export interface operations {
                             description: (string | null) | null;
                             websiteUrl: (string | null) | null;
                             imageUrl: (string | null) | null;
+                            instagramUrl: (string | null) | null;
+                            tiktokUrl: (string | null) | null;
+                            whatsappUrl: (string | null) | null;
+                            youtubeUrl: (string | null) | null;
+                            stravaUrl: (string | null) | null;
                             createdAt: Record<string, never> | string | number;
                             members: {
                                 id: string;
@@ -4730,6 +4906,11 @@ export interface operations {
                             description: (string | null) | null;
                             websiteUrl: (string | null) | null;
                             imageUrl: (string | null) | null;
+                            instagramUrl: (string | null) | null;
+                            tiktokUrl: (string | null) | null;
+                            whatsappUrl: (string | null) | null;
+                            youtubeUrl: (string | null) | null;
+                            stravaUrl: (string | null) | null;
                             createdAt: Record<string, never> | string | number;
                             members: {
                                 id: string;
@@ -4747,6 +4928,11 @@ export interface operations {
                             description: (string | null) | null;
                             websiteUrl: (string | null) | null;
                             imageUrl: (string | null) | null;
+                            instagramUrl: (string | null) | null;
+                            tiktokUrl: (string | null) | null;
+                            whatsappUrl: (string | null) | null;
+                            youtubeUrl: (string | null) | null;
+                            stravaUrl: (string | null) | null;
                             createdAt: Record<string, never> | string | number;
                             members: {
                                 id: string;
@@ -7411,6 +7597,9 @@ export interface operations {
                             updatedAt: Record<string, never> | string | number;
                             challengeId: (string | null) | null;
                             isPrivate: boolean;
+                            featured: boolean;
+                            paid: boolean;
+                            organizationId: (string | null) | null;
                         };
                     };
                     "multipart/form-data": {
@@ -7434,6 +7623,9 @@ export interface operations {
                             updatedAt: Record<string, never> | string | number;
                             challengeId: (string | null) | null;
                             isPrivate: boolean;
+                            featured: boolean;
+                            paid: boolean;
+                            organizationId: (string | null) | null;
                         };
                     };
                     "text/plain": {
@@ -7457,6 +7649,9 @@ export interface operations {
                             updatedAt: Record<string, never> | string | number;
                             challengeId: (string | null) | null;
                             isPrivate: boolean;
+                            featured: boolean;
+                            paid: boolean;
+                            organizationId: (string | null) | null;
                         };
                     };
                 };
@@ -7590,6 +7785,9 @@ export interface operations {
                             updatedAt: Record<string, never> | string | number;
                             challengeId: (string | null) | null;
                             isPrivate: boolean;
+                            featured: boolean;
+                            paid: boolean;
+                            organizationId: (string | null) | null;
                         };
                     };
                     "multipart/form-data": {
@@ -7613,6 +7811,9 @@ export interface operations {
                             updatedAt: Record<string, never> | string | number;
                             challengeId: (string | null) | null;
                             isPrivate: boolean;
+                            featured: boolean;
+                            paid: boolean;
+                            organizationId: (string | null) | null;
                         };
                     };
                     "text/plain": {
@@ -7636,6 +7837,9 @@ export interface operations {
                             updatedAt: Record<string, never> | string | number;
                             challengeId: (string | null) | null;
                             isPrivate: boolean;
+                            featured: boolean;
+                            paid: boolean;
+                            organizationId: (string | null) | null;
                         };
                     };
                 };
@@ -13110,18 +13314,33 @@ export interface operations {
                     description?: string;
                     websiteUrl?: string;
                     imageUrl?: string;
+                    instagramUrl?: string;
+                    tiktokUrl?: string;
+                    whatsappUrl?: string;
+                    youtubeUrl?: string;
+                    stravaUrl?: string;
                 };
                 "multipart/form-data": {
                     name: string;
                     description?: string;
                     websiteUrl?: string;
                     imageUrl?: string;
+                    instagramUrl?: string;
+                    tiktokUrl?: string;
+                    whatsappUrl?: string;
+                    youtubeUrl?: string;
+                    stravaUrl?: string;
                 };
                 "text/plain": {
                     name: string;
                     description?: string;
                     websiteUrl?: string;
                     imageUrl?: string;
+                    instagramUrl?: string;
+                    tiktokUrl?: string;
+                    whatsappUrl?: string;
+                    youtubeUrl?: string;
+                    stravaUrl?: string;
                 };
             };
         };
@@ -13209,6 +13428,11 @@ export interface operations {
                             description: (string | null) | null;
                             websiteUrl: (string | null) | null;
                             imageUrl: (string | null) | null;
+                            instagramUrl: (string | null) | null;
+                            tiktokUrl: (string | null) | null;
+                            whatsappUrl: (string | null) | null;
+                            youtubeUrl: (string | null) | null;
+                            stravaUrl: (string | null) | null;
                             createdAt: Record<string, never> | string | number;
                             updatedAt: Record<string, never> | string | number;
                             members: {
@@ -13228,6 +13452,11 @@ export interface operations {
                             description: (string | null) | null;
                             websiteUrl: (string | null) | null;
                             imageUrl: (string | null) | null;
+                            instagramUrl: (string | null) | null;
+                            tiktokUrl: (string | null) | null;
+                            whatsappUrl: (string | null) | null;
+                            youtubeUrl: (string | null) | null;
+                            stravaUrl: (string | null) | null;
                             createdAt: Record<string, never> | string | number;
                             updatedAt: Record<string, never> | string | number;
                             members: {
@@ -13247,6 +13476,11 @@ export interface operations {
                             description: (string | null) | null;
                             websiteUrl: (string | null) | null;
                             imageUrl: (string | null) | null;
+                            instagramUrl: (string | null) | null;
+                            tiktokUrl: (string | null) | null;
+                            whatsappUrl: (string | null) | null;
+                            youtubeUrl: (string | null) | null;
+                            stravaUrl: (string | null) | null;
                             createdAt: Record<string, never> | string | number;
                             updatedAt: Record<string, never> | string | number;
                             members: {
@@ -13294,18 +13528,33 @@ export interface operations {
                     description?: (string | null) | null;
                     websiteUrl?: (string | null) | null;
                     imageUrl?: (string | null) | null;
+                    instagramUrl?: (string | null) | null;
+                    tiktokUrl?: (string | null) | null;
+                    whatsappUrl?: (string | null) | null;
+                    youtubeUrl?: (string | null) | null;
+                    stravaUrl?: (string | null) | null;
                 };
                 "multipart/form-data": {
                     name?: string;
                     description?: (string | null) | null;
                     websiteUrl?: (string | null) | null;
                     imageUrl?: (string | null) | null;
+                    instagramUrl?: (string | null) | null;
+                    tiktokUrl?: (string | null) | null;
+                    whatsappUrl?: (string | null) | null;
+                    youtubeUrl?: (string | null) | null;
+                    stravaUrl?: (string | null) | null;
                 };
                 "text/plain": {
                     name?: string;
                     description?: (string | null) | null;
                     websiteUrl?: (string | null) | null;
                     imageUrl?: (string | null) | null;
+                    instagramUrl?: (string | null) | null;
+                    tiktokUrl?: (string | null) | null;
+                    whatsappUrl?: (string | null) | null;
+                    youtubeUrl?: (string | null) | null;
+                    stravaUrl?: (string | null) | null;
                 };
             };
         };

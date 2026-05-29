@@ -98,28 +98,28 @@ export const YouTubeIcon = ({ size = 24, color = "#6B7280" }: Props) => (
 export const SocialIcons = ({ size = 24, color }: Props) => (
   <View className="flex-row items-center gap-4">
     <TouchableOpacity
-      onPress={() => Linking.openURL(INSTAGRAM_URL)}
+      onPress={() => void Linking.openURL(INSTAGRAM_URL)}
       accessibilityLabel="Instagram"
       hitSlop={8}
     >
       <InstagramIcon size={size} color={color} />
     </TouchableOpacity>
     <TouchableOpacity
-      onPress={() => Linking.openURL(TIKTOK_URL)}
+      onPress={() => void Linking.openURL(TIKTOK_URL)}
       accessibilityLabel="TikTok"
       hitSlop={8}
     >
       <TikTokIcon size={size} color={color} />
     </TouchableOpacity>
     <TouchableOpacity
-      onPress={() => Linking.openURL(YOUTUBE_URL)}
+      onPress={() => void Linking.openURL(YOUTUBE_URL)}
       accessibilityLabel="YouTube"
       hitSlop={8}
     >
       <YouTubeIcon size={size} color={color} />
     </TouchableOpacity>
     <TouchableOpacity
-      onPress={() => Linking.openURL(WHATSAPP_COMMUNITY_URL)}
+      onPress={() => void Linking.openURL(WHATSAPP_COMMUNITY_URL)}
       accessibilityLabel="WhatsApp"
       hitSlop={8}
     >

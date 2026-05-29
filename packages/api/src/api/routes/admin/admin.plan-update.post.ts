@@ -65,6 +65,12 @@ export const adminPlanUpdatePostRoute = new Elysia().post(
     const [row] = await db
       .update(planTable)
       .set({
+        // Spread first, then override every normalized field — keys later in
+        // the literal win. Do NOT reorder; a reformatter that alphabetised
+        // these keys would silently re-introduce un-normalized empty strings
+        // (e.g. organizationId: "") from the request body. Every column
+        // listed below must stay after `...body`: imageUrl, whatsappGroupUrl,
+        // wikilocUrl, stravaUrl, organizationId.
         ...body,
         imageUrl,
         whatsappGroupUrl,

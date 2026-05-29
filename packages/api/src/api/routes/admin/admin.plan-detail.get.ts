@@ -1,4 +1,4 @@
-import { desc, eq, sql } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 
 import { db } from "@/db";
@@ -12,6 +12,7 @@ import {
   planTable,
   userTable,
 } from "@/db/schema";
+import { planParticipantsOrderBy } from "@/api/routes/@shared/plan-organization";
 import { AdminPlanDetailSchema } from "@/api/schemas/admin.schema";
 import {
   ErrorFieldResponse,
@@ -41,6 +42,10 @@ export const adminPlanDetailGetRoute = new Elysia().get(
         isPrivate: planTable.isPrivate,
         featured: planTable.featured,
         paid: planTable.paid,
+        // Admin UI consumes the org as a flat (id, name) pair driving the
+        // edit form's org search box — deliberately different from the
+        // public routes' nested `organization` object. No imageUrl needed
+        // here (admin table doesn't render an avatar for the org column).
         organizationId: organizationTable.id,
         organizationName: organizationTable.name,
         creatorId: planTable.creatorId,
@@ -82,12 +87,9 @@ export const adminPlanDetailGetRoute = new Elysia().get(
         .from(planHasUsersTable)
         .innerJoin(userTable, eq(planHasUsersTable.userId, userTable.id))
         .where(eq(planHasUsersTable.planId, params.id))
-        // Organizers first (postgres treats true > false on the boolean
-        // expression), then most-recently-joined within each role.
-        .orderBy(
-          sql`${planHasUsersTable.role} = 'organizer' DESC`,
-          desc(planHasUsersTable.joinedAt),
-        ),
+        // Organizers first, joinedAt DESC. Shared with the public plan
+        // routes via `planParticipantsOrderBy`.
+        .orderBy(...planParticipantsOrderBy()),
       db
         .select({
           mountainId: mountainTable.id,

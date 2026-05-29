@@ -1,19 +1,14 @@
 import { isToday } from "date-fns";
-import { Star } from "lucide-react-native";
 import { memo } from "react";
 import { TouchableOpacity, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
-import { LucideIcon, ThemedText } from "@/components/ui/atoms";
+import { FeaturedStar, ThemedText } from "@/components/ui/atoms";
 import {
   CALENDAR_EVENT_DOT_COLOR,
   type CalendarEventType,
 } from "@/domains/calendar/calendar.api";
 import { type CalendarCell } from "@/lib/calendar";
-
-// Amber-500 — same color the home + plan-detail rows use for the
-// Featured badge, so the calendar star reads as the same affordance.
-const FEATURED_STAR_COLOR = "#f59e0b";
 
 type Props = {
   cell: CalendarCell;
@@ -67,14 +62,7 @@ export const CalendarDay = memo(
         <View className="flex-1 items-center justify-center">
           {(eventTypes.length > 0 || hasFeatured) && (
             <View className="flex-row items-center gap-1">
-              {hasFeatured && (
-                <LucideIcon
-                  icon={Star}
-                  size={10}
-                  color={FEATURED_STAR_COLOR}
-                  fill={FEATURED_STAR_COLOR}
-                />
-              )}
+              {hasFeatured && <FeaturedStar size={10} />}
               {eventTypes.map((type) => (
                 <View
                   key={type}

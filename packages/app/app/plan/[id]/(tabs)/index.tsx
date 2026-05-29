@@ -37,6 +37,7 @@ import {
   ActivityIndicator,
   Avatar,
   EnrichedThemedText,
+  FeaturedStar,
   LucideIcon,
   Skeleton,
   StravaIcon,
@@ -521,6 +522,14 @@ export default function PlanIdPage() {
               </ThemedText>
             </View>
           )}
+          {plan.featured && (
+            <View className="flex-row items-center gap-2">
+              <FeaturedStar size={20} />
+              <ThemedText className="text-lg font-medium text-amber-500">
+                <FormattedMessage defaultMessage="Featured" />
+              </ThemedText>
+            </View>
+          )}
           {plan.whatsappGroupUrl && (
             <PlanLinkRow
               icon={<WhatsAppIcon size={20} />}
@@ -594,44 +603,37 @@ export default function PlanIdPage() {
           <FormattedMessage defaultMessage="Participants" />
         </ThemedText>
         <View className="gap-2">
-          {[...plan.users]
-            // Organizers float to the top; within each role, server order
-            // (most-recently-joined first) is preserved. `slice()` keeps
-            // the sort stable across renders without mutating `plan.users`.
-            .sort((a, b) => {
-              const aOrg = a.role === "organizer" ? 1 : 0;
-              const bOrg = b.role === "organizer" ? 1 : 0;
-              return bOrg - aOrg;
-            })
-            .map((user) => (
-              <Link
-                key={user.id}
-                href={{ pathname: "/user/[user]", params: { user: user.id } }}
-                asChild
-              >
-                <TouchableOpacity className="flex-row items-center gap-2">
-                  <Avatar
-                    size="xs"
-                    initials={getInitials(getFullName(user))}
-                    imageUrl={user.imageUrl}
-                  />
-                  {/* `flex-1 shrink` keeps long names from pushing the
-                      Organizer badge off the row — without it, ml-auto on
-                      the badge does nothing because the name View has
-                      already taken the full width. */}
-                  <ThemedText className="flex-1 shrink" numberOfLines={1}>
-                    {getFullName(user)}
-                  </ThemedText>
-                  {user.role === "organizer" && (
-                    <View className="rounded-full bg-blue-500/10 px-2 py-0.5">
-                      <ThemedText className="text-xs font-medium text-blue-500">
-                        <FormattedMessage defaultMessage="Organizer" />
-                      </ThemedText>
-                    </View>
-                  )}
-                </TouchableOpacity>
-              </Link>
-            ))}
+          {/* Server returns organizers first then joinedAt DESC — see
+              `planParticipantsOrderBy` shared helper. No client resort. */}
+          {plan.users.map((user) => (
+            <Link
+              key={user.id}
+              href={{ pathname: "/user/[user]", params: { user: user.id } }}
+              asChild
+            >
+              <TouchableOpacity className="flex-row items-center gap-2">
+                <Avatar
+                  size="xs"
+                  initials={getInitials(getFullName(user))}
+                  imageUrl={user.imageUrl}
+                />
+                {/* `flex-1 shrink` keeps long names from pushing the
+                    Organizer badge off the row — without it, ml-auto on
+                    the badge does nothing because the name View has
+                    already taken the full width. */}
+                <ThemedText className="flex-1 shrink" numberOfLines={1}>
+                  {getFullName(user)}
+                </ThemedText>
+                {user.role === "organizer" && (
+                  <View className="rounded-full bg-blue-500/10 px-2 py-0.5">
+                    <ThemedText className="text-xs font-medium text-blue-500">
+                      <FormattedMessage defaultMessage="Organizer" />
+                    </ThemedText>
+                  </View>
+                )}
+              </TouchableOpacity>
+            </Link>
+          ))}
         </View>
       </View>
       <View className="gap-2">

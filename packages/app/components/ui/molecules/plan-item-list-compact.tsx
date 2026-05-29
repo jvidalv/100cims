@@ -3,7 +3,7 @@ import { Link } from "expo-router";
 import { FormattedMessage, useIntl } from "react-intl";
 import { TouchableOpacity, View } from "react-native";
 
-import { ThemedText } from "@/components/ui/atoms";
+import { FeaturedStar, ThemedText } from "@/components/ui/atoms";
 import { AvatarGroup } from "@/components/ui/molecules/avatar-group";
 import { PlanCoverBackground } from "@/components/ui/molecules/plan-cover-background";
 import { type CalendarEvent } from "@/domains/calendar/calendar.api";
@@ -122,14 +122,7 @@ export const PlanItemListCompact = ({
                 <FormattedMessage defaultMessage="Canceled" />
               </ThemedText>
             )}
-            {featured && (
-              <ThemedText
-                className="text-sm font-semibold text-amber-500"
-                style={{ lineHeight: 14 }}
-              >
-                <FormattedMessage defaultMessage="Featured" />
-              </ThemedText>
-            )}
+            {featured && <FeaturedStar size={12} />}
             {planTypeLabel && (
               <ThemedText
                 className="text-sm text-muted-foreground"

@@ -165,4 +165,7 @@ export const BasicPlanSchema = t.Object({
   updatedAt: t.Date(),
   challengeId: t.Nullable(t.String()),
   isPrivate: t.Boolean(),
+  featured: t.Boolean(),
+  paid: t.Boolean(),
+  organizationId: t.Nullable(t.String()),
 });

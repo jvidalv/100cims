@@ -19,6 +19,7 @@ import { canReadPlan } from "@/api/routes/@shared/plan-access";
 import {
   assemblePlanOrganization,
   planOrganizationSelection,
+  planParticipantsOrderBy,
 } from "@/api/routes/@shared/plan-organization";
 import { SuccessResponse, ErrorResponse } from "@/api/schemas/common.schema";
 import { PlanDetailSchema } from "@/api/schemas/plan.schema";
@@ -87,7 +88,12 @@ export const planOneGetRoute = new Elysia().use(JWT()).get(
         })
         .from(planHasUsersTable)
         .innerJoin(userTable, eq(planHasUsersTable.userId, userTable.id))
-        .where(eq(planHasUsersTable.planId, query.id)),
+        .where(eq(planHasUsersTable.planId, query.id))
+        // Organizers first, then most-recently-joined within each role.
+        // Shared with the other plan-list endpoints so every consumer
+        // (AvatarGroup, plan-detail list, calendar) sees the same order
+        // without any client-side resort. See `planParticipantsOrderBy`.
+        .orderBy(...planParticipantsOrderBy()),
 
       db
         .select({

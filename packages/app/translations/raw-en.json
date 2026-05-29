@@ -5,6 +5,9 @@
   "+3x+Vt": {
     "defaultMessage": "Show 1 more reply"
   },
+  "+4A/sX": {
+    "defaultMessage": "Open {network}"
+  },
   "+QiHz4": {
     "defaultMessage": "One more thing"
   },
@@ -478,9 +481,6 @@
   },
   "E92c/O": {
     "defaultMessage": "Last {count}"
-  },
-  "EFWGgA": {
-    "defaultMessage": "Maps"
   },
   "EI6p6o": {
     "defaultMessage": "Mountain updated!"
@@ -986,9 +986,6 @@
   "XjNXDk": {
     "defaultMessage": "Sign in to join the plan and chat"
   },
-  "XpSkO/": {
-    "defaultMessage": "Still loading"
-  },
   "XqXMjU": {
     "defaultMessage": "View full thread"
   },
@@ -1244,9 +1241,6 @@
   "hd9nqu": {
     "defaultMessage": "New challenge"
   },
-  "hkJuAZ": {
-    "defaultMessage": "Wikiloc"
-  },
   "hx5eQE": {
     "defaultMessage": "Edit mountain"
   },
@@ -1462,9 +1456,6 @@
   },
   "rzCvRt": {
     "defaultMessage": "Family"
-  },
-  "sJCEnQ": {
-    "defaultMessage": "Hold on a moment, then try again."
   },
   "sUgU78": {
     "defaultMessage": "Search Wikiloc for more routes"

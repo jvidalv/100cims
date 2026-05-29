@@ -24,6 +24,7 @@ import { planVisibilitySql } from "@/api/routes/@shared/plan-access";
 import {
   assemblePlanOrganization,
   planOrganizationSelection,
+  planParticipantsOrderBy,
 } from "@/api/routes/@shared/plan-organization";
 import { SuccessResponse } from "@/api/schemas/common.schema";
 import { PlansArraySchema } from "@/api/schemas/plan.schema";
@@ -115,7 +116,11 @@ export const planAllGetRoute = new Elysia().use(JWT()).get(
         })
         .from(planHasUsersTable)
         .innerJoin(userTable, eq(planHasUsersTable.userId, userTable.id))
-        .where(inArray(planHasUsersTable.planId, planIds)),
+        .where(inArray(planHasUsersTable.planId, planIds))
+        // Organizers first, joinedAt DESC within each role. Shared with
+        // every other plan-list endpoint via `planParticipantsOrderBy`.
+        // The per-plan `.filter` below preserves this row order.
+        .orderBy(...planParticipantsOrderBy()),
 
       db
         .select({
