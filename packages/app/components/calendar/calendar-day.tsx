@@ -62,7 +62,7 @@ export const CalendarDay = memo(
         <View className="flex-1 items-center justify-center">
           {(eventTypes.length > 0 || hasFeatured) && (
             <View className="flex-row items-center gap-1">
-              {hasFeatured && <FeaturedStar size={10} />}
+              {hasFeatured && <FeaturedStar size={10} decorative />}
               {eventTypes.map((type) => (
                 <View
                   key={type}

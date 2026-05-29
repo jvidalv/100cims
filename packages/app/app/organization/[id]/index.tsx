@@ -16,7 +16,7 @@ import {
   YouTubeIcon,
 } from "@/components/ui/atoms";
 import { Image } from "@/components/ui/atoms/image";
-import { PersonRow } from "@/components/ui/molecules";
+import { ErrorState, PersonRow } from "@/components/ui/molecules";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
 import { useOrganizationOneGet } from "@/domains/organization/organization.api";
 
@@ -27,10 +27,25 @@ export default function OrganizationScreen() {
   // window — treat it as possibly-undefined; the enabled-guard inside the
   // hook is the real safety net. See `feedback_react_query_enabled_guards`.
   const { id } = useLocalSearchParams<{ id?: string }>();
-  const { data: organization, isPending } = useOrganizationOneGet({ id });
+  const {
+    data: organization,
+    isPending,
+    isError,
+    error,
+    refetch,
+  } = useOrganizationOneGet({ id });
 
   if (!isAuthenticated) {
     return <Redirect href="/join" />;
+  }
+
+  // Without this, a deep-link to a deleted or non-existent org id leaves the
+  // screen on the skeleton forever (isPending flips false on a 404 but
+  // `organization` stays undefined).
+  if (isError) {
+    return (
+      <ErrorState context="organization" error={error} onReload={refetch} />
+    );
   }
 
   const openUrl = async (url: string | null | undefined) => {
