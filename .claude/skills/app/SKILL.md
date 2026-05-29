@@ -296,6 +296,7 @@ import { FormattedMessage } from 'react-intl';
 3. Run compilation: `yarn translations:generate`
 4. English (`translations/en.json`) is auto-generated
 5. **Manually copy new keys** to `translations/ca.json` (Catalan) and `translations/es.json` (Spanish)
+   - **Sort order is strict ASCII** (uppercase `A-Z` before lowercase `a-z`, symbols `+ /` before digits). Don't use `sort -f` / case-insensitive `localeCompare` — that reorders the existing file and produces a huge spurious diff. The safe approach is to insert each new hash at its strict-ASCII alphabetical position (or, when bulk-inserting, run `JSON.stringify(Object.fromEntries(Object.entries(obj).sort()))` — default JS `sort()` is codepoint-ascending, which matches the file's existing order).
 6. Translate the values in ca.json and es.json
 
 **Translation Files:**

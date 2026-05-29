@@ -55,6 +55,7 @@ export const planByMountainGetRoute = new Elysia().use(JWT()).get(
         status: planTable.status,
         planType: planTable.type,
         isPrivate: planTable.isPrivate,
+        featured: planTable.featured,
         imageUrl: planTable.imageUrl,
       })
       .from(planTable)
@@ -143,6 +144,7 @@ export const planByMountainGetRoute = new Elysia().use(JWT()).get(
       status: p.status,
       planType: p.planType,
       isPrivate: p.isPrivate,
+      featured: p.featured,
       imageUrl: p.imageUrl,
       mountains: mountainsByPlan.get(p.id) ?? [],
       users: usersByPlan.get(p.id) ?? [],

@@ -11,6 +11,7 @@ import type {
   AdminPlanUpdateBodySchema,
   AdminShopRequestUpdateBodySchema,
 } from "@/api/schemas/admin.schema";
+import type { PlanMemberRole } from "@/db/enums";
 import { api } from "@/lib/api";
 import { adminKeys } from "@/lib/query-keys";
 
@@ -24,21 +25,24 @@ export const useCrons = () =>
     },
   });
 
-export const useAdminUsers = ({
-  page,
-  q,
-  country,
-  platform,
-  version,
-  sort,
-}: {
-  page: number;
-  q: string;
-  country: string;
-  platform: string;
-  version: string;
-  sort: string;
-}) =>
+export const useAdminUsers = (
+  {
+    page,
+    q,
+    country,
+    platform,
+    version,
+    sort,
+  }: {
+    page: number;
+    q: string;
+    country: string;
+    platform: string;
+    version: string;
+    sort: string;
+  },
+  options?: { enabled?: boolean },
+) =>
   useQuery({
     queryKey: adminKeys.users({ page, q, country, platform, version, sort }),
     queryFn: async () => {
@@ -57,6 +61,7 @@ export const useAdminUsers = ({
       return data.message;
     },
     placeholderData: (prev) => prev,
+    enabled: options?.enabled ?? true,
   });
 
 export const useAdminUserDetail = (id: string) =>
@@ -1058,6 +1063,161 @@ export const useTriggerCron = () => {
     },
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: adminKeys.crons() });
+    },
+  });
+};
+
+// ---------------------------------------------------------------------------
+// Organizations
+// ---------------------------------------------------------------------------
+
+export const useAdminOrganizations = (
+  { page, q }: { page: number; q: string },
+  options?: { enabled?: boolean },
+) =>
+  useQuery({
+    queryKey: adminKeys.organizations({ page, q }),
+    queryFn: async () => {
+      const { data, error } = await api.api.admin.organizations.get({
+        query: {
+          page,
+          pageSize: 15,
+          q: q || undefined,
+        },
+      });
+      if (error) throw error;
+      return data.message;
+    },
+    placeholderData: (prev) => prev,
+    enabled: options?.enabled ?? true,
+  });
+
+export const useAdminOrganizationDetail = (id: string) =>
+  useQuery({
+    queryKey: adminKeys.organizationDetail(id),
+    queryFn: async () => {
+      const { data, error } = await api.api.admin.organizations({ id }).get();
+      if (error) throw error;
+      return data.message;
+    },
+  });
+
+export type AdminOrganizationCreateBody = {
+  name: string;
+  description?: string;
+  websiteUrl?: string;
+  imageUrl?: string;
+};
+
+export const useCreateAdminOrganization = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (body: AdminOrganizationCreateBody) => {
+      const { data, error } = await api.api.admin.organizations.post(body);
+      if (error) throw error;
+      return data.message;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: adminKeys.organizationsList() });
+    },
+  });
+};
+
+export type AdminOrganizationUpdateBody = {
+  name?: string;
+  description?: string | null;
+  websiteUrl?: string | null;
+  imageUrl?: string | null;
+};
+
+export const useUpdateAdminOrganization = (id: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (body: AdminOrganizationUpdateBody) => {
+      const { data, error } = await api.api.admin
+        .organizations({ id })
+        .post(body);
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: adminKeys.organizationDetail(id) });
+      void qc.invalidateQueries({ queryKey: adminKeys.organizationsList() });
+    },
+  });
+};
+
+export const useDeleteAdminOrganization = (id: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      const { data, error } = await api.api.admin
+        .organizations({ id })
+        .delete();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      qc.removeQueries({ queryKey: adminKeys.organizationDetail(id) });
+      void qc.invalidateQueries({ queryKey: adminKeys.organizationsList() });
+    },
+  });
+};
+
+export const useAddAdminOrganizationMember = (orgId: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (body: { userId: string }) => {
+      const { data, error } = await api.api.admin
+        .organizations({ id: orgId })
+        .members.post(body);
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({
+        queryKey: adminKeys.organizationDetail(orgId),
+      });
+      void qc.invalidateQueries({ queryKey: adminKeys.organizationsList() });
+    },
+  });
+};
+
+export const useRemoveAdminOrganizationMember = (orgId: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (userId: string) => {
+      const { data, error } = await api.api.admin
+        .organizations({ id: orgId })
+        .members({ userId })
+        .delete();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({
+        queryKey: adminKeys.organizationDetail(orgId),
+      });
+      void qc.invalidateQueries({ queryKey: adminKeys.organizationsList() });
+    },
+  });
+};
+
+// Promote/demote a participant inside a plan. Mirrors the (now-deleted)
+// org-side role hook but targets plan_has_users.role instead.
+export const useUpdateAdminPlanMemberRole = (planId: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (args: { userId: string; role: PlanMemberRole }) => {
+      const { data, error } = await api.api.admin
+        .plans({ id: planId })
+        .members({ userId: args.userId })
+        .role.patch({ role: args.role });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: adminKeys.planDetail(planId) });
     },
   });
 };

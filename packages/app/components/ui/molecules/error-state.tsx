@@ -9,6 +9,7 @@ import {
 import { useState } from "react";
 import { FormattedMessage } from "react-intl";
 import { View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import {
   LucideIcon,
@@ -30,6 +31,7 @@ type ErrorStateProps = {
 export const ErrorState = ({ context, error, onReload }: ErrorStateProps) => {
   const { data: user } = useUserMe();
   const network = useNetworkState();
+  const insets = useSafeAreaInsets();
   const isOnline =
     network.isConnected !== false && network.isInternetReachable !== false;
   const [reportStatus, setReportStatus] = useState<
@@ -46,15 +48,21 @@ export const ErrorState = ({ context, error, onReload }: ErrorStateProps) => {
 
   return (
     <ThemedView className="flex-1 px-8">
-      <View className="flex-1 items-center justify-center gap-4">
+      <View
+        className="items-center pb-8"
+        style={{ paddingTop: insets.top + 16 }}
+      >
+        <ThemedLogo style={{ width: 120, height: 40 }} resizeMode="contain" />
+      </View>
+      <View className="flex-1 justify-center gap-4">
         <LucideIcon icon={CloudOff} size={48} muted />
-        <ThemedText className="text-center text-2xl font-bold">
+        <ThemedText className="text-2xl font-bold">
           <FormattedMessage defaultMessage="Something went wrong" />
         </ThemedText>
-        <ThemedText className="text-center text-muted-foreground">
+        <ThemedText className="text-muted-foreground">
           <FormattedMessage defaultMessage="We couldn't load this screen. Please try again." />
         </ThemedText>
-        <View className="mt-2 items-center gap-1">
+        <View className="mt-2 items-start gap-1">
           <ActionRow
             icon={RotateCw}
             intent="primary"
@@ -87,9 +95,6 @@ export const ErrorState = ({ context, error, onReload }: ErrorStateProps) => {
             <FormattedMessage defaultMessage="Check for updates" />
           </ActionRow>
         </View>
-      </View>
-      <View className="items-center pb-8">
-        <ThemedLogo style={{ width: 120, height: 40 }} resizeMode="contain" />
       </View>
     </ThemedView>
   );

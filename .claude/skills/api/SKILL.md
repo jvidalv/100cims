@@ -238,6 +238,8 @@ String-enum columns (plan status, coupon discount type, etc.) are declared once,
 
 Consumers pick the module that matches their layer: `db/schema.ts` uses `$type<PlanStatus>()` from `db/enums`; route bodies/queries/responses compose `PlanStatusSchema` from `api/schemas/enums`; handlers narrow with `PlanStatus`. **Never declare these inline in a route or schema file** — duplicate declarations drift. If you're tightening a previously-loose `t.String()` on a request, also delete any `as unknown as ...` casts downstream; they only existed to paper over the missing validation.
 
+**Spell the union as a literal-tuple, not `t.Union(arr.map(t.Literal))`.** `t.Union([t.Literal("a"), t.Literal("b")])` infers as `TUnion<[TLiteral<"a">, TLiteral<"b">]>` and the column type stays `"a" | "b"`. `t.Union(ENUM.map((v) => t.Literal(v)))` collapses to `TUnion<TLiteral<string>[]>` and the static type widens to `string`, which then mismatches handler return types and triggers Elysia's `Response`-fallback type error (the cryptic "Type '{...}' is missing properties from type 'Response'"). Yes, this means duplicating the values — that's the cost of keeping inference narrow.
+
 ### User privacy: schema split + explicit SELECT
 
 Two response schemas in `src/api/schemas/user.schema.ts` bound by purpose:

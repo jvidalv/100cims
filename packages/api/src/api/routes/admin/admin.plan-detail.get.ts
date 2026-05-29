@@ -1,10 +1,11 @@
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 
 import { db } from "@/db";
 import {
   challengeTable,
   mountainTable,
+  organizationTable,
   planHasMountainsTable,
   planHasUsersTable,
   planMessageTable,
@@ -38,6 +39,10 @@ export const adminPlanDetailGetRoute = new Elysia().get(
         speed: planTable.speed,
         status: planTable.status,
         isPrivate: planTable.isPrivate,
+        featured: planTable.featured,
+        paid: planTable.paid,
+        organizationId: organizationTable.id,
+        organizationName: organizationTable.name,
         creatorId: planTable.creatorId,
         challengeId: challengeTable.id,
         challengeName: challengeTable.name,
@@ -51,6 +56,10 @@ export const adminPlanDetailGetRoute = new Elysia().get(
       .from(planTable)
       .leftJoin(userTable, eq(planTable.creatorId, userTable.id))
       .leftJoin(challengeTable, eq(planTable.challengeId, challengeTable.id))
+      .leftJoin(
+        organizationTable,
+        eq(planTable.organizationId, organizationTable.id),
+      )
       .where(eq(planTable.id, params.id));
 
     if (!plan) {
@@ -68,11 +77,17 @@ export const adminPlanDetailGetRoute = new Elysia().get(
           imageUrl: userTable.imageUrl,
           joinedAt: planHasUsersTable.joinedAt,
           willBringDogs: planHasUsersTable.willBringDogs,
+          role: planHasUsersTable.role,
         })
         .from(planHasUsersTable)
         .innerJoin(userTable, eq(planHasUsersTable.userId, userTable.id))
         .where(eq(planHasUsersTable.planId, params.id))
-        .orderBy(desc(planHasUsersTable.joinedAt)),
+        // Organizers first (postgres treats true > false on the boolean
+        // expression), then most-recently-joined within each role.
+        .orderBy(
+          sql`${planHasUsersTable.role} = 'organizer' DESC`,
+          desc(planHasUsersTable.joinedAt),
+        ),
       db
         .select({
           mountainId: mountainTable.id,

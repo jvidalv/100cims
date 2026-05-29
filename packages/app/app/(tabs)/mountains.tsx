@@ -637,32 +637,20 @@ function AuthedMountainsScreen() {
         onChange={setSettingsFilters}
       />
 
-      {/* Keep both views mounted across mode switches so MountainsMap doesn't
-          tear down its native Mapbox view (which would lose camera state).
-          Toggling visibility with `display:none` collapses the view to 0×0,
-          which Mapbox interprets as a viewport resize on re-show — that
-          ends up zooming to max. Instead, both views render at full size
-          and we layer them with `zIndex`; the inactive view stays alive
-          AND keeps its real bounds. `pointerEvents=none` on the inactive
-          view stops it from intercepting taps. */}
+      {/* The MAP stays mounted across mode switches so Mapbox doesn't tear
+          down its native view (which would lose camera state). Toggling
+          visibility with `display:none` collapses the view to 0×0, which
+          Mapbox interprets as a viewport resize on re-show and ends up
+          zooming to max — so the map renders at full size and we layer
+          with `zIndex` / `opacity`. The LIST has no such constraint and is
+          unmounted while in map mode, both to avoid stale-state visibility
+          on Android at first launch and so the FlatList stops scheduling
+          render batches in the background (was triggering RN's "slow
+          VirtualizedList update" warning). */}
       <View className="flex-1">
-        <View
-          style={[
-            ABSOLUTE_FILL,
-            {
-              zIndex: viewMode === "list" ? 1 : 0,
-              // Hide the list entirely while in map mode. The map renders at
-              // zIndex 1 on top, but until Mapbox finishes its native init
-              // the map View is transparent — leaving the (fully-rendered)
-              // list visible through it on Android at first launch. Fading
-              // the list to 0 matches the symmetric treatment the map gets
-              // when behind the list (see opacity below).
-              opacity: viewMode === "list" ? 1 : 0,
-            },
-          ]}
-          pointerEvents={viewMode === "list" ? "auto" : "none"}
-        >
-          <FlatList
+        {viewMode === "list" && (
+          <View style={[ABSOLUTE_FILL, { zIndex: 1 }]}>
+            <FlatList
             data={filteredMountains}
             initialNumToRender={10}
             scrollEventThrottle={16}
@@ -722,8 +710,9 @@ function AuthedMountainsScreen() {
                 />
               </View>
             )}
-          />
-        </View>
+            />
+          </View>
+        )}
         <View
           style={[
             ABSOLUTE_FILL,

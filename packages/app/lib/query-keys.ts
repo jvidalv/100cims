@@ -99,3 +99,9 @@ export const calendarKeys = {
   events: (from: string, to: string) =>
     ["calendar", "events", from, to] as const,
 };
+
+// Organization keys
+export const organizationKeys = {
+  all: ["organization"] as const,
+  one: (id: string) => ["organization", id] as const,
+};

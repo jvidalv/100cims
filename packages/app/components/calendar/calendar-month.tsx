@@ -15,6 +15,9 @@ type Props = {
   height: number;
   selectedDateKey: string | null;
   eventTypesByDay: Record<string, CalendarEventType[]>;
+  /** Set of date keys that contain at least one featured plan. Used by
+   *  CalendarDay to draw a golden star alongside the per-event dots. */
+  featuredDays: Set<string>;
   /** Direction the navigation pill should send the FlatList. At the last
    *  month in the range we flip to `prev` so the button is never a dead-end. */
   navDirection: "prev" | "next";
@@ -33,6 +36,7 @@ export const CalendarMonth = memo(
     height,
     selectedDateKey,
     eventTypesByDay,
+    featuredDays,
     navDirection,
     navLabel,
     onDayPress,
@@ -105,6 +109,7 @@ export const CalendarMonth = memo(
                   cell={cell}
                   selected={key === selectedDateKey}
                   eventTypes={eventTypesByDay[key] ?? EMPTY_EVENT_TYPES}
+                  hasFeatured={featuredDays.has(key)}
                   onPress={onDayPress}
                   onLongPress={onDayLongPress}
                 />

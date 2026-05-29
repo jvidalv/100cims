@@ -24,4 +24,5 @@ export {
   TikTokIcon,
   WhatsAppIcon,
   WikilocIcon,
+  YouTubeIcon,
 } from "./social-icons";

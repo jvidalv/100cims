@@ -397,6 +397,7 @@ export default function MountainScreen() {
                 status={plan.status}
                 planType={plan.planType}
                 isPrivate={plan.isPrivate}
+                featured={plan.featured}
                 mountains={plan.mountains}
                 users={plan.users}
               />
@@ -665,14 +666,14 @@ function RatingActionRow({
       <View className="flex-row items-center gap-0.5">
         {loading ? (
           <Skeleton style={{ width: 14, height: 14, borderRadius: 4 }} />
-        ) : (
+        ) : count > 0 ? (
           <ThemedText
             className="text-muted-foreground"
             style={{ opacity: 0.6 }}
           >
             {count}
           </ThemedText>
-        )}
+        ) : null}
         <LucideIcon icon={ChevronRight} size={18} muted />
       </View>
     </TouchableOpacity>

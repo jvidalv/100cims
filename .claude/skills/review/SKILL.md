@@ -14,6 +14,7 @@ Review all files you changed in this session. Focus on patterns specific to this
 - `@ts-ignore` / `@ts-expect-error` without a `--` reason comment.
 - `console.log` left in committed code.
 - Hardcoded values that belong in a constant / env var.
+- **Re-exports of symbols the file doesn't define.** `export { X } from "./other"` and `export type { X } from "./other"` are both violations unless the file is explicitly a package's public-API barrel (e.g. `components/ui/atoms/index.ts`). Callsites import `X` from where `X` lives — re-exporting "alongside related hooks for convenience" still drifts, fragments ownership, and pads the bundle. The global rule lives in `~/.claude/CLAUDE.md` "Critical Rules"; this skill's job is to catch its violations.
 
 ### 2. Manually edited generated types
 

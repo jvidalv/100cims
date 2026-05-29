@@ -51,6 +51,12 @@ export default function MountainSlugLayout() {
           {intl.formatMessage({ defaultMessage: "Details" })}
         </NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="routes">
+        <NativeTabs.Trigger.Icon sf="map.fill" md="map" />
+        <NativeTabs.Trigger.Label>
+          {intl.formatMessage({ defaultMessage: "Routes" })}
+        </NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
       <NativeTabs.Trigger name="summit">
         <NativeTabs.Trigger.Icon
           sf="checkmark.circle.fill"

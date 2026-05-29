@@ -1,5 +1,6 @@
 import { t } from "elysia";
 
+import { PlanMemberRoleSchema } from "@/api/schemas/admin-organization.schema";
 import {
   CouponDiscountTypeSchema,
   PlanSpeedSchema,
@@ -220,6 +221,7 @@ export const AdminPlanParticipantSchema = t.Object({
   joinedAt: t.Date(),
   willBringDogs: t.Boolean(),
   isCreator: t.Boolean(),
+  role: PlanMemberRoleSchema,
 });
 
 export const AdminPlanMemberLogEntrySchema = t.Object({
@@ -272,6 +274,10 @@ export const AdminPlanDetailSchema = t.Object({
   speed: t.String(),
   status: PlanStatusSchema,
   isPrivate: t.Boolean(),
+  featured: t.Boolean(),
+  paid: t.Boolean(),
+  organizationId: t.Nullable(t.String()),
+  organizationName: t.Nullable(t.String()),
   creatorId: t.String(),
   challengeId: t.Nullable(t.String()),
   challengeName: t.Nullable(t.String()),
@@ -303,6 +309,11 @@ export const AdminPlanUpdateBodySchema = t.Object({
   wikilocUrl: t.Optional(t.Nullable(t.String())),
   stravaUrl: t.Optional(t.Nullable(t.String())),
   isPrivate: t.Optional(t.Boolean()),
+  featured: t.Optional(t.Boolean()),
+  paid: t.Optional(t.Boolean()),
+  // Pass `null` (or empty string, which the route normalizes to null) to
+  // unaffiliate a plan from its current organization.
+  organizationId: t.Optional(t.Nullable(t.String())),
 });
 
 export const AdminPlanCreateBodySchema = t.Object({
@@ -318,6 +329,9 @@ export const AdminPlanCreateBodySchema = t.Object({
   // Either an http(s) URL (keep as-is) or a raw base64 payload (uploaded to S3).
   imageUrl: t.Optional(t.Nullable(t.String())),
   publishAsCims: t.Optional(t.Boolean()),
+  featured: t.Optional(t.Boolean()),
+  paid: t.Optional(t.Boolean()),
+  organizationId: t.Optional(t.String()),
 });
 
 export const MerchVariantSchema = t.Object({

@@ -39,13 +39,13 @@ if (!MAPBOX_TOKEN && __DEV__) {
 // call lets the SDK throw a clearer "no token" error on first map mount.
 if (MAPBOX_TOKEN) Mapbox.setAccessToken(MAPBOX_TOKEN);
 
-// Mapbox Standard is their newer 3D vector style — richer terrain shading,
-// hillshades, contour lines and peak labels than Outdoors v12. Standard has
-// a built-in light/dark/dusk/dawn config, but @rnmapbox/maps 10.x doesn't
-// expose the style-config API yet, so we fall back to the classic `dark-v11`
-// when the app is in dark mode for a clearly-dark basemap.
-const STYLE_LIGHT = "mapbox://styles/mapbox/standard";
-const STYLE_DARK = "mapbox://styles/mapbox/dark-v11";
+// Satellite-streets for both light and dark: aerial imagery shows terrain,
+// forest cover, rock and snow at all zoom levels, which is the context hikers
+// actually use to read the map. Streets/labels are overlaid so mountain names
+// and clusters stay legible. Satellite imagery has no dark variant so we use
+// the same style in both modes.
+const STYLE_LIGHT = "mapbox://styles/mapbox/satellite-streets-v12";
+const STYLE_DARK = "mapbox://styles/mapbox/satellite-streets-v12";
 
 const COLOR_SUMMITED = "#10b981";
 const COLOR_ESSENTIAL = Colors.light.primary;
@@ -94,10 +94,10 @@ const SINGLE_POINT_PADDING = 0.05;
 // `LABEL_MIN_ZOOM` is the zoom at which the per-marker name/height tag becomes
 // visible; below this the map is too dense for labels to read.
 const LABEL_NAME_MAX = 18;
-// Zoom at which the per-marker label appears. Set just below
-// cluster-dissolve (zoom 9) so labels start showing as soon as the cluster
-// disks split apart.
-const LABEL_MIN_ZOOM = 8;
+// Zoom at which the per-marker label appears. Set just above
+// cluster-dissolve (zoom 9) so labels only show once the user is close
+// enough that the names won't overlap into a dense wall of text.
+const LABEL_MIN_ZOOM = 10;
 // Per-theme label colors. Dark slate on the light Standard basemap and
 // near-white on the dark-v11 basemap — picking one color for both turns
 // invisible on the opposite scheme.
@@ -230,9 +230,6 @@ export function MountainsMap({
       },
       TAP_PULSE_DURATION_MS + 16,
     );
-    if (__DEV__) {
-      console.log("[mountains-map] pulse mount", pulseCoord);
-    }
     return () => {
       clearTimeout(flip);
       clearTimeout(clear);
@@ -488,6 +485,12 @@ export function MountainsMap({
         compassEnabled
         scaleBarEnabled={false}
         attributionEnabled
+        // Lock the map to a flat top-down view: no 2-finger tilt into 3D, no
+        // rotation. The mountains overview is a discovery surface, not a
+        // navigation viewport, and the satellite imagery + cluster markers
+        // are easier to read at pitch=0.
+        pitchEnabled={false}
+        rotateEnabled={false}
         // Logo top-leading, (i) chip bottom-leading (different corners so
         // they don't stack), compass left at its default top-trailing.
         logoPosition={{ top: 8, left: 8 }}

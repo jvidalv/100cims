@@ -32,6 +32,10 @@ export const adminPlanUpdatePostRoute = new Elysia().post(
       body.stravaUrl !== undefined
         ? normalizePlanLinkUrl(body.stravaUrl)
         : undefined;
+    // Empty-string organizationId means "clear the link"; everything else
+    // (including the absence of the key) flows through untouched.
+    const organizationId =
+      body.organizationId === "" ? null : body.organizationId;
 
     const invalidField = findInvalidPlanLinkUrl({
       whatsappGroupUrl,
@@ -66,6 +70,7 @@ export const adminPlanUpdatePostRoute = new Elysia().post(
         whatsappGroupUrl,
         wikilocUrl,
         stravaUrl,
+        organizationId,
         updatedAt: new Date(),
       })
       .where(eq(planTable.id, params.id))
