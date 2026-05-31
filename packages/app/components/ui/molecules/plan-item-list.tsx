@@ -4,10 +4,11 @@ import { memo } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { TouchableOpacity, View } from "react-native";
 
-import { FeaturedStar, Skeleton, ThemedText } from "@/components/ui/atoms";
+import { Skeleton, ThemedText } from "@/components/ui/atoms";
 import { AvatarGroup } from "@/components/ui/molecules/avatar-group";
 import { PlanCoverBackground } from "@/components/ui/molecules/plan-cover-background";
 import { usePlanChatUnread } from "@/domains/plan/plan-chat.api";
+import { useUserMe } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
 import { formatDayDistance, parseLocalDateString } from "@/lib/dates";
 
@@ -54,6 +55,10 @@ const PlanItemListBase = ({
 }: PlanItemListProps) => {
   const { data } = usePlanChatUnread();
   const hasUnreadMessages = data?.includes(id);
+  const { data: me } = useUserMe();
+  // Viewer is part of this plan — surfaces the same blue "you're in"
+  // affordance the calendar grid uses (calendar-day's person icon).
+  const isJoined = !!me?.id && users.some((u) => u.id === me.id);
 
   const intl = useIntl();
   const mountainsWithImages = mountains?.filter(({ imageUrl }) => imageUrl);
@@ -113,7 +118,6 @@ const PlanItemListBase = ({
         <View className="flex-1 justify-center">
           <View className="items-start gap-1">
             <View className="flex-row items-center gap-2">
-              {featured && <FeaturedStar />}
               {isOpen && !isOngoing && (
                 <ThemedText className="font-semibold text-blue-500">
                   <FormattedMessage defaultMessage="Open" />
@@ -144,6 +148,22 @@ const PlanItemListBase = ({
             {!isCanceled && (
               <ThemedText className="font-medium text-muted-foreground">
                 {when}
+                {featured && (
+                  <>
+                    ,{" "}
+                    <ThemedText className="font-medium text-amber-500">
+                      <FormattedMessage defaultMessage="featured" />
+                    </ThemedText>
+                  </>
+                )}
+                {isJoined && (
+                  <>
+                    ,{" "}
+                    <ThemedText className="font-medium text-blue-500">
+                      <FormattedMessage defaultMessage="joined" />
+                    </ThemedText>
+                  </>
+                )}
                 {isPrivate && (
                   <>
                     ,{" "}

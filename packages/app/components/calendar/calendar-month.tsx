@@ -18,6 +18,10 @@ type Props = {
   /** Set of date keys that contain at least one featured plan. Used by
    *  CalendarDay to draw a golden star alongside the per-event dots. */
   featuredDays: Set<string>;
+  /** Set of date keys where the viewer is part of at least one plan
+   *  (creator or member). The /calendar endpoint is already scoped to the
+   *  viewer's plans, so this is effectively any day with a plan event. */
+  joinedDays: Set<string>;
   /** Direction the navigation pill should send the FlatList. At the last
    *  month in the range we flip to `prev` so the button is never a dead-end. */
   navDirection: "prev" | "next";
@@ -37,6 +41,7 @@ export const CalendarMonth = memo(
     selectedDateKey,
     eventTypesByDay,
     featuredDays,
+    joinedDays,
     navDirection,
     navLabel,
     onDayPress,
@@ -110,6 +115,7 @@ export const CalendarMonth = memo(
                   selected={key === selectedDateKey}
                   eventTypes={eventTypesByDay[key] ?? EMPTY_EVENT_TYPES}
                   hasFeatured={featuredDays.has(key)}
+                  hasJoined={joinedDays.has(key)}
                   onPress={onDayPress}
                   onLongPress={onDayLongPress}
                 />

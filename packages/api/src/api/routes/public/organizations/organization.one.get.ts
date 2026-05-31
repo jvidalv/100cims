@@ -26,6 +26,11 @@ export const organizationOneGetRoute = new Elysia().get(
           description: organizationTable.description,
           websiteUrl: organizationTable.websiteUrl,
           imageUrl: organizationTable.imageUrl,
+          instagramUrl: organizationTable.instagramUrl,
+          tiktokUrl: organizationTable.tiktokUrl,
+          whatsappUrl: organizationTable.whatsappUrl,
+          youtubeUrl: organizationTable.youtubeUrl,
+          stravaUrl: organizationTable.stravaUrl,
           createdAt: organizationTable.createdAt,
         })
         .from(organizationTable)

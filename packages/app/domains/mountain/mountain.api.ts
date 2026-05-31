@@ -6,7 +6,6 @@ import apiClient from "@/lib/api-client";
 import { getDistanceInKm } from "@/lib/location";
 import { mountainKeys } from "@/lib/query-keys";
 
-import type { MountainData } from "@/types/mountain";
 
 export const useMountainOne = ({ mountainSlug }: { mountainSlug: string }) => {
   const props = useQuery({
@@ -31,7 +30,7 @@ export const useMountainOne = ({ mountainSlug }: { mountainSlug: string }) => {
 export const useMountains = () => {
   return useQuery({
     queryKey: mountainKeys.list(),
-    queryFn: async (): Promise<MountainData[]> => {
+    queryFn: async () => {
       const { data, error } = await apiClient.GET("/api/public/mountains/all", {
         params: { query: {} },
       });

@@ -5,10 +5,23 @@ import { useUserMe } from "@/domains/user/user.api";
 import apiClient from "@/lib/api-client";
 import { calendarKeys, planKeys } from "@/lib/query-keys";
 
+import type { paths } from "@/types/api";
+
 const PLANS_PAGE_SIZE = 20;
 
 export type PlanStatus = "open" | "completed" | "canceled";
 export type PlanType = "hike" | "trail" | "bike";
+
+// Body shapes for plan-create / plan-update / plan-delete derived from the
+// API's OpenAPI schemas so they stay in lockstep with the backend body
+// validators — adding/renaming/optional-ising a field on the server
+// immediately surfaces it here.
+type PlanCreateBody =
+  paths["/api/protected/plans/create"]["post"]["requestBody"]["content"]["application/json"];
+type PlanUpdateBody =
+  paths["/api/protected/plans/update"]["post"]["requestBody"]["content"]["application/json"];
+type PlanDeleteBody =
+  paths["/api/protected/plans/delete"]["post"]["requestBody"]["content"]["application/json"];
 
 export const usePlans = (
   params?: {
@@ -32,6 +45,26 @@ export const usePlans = (
     },
   });
 };
+
+/**
+ * Admin-curated featured open plans. Backs the home "Upcoming plans"
+ * section, where featured plans are rendered above the regular upcoming
+ * window (and deduped so a featured plan that also falls in the upcoming
+ * limit only shows once). Separate from `usePlans` so the existing list
+ * surfaces (/plans, mountain detail) keep their stable sort.
+ */
+export const useFeaturedPlans = (params?: { limit?: number }) =>
+  useQuery({
+    queryKey: planKeys.featured(params),
+    queryFn: async () => {
+      const { data, error } = await apiClient.GET(
+        "/api/public/plans/featured",
+        { params: { query: params ?? {} } },
+      );
+      if (error) throw error;
+      return data.message;
+    },
+  });
 
 export const usePlansInfinite = (params?: {
   status?: PlanStatus;
@@ -146,21 +179,7 @@ export const useMarkPlansAsVisited = () => {
 export const usePlanCreate = () => {
   return useMutation({
     mutationKey: ["plan", "create"],
-    mutationFn: async (input: {
-      title: string;
-      description: string;
-      startDate?: string;
-      startTime?: string;
-      type?: PlanType;
-      mountainIds?: string[];
-      userIds?: string[];
-      isPrivate?: boolean;
-      whatsappGroupUrl?: string | null;
-      wikilocUrl?: string | null;
-      stravaUrl?: string | null;
-      /** http(s) URL kept as-is, base64 uploaded to S3, or null to clear. */
-      imageUrl?: string | null;
-    }) => {
+    mutationFn: async (input: PlanCreateBody) => {
       const { data, error } = await apiClient.POST(
         "/api/protected/plans/create",
         { body: input },
@@ -178,23 +197,7 @@ export const usePlanCreate = () => {
 export const usePlanUpdate = () => {
   return useMutation({
     mutationKey: ["plan", "update"],
-    mutationFn: async (input: {
-      id: string;
-      title?: string;
-      description?: string;
-      mountainIds?: string[];
-      startDate?: string;
-      startTime?: string | null;
-      type?: PlanType | null;
-      userIds?: string[];
-      status?: PlanStatus;
-      isPrivate?: boolean;
-      whatsappGroupUrl?: string | null;
-      wikilocUrl?: string | null;
-      stravaUrl?: string | null;
-      /** http(s) URL kept as-is, base64 uploaded to S3, or null to clear. */
-      imageUrl?: string | null;
-    }) => {
+    mutationFn: async (input: PlanUpdateBody) => {
       const { data, error } = await apiClient.POST(
         "/api/protected/plans/update",
         { body: input },
@@ -213,7 +216,7 @@ export const usePlanUpdate = () => {
 export const usePlanDelete = () => {
   return useMutation({
     mutationKey: ["plan", "delete"],
-    mutationFn: async (input: { id: string }) => {
+    mutationFn: async (input: PlanDeleteBody) => {
       const { data, error } = await apiClient.POST(
         "/api/protected/plans/delete",
         { body: input },
@@ -229,10 +232,14 @@ export const usePlanDelete = () => {
   });
 };
 
-export const usePlanJoin = (planId: string) => {
+export const usePlanJoin = (planId: string | undefined) => {
   return useMutation({
     mutationKey: ["plan", "join"],
     mutationFn: async () => {
+      // The NativeTabs eager-mount window leaves planId briefly undefined
+      // — surface that explicitly instead of POSTing { id: undefined } and
+      // getting a 422 from TypeBox.
+      if (!planId) throw new Error("PLAN_ID_UNRESOLVED");
       const { data, error } = await apiClient.POST(
         "/api/protected/plans/join",
         { body: { id: planId } },
@@ -243,15 +250,18 @@ export const usePlanJoin = (planId: string) => {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: planKeys.all });
       void queryClient.invalidateQueries({ queryKey: calendarKeys.all });
-      void queryClient.invalidateQueries({ queryKey: planKeys.one(planId) });
+      if (planId) {
+        void queryClient.invalidateQueries({ queryKey: planKeys.one(planId) });
+      }
     },
   });
 };
 
-export const usePlanLeave = (planId: string) => {
+export const usePlanLeave = (planId: string | undefined) => {
   return useMutation({
     mutationKey: ["plan", "leave"],
     mutationFn: async () => {
+      if (!planId) throw new Error("PLAN_ID_UNRESOLVED");
       const { data, error } = await apiClient.POST(
         "/api/protected/plans/leave",
         { body: { id: planId } },
@@ -262,7 +272,9 @@ export const usePlanLeave = (planId: string) => {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: planKeys.all });
       void queryClient.invalidateQueries({ queryKey: calendarKeys.all });
-      void queryClient.invalidateQueries({ queryKey: planKeys.one(planId) });
+      if (planId) {
+        void queryClient.invalidateQueries({ queryKey: planKeys.one(planId) });
+      }
     },
   });
 };

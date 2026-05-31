@@ -612,6 +612,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/protected/user/saved-routes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiProtectedUserSaved-routes"];
+        put?: never;
+        post: operations["postApiProtectedUserSaved-routes"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/protected/user/saved-routes/{routeId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["deleteApiProtectedUserSaved-routesByRouteId"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/protected/user/summits/all": {
         parameters: {
             query?: never;
@@ -1118,6 +1150,38 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["postApiProtectedPlansLeave"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/protected/routes/list": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiProtectedRoutesList"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/protected/routes/one": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiProtectedRoutesOne"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -1724,6 +1788,38 @@ export interface paths {
             cookie?: never;
         };
         get: operations["getApiAdminChallengesByIdMountains"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/routes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiAdminRoutes"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/routes/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiAdminRoutesById"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5728,6 +5824,168 @@ export interface operations {
             };
         };
     };
+    "getApiProtectedUserSaved-routes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            routeId: string;
+                            externalId: string;
+                            source: string;
+                            url: string;
+                            title: {
+                                en: string;
+                                ca: string;
+                                es: string;
+                            };
+                            distanceMeters: (number | null) | null;
+                            elevationGainMeters: (number | null) | null;
+                            mountainSlug: (string | null) | null;
+                            mountainName: (string | null) | null;
+                            mountainImageUrl: (string | null) | null;
+                            savedAt: Record<string, never> | string | number;
+                        }[];
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            routeId: string;
+                            externalId: string;
+                            source: string;
+                            url: string;
+                            title: {
+                                en: string;
+                                ca: string;
+                                es: string;
+                            };
+                            distanceMeters: (number | null) | null;
+                            elevationGainMeters: (number | null) | null;
+                            mountainSlug: (string | null) | null;
+                            mountainName: (string | null) | null;
+                            mountainImageUrl: (string | null) | null;
+                            savedAt: Record<string, never> | string | number;
+                        }[];
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            routeId: string;
+                            externalId: string;
+                            source: string;
+                            url: string;
+                            title: {
+                                en: string;
+                                ca: string;
+                                es: string;
+                            };
+                            distanceMeters: (number | null) | null;
+                            elevationGainMeters: (number | null) | null;
+                            mountainSlug: (string | null) | null;
+                            mountainName: (string | null) | null;
+                            mountainImageUrl: (string | null) | null;
+                            savedAt: Record<string, never> | string | number;
+                        }[];
+                    };
+                };
+            };
+        };
+    };
+    "postApiProtectedUserSaved-routes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    routeId: string;
+                };
+                "multipart/form-data": {
+                    routeId: string;
+                };
+                "text/plain": {
+                    routeId: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    "deleteApiProtectedUserSaved-routesByRouteId": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                routeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+        };
+    };
     getApiProtectedUserSummitsAll: {
         parameters: {
             query?: {
@@ -8079,6 +8337,419 @@ export interface operations {
                     };
                     "text/plain": {
                         error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    getApiProtectedRoutesList: {
+        parameters: {
+            query?: {
+                mountainSlug?: string;
+                q?: string;
+                trailType?: string;
+                minDistance?: number;
+                maxDistance?: number;
+                multiPeak?: boolean;
+                page?: number;
+                pageSize?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                externalId: string;
+                                /** @constant */
+                                source: "wikiloc";
+                                url: string;
+                                title: {
+                                    en: string;
+                                    ca: string;
+                                    es: string;
+                                };
+                                titleRaw: string;
+                                description: ({
+                                    en: string;
+                                    ca: string;
+                                    es: string;
+                                } | null) | null;
+                                author: (string | null) | null;
+                                distanceMeters: (number | null) | null;
+                                elevationGainMeters: (number | null) | null;
+                                elevationLossMeters: (number | null) | null;
+                                maxElevationMeters: (number | null) | null;
+                                minElevationMeters: (number | null) | null;
+                                technicalDifficulty: (("easy" | "moderate" | "difficult" | "very-difficult" | "only-experts") | null) | null;
+                                trailType: (("loop" | "out-and-back" | "one-way") | null) | null;
+                                movingTimeSeconds: (number | null) | null;
+                                totalTimeSeconds: (number | null) | null;
+                                coordinatesCount: (number | null) | null;
+                                uploadedAt: (string | null) | null;
+                                recordedAt: (string | null) | null;
+                                mountains: {
+                                    id: string;
+                                    name: string;
+                                    slug: string;
+                                    location: string;
+                                    essential: boolean;
+                                    height: string;
+                                    latitude: string;
+                                    longitude: string;
+                                    imageUrl: (string | null) | null;
+                                    avgFamilyFriendly?: (number | null) | null;
+                                    familyRatingCount?: number;
+                                    avgDogFriendly?: (number | null) | null;
+                                    dogRatingCount?: number;
+                                    avgDifficulty?: (number | null) | null;
+                                    difficultyRatingCount?: number;
+                                }[];
+                                coordinates: ({
+                                    lat: number;
+                                    lng: number;
+                                    ele?: number;
+                                }[] | null) | null;
+                            }[];
+                            pagination: {
+                                page: number;
+                                pageSize: number;
+                                totalItems: number;
+                                totalPages: number;
+                                hasMore: boolean;
+                            };
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                externalId: string;
+                                /** @constant */
+                                source: "wikiloc";
+                                url: string;
+                                title: {
+                                    en: string;
+                                    ca: string;
+                                    es: string;
+                                };
+                                titleRaw: string;
+                                description: ({
+                                    en: string;
+                                    ca: string;
+                                    es: string;
+                                } | null) | null;
+                                author: (string | null) | null;
+                                distanceMeters: (number | null) | null;
+                                elevationGainMeters: (number | null) | null;
+                                elevationLossMeters: (number | null) | null;
+                                maxElevationMeters: (number | null) | null;
+                                minElevationMeters: (number | null) | null;
+                                technicalDifficulty: (("easy" | "moderate" | "difficult" | "very-difficult" | "only-experts") | null) | null;
+                                trailType: (("loop" | "out-and-back" | "one-way") | null) | null;
+                                movingTimeSeconds: (number | null) | null;
+                                totalTimeSeconds: (number | null) | null;
+                                coordinatesCount: (number | null) | null;
+                                uploadedAt: (string | null) | null;
+                                recordedAt: (string | null) | null;
+                                mountains: {
+                                    id: string;
+                                    name: string;
+                                    slug: string;
+                                    location: string;
+                                    essential: boolean;
+                                    height: string;
+                                    latitude: string;
+                                    longitude: string;
+                                    imageUrl: (string | null) | null;
+                                    avgFamilyFriendly?: (number | null) | null;
+                                    familyRatingCount?: number;
+                                    avgDogFriendly?: (number | null) | null;
+                                    dogRatingCount?: number;
+                                    avgDifficulty?: (number | null) | null;
+                                    difficultyRatingCount?: number;
+                                }[];
+                                coordinates: ({
+                                    lat: number;
+                                    lng: number;
+                                    ele?: number;
+                                }[] | null) | null;
+                            }[];
+                            pagination: {
+                                page: number;
+                                pageSize: number;
+                                totalItems: number;
+                                totalPages: number;
+                                hasMore: boolean;
+                            };
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                externalId: string;
+                                /** @constant */
+                                source: "wikiloc";
+                                url: string;
+                                title: {
+                                    en: string;
+                                    ca: string;
+                                    es: string;
+                                };
+                                titleRaw: string;
+                                description: ({
+                                    en: string;
+                                    ca: string;
+                                    es: string;
+                                } | null) | null;
+                                author: (string | null) | null;
+                                distanceMeters: (number | null) | null;
+                                elevationGainMeters: (number | null) | null;
+                                elevationLossMeters: (number | null) | null;
+                                maxElevationMeters: (number | null) | null;
+                                minElevationMeters: (number | null) | null;
+                                technicalDifficulty: (("easy" | "moderate" | "difficult" | "very-difficult" | "only-experts") | null) | null;
+                                trailType: (("loop" | "out-and-back" | "one-way") | null) | null;
+                                movingTimeSeconds: (number | null) | null;
+                                totalTimeSeconds: (number | null) | null;
+                                coordinatesCount: (number | null) | null;
+                                uploadedAt: (string | null) | null;
+                                recordedAt: (string | null) | null;
+                                mountains: {
+                                    id: string;
+                                    name: string;
+                                    slug: string;
+                                    location: string;
+                                    essential: boolean;
+                                    height: string;
+                                    latitude: string;
+                                    longitude: string;
+                                    imageUrl: (string | null) | null;
+                                    avgFamilyFriendly?: (number | null) | null;
+                                    familyRatingCount?: number;
+                                    avgDogFriendly?: (number | null) | null;
+                                    dogRatingCount?: number;
+                                    avgDifficulty?: (number | null) | null;
+                                    difficultyRatingCount?: number;
+                                }[];
+                                coordinates: ({
+                                    lat: number;
+                                    lng: number;
+                                    ele?: number;
+                                }[] | null) | null;
+                            }[];
+                            pagination: {
+                                page: number;
+                                pageSize: number;
+                                totalItems: number;
+                                totalPages: number;
+                                hasMore: boolean;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    getApiProtectedRoutesOne: {
+        parameters: {
+            query: {
+                id: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            externalId: string;
+                            /** @constant */
+                            source: "wikiloc";
+                            url: string;
+                            title: {
+                                en: string;
+                                ca: string;
+                                es: string;
+                            };
+                            titleRaw: string;
+                            description: ({
+                                en: string;
+                                ca: string;
+                                es: string;
+                            } | null) | null;
+                            author: (string | null) | null;
+                            distanceMeters: (number | null) | null;
+                            elevationGainMeters: (number | null) | null;
+                            elevationLossMeters: (number | null) | null;
+                            maxElevationMeters: (number | null) | null;
+                            minElevationMeters: (number | null) | null;
+                            technicalDifficulty: (("easy" | "moderate" | "difficult" | "very-difficult" | "only-experts") | null) | null;
+                            trailType: (("loop" | "out-and-back" | "one-way") | null) | null;
+                            movingTimeSeconds: (number | null) | null;
+                            totalTimeSeconds: (number | null) | null;
+                            coordinatesCount: (number | null) | null;
+                            uploadedAt: (string | null) | null;
+                            recordedAt: (string | null) | null;
+                            mountains: {
+                                id: string;
+                                name: string;
+                                slug: string;
+                                location: string;
+                                essential: boolean;
+                                height: string;
+                                latitude: string;
+                                longitude: string;
+                                imageUrl: (string | null) | null;
+                                avgFamilyFriendly?: (number | null) | null;
+                                familyRatingCount?: number;
+                                avgDogFriendly?: (number | null) | null;
+                                dogRatingCount?: number;
+                                avgDifficulty?: (number | null) | null;
+                                difficultyRatingCount?: number;
+                            }[];
+                            coordinates: ({
+                                lat: number;
+                                lng: number;
+                                ele?: number;
+                            }[] | null) | null;
+                            descriptionRaw: (string | null) | null;
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            externalId: string;
+                            /** @constant */
+                            source: "wikiloc";
+                            url: string;
+                            title: {
+                                en: string;
+                                ca: string;
+                                es: string;
+                            };
+                            titleRaw: string;
+                            description: ({
+                                en: string;
+                                ca: string;
+                                es: string;
+                            } | null) | null;
+                            author: (string | null) | null;
+                            distanceMeters: (number | null) | null;
+                            elevationGainMeters: (number | null) | null;
+                            elevationLossMeters: (number | null) | null;
+                            maxElevationMeters: (number | null) | null;
+                            minElevationMeters: (number | null) | null;
+                            technicalDifficulty: (("easy" | "moderate" | "difficult" | "very-difficult" | "only-experts") | null) | null;
+                            trailType: (("loop" | "out-and-back" | "one-way") | null) | null;
+                            movingTimeSeconds: (number | null) | null;
+                            totalTimeSeconds: (number | null) | null;
+                            coordinatesCount: (number | null) | null;
+                            uploadedAt: (string | null) | null;
+                            recordedAt: (string | null) | null;
+                            mountains: {
+                                id: string;
+                                name: string;
+                                slug: string;
+                                location: string;
+                                essential: boolean;
+                                height: string;
+                                latitude: string;
+                                longitude: string;
+                                imageUrl: (string | null) | null;
+                                avgFamilyFriendly?: (number | null) | null;
+                                familyRatingCount?: number;
+                                avgDogFriendly?: (number | null) | null;
+                                dogRatingCount?: number;
+                                avgDifficulty?: (number | null) | null;
+                                difficultyRatingCount?: number;
+                            }[];
+                            coordinates: ({
+                                lat: number;
+                                lng: number;
+                                ele?: number;
+                            }[] | null) | null;
+                            descriptionRaw: (string | null) | null;
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            externalId: string;
+                            /** @constant */
+                            source: "wikiloc";
+                            url: string;
+                            title: {
+                                en: string;
+                                ca: string;
+                                es: string;
+                            };
+                            titleRaw: string;
+                            description: ({
+                                en: string;
+                                ca: string;
+                                es: string;
+                            } | null) | null;
+                            author: (string | null) | null;
+                            distanceMeters: (number | null) | null;
+                            elevationGainMeters: (number | null) | null;
+                            elevationLossMeters: (number | null) | null;
+                            maxElevationMeters: (number | null) | null;
+                            minElevationMeters: (number | null) | null;
+                            technicalDifficulty: (("easy" | "moderate" | "difficult" | "very-difficult" | "only-experts") | null) | null;
+                            trailType: (("loop" | "out-and-back" | "one-way") | null) | null;
+                            movingTimeSeconds: (number | null) | null;
+                            totalTimeSeconds: (number | null) | null;
+                            coordinatesCount: (number | null) | null;
+                            uploadedAt: (string | null) | null;
+                            recordedAt: (string | null) | null;
+                            mountains: {
+                                id: string;
+                                name: string;
+                                slug: string;
+                                location: string;
+                                essential: boolean;
+                                height: string;
+                                latitude: string;
+                                longitude: string;
+                                imageUrl: (string | null) | null;
+                                avgFamilyFriendly?: (number | null) | null;
+                                familyRatingCount?: number;
+                                avgDogFriendly?: (number | null) | null;
+                                dogRatingCount?: number;
+                                avgDifficulty?: (number | null) | null;
+                                difficultyRatingCount?: number;
+                            }[];
+                            coordinates: ({
+                                lat: number;
+                                lng: number;
+                                ele?: number;
+                            }[] | null) | null;
+                            descriptionRaw: (string | null) | null;
+                        };
                     };
                 };
             };
@@ -11940,6 +12611,416 @@ export interface operations {
                             isOfficial: boolean;
                             creatorName: (string | null) | null;
                         }[];
+                    };
+                };
+            };
+        };
+    };
+    getApiAdminRoutes: {
+        parameters: {
+            query?: {
+                q?: string;
+                mountainSlug?: string;
+                multiPeak?: boolean;
+                page?: number;
+                pageSize?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                externalId: string;
+                                /** @constant */
+                                source: "wikiloc";
+                                url: string;
+                                title: {
+                                    en: string;
+                                    ca: string;
+                                    es: string;
+                                };
+                                titleRaw: string;
+                                description: ({
+                                    en: string;
+                                    ca: string;
+                                    es: string;
+                                } | null) | null;
+                                author: (string | null) | null;
+                                distanceMeters: (number | null) | null;
+                                elevationGainMeters: (number | null) | null;
+                                elevationLossMeters: (number | null) | null;
+                                maxElevationMeters: (number | null) | null;
+                                minElevationMeters: (number | null) | null;
+                                technicalDifficulty: (("easy" | "moderate" | "difficult" | "very-difficult" | "only-experts") | null) | null;
+                                trailType: (("loop" | "out-and-back" | "one-way") | null) | null;
+                                movingTimeSeconds: (number | null) | null;
+                                totalTimeSeconds: (number | null) | null;
+                                coordinatesCount: (number | null) | null;
+                                uploadedAt: (string | null) | null;
+                                recordedAt: (string | null) | null;
+                                mountains: {
+                                    id: string;
+                                    name: string;
+                                    slug: string;
+                                    location: string;
+                                    essential: boolean;
+                                    height: string;
+                                    latitude: string;
+                                    longitude: string;
+                                    imageUrl: (string | null) | null;
+                                    avgFamilyFriendly?: (number | null) | null;
+                                    familyRatingCount?: number;
+                                    avgDogFriendly?: (number | null) | null;
+                                    dogRatingCount?: number;
+                                    avgDifficulty?: (number | null) | null;
+                                    difficultyRatingCount?: number;
+                                }[];
+                                coordinates: ({
+                                    lat: number;
+                                    lng: number;
+                                    ele?: number;
+                                }[] | null) | null;
+                            }[];
+                            pagination: {
+                                page: number;
+                                pageSize: number;
+                                totalItems: number;
+                                totalPages: number;
+                                hasMore: boolean;
+                            };
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                externalId: string;
+                                /** @constant */
+                                source: "wikiloc";
+                                url: string;
+                                title: {
+                                    en: string;
+                                    ca: string;
+                                    es: string;
+                                };
+                                titleRaw: string;
+                                description: ({
+                                    en: string;
+                                    ca: string;
+                                    es: string;
+                                } | null) | null;
+                                author: (string | null) | null;
+                                distanceMeters: (number | null) | null;
+                                elevationGainMeters: (number | null) | null;
+                                elevationLossMeters: (number | null) | null;
+                                maxElevationMeters: (number | null) | null;
+                                minElevationMeters: (number | null) | null;
+                                technicalDifficulty: (("easy" | "moderate" | "difficult" | "very-difficult" | "only-experts") | null) | null;
+                                trailType: (("loop" | "out-and-back" | "one-way") | null) | null;
+                                movingTimeSeconds: (number | null) | null;
+                                totalTimeSeconds: (number | null) | null;
+                                coordinatesCount: (number | null) | null;
+                                uploadedAt: (string | null) | null;
+                                recordedAt: (string | null) | null;
+                                mountains: {
+                                    id: string;
+                                    name: string;
+                                    slug: string;
+                                    location: string;
+                                    essential: boolean;
+                                    height: string;
+                                    latitude: string;
+                                    longitude: string;
+                                    imageUrl: (string | null) | null;
+                                    avgFamilyFriendly?: (number | null) | null;
+                                    familyRatingCount?: number;
+                                    avgDogFriendly?: (number | null) | null;
+                                    dogRatingCount?: number;
+                                    avgDifficulty?: (number | null) | null;
+                                    difficultyRatingCount?: number;
+                                }[];
+                                coordinates: ({
+                                    lat: number;
+                                    lng: number;
+                                    ele?: number;
+                                }[] | null) | null;
+                            }[];
+                            pagination: {
+                                page: number;
+                                pageSize: number;
+                                totalItems: number;
+                                totalPages: number;
+                                hasMore: boolean;
+                            };
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            items: {
+                                id: string;
+                                externalId: string;
+                                /** @constant */
+                                source: "wikiloc";
+                                url: string;
+                                title: {
+                                    en: string;
+                                    ca: string;
+                                    es: string;
+                                };
+                                titleRaw: string;
+                                description: ({
+                                    en: string;
+                                    ca: string;
+                                    es: string;
+                                } | null) | null;
+                                author: (string | null) | null;
+                                distanceMeters: (number | null) | null;
+                                elevationGainMeters: (number | null) | null;
+                                elevationLossMeters: (number | null) | null;
+                                maxElevationMeters: (number | null) | null;
+                                minElevationMeters: (number | null) | null;
+                                technicalDifficulty: (("easy" | "moderate" | "difficult" | "very-difficult" | "only-experts") | null) | null;
+                                trailType: (("loop" | "out-and-back" | "one-way") | null) | null;
+                                movingTimeSeconds: (number | null) | null;
+                                totalTimeSeconds: (number | null) | null;
+                                coordinatesCount: (number | null) | null;
+                                uploadedAt: (string | null) | null;
+                                recordedAt: (string | null) | null;
+                                mountains: {
+                                    id: string;
+                                    name: string;
+                                    slug: string;
+                                    location: string;
+                                    essential: boolean;
+                                    height: string;
+                                    latitude: string;
+                                    longitude: string;
+                                    imageUrl: (string | null) | null;
+                                    avgFamilyFriendly?: (number | null) | null;
+                                    familyRatingCount?: number;
+                                    avgDogFriendly?: (number | null) | null;
+                                    dogRatingCount?: number;
+                                    avgDifficulty?: (number | null) | null;
+                                    difficultyRatingCount?: number;
+                                }[];
+                                coordinates: ({
+                                    lat: number;
+                                    lng: number;
+                                    ele?: number;
+                                }[] | null) | null;
+                            }[];
+                            pagination: {
+                                page: number;
+                                pageSize: number;
+                                totalItems: number;
+                                totalPages: number;
+                                hasMore: boolean;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    getApiAdminRoutesById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            externalId: string;
+                            /** @constant */
+                            source: "wikiloc";
+                            url: string;
+                            title: {
+                                en: string;
+                                ca: string;
+                                es: string;
+                            };
+                            titleRaw: string;
+                            description: ({
+                                en: string;
+                                ca: string;
+                                es: string;
+                            } | null) | null;
+                            author: (string | null) | null;
+                            distanceMeters: (number | null) | null;
+                            elevationGainMeters: (number | null) | null;
+                            elevationLossMeters: (number | null) | null;
+                            maxElevationMeters: (number | null) | null;
+                            minElevationMeters: (number | null) | null;
+                            technicalDifficulty: (("easy" | "moderate" | "difficult" | "very-difficult" | "only-experts") | null) | null;
+                            trailType: (("loop" | "out-and-back" | "one-way") | null) | null;
+                            movingTimeSeconds: (number | null) | null;
+                            totalTimeSeconds: (number | null) | null;
+                            coordinatesCount: (number | null) | null;
+                            uploadedAt: (string | null) | null;
+                            recordedAt: (string | null) | null;
+                            mountains: {
+                                id: string;
+                                name: string;
+                                slug: string;
+                                location: string;
+                                essential: boolean;
+                                height: string;
+                                latitude: string;
+                                longitude: string;
+                                imageUrl: (string | null) | null;
+                                avgFamilyFriendly?: (number | null) | null;
+                                familyRatingCount?: number;
+                                avgDogFriendly?: (number | null) | null;
+                                dogRatingCount?: number;
+                                avgDifficulty?: (number | null) | null;
+                                difficultyRatingCount?: number;
+                            }[];
+                            coordinates: ({
+                                lat: number;
+                                lng: number;
+                                ele?: number;
+                            }[] | null) | null;
+                            descriptionRaw: (string | null) | null;
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            externalId: string;
+                            /** @constant */
+                            source: "wikiloc";
+                            url: string;
+                            title: {
+                                en: string;
+                                ca: string;
+                                es: string;
+                            };
+                            titleRaw: string;
+                            description: ({
+                                en: string;
+                                ca: string;
+                                es: string;
+                            } | null) | null;
+                            author: (string | null) | null;
+                            distanceMeters: (number | null) | null;
+                            elevationGainMeters: (number | null) | null;
+                            elevationLossMeters: (number | null) | null;
+                            maxElevationMeters: (number | null) | null;
+                            minElevationMeters: (number | null) | null;
+                            technicalDifficulty: (("easy" | "moderate" | "difficult" | "very-difficult" | "only-experts") | null) | null;
+                            trailType: (("loop" | "out-and-back" | "one-way") | null) | null;
+                            movingTimeSeconds: (number | null) | null;
+                            totalTimeSeconds: (number | null) | null;
+                            coordinatesCount: (number | null) | null;
+                            uploadedAt: (string | null) | null;
+                            recordedAt: (string | null) | null;
+                            mountains: {
+                                id: string;
+                                name: string;
+                                slug: string;
+                                location: string;
+                                essential: boolean;
+                                height: string;
+                                latitude: string;
+                                longitude: string;
+                                imageUrl: (string | null) | null;
+                                avgFamilyFriendly?: (number | null) | null;
+                                familyRatingCount?: number;
+                                avgDogFriendly?: (number | null) | null;
+                                dogRatingCount?: number;
+                                avgDifficulty?: (number | null) | null;
+                                difficultyRatingCount?: number;
+                            }[];
+                            coordinates: ({
+                                lat: number;
+                                lng: number;
+                                ele?: number;
+                            }[] | null) | null;
+                            descriptionRaw: (string | null) | null;
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            id: string;
+                            externalId: string;
+                            /** @constant */
+                            source: "wikiloc";
+                            url: string;
+                            title: {
+                                en: string;
+                                ca: string;
+                                es: string;
+                            };
+                            titleRaw: string;
+                            description: ({
+                                en: string;
+                                ca: string;
+                                es: string;
+                            } | null) | null;
+                            author: (string | null) | null;
+                            distanceMeters: (number | null) | null;
+                            elevationGainMeters: (number | null) | null;
+                            elevationLossMeters: (number | null) | null;
+                            maxElevationMeters: (number | null) | null;
+                            minElevationMeters: (number | null) | null;
+                            technicalDifficulty: (("easy" | "moderate" | "difficult" | "very-difficult" | "only-experts") | null) | null;
+                            trailType: (("loop" | "out-and-back" | "one-way") | null) | null;
+                            movingTimeSeconds: (number | null) | null;
+                            totalTimeSeconds: (number | null) | null;
+                            coordinatesCount: (number | null) | null;
+                            uploadedAt: (string | null) | null;
+                            recordedAt: (string | null) | null;
+                            mountains: {
+                                id: string;
+                                name: string;
+                                slug: string;
+                                location: string;
+                                essential: boolean;
+                                height: string;
+                                latitude: string;
+                                longitude: string;
+                                imageUrl: (string | null) | null;
+                                avgFamilyFriendly?: (number | null) | null;
+                                familyRatingCount?: number;
+                                avgDogFriendly?: (number | null) | null;
+                                dogRatingCount?: number;
+                                avgDifficulty?: (number | null) | null;
+                                difficultyRatingCount?: number;
+                            }[];
+                            coordinates: ({
+                                lat: number;
+                                lng: number;
+                                ele?: number;
+                            }[] | null) | null;
+                            descriptionRaw: (string | null) | null;
+                        };
                     };
                 };
             };

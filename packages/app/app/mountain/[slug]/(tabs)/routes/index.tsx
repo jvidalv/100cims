@@ -1,9 +1,10 @@
 import * as Linking from "expo-linking";
-import { useGlobalSearchParams, useRouter } from "expo-router";
+import { Redirect, useGlobalSearchParams, useRouter } from "expo-router";
 import {
   ArrowDownAZ,
   ChevronRight,
   Clock,
+  Layers,
   Repeat,
   Route as RouteIcon,
 } from "lucide-react-native";
@@ -12,8 +13,8 @@ import { FormattedMessage, useIntl } from "react-intl";
 import { FlatList, ScrollView, TouchableOpacity, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
+import { useAuth } from "@/components/providers/auth-provider";
 import { ExternalSourceIcon } from "@/components/route/external-source-icon";
-
 import {
   LucideIcon,
   SearchInput,
@@ -31,7 +32,9 @@ import { isLoopRoute, pickLocalizedTitle } from "@/domains/route/route.format";
 
 import type { MountainRoute } from "@/domains/route/route.types";
 
-const keyExtractor = (route: MountainRoute) => route.externalId;
+// Use DB id when present (always, for API-sourced routes); fall back to
+// externalId only for legacy file-based routes during the transition.
+const keyExtractor = (route: MountainRoute) => route.id ?? route.externalId;
 
 // Sort options run mutually-exclusive (one selected at a time, like /challenges
 // pills). "Default" preserves the scraper's Wikiloc-rank ordering so the user
@@ -74,8 +77,17 @@ export default function MountainRoutesScreen() {
   // useGlobalSearchParams — see comment in summit.tsx + the app skill's
   // "NativeTabs gotchas" section.
   const { slug } = useGlobalSearchParams<{ slug: string }>();
+  // Routes data is gated to authenticated users (the underlying endpoint
+  // lives under /api/protected/routes). Mirror the summit-tab pattern: if
+  // the user isn't signed in, redirect to the join screen instead of
+  // letting the unauthenticated query fire and 401.
+  const { isAuthenticated } = useAuth();
   const { data: mountain } = useMountainOne({ mountainSlug: slug });
-  const routes = useRoutesForMountain(slug);
+  const { data: routesData, isLoading: routesLoading } =
+    useRoutesForMountain(isAuthenticated ? slug : undefined);
+  // Memoise the fallback so the useMemo on visibleRoutes has a stable
+  // routes reference between renders when the query is loading.
+  const routes = useMemo(() => routesData ?? [], [routesData]);
   const headerHeight = useBlurredScreenHeaderHeight();
 
   const [searchInput, setSearchInput] = useState("");
@@ -83,6 +95,9 @@ export default function MountainRoutesScreen() {
   // Loop is an independent toggle filter (not a sort), so it lives in its own
   // boolean state. Sorts are mutually-exclusive among themselves.
   const [loopOnly, setLoopOnly] = useState(false);
+  // Multi-peak filter: only show routes that summit more than one mountain.
+  // Useful when a hiker specifically wants "2x100 Cims"-style traverses.
+  const [multiPeakOnly, setMultiPeakOnly] = useState(false);
   // Default to "shortest" — for a list of routes up the same mountain, the
   // shortest one is the most useful first impression (lowest barrier to
   // entry). Users can toggle Shortest off to fall back to scraper order.
@@ -99,6 +114,9 @@ export default function MountainRoutesScreen() {
     if (loopOnly) {
       result = result.filter((r) => isLoopRoute(r));
     }
+    if (multiPeakOnly) {
+      result = result.filter((r) => (r.mountains?.length ?? 0) > 1);
+    }
     if (q) {
       result = result.filter((r) => {
         const localized = pickLocalizedTitle(r, intl).toLowerCase();
@@ -109,7 +127,7 @@ export default function MountainRoutesScreen() {
     }
     if (sort === "default") return result;
     return [...result].sort(SORT_COMPARATORS[sort]);
-  }, [routes, debouncedSearch, loopOnly, sort, intl]);
+  }, [routes, debouncedSearch, loopOnly, multiPeakOnly, sort, intl]);
 
   const sortPills: { value: Sort; label: string; icon: typeof RouteIcon }[] = [
     {
@@ -128,6 +146,12 @@ export default function MountainRoutesScreen() {
       icon: Clock,
     },
   ];
+
+  // Tabs mount eagerly; auth state may still be resolving on the first
+  // frame. Once we know the user isn't signed in, push them to /join.
+  if (!isAuthenticated) {
+    return <Redirect href="/join" />;
+  }
 
   return (
     <ThemedView className="flex-1">
@@ -152,6 +176,12 @@ export default function MountainRoutesScreen() {
             icon={Repeat}
             active={loopOnly}
             onPress={() => setLoopOnly((v) => !v)}
+          />
+          <Pill
+            label={intl.formatMessage({ defaultMessage: "Multi-peak" })}
+            icon={Layers}
+            active={multiPeakOnly}
+            onPress={() => setMultiPeakOnly((v) => !v)}
           />
           {sortPills.map((pill) => (
             <Pill
@@ -180,13 +210,15 @@ export default function MountainRoutesScreen() {
         ListEmptyComponent={
           <View className="items-center px-6 py-16">
             <ThemedText className="text-center text-base font-medium text-muted-foreground">
-              {routes.length === 0 ? (
+              {routesLoading ? (
+                <FormattedMessage defaultMessage="Loading…" />
+              ) : routes.length === 0 ? (
                 <FormattedMessage defaultMessage="No routes yet" />
               ) : (
                 <FormattedMessage defaultMessage="No routes match your filters" />
               )}
             </ThemedText>
-            {routes.length === 0 ? (
+            {!routesLoading && routes.length === 0 ? (
               <ThemedText className="mt-1 text-center text-sm text-muted-foreground">
                 <FormattedMessage defaultMessage="We're rolling out scraped Wikiloc routes mountain by mountain. This one isn't covered yet." />
               </ThemedText>
@@ -202,7 +234,7 @@ export default function MountainRoutesScreen() {
               if (!slug) return;
               router.push({
                 pathname: "/mountain/[slug]/routes/[routeId]",
-                params: { slug, routeId: item.externalId },
+                params: { slug, routeId: item.id ?? item.externalId },
               });
             }}
           />
@@ -256,9 +288,6 @@ const ViewMoreOnWikiloc = ({
             className="font-medium leading-snug"
           >
             <FormattedMessage defaultMessage="View more on Wikiloc" />
-          </ThemedText>
-          <ThemedText className="mt-0.5 text-sm text-muted-foreground">
-            <FormattedMessage defaultMessage="Search Wikiloc for more routes" />
           </ThemedText>
         </View>
         <LucideIcon icon={ChevronRight} size={18} muted />

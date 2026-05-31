@@ -193,8 +193,11 @@ export default function PlanIdPage() {
   const { width: screenW, height: screenH } = useWindowDimensions();
 
   // useGlobalSearchParams (not useLocal-) — inside a NativeTabs eagerly-mounted
-  // child of [id], useLocalSearchParams doesn't bind the parent dynamic.
-  const { id, from } = useGlobalSearchParams<{ id: string; from?: string }>();
+  // child of [id], useLocalSearchParams doesn't bind the parent dynamic. The
+  // param is briefly undefined during that mount window; downstream hooks
+  // gate on it via their `enabled` callback so we don't fire requests with
+  // `planId=undefined`.
+  const { id, from } = useGlobalSearchParams<{ id?: string; from?: string }>();
   const { data } = usePlanOne({ id });
   const { isAuthenticated } = useAuth();
   const { data: user } = useUserMe();
@@ -219,7 +222,7 @@ export default function PlanIdPage() {
     Record<string, string>
   >({});
   useEffect(() => {
-    if (justCompleted) {
+    if (justCompleted && id) {
       setCompletionImages(consumePlanCompletionImages(id));
     }
   }, [id, justCompleted]);
@@ -341,6 +344,7 @@ export default function PlanIdPage() {
           text: intl.formatMessage({ defaultMessage: "Yes" }),
           style: "destructive",
           onPress: async () => {
+            if (!id) return;
             await adminDeletePlan({ planId: id });
             router.back();
           },
@@ -656,7 +660,7 @@ export default function PlanIdPage() {
         {/* "Set plan date" stays as a contextual prompt — it's a CTA, not
             duplicate navigation. Complete / Modify / Chat moved to the
             bottom tab bar and the in-content rows were removed. */}
-        {isOpen && isCreator && !plan.startDate && (
+        {isOpen && isCreator && !plan.startDate && id && (
           <Link
             href={{ pathname: "/plan/[id]/edit", params: { id } }}
             asChild

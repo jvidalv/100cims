@@ -7,6 +7,11 @@ export const Colors = {
     primary: "#f43f5e",
     accent: "#963ff4",
     success: "#22c55e",
+    // Tailwind amber-500. Used for the "featured" affordance — gold star
+    // on plan-list rows + calendar grid, gold label in the plan-detail
+    // header. Same value as `text-amber-500` so Tailwind classes and
+    // direct hex usage agree.
+    featured: "#f59e0b",
     foreground: "black",
     muted: "#a3a3a3",
   },
@@ -14,6 +19,7 @@ export const Colors = {
     primary: "#f43f5e",
     accent: "#963ff4",
     success: "#22c55e",
+    featured: "#f59e0b",
     foreground: "white",
     muted: "#737373",
   },

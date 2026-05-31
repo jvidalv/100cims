@@ -147,22 +147,6 @@ export const RouteElevationChart = ({ coordinates, height = 160 }: Props) => {
             strokeWidth={3}
           />
         </Svg>
-        {/* Peak elevation pill, absolutely positioned. We compute its left as
-            the peak's x ratio so it tracks the dot horizontally; the SVG
-            coordinate space is normalised to VIEWBOX_W. */}
-        <View
-          style={{
-            position: "absolute",
-            top: 6,
-            left: `${(toX(peakPoint.distanceM) / VIEWBOX_W) * 100}%`,
-            transform: [{ translateX: -28 }],
-          }}
-          className="rounded-full bg-background/90 px-2 py-0.5"
-        >
-          <ThemedText className="text-xs font-semibold">
-            {`${Math.round(peakPoint.ele)} m`}
-          </ThemedText>
-        </View>
       </View>
       {/* Bottom-corner labels: min elevation (left) and max elevation (right).
           We *intentionally* don't anchor these to the trail's first/last GPS

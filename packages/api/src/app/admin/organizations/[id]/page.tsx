@@ -39,6 +39,11 @@ type Form = {
   description: string;
   websiteUrl: string;
   imageUrl: string;
+  instagramUrl: string;
+  tiktokUrl: string;
+  whatsappUrl: string;
+  youtubeUrl: string;
+  stravaUrl: string;
 };
 
 const emptyForm: Form = {
@@ -46,6 +51,11 @@ const emptyForm: Form = {
   description: "",
   websiteUrl: "",
   imageUrl: "",
+  instagramUrl: "",
+  tiktokUrl: "",
+  whatsappUrl: "",
+  youtubeUrl: "",
+  stravaUrl: "",
 };
 
 export default function AdminOrganizationDetailPage({
@@ -90,6 +100,11 @@ export default function AdminOrganizationDetailPage({
       description: detail.data.description ?? "",
       websiteUrl: detail.data.websiteUrl ?? "",
       imageUrl: detail.data.imageUrl ?? "",
+      instagramUrl: detail.data.instagramUrl ?? "",
+      tiktokUrl: detail.data.tiktokUrl ?? "",
+      whatsappUrl: detail.data.whatsappUrl ?? "",
+      youtubeUrl: detail.data.youtubeUrl ?? "",
+      stravaUrl: detail.data.stravaUrl ?? "",
     };
     setForm(next);
     setInitial(next);
@@ -108,6 +123,16 @@ export default function AdminOrganizationDetailPage({
       body.websiteUrl = form.websiteUrl || null;
     if (form.imageUrl !== initial.imageUrl)
       body.imageUrl = form.imageUrl || null;
+    if (form.instagramUrl !== initial.instagramUrl)
+      body.instagramUrl = form.instagramUrl || null;
+    if (form.tiktokUrl !== initial.tiktokUrl)
+      body.tiktokUrl = form.tiktokUrl || null;
+    if (form.whatsappUrl !== initial.whatsappUrl)
+      body.whatsappUrl = form.whatsappUrl || null;
+    if (form.youtubeUrl !== initial.youtubeUrl)
+      body.youtubeUrl = form.youtubeUrl || null;
+    if (form.stravaUrl !== initial.stravaUrl)
+      body.stravaUrl = form.stravaUrl || null;
 
     update.mutate(body, {
       onSuccess: () => toast.success("Saved"),
@@ -232,6 +257,58 @@ export default function AdminOrganizationDetailPage({
             }
             placeholder="https://…"
           />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="space-y-1">
+            <Label>Instagram URL</Label>
+            <Input
+              value={form.instagramUrl}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, instagramUrl: e.target.value }))
+              }
+              placeholder="https://instagram.com/…"
+            />
+          </div>
+          <div className="space-y-1">
+            <Label>TikTok URL</Label>
+            <Input
+              value={form.tiktokUrl}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, tiktokUrl: e.target.value }))
+              }
+              placeholder="https://tiktok.com/@…"
+            />
+          </div>
+          <div className="space-y-1">
+            <Label>WhatsApp URL</Label>
+            <Input
+              value={form.whatsappUrl}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, whatsappUrl: e.target.value }))
+              }
+              placeholder="https://chat.whatsapp.com/…"
+            />
+          </div>
+          <div className="space-y-1">
+            <Label>YouTube URL</Label>
+            <Input
+              value={form.youtubeUrl}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, youtubeUrl: e.target.value }))
+              }
+              placeholder="https://youtube.com/@…"
+            />
+          </div>
+          <div className="space-y-1 md:col-span-2">
+            <Label>Strava URL</Label>
+            <Input
+              value={form.stravaUrl}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, stravaUrl: e.target.value }))
+              }
+              placeholder="https://strava.com/clubs/…"
+            />
+          </div>
         </div>
         <div className="space-y-2">
           <Label>Image</Label>

@@ -71,6 +71,10 @@ export const adminPlanCreatePostRoute = new Elysia().post(
         planId,
         userId: creatorId,
         willBringDogs: false,
+        // Mirror protected/plans/plan.create.post.ts — creator is the
+        // implicit organizer. Admin can demote later via the
+        // /admin/plans/:id/members/:userId/role route if needed.
+        role: "organizer",
       });
 
       if (body.mountainIds?.length) {

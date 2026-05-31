@@ -57,8 +57,11 @@ function getUserColor(userId: string) {
 
 export default function PlanChatPage() {
   // useGlobalSearchParams (not useLocal-) — inside a NativeTabs eagerly-mounted
-  // child of [id], useLocalSearchParams doesn't bind the parent dynamic.
-  const { id } = useGlobalSearchParams<{ id: string }>();
+  // child of [id], useLocalSearchParams doesn't bind the parent dynamic. The
+  // param is briefly undefined during that mount window; every downstream
+  // hook gates on it via its `enabled` callback so we don't fire requests
+  // with `planId=undefined`.
+  const { id } = useGlobalSearchParams<{ id?: string }>();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const { bottom: bottomInset } = useSafeAreaInsets();
@@ -73,6 +76,17 @@ export default function PlanChatPage() {
   const { data: planData } = usePlanOne({ id });
   const plan = planData;
   const hasJoined = !!user?.id && !!plan?.users.some((u) => u.id === user.id);
+  // Source of truth for the "Organizer" badge in chat. Read off the same
+  // plan.users array that powers the participant list so the two stay in
+  // sync without an extra fetch.
+  const organizerIds = useMemo(
+    () =>
+      new Set(
+        plan?.users.filter((u) => u.role === "organizer").map((u) => u.id) ??
+          [],
+      ),
+    [plan?.users],
+  );
   const { mutateAsync: joinPlan, isPending: isJoining } = usePlanJoin(id);
 
   const { data: messagesData, isPending: isPendingMessages } =
@@ -98,7 +112,7 @@ export default function PlanChatPage() {
   }, [id, readChat]);
 
   const handleSend = async () => {
-    if (!message.trim()) return;
+    if (!message.trim() || !id) return;
     await sendMessage({ planId: id, message });
     setMessage("");
     readChat(id);
@@ -231,6 +245,7 @@ export default function PlanChatPage() {
           <MessageList
             messages={messages}
             currentUserId={user?.id}
+            organizerIds={organizerIds}
             onDeleteMessage={(id) =>
               Alert.alert(
                 intl.formatMessage({ defaultMessage: "Delete message?" }),
@@ -301,6 +316,7 @@ export default function PlanChatPage() {
 function MessageList({
   messages,
   currentUserId,
+  organizerIds,
   onDeleteMessage,
 }: {
   messages: {
@@ -315,6 +331,7 @@ function MessageList({
     };
   }[];
   currentUserId?: string;
+  organizerIds: Set<string>;
   onDeleteMessage: (id: string) => void;
 }) {
   const intl = useIntl();
@@ -378,6 +395,14 @@ function MessageList({
         const isLastOfGroup =
           index === 0 || messages[index - 1]?.user.id !== item.user.id;
 
+        const isOrganizer = organizerIds.has(item.user.id);
+        // Badge sits on the first message of each organizer's run, mirroring
+        // the avatar's `showAvatar` rule so the user sees the role label
+        // exactly where they see who's talking. Self-authored messages
+        // (right-aligned, no avatar) get the badge too — useful for the
+        // organizer's own confirmation that the role is active.
+        const showOrganizerBadge = isOrganizer && showAvatar;
+
         return (
           <View>
             {isFirstOfDay && (
@@ -425,6 +450,18 @@ function MessageList({
                   !isMine && !showAvatar && "ml-10",
                 )}
               >
+                {showOrganizerBadge && (
+                  <View
+                    className={twMerge(
+                      "mb-1 self-start rounded-full bg-blue-500/15 px-2 py-0.5",
+                      isMine && "self-end",
+                    )}
+                  >
+                    <ThemedText className="text-[10px] font-medium text-blue-500">
+                      <FormattedMessage defaultMessage="Organizer" />
+                    </ThemedText>
+                  </View>
+                )}
                 <EnrichedThemedText
                   className={twMerge(isMine ? "text-foreground" : "text-black")}
                 >

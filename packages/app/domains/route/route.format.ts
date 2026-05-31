@@ -18,14 +18,43 @@ const LOCALIZED_LANGS: (keyof LocalizedString)[] = ["en", "ca", "es"];
 const isLocalizedLang = (lang: string): lang is keyof LocalizedString =>
   (LOCALIZED_LANGS as string[]).includes(lang);
 
+/**
+ * Pick a localized string for the user's current locale, falling back through
+ * the canonical en→es→ca chain before deferring to the caller-supplied raw
+ * fallback. Exposed so non-MountainRoute consumers (saved-routes list,
+ * future notification payloads, etc.) can apply the same locale logic
+ * without re-implementing it.
+ */
+export const pickLocalizedString = (
+  t: LocalizedString,
+  intl: IntlShape,
+  fallback: string,
+): string => {
+  const lang = intl.locale.split(/[-_]/)[0];
+  const primary = isLocalizedLang(lang) ? t[lang] : undefined;
+  return primary ?? t.en ?? t.es ?? t.ca ?? fallback;
+};
+
 export const pickLocalizedTitle = (
   route: MountainRoute,
   intl: IntlShape,
-): string => {
-  const lang = intl.locale.split(/[-_]/)[0];
-  const t = route.title;
-  const primary = isLocalizedLang(lang) ? t[lang] : undefined;
-  return primary ?? t.en ?? t.es ?? t.ca ?? route.titleRaw;
+): string => pickLocalizedString(route.title, intl, route.titleRaw);
+
+// Prefer the Gemini-rewritten description in the user's locale; fall back
+// to other locales then to the raw scraped prose. Returns null when there's
+// nothing to show.
+export const pickLocalizedDescription = (
+  route: MountainRoute,
+  intl: IntlShape,
+): string | null => {
+  const d = route.description;
+  if (d) {
+    // Empty-string sentinel because pickLocalizedString demands a fallback;
+    // we'd rather degrade to `descriptionRaw` than render an empty paragraph.
+    const localized = pickLocalizedString(d, intl, "");
+    if (localized) return localized;
+  }
+  return route.descriptionRaw;
 };
 
 // Haversine distance in metres between two lat/lng points.

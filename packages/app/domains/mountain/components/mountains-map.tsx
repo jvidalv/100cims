@@ -1,6 +1,7 @@
 import Mapbox, {
   Camera,
   CircleLayer,
+  Images,
   MapView,
   ShapeSource,
   SymbolLayer,
@@ -94,10 +95,11 @@ const SINGLE_POINT_PADDING = 0.05;
 // `LABEL_MIN_ZOOM` is the zoom at which the per-marker name/height tag becomes
 // visible; below this the map is too dense for labels to read.
 const LABEL_NAME_MAX = 18;
-// Zoom at which the per-marker label appears. Set just above
-// cluster-dissolve (zoom 9) so labels only show once the user is close
-// enough that the names won't overlap into a dense wall of text.
-const LABEL_MIN_ZOOM = 10;
+// Zoom at which the per-marker label appears. Bumped a couple of stops
+// above cluster-dissolve (zoom 9) so labels only show once the user is
+// close enough that the names won't overlap into a dense wall of text on
+// the satellite basemap.
+const LABEL_MIN_ZOOM = 12;
 // Per-theme label colors. Dark slate on the light Standard basemap and
 // near-white on the dark-v11 basemap — picking one color for both turns
 // invisible on the opposite scheme.
@@ -503,9 +505,19 @@ export function MountainsMap({
         tintColor="#737373"
       >
         <Camera ref={cameraRef} animationMode="easeTo" />
+        {/* Register the three mountain glyph PNGs once so the SymbolLayer
+            below can reference them by name. RN picks the right @1x/@2x/@3x
+            asset automatically based on device pixel density. */}
+        <Images
+          images={{
+            "mtn-default": require("@/assets/images/markers/mountain-default.png"),
+            "mtn-summited": require("@/assets/images/markers/mountain-summited.png"),
+            "mtn-essential": require("@/assets/images/markers/mountain-essential.png"),
+          }}
+        />
         {/* Single GeoJSON source with native clustering. Two layers paint
             off it: clusters as solid filled circles with a count label,
-            and individual mountains as smaller colored dots. */}
+            and individual mountains as glyph markers. */}
         <ShapeSource
           ref={shapeSourceRef}
           id={SOURCE_ID}
@@ -567,16 +579,38 @@ export function MountainsMap({
               textIgnorePlacement: true,
             }}
           />
-          <CircleLayer
+          {/* Un-clustered marker: a tinted mountain glyph instead of a flat
+              disc. Three variants by status (summited > essential > default)
+              swapped via an `iconImage` case expression — no per-feature
+              tinting, so we don't need SDF-encoded assets. `iconAllowOverlap`
+              keeps every marker visible at dense zooms; `iconSize` scales
+              with zoom so dots stay readable at the world view but don't
+              dominate at close zoom. */}
+          <SymbolLayer
             id={UNCLUSTERED_LAYER_ID}
             filter={["!", ["has", "point_count"]]}
             style={{
-              // Fill = essential-or-default (set in the FeatureCollection
-              // memo). Border = essential | summited | default.
-              circleColor: ["get", "fillColor"],
-              circleStrokeColor: ["get", "strokeColor"],
-              circleStrokeWidth: 3,
-              circleRadius: 7,
+              iconImage: [
+                "case",
+                ["get", "isSummited"],
+                "mtn-summited",
+                ["get", "essential"],
+                "mtn-essential",
+                "mtn-default",
+              ],
+              iconAllowOverlap: true,
+              iconIgnorePlacement: true,
+              iconSize: [
+                "interpolate",
+                ["linear"],
+                ["zoom"],
+                6,
+                0.4,
+                10,
+                0.6,
+                14,
+                0.85,
+              ],
             }}
           />
         </ShapeSource>
@@ -639,7 +673,7 @@ export function MountainsMap({
               // Arial Unicode for any glyph the primary font lacks.
               textFont: ["Open Sans Semibold", "Arial Unicode MS Bold"],
               textAnchor: "bottom",
-              textOffset: [0, -1.4],
+              textOffset: [0, -1],
               textAllowOverlap: true,
               textIgnorePlacement: true,
             }}

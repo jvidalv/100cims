@@ -197,6 +197,9 @@
   "4CrCbD": {
     "defaultMessage": "Community"
   },
+  "4OB54U": {
+    "defaultMessage": "featured"
+  },
   "4YJHut": {
     "defaultMessage": "Clear search"
   },
@@ -238,9 +241,6 @@
   },
   "5mhKmC": {
     "defaultMessage": "{percent}% completed"
-  },
-  "6338Oc": {
-    "defaultMessage": "Comments ({count})"
   },
   "6Jl56G": {
     "defaultMessage": "Safe for kids"
@@ -433,9 +433,6 @@
   },
   "D2Qvad": {
     "defaultMessage": "Route not found."
-  },
-  "DH9P+z": {
-    "defaultMessage": "Made by"
   },
   "DJbyE/": {
     "defaultMessage": "You summited this mountain"
@@ -803,6 +800,9 @@
   "Q5CLtp": {
     "defaultMessage": "Plans"
   },
+  "Q7i8B0": {
+    "defaultMessage": "{name} is on your saved routes list."
+  },
   "Q8Qw5B": {
     "defaultMessage": "Description"
   },
@@ -935,6 +935,9 @@
   "Uf3+S6": {
     "defaultMessage": "Help & Support"
   },
+  "V5L8fp": {
+    "defaultMessage": "No plans match your search."
+  },
   "VHUGly": {
     "defaultMessage": "One summit of 1000 meters equals 100 points. Essentials are worth x2 — summit them!"
   },
@@ -958,6 +961,9 @@
   },
   "WJ84tC": {
     "defaultMessage": "Wikiloc trail"
+  },
+  "WNcxGO": {
+    "defaultMessage": "joined"
   },
   "WTrOy3": {
     "defaultMessage": "Chat"
@@ -1142,6 +1148,9 @@
   "dEo+/0": {
     "defaultMessage": "and be part of a thriving community"
   },
+  "dNRnr+": {
+    "defaultMessage": "Tap the bookmark on any route to save it here."
+  },
   "dUCA4K": {
     "defaultMessage": "Not now"
   },
@@ -1226,6 +1235,9 @@
   "gUkajj": {
     "defaultMessage": "Time actually in motion — breaks and stops are excluded. A rough estimate of how long the trail takes at the author's pace."
   },
+  "gpoyfj": {
+    "defaultMessage": "Multi-peak"
+  },
   "grf9Y7": {
     "defaultMessage": "Active challenge"
   },
@@ -1258,6 +1270,9 @@
   },
   "ihTd0A": {
     "defaultMessage": "No summits match \"{query}\""
+  },
+  "iwT6/W": {
+    "defaultMessage": "Saved routes ({count})"
   },
   "j1qOou": {
     "defaultMessage": "Cover photo"
@@ -1318,6 +1333,9 @@
   },
   "lu+CdU": {
     "defaultMessage": "Organizer"
+  },
+  "lyShyC": {
+    "defaultMessage": "Saved routes"
   },
   "mKa7fP": {
     "defaultMessage": "Dogs"
@@ -1456,9 +1474,6 @@
   },
   "rzCvRt": {
     "defaultMessage": "Family"
-  },
-  "sUgU78": {
-    "defaultMessage": "Search Wikiloc for more routes"
   },
   "sYQGsN": {
     "defaultMessage": "No GPS track available."

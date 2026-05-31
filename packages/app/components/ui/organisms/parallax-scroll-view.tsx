@@ -22,7 +22,7 @@ import { twMerge } from "tailwind-merge";
 import { BlurView, ThemedText } from "@/components/ui/atoms";
 import { LucideIcon } from "@/components/ui/atoms/lucide-icon";
 import { ThemedView } from "@/components/ui/atoms/themed-view";
-import { useBlurredScreenHeaderHeight } from "@/components/ui/molecules/blurred-screen-header";
+import { useBlurredScreenHeaderBarHeight } from "@/components/ui/molecules/blurred-screen-header";
 import { hasDynamicIsland, isAndroid } from "@/lib/device";
 
 const DEFAULT_BLURRED_HEADER_CLASSNAME = "font-medium text-lg max-w-56";
@@ -71,7 +71,10 @@ export default function ParallaxScrollView({
   onEndReachedThreshold = 0.5,
 }: Props) {
   const router = useRouter();
-  const blurredHeaderHeight = useBlurredScreenHeaderHeight();
+  // The collapsed parallax band is the BAR itself, not scroll-content
+  // padding — use the bar-height hook so it matches `BlurredScreenHeader`'s
+  // own height exactly (no content-side gap baked in).
+  const blurredHeaderHeight = useBlurredScreenHeaderBarHeight();
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useScrollOffset(scrollRef);
   // Latches when we've fired `onEndReached` for the current visit to the

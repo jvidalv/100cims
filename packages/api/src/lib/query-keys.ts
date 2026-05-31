@@ -62,4 +62,12 @@ export const adminKeys = {
   organizations: (params: { page: number; q: string }) =>
     ["admin", "organizations", params] as const,
   organizationDetail: (id: string) => ["admin", "organizations", id] as const,
+  routesList: () => ["admin", "routes"] as const,
+  routes: (params: {
+    page: number;
+    q: string;
+    mountainSlug: string;
+    multiPeak: boolean;
+  }) => ["admin", "routes", params] as const,
+  routeDetail: (id: string) => ["admin", "routes", id] as const,
 };

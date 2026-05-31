@@ -1,0 +1,1 @@
+ALTER TABLE "mountain_route" ADD CONSTRAINT "mountain_route_mountain_slug_mountain_slug_fk" FOREIGN KEY ("mountain_slug") REFERENCES "public"."mountain"("slug") ON DELETE cascade ON UPDATE no action;

@@ -7,19 +7,31 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BlurView, ThemedText } from "@/components/ui/atoms";
 import { LucideIcon } from "@/components/ui/atoms/lucide-icon";
 
-// Height of the title row + a bit of breathing room below it. Sized to fit
-// the back-arrow TouchableOpacity (28pt icon + py-4 = 60pt) plus the row's
-// own `pb-3`. The header's total height becomes `insets.top + ROW_AREA`,
-// so Android with a ~24dp status bar gets a ~76dp band instead of the
-// iOS-tuned 96; iPhone-notch lands at 44+52=96 which matches the old
-// constant exactly. The row pins to the bottom of the band via `mt-auto`,
-// so the title sits flush with the bottom edge on every platform.
+// Height of the title row itself. Sized to fit the back-arrow
+// TouchableOpacity (28pt icon + py-4 = 60pt) plus the row's own `pb-3`.
 const ROW_AREA = 52;
+// Gap between the bottom edge of the bar and the first row of consumer
+// content. Baked into the hook (rather than left to each caller) so every
+// `BlurredScreenHeader` screen gets the same breathing room without a
+// `paddingTop: headerHeight + 12` boilerplate at every call site.
+const CONTENT_GAP = 12;
 
 /**
- * Hook returning the header's total height in points (status-bar inset +
- * title row). Consumers use it as `paddingTop` (via the `style` prop) on
- * the first content element below the absolute-positioned bar.
+ * Visible height of the bar itself (status-bar inset + title row) — what
+ * an overlapping collapsed parallax header should match. Use
+ * `useBlurredScreenHeaderHeight()` instead when you're padding scroll
+ * content; that variant adds a few pt of breathing room below the bar.
+ */
+export const useBlurredScreenHeaderBarHeight = (): number => {
+  const insets = useSafeAreaInsets();
+  return insets.top + ROW_AREA;
+};
+
+/**
+ * Hook returning the bar's height + a small content gap, sized for use as
+ * `paddingTop` on the first scrollable below the absolute-positioned bar.
+ * iPhone-notch lands at 44+52+12=108; Android lands at 24+52+12=88;
+ * Dynamic Island at 54+52+12=118.
  *
  *     const headerHeight = useBlurredScreenHeaderHeight();
  *     <ScrollView contentContainerStyle={{ paddingTop: headerHeight, ... }} />
@@ -30,8 +42,7 @@ const ROW_AREA = 52;
  * with either clipped content (too short) or a tab-bar-sized gap (too tall).
  */
 export const useBlurredScreenHeaderHeight = (): number => {
-  const insets = useSafeAreaInsets();
-  return insets.top + ROW_AREA;
+  return useBlurredScreenHeaderBarHeight() + CONTENT_GAP;
 };
 
 /**
@@ -49,12 +60,12 @@ export const BlurredScreenHeader = ({
   rightElement,
 }: PropsWithChildren<{ rightElement?: ReactNode }>) => {
   const router = useRouter();
-  const height = useBlurredScreenHeaderHeight();
+  const barHeight = useBlurredScreenHeaderBarHeight();
 
   return (
     <View
       className="absolute top-0 w-full flex-1"
-      style={{ height, zIndex: 10, elevation: 10 }}
+      style={{ height: barHeight, zIndex: 10, elevation: 10 }}
     >
       <BlurView className="flex-1">
         <View className="mt-auto flex-row items-center justify-between">
