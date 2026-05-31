@@ -9,7 +9,6 @@ import type { Target } from "./scrape-mountain";
 // move to a DB query, but the seed is the canonical source for now.
 
 const DRIZZLE_DIR = resolve(__dirname, "../../../src/db/drizzle");
-const SEED_PATH = resolve(DRIZZLE_DIR, "0001_seed-data.sql");
 
 // Wikiloc Catalonia spans ~3° lng × 2° lat; a 0.18° radius (~20km) is wide
 // enough to catch trails starting at a nearby village without inviting many
@@ -65,15 +64,16 @@ const TUPLE_REGEX =
 //
 // We strip SQL line comments first — `-- foo (3 new; bar)` contains a `;`
 // that otherwise prematurely terminates our non-greedy block regex.
-const stripLineComments = (sql: string): string =>
-  sql.replace(/--[^\n]*/g, "");
+const stripLineComments = (sql: string): string => sql.replace(/--[^\n]*/g, "");
 
 const readAllSql = (): string => {
   const files = readdirSync(DRIZZLE_DIR)
     .filter((f) => f.endsWith(".sql"))
     .sort();
   return files
-    .map((f) => stripLineComments(readFileSync(resolve(DRIZZLE_DIR, f), "utf8")))
+    .map((f) =>
+      stripLineComments(readFileSync(resolve(DRIZZLE_DIR, f), "utf8")),
+    )
     .join("\n");
 };
 
@@ -121,9 +121,7 @@ export const toTarget = (m: SeedMountain): Target => ({
  * Case-insensitive, matches anywhere in the string. Used by the comarca
  * sub-commands ("Terra Alta", "Alt Empordà", etc.).
  */
-export const loadMountainsByLocation = (
-  needle: string,
-): SeedMountain[] => {
+export const loadMountainsByLocation = (needle: string): SeedMountain[] => {
   const all = loadAllMountains();
   const lower = needle.toLowerCase();
   return all.filter((m) => m.location.toLowerCase().includes(lower));
@@ -137,58 +135,375 @@ export const loadMountainsByLocation = (
 //   - keep an explicit slug list mirroring the migration's WHERE clause.
 const SOSTRES_COMARCALS_SLUGS = new Set<string>([
   // Pirineu
-  "pica-destats", "pic-de-comaloforno", "tuc-de-molieres", "pic-de-peguera",
-  "puigpedros", "pic-de-saloria", "puigmal", "comanegra", "roc-del-comptador",
+  "pica-destats",
+  "pic-de-comaloforno",
+  "tuc-de-molieres",
+  "pic-de-peguera",
+  "puigpedros",
+  "pic-de-saloria",
+  "puigmal",
+  "comanegra",
+  "roc-del-comptador",
   // Catalunya Central / Prepirineu
-  "pic-de-costa-cabirolera", "pedro-dels-quatre-batlles", "matagalls",
-  "sant-jeroni", "puigdon", "serrat-de-sant-joan", "tossal-de-les-torretes",
+  "pic-de-costa-cabirolera",
+  "pedro-dels-quatre-batlles",
+  "matagalls",
+  "sant-jeroni",
+  "puigdon",
+  "serrat-de-sant-joan",
+  "tossal-de-les-torretes",
   // Terres de Ponent
-  "punta-del-curull", "turo-del-galutxo", "tossal-gros-de-vallbona",
-  "puntal-dels-escambrons", "tossal-de-linfern",
+  "punta-del-curull",
+  "turo-del-galutxo",
+  "tossal-gros-de-vallbona",
+  "puntal-dels-escambrons",
+  "tossal-de-linfern",
   // Comarques gironines
-  "les-agudes", "puigsou", "comaestremer", "puig-daiguabona",
+  "les-agudes",
+  "puigsou",
+  "comaestremer",
+  "puig-daiguabona",
   // Àmbit metropolità
-  "turo-de-lhome", "lalbarda-castellana", "la-mola-de-sant-llorenc-del-munt",
-  "puig-dagulles", "turo-den-vives", "puig-de-la-mola", "tibidabo",
+  "turo-de-lhome",
+  "lalbarda-castellana",
+  "la-mola-de-sant-llorenc-del-munt",
+  "puig-dagulles",
+  "turo-den-vives",
+  "puig-de-la-mola",
+  "tibidabo",
   // Camp de Tarragona / Terres de l'Ebre
-  "caro", "tossal-dels-tres-reis", "tosseta-rasa", "xaquera-o-creu-de-santos",
-  "tossal-de-la-baltasana", "roca-corbatera", "roca-de-migdia",
-  "talaia-del-montmell", "la-mola",
+  "caro",
+  "tossal-dels-tres-reis",
+  "tosseta-rasa",
+  "xaquera-o-creu-de-santos",
+  "tossal-de-la-baltasana",
+  "roca-corbatera",
+  "roca-de-migdia",
+  "talaia-del-montmell",
+  "la-mola",
 ]);
 
 const TECHOS_PROVINCIALES_SLUGS = new Set<string>([
   // Pirineos
-  "aneto", "pica-destats", "puigpedros", "hiru-erregeen-mahaia",
+  "aneto",
+  "pica-destats",
+  "puigpedros",
+  "hiru-erregeen-mahaia",
   "costa-cabirolera",
   // Cordillera Cantábrica & País Vasco
-  "torrecerredo", "torre-blanca", "pena-prieta-sur",
-  "gorbeia", "aketegi",
+  "torrecerredo",
+  "torre-blanca",
+  "pena-prieta-sur",
+  "gorbeia",
+  "aketegi",
   // Galicia
-  "pena-trevinca", "o-mustallar", "faro-de-avion", "coto-pilar",
+  "pena-trevinca",
+  "o-mustallar",
+  "faro-de-avion",
+  "coto-pilar",
   // Sistema Central
-  "almanzor", "penalara", "canchal-de-la-ceja", "calvitero", "pico-del-lobo",
+  "almanzor",
+  "penalara",
+  "canchal-de-la-ceja",
+  "calvitero",
+  "pico-del-lobo",
   // Sistema Ibérico
-  "moncayo", "san-lorenzo", "san-millan", "penarroya", "mogorrita",
-  "alto-de-las-barracas", "penyagolosa",
+  "moncayo",
+  "san-lorenzo",
+  "san-millan",
+  "penarroya",
+  "mogorrita",
+  "alto-de-las-barracas",
+  "penyagolosa",
   // Montes de Toledo / Sierra Morena / interior
-  "corocho-de-rocigalgo", "la-banuela", "el-terril", "tentudia",
-  "los-bonales", "cuchillejo",
+  "corocho-de-rocigalgo",
+  "la-banuela",
+  "el-terril",
+  "tentudia",
+  "los-bonales",
+  "cuchillejo",
   // Andalucía / Béticas
-  "mulhacen", "chullo", "pico-magina", "la-maroma", "pico-tinosa", "el-torreon",
+  "mulhacen",
+  "chullo",
+  "pico-magina",
+  "la-maroma",
+  "pico-tinosa",
+  "el-torreon",
   // Sureste & Levante
-  "sierra-de-aitana", "los-obispos", "las-atalayas", "caro",
+  "sierra-de-aitana",
+  "los-obispos",
+  "las-atalayas",
+  "caro",
   // Islas
-  "teide", "pico-de-las-nieves", "puig-major",
+  "teide",
+  "pico-de-las-nieves",
+  "puig-major",
   // Ciudades autónomas
-  "monte-anyera", "rostrogordo",
+  "monte-anyera",
+  "rostrogordo",
 ]);
 
 const ARAGON_SLUGS = new Set<string>([
-  "aneto", "monte-perdido", "posets", "pico-de-aspe", "pico-anayet",
-  "pico-de-tendeñera", "tozal-de-guara", "pico-del-mondoto",
-  "peña-montañesa", "peña-telera", "peña-foratata", "peña-mediodía",
-  "peña-roya", "peña-melera", "pico-de-la-pala", "pico-balaitus",
-  "pico-marboré", "pico-cilindro", "peña-collarada", "pico-del-infierno",
+  "aneto",
+  "monte-perdido",
+  "posets",
+  "pico-de-aspe",
+  "pico-anayet",
+  "pico-de-tendeñera",
+  "tozal-de-guara",
+  "pico-del-mondoto",
+  "peña-montañesa",
+  "peña-telera",
+  "peña-foratata",
+  "peña-mediodía",
+  "peña-roya",
+  "peña-melera",
+  "pico-de-la-pala",
+  "pico-balaitus",
+  "pico-marboré",
+  "pico-cilindro",
+  "peña-collarada",
+  "pico-del-infierno",
+]);
+
+// Slug lists extracted from the seed migrations' challenge_has_mountain
+// inserts (0001_seed-data.sql, 0043_add-picos-de-europa-challenge.sql,
+// 0051_add-cumbres-alicante-challenge.sql). Each set mirrors the WHERE
+// slug IN (...) clause used to populate the join table for the challenge.
+const ISLAS_CANARIAS_SLUGS = new Set<string>([
+  "teide",
+  "roque-de-los-muchachos",
+  "pico-de-las-nieves",
+  "montaña-de-tirma",
+  "montaña-roja",
+  "montaña-blanca",
+  "guajara",
+  "roque-nublo",
+]);
+
+const CUMBRES_DEL_LEVANTE_SLUGS = new Set<string>([
+  "pico-calderon",
+  "penyagolosa",
+  "pico-gavilan",
+  "sierra-de-aitana",
+  "puig-campana",
+  "alto-de-santa-barbara",
+  "el-cabezo",
+  "cim-del-ponig",
+  "caroche",
+  "benicadell",
+  "pico-espadan",
+  "pico-nono",
+  "sierra-de-bernia",
+  "pico-elvira",
+  "pico-batalla",
+  "bellota",
+  "pico-del-ave",
+  "puntal-de-aljub",
+  "cima-el-carrascal",
+  "pico-monduver",
+  "cima-del-picacho",
+  "montgo",
+  "el-garbi",
+]);
+
+const PICOS_DE_EUROPA_SLUGS = new Set<string>([
+  "torrecerredo",
+  "torre-del-llambrion",
+  "torre-del-tiro-tirso",
+  "torre-sin-nombre",
+  "torre-casiano-de-prado",
+  "pena-vieja",
+  "torre-bermeja",
+  "torre-del-hoyo-grande",
+  "torre-del-tiro-navarro-i",
+  "pico-de-santa-ana-i",
+  "pico-de-santa-ana-ii",
+  "torre-del-tiro-navarro-ii",
+  "torre-santa",
+  "torre-de-las-minas-del-carbon",
+  "torre-de-coello",
+  "torre-del-tiro-del-oso",
+  "los-campanarios-ii",
+  "los-campanarios-i",
+  "los-campanarios-iii",
+  "torre-del-tiro-llago",
+  "risco-saint-saud",
+  "neveron-de-urriellu",
+  "la-morra",
+  "pico-de-los-cabrones",
+  "los-campanarios-iv",
+  "torre-de-labrouche",
+  "pico-de-boada",
+  "aguja-de-la-canalona",
+  "naranjo-de-bulnes",
+  "pico-arenizas-ii",
+  "horcados-rojos",
+  "pico-arenizas-i",
+  "torre-de-las-coteras-rojas",
+  "pico-arenizas-iii",
+  "aguja-de-los-cabrones-i",
+  "pena-santa-enol",
+  "torre-de-delgado-ubeda",
+  "torre-diego-mella",
+  "torre-del-hoyo-de-liordes",
+  "torre-de-enmedio",
+  "torre-de-penalba",
+  "torre-del-oso",
+  "aguja-jose-de-prado",
+  "torre-de-la-celada",
+  "torre-de-la-horcada",
+  "torre-del-torco",
+  "torre-de-las-colladetas",
+  "tiros-de-santiago",
+  "torre-de-salinas",
+  "torre-de-cebolleda-iii",
+  "morra-lechugales",
+  "torre-del-friero",
+  "neveron-del-albo",
+  "pico-del-albo",
+  "pena-castil",
+  "aguja-alpino",
+  "silla-del-caballo-cimero",
+  "aguja-de-juan-menendez",
+  "aguja-cimadevilla",
+  "aguja-jovellanos",
+  "torre-del-hoyo-oscuro",
+  "torre-del-carnizoso",
+  "torre-de-las-tres-marias-i",
+  "torre-de-cebolleda-ii",
+  "torres-areneras",
+  "torre-de-las-tres-marias-ii",
+  "porro-del-torco",
+  "cuchalon-de-villasobrada",
+  "cueto-albo",
+  "pena-olvidada",
+  "torre-bermeja-cornion",
+]);
+
+const CUMBRES_ALICANTE_SLUGS = new Set<string>([
+  "sierra-de-aitana",
+  "puig-campana",
+  "montcabrer",
+  "serrella",
+  "el-menejador",
+  "maigmo",
+  "cabeco-dor",
+  "cim-del-ponig",
+  "sierra-de-bernia",
+  "montgo",
+  "penon-de-ifach",
+]);
+
+const CUMBRES_ASTURES_SLUGS = new Set<string>([
+  "torrecerredo",
+  "torre-bermeja",
+  "tesorero",
+  "naranjo-de-bulnes",
+  "pena-santa-enol",
+  "morra-lechugales",
+  "pena-ubina",
+  "el-fontan",
+  "la-verdilluenga",
+  "pena-orniz",
+  "cornon",
+  "farinentu",
+  "pena-rueda",
+  "munon",
+  "cueto-cabras",
+  "torres",
+  "pena-pilenes",
+  "pena-viento",
+  "tiatordos",
+  "la-tesa",
+  "el-retrinon",
+  "picu-michu",
+  "pena-main",
+  "la-cabra",
+  "la-mostayal",
+  "pienzu",
+]);
+
+const MONTES_GALLEGOS_SLUGS = new Set<string>([
+  "pena-trevinca",
+  "pena-negra",
+  "pena-surbia",
+  "alto-ladeira-de-la-medias",
+  "cuina",
+  "mustallar",
+  "tres-bispos",
+  "cabeza-de-manzaneda",
+  "seixo",
+  "formigueiros",
+  "piapaxaro",
+  "faro",
+  "el-turrieiro",
+  "a-nevosa",
+  "alto-do-couto",
+  "penagache",
+  "monte-faro",
+  "pico-de-los-cuatro-caballeros",
+  "monte-coco",
+  "monte-farelo",
+  "pena-grande",
+  "monseivane",
+  "el-candan",
+  "monte-de-la-cova-de-la-serpe",
+]);
+
+const REPTE_DEL_GIRONES_SLUGS = new Set<string>([
+  "puigsou-rocacorba",
+  "castell-sant-miquel",
+  "puig-cadiretes",
+  "puig-maimi-sant-cristofol",
+  "montigalar",
+  "sant-grau",
+  "el-rocas-santa-afra",
+  "sants-metges-congost",
+  "els-angels",
+  "sant-roc-pas-historia",
+]);
+
+const TOP_SPAIN_SLUGS = new Set<string>([
+  "mulhacen",
+  "veleta",
+  "vignemale",
+  "torrecerredo",
+  "aneto",
+  "teide",
+  "pica-destats",
+  "roque-nublo",
+  "monte-perdido",
+  "pico-balaitus",
+  "pico-del-infierno",
+]);
+
+const ALTOS_MADRILENOS_SLUGS = new Set<string>([
+  "penalara",
+  "cabezas-de-hierro",
+  "pico-del-lobo",
+  "pico-de-navahondilla",
+  "la-maliciosa",
+  "reajo-alto",
+  "portacho-de-los-gavilanes",
+  "pena-negra-cabrera",
+  "pena-de-la-cabra",
+  "alto-del-porrejon",
+  "cabeza-lijar",
+  "monte-abantos",
+  "la-najarra",
+  "el-yelmo",
+  "cerro-del-barranco-de-la-cabeza",
+  "cerro-san-benito",
+  "cancho-gordo",
+  "pico-del-fraile",
+  "cerro-de-san-pedro",
+  "machota-baja",
+  "pico-de-la-miel",
+  "cancho-de-la-cabeza",
+  "pico-de-la-almenara",
+  "pico-almojon",
+  "cerro-del-ecce-homo",
 ]);
 
 /**
@@ -204,16 +519,32 @@ export const loadMountainsForChallenge = (
   if (challengeSlug === "100-cims") {
     const all = loadAllMountainsWithUrls();
     return all
-      .filter((m) =>
-        m.url?.includes("feec.cat/activitats/100-cims/cim/"),
-      )
-      .map(({ url: _url, ...rest }) => rest);
+      .filter((m) => m.url?.includes("feec.cat/activitats/100-cims/cim/"))
+      .map(({ slug, name, location, height, latitude, longitude }) => ({
+        slug,
+        name,
+        location,
+        height,
+        latitude,
+        longitude,
+      }));
   }
-  const slugSet = ({
-    "sostres-comarcals": SOSTRES_COMARCALS_SLUGS,
-    "techos-provinciales": TECHOS_PROVINCIALES_SLUGS,
-    aragon: ARAGON_SLUGS,
-  } as Record<string, Set<string>>)[challengeSlug];
+  const slugSet = (
+    {
+      "sostres-comarcals": SOSTRES_COMARCALS_SLUGS,
+      "techos-provinciales": TECHOS_PROVINCIALES_SLUGS,
+      aragon: ARAGON_SLUGS,
+      "islas-canarias": ISLAS_CANARIAS_SLUGS,
+      "cumbres-del-levante": CUMBRES_DEL_LEVANTE_SLUGS,
+      "picos-de-europa": PICOS_DE_EUROPA_SLUGS,
+      "cumbres-alicante": CUMBRES_ALICANTE_SLUGS,
+      "cumbres-astures": CUMBRES_ASTURES_SLUGS,
+      "montes-gallegos": MONTES_GALLEGOS_SLUGS,
+      "repte-del-girones": REPTE_DEL_GIRONES_SLUGS,
+      "top-spain": TOP_SPAIN_SLUGS,
+      "altos-madrilenos": ALTOS_MADRILENOS_SLUGS,
+    } as Record<string, Set<string>>
+  )[challengeSlug];
   if (!slugSet) {
     throw new Error(`Unknown challenge slug: ${challengeSlug}`);
   }

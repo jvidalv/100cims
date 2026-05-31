@@ -111,7 +111,9 @@ export const scrapeMountain = async (params: {
     const trails: TrailDetail[] = [];
     for (const [index, entry] of entries.entries()) {
       log(`(${index + 1}/${entries.length}) ${entry.url}`);
-      await jitteredDelay(3_000, 2_000);
+      // 1–2s between trail-detail fetches (was 3–5s). Tightened for
+      // throughput; the rate-limit guard still catches 403 bursts.
+      await jitteredDelay(1_000, 1_000);
       const page = await session.context.newPage();
       try {
         const coordinates = await interceptCoordinatesDuringNav(
