@@ -7,7 +7,7 @@
 
 const RECENT_WINDOW_MS = 5 * 60_000; // 5 minutes
 const TRIPWIRE_403_COUNT = 3;
-const COOLDOWN_MS = 15 * 60_000; // 15 minutes
+const COOLDOWN_MS = 5 * 60_000; // 5 minutes (was 15) — aggressive retry
 const MAX_COOLDOWNS_BEFORE_GIVE_UP = 3;
 
 let recent403s: number[] = [];

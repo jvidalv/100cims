@@ -161,7 +161,9 @@ const main = async (): Promise<void> => {
       } else {
         // Soft-fail per mountain: log and continue. Hard-aborting on every
         // network blip wastes the run; the summary will surface what failed.
-        console.error(`[scrape] ${target.slug} failed: ${result.error.message}`);
+        console.error(
+          `[scrape] ${target.slug} failed: ${result.error.message}`,
+        );
         // Persist the failure so `--retry-failures` picks it up next run.
         recordFailure(outputDir, target.slug, result.error);
         summary.push({
@@ -180,10 +182,11 @@ const main = async (): Promise<void> => {
         break;
       }
 
-      // 5–10s breath between mountains so Wikiloc doesn't see a
-      // perfectly-spaced request train.
+      // 2–4s breath between mountains so Wikiloc doesn't see a
+      // perfectly-spaced request train. Was 5–10s; tightened to ship the
+      // remaining catalogue faster.
       if (index < targets.length - 1) {
-        await jitteredDelay(5_000, 5_000);
+        await jitteredDelay(2_000, 2_000);
       }
     }
   } finally {

@@ -4,7 +4,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, PropsWithChildren, useState, useMemo } from "react";
 import { IntlProvider } from "react-intl";
-import { Platform, View } from "react-native";
+import { Platform, View, useColorScheme } from "react-native";
 import {
   initialWindowMetrics,
   SafeAreaProvider,
@@ -66,6 +66,13 @@ function Content() {
   });
   usePushTokenRegistration();
 
+  // Match the background-color tokens declared in ThemeProvider so the
+  // RNScreen host view paints the theme background BEFORE React's first
+  // paint commits — without this, every push transition shows a brief
+  // white flash from iOS's `systemBackground` default during the slide-in.
+  const colorScheme = useColorScheme() === "dark" ? "dark" : "light";
+  const screenBackground = colorScheme === "dark" ? "#000000" : "#ffffff";
+
   const isDataReady = !isPendingMountains && !isPendingHomepageSummits;
 
   useEffect(() => {
@@ -90,10 +97,20 @@ function Content() {
         screenOptions={{
           headerShown: false,
           freezeOnBlur: Platform.OS === "android" ? false : undefined,
+          // Pin the per-screen host-view background to the theme so the
+          // slide-in transition doesn't briefly show iOS's white system
+          // background while the screen's React tree mounts.
+          contentStyle: { backgroundColor: screenBackground },
         }}
       >
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="challenges" />
+        {/* `mountain` owns its own Stack (mountain/_layout.tsx). Declaring it
+            here pins the root Stack mount point so every push of
+            /mountain/[slug] resolves to the parent Stack — which keeps
+            sibling slugs as separate frames with their own NativeTabs
+            instances instead of double-mounting on top of each other. */}
+        <Stack.Screen name="mountain" />
         {/* No <Stack.Screen name="plans" />: plans/ contains only the (tabs)/
             group, so Expo Router flattens the route to "plans/(tabs)" and a
             "plans" declaration would not match any child — see the [Layout

@@ -1,23 +1,27 @@
 /**
  * Generate custom Drizzle migration SQL files that seed the `route` +
- * `mountain_route` tables from the local scraper output. One-shot: produces
- * chunked SQL under `src/db/drizzle/NNNN_seed_routes_part_NN.sql`, with
- * corresponding entries appended to `_journal.json`.
+ * `mountain_route` tables from the local scraper output.
+ *
+ * APPEND-ONLY. Existing seed_routes_part_*.sql files (and their journal
+ * entries) are never touched — they represent migrations that have already
+ * shipped. New runs only emit chunks for externalIds that AREN'T already
+ * referenced by an existing seed file. New chunk filenames continue the
+ * numbering after the highest existing seed_routes_part_* entry in the
+ * journal.
  *
  * Run:
  *   yarn tsx scripts/wikiloc/emit-seed-sql.ts
  *
- * Re-runnable: each route INSERT uses `ON CONFLICT (source, external_id)
- * DO NOTHING`; mountain_route uses `ON CONFLICT (mountain_slug, route_id)
- * DO NOTHING`. Old part files are wiped before regeneration so partial
- * runs don't leave stale chunks behind.
+ * Re-runnable: each route INSERT also uses `ON CONFLICT (source,
+ * external_id) DO NOTHING` and `mountain_route` uses `ON CONFLICT
+ * (mountain_slug, route_id) DO NOTHING`, so even if the same externalId
+ * slips into a new chunk it won't duplicate. The external-id dedupe is
+ * primarily about not committing 200MB of redundant SQL to git.
  *
- * Coordinates are stored at full fidelity (no downsample). Migration files
- * are large (~10MB per chunk). The seed migrations are intended to run
- * exactly once on first deploy and then be removed from the journal.
+ * Coordinates are stored at full fidelity (no downsample).
  */
 import { createHash } from "crypto";
-import { readdirSync, readFileSync, unlinkSync, writeFileSync } from "fs";
+import { readdirSync, readFileSync, writeFileSync } from "fs";
 import { resolve } from "path";
 
 import type { TrailDetail } from "./lib/types";
@@ -196,50 +200,85 @@ type Journal = {
 
 const SEED_TAG_PREFIX = "seed_routes_part_";
 
-const wipeOldSeedFiles = (): void => {
+// Pull every external_id referenced by an existing seed_routes_part_*.sql
+// file. Used to skip routes that have already been emitted in a prior run
+// (and presumably already applied to prod). Parses just the route INSERT
+// VALUES rows where externalId is the second column (`'wikiloc', '<id>',
+// ...`).
+const ROUTE_EXTERNAL_ID_REGEX = /\(\s*'wikiloc'\s*,\s*'([^']+)'/g;
+
+const collectAlreadySeededExternalIds = (): Set<string> => {
+  const seeded = new Set<string>();
   for (const f of readdirSync(DRIZZLE_DIR)) {
-    if (f.endsWith(".sql") && f.includes(SEED_TAG_PREFIX)) {
-      unlinkSync(resolve(DRIZZLE_DIR, f));
+    if (!(f.endsWith(".sql") && f.includes(SEED_TAG_PREFIX))) continue;
+    const text = readFileSync(resolve(DRIZZLE_DIR, f), "utf8");
+    let m: RegExpExecArray | null;
+    ROUTE_EXTERNAL_ID_REGEX.lastIndex = 0;
+    while ((m = ROUTE_EXTERNAL_ID_REGEX.exec(text)) !== null) {
+      seeded.add(m[1]);
     }
   }
+  return seeded;
 };
-
-const filterJournalSeedEntries = (journal: Journal): Journal => ({
-  ...journal,
-  entries: journal.entries.filter((e) => !e.tag.includes(SEED_TAG_PREFIX)),
-});
 
 // drizzle's snapshot hash; computed by the kit but we can recompute here
 // for the journal entry. The simpler path is to leave the snapshot files
 // alone — adding pure-data migrations doesn't change the schema snapshot.
 const padIdx = (n: number): string => String(n).padStart(4, "0");
 
+// Find the highest seed_routes_part_* part number already in the journal
+// so the new files continue the numbering from there.
+const highestExistingPartNumber = (journal: Journal): number => {
+  let max = 0;
+  for (const e of journal.entries) {
+    if (!e.tag.includes(SEED_TAG_PREFIX)) continue;
+    const partStr = e.tag.split(SEED_TAG_PREFIX)[1];
+    const partNum = parseInt(partStr, 10);
+    if (!Number.isNaN(partNum) && partNum > max) max = partNum;
+  }
+  return max;
+};
+
 const main = (): void => {
   console.log("[seed-sql] reading scraper output…");
   const routes = collectRoutes();
-  console.log(`[seed-sql] ${routes.length} unique routes to seed`);
+  console.log(`[seed-sql] ${routes.length} unique routes in output/`);
+
+  console.log("[seed-sql] scanning existing seed files for prior externalIds…");
+  const alreadySeeded = collectAlreadySeededExternalIds();
+  console.log(`[seed-sql] ${alreadySeeded.size} already in prior seed files`);
+
+  const newRoutes = routes.filter((r) => !alreadySeeded.has(r.externalId));
+  console.log(`[seed-sql] ${newRoutes.length} new routes to emit`);
+
+  if (newRoutes.length === 0) {
+    console.log("[seed-sql] nothing to do — exiting");
+    return;
+  }
 
   const chunks: SeedRoute[][] = [];
-  for (let i = 0; i < routes.length; i += ROUTES_PER_CHUNK) {
-    chunks.push(routes.slice(i, i + ROUTES_PER_CHUNK));
+  for (let i = 0; i < newRoutes.length; i += ROUTES_PER_CHUNK) {
+    chunks.push(newRoutes.slice(i, i + ROUTES_PER_CHUNK));
   }
   console.log(
     `[seed-sql] ${chunks.length} chunks of up to ${ROUTES_PER_CHUNK} routes`,
   );
 
-  console.log("[seed-sql] wiping old seed_routes_part_* files…");
-  wipeOldSeedFiles();
-
   const journalRaw = readFileSync(JOURNAL_PATH, "utf8");
-  const journal = filterJournalSeedEntries(JSON.parse(journalRaw) as Journal);
+  const journal = JSON.parse(journalRaw) as Journal;
   const baseIdx = journal.entries.length;
+  const basePartNumber = highestExistingPartNumber(journal);
   const now = Date.now();
 
   for (const [i, chunk] of chunks.entries()) {
     const idx = baseIdx + i;
-    const partNumber = i + 1;
+    const partNumber = basePartNumber + i + 1;
     const tag = `${padIdx(idx)}_${SEED_TAG_PREFIX}${padIdx(partNumber)}`;
-    const sql = buildChunkSql(chunk, partNumber, chunks.length);
+    const sql = buildChunkSql(
+      chunk,
+      partNumber,
+      basePartNumber + chunks.length,
+    );
     const fileName = `${tag}.sql`;
     writeFileSync(resolve(DRIZZLE_DIR, fileName), sql, "utf8");
     journal.entries.push({
@@ -249,17 +288,17 @@ const main = (): void => {
       tag,
       breakpoints: true,
     });
-    if (partNumber % 5 === 0 || partNumber === chunks.length) {
+    if ((i + 1) % 5 === 0 || i + 1 === chunks.length) {
       console.log(`[seed-sql] wrote ${fileName}`);
     }
   }
 
   writeFileSync(JOURNAL_PATH, JSON.stringify(journal, null, 2) + "\n", "utf8");
   console.log(
-    `[seed-sql] done — ${chunks.length} chunks written, journal updated to idx ${baseIdx + chunks.length - 1}`,
+    `[seed-sql] done — ${chunks.length} new chunks (parts ${basePartNumber + 1}..${basePartNumber + chunks.length}), journal at idx ${baseIdx + chunks.length - 1}`,
   );
-  // Drop a sanity-check hash so we notice if the emitter output changes
-  // unexpectedly.
+  // Sanity-check hash so we notice if the emitter output changes
+  // unexpectedly between runs.
   const totalSize = chunks.reduce(
     (acc, c) => acc + c.reduce((a, r) => a + JSON.stringify(r).length, 0),
     0,

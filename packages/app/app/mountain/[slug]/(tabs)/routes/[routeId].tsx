@@ -43,6 +43,7 @@ import {
   MountainRowMinimal,
   useBlurredScreenHeaderHeight,
 } from "@/components/ui/molecules";
+import { useMountainOne } from "@/domains/mountain/mountain.api";
 import { useRouteById } from "@/domains/route/route.api";
 import {
   difficultyPosition,
@@ -76,6 +77,9 @@ export default function RouteDetailScreen() {
   // lives under /api/protected/routes). Skip the fetch when signed out so
   // it doesn't 401.
   const { isAuthenticated } = useAuth();
+  // Header anchors on the parent mountain, not the route — matches the
+  // routes-tab list screen and gives back-navigation visual continuity.
+  const { data: mountain } = useMountainOne({ mountainSlug: slug });
   const { data: route, isLoading } = useRouteById(
     isAuthenticated ? routeId : undefined,
   );
@@ -106,14 +110,7 @@ export default function RouteDetailScreen() {
   if (!route) {
     return (
       <ThemedView className="flex-1">
-        <BlurredScreenHeader>
-          <ThemedText
-            numberOfLines={1}
-            className="max-w-56 text-lg font-medium"
-          >
-            <FormattedMessage defaultMessage="Route" />
-          </ThemedText>
-        </BlurredScreenHeader>
+        <BlurredScreenHeader>{mountain?.name ?? ""}</BlurredScreenHeader>
         {isLoading ? (
           <RouteDetailSkeleton headerHeight={headerHeight} />
         ) : (
@@ -323,14 +320,7 @@ export default function RouteDetailScreen() {
 
   return (
     <ThemedView className="flex-1">
-      <BlurredScreenHeader>
-        <ThemedText
-          numberOfLines={1}
-          className="max-w-56 text-lg font-medium"
-        >
-          {title}
-        </ThemedText>
-      </BlurredScreenHeader>
+      <BlurredScreenHeader>{mountain?.name ?? ""}</BlurredScreenHeader>
       <ScrollView
         contentContainerStyle={{
           paddingTop: headerHeight,
@@ -367,6 +357,18 @@ export default function RouteDetailScreen() {
             <FormattedMessage defaultMessage="Actions" />
           </ThemedText>
           <ActionRow
+            onPress={handleToggleSaved}
+            icon={isSaved ? BookmarkCheck : Bookmark}
+            intent={isSaved ? "emerald" : "muted"}
+            size="sm"
+          >
+            {isSaved ? (
+              <FormattedMessage defaultMessage="Saved" />
+            ) : (
+              <FormattedMessage defaultMessage="Save for later" />
+            )}
+          </ActionRow>
+          <ActionRow
             onPress={() => void Linking.openURL(route.url)}
             icon={RouteIcon}
             iconOverride={<ExternalSourceIcon source={route.source} size={18} />}
@@ -397,18 +399,6 @@ export default function RouteDetailScreen() {
               <FormattedMessage defaultMessage="Drive to start" />
             </ActionRow>
           ) : null}
-          <ActionRow
-            onPress={handleToggleSaved}
-            icon={isSaved ? BookmarkCheck : Bookmark}
-            intent={isSaved ? "emerald" : "muted"}
-            size="sm"
-          >
-            {isSaved ? (
-              <FormattedMessage defaultMessage="Saved" />
-            ) : (
-              <FormattedMessage defaultMessage="Save for later" />
-            )}
-          </ActionRow>
           <ActionRow
             onPress={() => void handleShare()}
             icon={ShareIcon}
