@@ -83,25 +83,35 @@ export default function CalendarScreen() {
     range ?? { from: "", to: "" },
   );
 
-  const { eventTypesByDay, eventsByDay, featuredDays } = useMemo(() => {
-    const types: Record<string, CalendarEventType[]> = {};
-    const list: Record<string, CalendarEvent[]> = {};
-    // Set of date keys that contain at least one featured plan. Drives the
-    // golden star on the calendar grid. We only look at plan events
-    // because `featured` is plan-specific (summits don't carry it).
-    const featured = new Set<string>();
-    for (const event of events ?? []) {
-      (list[event.date] ??= []).push(event);
-      const seen = (types[event.date] ??= []);
-      if (!seen.includes(event.type)) seen.push(event.type);
-      if (event.type === "plan" && event.featured) featured.add(event.date);
-    }
-    return {
-      eventTypesByDay: types,
-      eventsByDay: list,
-      featuredDays: featured,
-    };
-  }, [events]);
+  const { eventTypesByDay, eventsByDay, featuredDays, joinedDays } =
+    useMemo(() => {
+      const types: Record<string, CalendarEventType[]> = {};
+      const list: Record<string, CalendarEvent[]> = {};
+      // Set of date keys that contain at least one featured plan. Drives the
+      // golden star on the calendar grid. We only look at plan events
+      // because `featured` is plan-specific (summits don't carry it).
+      const featured = new Set<string>();
+      // Set of date keys that contain at least one plan the viewer is part
+      // of. The /calendar endpoint is scoped to plans the authed user joined
+      // or created (creator OR plan_has_users.userId = viewer), so every
+      // plan event in this payload qualifies.
+      const joined = new Set<string>();
+      for (const event of events ?? []) {
+        (list[event.date] ??= []).push(event);
+        const seen = (types[event.date] ??= []);
+        if (!seen.includes(event.type)) seen.push(event.type);
+        if (event.type === "plan") {
+          joined.add(event.date);
+          if (event.featured) featured.add(event.date);
+        }
+      }
+      return {
+        eventTypesByDay: types,
+        eventsByDay: list,
+        featuredDays: featured,
+        joinedDays: joined,
+      };
+    }, [events]);
 
   // Default selection = today. Tapping a day swaps it.
   const todayKey = useMemo(() => toLocalDateString(new Date()), []);
@@ -193,6 +203,7 @@ export default function CalendarScreen() {
           selectedDateKey={selectedDateKey}
           eventTypesByDay={eventTypesByDay}
           featuredDays={featuredDays}
+          joinedDays={joinedDays}
           navDirection={navDirection}
           navLabel={navLabel}
           onDayPress={onDayPress}
@@ -207,6 +218,7 @@ export default function CalendarScreen() {
       selectedDateKey,
       eventTypesByDay,
       featuredDays,
+      joinedDays,
       lastMonthIndex,
       onDayPress,
       onDayLongPress,

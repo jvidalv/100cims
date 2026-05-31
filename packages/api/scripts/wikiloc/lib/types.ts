@@ -34,6 +34,10 @@ export type LocalizedString = {
 export type TrailDetail = {
   source: RouteSource;
   externalId: string;
+  // Every mountain (by seed slug) this route actually summits. Populated by
+  // the Gemini summit-detection pass. Originating mountain is first;
+  // additional summits (for 2x100Cims-style traverses) follow.
+  mountainSlugs: string[];
   url: string;
   // Original source-side title (the messy concatenation of waypoints on
   // Wikiloc). Kept so we can re-run the title rewrite without re-scraping.
@@ -42,8 +46,12 @@ export type TrailDetail = {
   // hold the raw title verbatim so the type stays consistent.
   title: LocalizedString;
   // Author's prose description scraped from <meta name="description">. Used as
-  // context for the Gemini rewrite; may also surface in the app later.
+  // input to the description rewrite step and kept so we can re-run the
+  // rewrite without re-scraping.
   descriptionRaw: string | null;
+  // Concise en/ca/es summary produced by Gemini. Null until the rewrite step
+  // runs (older scraper output predates this field).
+  description: LocalizedString | null;
   author: string | null;
   distanceMeters: number | null;
   elevationGainMeters: number | null;

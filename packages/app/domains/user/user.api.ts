@@ -6,7 +6,23 @@ import { useAuth } from "@/components/providers/auth-provider";
 import apiClient from "@/lib/api-client";
 import { userKeys, challengeKeys, mountainKeys } from "@/lib/query-keys";
 
+import type { paths } from "@/types/api";
+
 export const UNAUTHORIZED = "Unauthorized";
+
+// Shapes derived from the API's OpenAPI schemas so they stay in lockstep
+// with the backend handlers — adding/renaming a field server-side surfaces
+// it here without an extra hand-edit.
+type PersonListItem =
+  paths["/api/protected/user/people"]["get"]["responses"][200]["content"]["application/json"]["message"][number];
+type JoinBody =
+  paths["/api/public/join"]["post"]["requestBody"]["content"]["application/json"];
+type UpdateMeBody =
+  paths["/api/protected/user/me"]["post"]["requestBody"]["content"]["application/json"];
+type SuggestionBody =
+  paths["/api/protected/user/suggestion"]["post"]["requestBody"]["content"]["application/json"];
+type UnlockableBody =
+  paths["/api/protected/user/unlockables"]["post"]["requestBody"]["content"]["application/json"];
 
 export const useUserMe = () => {
   const { isAuthenticated, logout } = useAuth();
@@ -223,14 +239,6 @@ export const useUserPeople = () => {
   });
 };
 
-type PersonListItem = {
-  userId: string;
-  firstName: string | null;
-  lastName: string | null;
-  imageUrl: string | null;
-  connectedAt: string;
-  sharedSummitCount: number;
-};
 
 export const useAddUserPerson = () => {
   return useMutation({
@@ -333,13 +341,7 @@ export const useUserChallenges = ({
 export const useJoinMutation = () => {
   return useMutation({
     mutationKey: ["user", "join"],
-    mutationFn: async (input: {
-      provider: "apple" | "google";
-      identityToken: string;
-      locale?: string;
-      firstName?: string;
-      lastName?: string;
-    }) => {
+    mutationFn: async (input: JoinBody) => {
       const { data, error } = await apiClient.POST("/api/public/join", {
         body: input,
       });
@@ -352,17 +354,7 @@ export const useJoinMutation = () => {
 export const useUpdateUserMeMutation = () => {
   return useMutation({
     mutationKey: ["user", "update", "me"],
-    mutationFn: async (input: {
-      firstName?: string;
-      lastName?: string;
-      imageUrl?: string;
-      locale?: string;
-      town?: string;
-      phoneNumber?: string;
-      visibleOnHiscores?: boolean;
-      visibleOnPeopleSearch?: boolean;
-      activeChallengeId?: string;
-    }) => {
+    mutationFn: async (input: UpdateMeBody) => {
       if (Object.values(input).every((v) => v === undefined)) {
         return { success: true } as const;
       }
@@ -397,7 +389,7 @@ export const useDeleteAccountMutation = () => {
 
 export const useUnlockableUnlock = () => {
   return useMutation({
-    mutationFn: async (key: "merch" | "share" | "forcat" | "picat") => {
+    mutationFn: async (key: UnlockableBody["key"]) => {
       const { data, error } = await apiClient.POST(
         "/api/protected/user/unlockables",
         { body: { key } },
@@ -414,7 +406,7 @@ export const useUnlockableUnlock = () => {
 export const useSubmitSuggestionMutation = () => {
   return useMutation({
     mutationKey: ["user", "suggestion"],
-    mutationFn: async (input: { suggestion: string }) => {
+    mutationFn: async (input: SuggestionBody) => {
       const { data, error } = await apiClient.POST(
         "/api/protected/user/suggestion",
         {

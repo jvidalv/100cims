@@ -19,6 +19,7 @@ export const userKeys = {
   search: (query: string) => ["user", "search", query] as const,
   people: () => ["user", "people"] as const,
   saved: () => ["user", "saved"] as const,
+  savedRoutes: () => ["user", "saved-routes"] as const,
 };
 
 // Challenge keys
@@ -71,6 +72,7 @@ export const planKeys = {
   countNew: (userId?: string) => ["plan", "count-new", userId] as const,
   byMountain: (mountainSlug: string) =>
     ["plan", "by-mountain", mountainSlug] as const,
+  featured: (params?: object) => ["plan", "featured", params] as const,
 };
 
 // Hiscores keys
@@ -104,4 +106,12 @@ export const calendarKeys = {
 export const organizationKeys = {
   all: ["organization"] as const,
   one: (id: string) => ["organization", id] as const,
+};
+
+// Route keys
+export const routeKeys = {
+  all: ["route"] as const,
+  list: (params?: object) => ["route", "list", params] as const,
+  one: (id: string) => ["route", "one", id] as const,
+  byMountain: (slug: string) => ["route", "by-mountain", slug] as const,
 };

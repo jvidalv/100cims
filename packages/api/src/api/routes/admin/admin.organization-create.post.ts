@@ -47,6 +47,11 @@ export const adminOrganizationCreatePostRoute = new Elysia().post(
       description: normalizeOptional(body.description),
       websiteUrl: normalizeOptional(body.websiteUrl),
       imageUrl,
+      instagramUrl: normalizeOptional(body.instagramUrl),
+      tiktokUrl: normalizeOptional(body.tiktokUrl),
+      whatsappUrl: normalizeOptional(body.whatsappUrl),
+      youtubeUrl: normalizeOptional(body.youtubeUrl),
+      stravaUrl: normalizeOptional(body.stravaUrl),
     });
 
     return { success: true, message: { id: organizationId } };

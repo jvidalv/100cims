@@ -11,6 +11,7 @@ import {
   Info,
   List,
   MessageCircle,
+  Route as RouteIcon,
   User,
   UsersRound,
   type LucideIcon as LucideIconType,
@@ -63,6 +64,11 @@ export default function UserIndexScreen() {
       icon: Bookmark,
       text: intl.formatMessage({ defaultMessage: "My saved mountains" }),
       onPress: () => router.push("/user/saved"),
+    },
+    {
+      icon: RouteIcon,
+      text: intl.formatMessage({ defaultMessage: "Saved routes" }),
+      onPress: () => router.push("/user/saved-routes"),
     },
     {
       icon: Backpack,

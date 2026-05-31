@@ -6,15 +6,13 @@ import {
   CircleDot,
   Eye,
   Map as MapIcon,
-  MessageCircle,
-  Mountain as MountainIcon,
   Share as ShareIcon,
   Trophy,
   X,
 } from "lucide-react-native";
 import { useColorScheme } from "nativewind";
 import { FormattedMessage, useIntl } from "react-intl";
-import { Alert, Linking, StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { twMerge } from "tailwind-merge";
 
@@ -22,7 +20,6 @@ import { BlurView, LucideIcon, ThemedText } from "@/components/ui/atoms";
 import { Image } from "@/components/ui/atoms/image";
 import { ActionRow } from "@/components/ui/molecules/action-row";
 import { useMountainOne } from "@/domains/mountain/mountain.api";
-import { useTopMountainComments } from "@/domains/mountain-comments/mountain-comments.api";
 import {
   useIsMountainSaved,
   useSavedAddMutation,
@@ -49,7 +46,6 @@ interface Props {
  * close button or outside the card.
  */
 export const MountainPreviewCard = ({ preview, onClose }: Props) => {
-  const intl = useIntl();
   const insets = useSafeAreaInsets();
   const { colorScheme } = useColorScheme();
   // BlurView's `tint` decides whether the frosted backdrop reads as dark
@@ -74,7 +70,6 @@ export const MountainPreviewCard = ({ preview, onClose }: Props) => {
   // in until the query resolves.
   const name = mountain?.name ?? fallback?.name ?? "";
   const height = mountain?.height ?? fallback?.height ?? "";
-  const location = mountain?.location ?? fallback?.location ?? "";
   const imageUrl = mountain?.imageUrl ?? fallback?.imageUrl ?? null;
   const essential = mountain?.essential ?? fallback?.essential ?? false;
   const mountainId = mountain?.id;
@@ -102,13 +97,9 @@ export const MountainPreviewCard = ({ preview, onClose }: Props) => {
           mountainId={mountainId}
           name={name}
           height={height}
-          location={location}
           imageUrl={imageUrl}
           essential={essential}
-          latitude={mountain?.latitude ?? null}
-          longitude={mountain?.longitude ?? null}
           onClose={onClose}
-          intlLocale={intl.locale}
         />
       </BlurView>
     </View>
@@ -120,25 +111,17 @@ const CardContents = ({
   mountainId,
   name,
   height,
-  location,
   imageUrl,
   essential,
-  latitude,
-  longitude,
   onClose,
-  intlLocale,
 }: {
   slug: string;
   mountainId: string | undefined;
   name: string;
   height: string;
-  location: string;
   imageUrl: string | null;
   essential: boolean;
-  latitude: string | null;
-  longitude: string | null;
   onClose: () => void;
-  intlLocale: string;
 }) => {
   const intl = useIntl();
   const isSaved = useIsMountainSaved(mountainId);
@@ -146,11 +129,6 @@ const CardContents = ({
   const { mutate: removeSaved, isPending: isRemoving } =
     useSavedRemoveMutation();
 
-  // Top comments query fetches the same shape the detail page uses, so the
-  // cache stays warm. `items` is just the top-N preview; `total` is the
-  // full count we want to surface in the action row.
-  const { data: comments } = useTopMountainComments(mountainId);
-  const commentsCount = comments?.total ?? 0;
   // Whether the viewer has already summited this mountain — drives the
   // wording of the Summit action row ("Mark as summited" vs "again").
   const { data: userSummits } = useUserChallengeSummits();
@@ -178,41 +156,27 @@ const CardContents = ({
     }
   };
 
-  const handleOpenWikiloc = () => {
-    const subdomain =
-      intlLocale === "ca" || intlLocale === "es" ? intlLocale : "en";
-    void Linking.openURL(
-      `https://${subdomain}.wikiloc.com/wikiloc/map.do?q=${encodeURIComponent(
-        `${name}, ${location}`,
-      )}&fitMapToTrails=1&page=1`,
-    );
-  };
-
-  const handleOpenMaps = () => {
-    if (!latitude || !longitude) {
-      // useMountainOne hasn't resolved yet — surface the wait rather than
-      // firing a malformed URL. With a warm cache this branch is unreachable.
-      Alert.alert(
-        intl.formatMessage({ defaultMessage: "Still loading" }),
-        intl.formatMessage({
-          defaultMessage: "Hold on a moment, then try again.",
-        }),
-      );
-      return;
-    }
-    void Linking.openURL(
-      `https://www.google.es/maps?q=${latitude},${longitude}`,
-    );
-  };
-
   return (
     <View>
       {imageUrl && (
-        <Image
-          source={{ uri: imageUrl, cache: "force-cache" }}
-          style={styles.image}
-          resizeMode="cover"
-        />
+        <Link
+          href={{ pathname: "/mountain/[slug]", params: { slug } }}
+          asChild
+        >
+          <TouchableOpacity
+            onPress={onClose}
+            activeOpacity={0.85}
+            accessibilityLabel={intl.formatMessage({
+              defaultMessage: "View mountain",
+            })}
+          >
+            <Image
+              source={{ uri: imageUrl, cache: "force-cache" }}
+              style={styles.image}
+              resizeMode="cover"
+            />
+          </TouchableOpacity>
+        </Link>
       )}
 
       {/* Floating top-left actions on the image: View (→ detail page) +
@@ -261,35 +225,53 @@ const CardContents = ({
         <LucideIcon icon={X} size={16} />
       </TouchableOpacity>
 
-      <View className="gap-3 p-4">
-        <View className="gap-1">
-          <ThemedText className="text-xl font-semibold" numberOfLines={1}>
-            {name}
-          </ThemedText>
-          {/* Height + essential. Location dropped — the map view already
-              shows where the mountain is, restating it is noise. */}
-          <View className="flex-row items-center gap-3">
-            <View className="flex-row items-center gap-1.5">
-              <LucideIcon icon={ArrowUp} size={12} muted />
-              <ThemedText className="text-sm text-muted-foreground">
-                {height}m
+      {/* Solid-ish background under the text + action rows. The frosted
+          BlurView alone gives the text too little contrast against busy
+          satellite terrain (mountain green/blue), so we layer an extra
+          translucent fill — bg-background/80 picks the theme's foreground
+          contrast color and ThemedText then reads cleanly on top. */}
+      <View className="gap-3 bg-background/30 p-4">
+        <Link
+          href={{ pathname: "/mountain/[slug]", params: { slug } }}
+          asChild
+        >
+          <TouchableOpacity
+            onPress={onClose}
+            activeOpacity={0.7}
+            accessibilityLabel={intl.formatMessage({
+              defaultMessage: "View mountain",
+            })}
+          >
+            <View className="gap-1">
+              <ThemedText className="text-xl font-semibold" numberOfLines={1}>
+                {name}
               </ThemedText>
-            </View>
-            {essential && (
-              <View className="flex-row items-center gap-1.5">
-                <LucideIcon icon={CircleDot} size={12} primary />
-                <ThemedText className="text-sm text-muted-foreground">
-                  <FormattedMessage defaultMessage="Essential" />
-                </ThemedText>
+              {/* Height + essential. Location dropped — the map view already
+                  shows where the mountain is, restating it is noise. */}
+              <View className="flex-row items-center gap-3">
+                <View className="flex-row items-center gap-1.5">
+                  <LucideIcon icon={ArrowUp} size={12} muted />
+                  <ThemedText className="text-sm text-muted-foreground">
+                    {height}m
+                  </ThemedText>
+                </View>
+                {essential && (
+                  <View className="flex-row items-center gap-1.5">
+                    <LucideIcon icon={CircleDot} size={12} primary />
+                    <ThemedText className="text-sm text-muted-foreground">
+                      <FormattedMessage defaultMessage="Essential" />
+                    </ThemedText>
+                  </View>
+                )}
               </View>
-            )}
-          </View>
-        </View>
+            </View>
+          </TouchableOpacity>
+        </Link>
 
-        {/* Four small ActionRows, gap-2 between them. Order: Mark as
-            summited (primary CTA) → Comments → Wikiloc → Maps. Wording on
-            the summit row flips once the viewer has already summited this
-            peak so they know they're logging a repeat ascent. */}
+        {/* Two small ActionRows, gap-2 between them. Order: Mark as
+            summited (primary CTA) → Routes. Wording on the summit row
+            flips once the viewer has already summited this peak so they
+            know they're logging a repeat ascent. */}
         <View className="gap-2">
           <Link
             href={{
@@ -313,28 +295,15 @@ const CardContents = ({
           </Link>
           <Link
             href={{
-              pathname: "/mountain/[slug]/comments",
+              pathname: "/mountain/[slug]/routes",
               params: { slug },
             }}
             asChild
           >
-            <ActionRow icon={MessageCircle} size="sm" onPress={onClose}>
-              <FormattedMessage
-                defaultMessage="Comments ({count})"
-                values={{ count: commentsCount }}
-              />
+            <ActionRow icon={MapIcon} size="sm" onPress={onClose}>
+              <FormattedMessage defaultMessage="Routes" />
             </ActionRow>
           </Link>
-          <ActionRow
-            icon={MountainIcon}
-            size="sm"
-            onPress={handleOpenWikiloc}
-          >
-            <FormattedMessage defaultMessage="Wikiloc" />
-          </ActionRow>
-          <ActionRow icon={MapIcon} size="sm" onPress={handleOpenMaps}>
-            <FormattedMessage defaultMessage="Maps" />
-          </ActionRow>
         </View>
       </View>
     </View>

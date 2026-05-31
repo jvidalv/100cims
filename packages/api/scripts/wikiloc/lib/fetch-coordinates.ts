@@ -107,12 +107,25 @@ export const interceptCoordinatesDuringNav = async (
   page.on("response", onResponse);
 
   try {
-    const response = await page.goto(navUrl, {
-      waitUntil: "networkidle",
-      timeout: 60_000,
-    });
+    // Primary nav: `networkidle` + 30s. Catches the geojson XHR via the
+    // response listener above.
+    let response = await page
+      .goto(navUrl, { waitUntil: "networkidle", timeout: 30_000 })
+      .catch(() => null);
+    // Fallback: tracking pixels can keep the network "busy" past 30s even
+    // when the page itself loaded fine. Retry with `domcontentloaded`,
+    // which is much more reliable; we lose the XHR intercept window but
+    // the global `window.coordinates` / `window.geojson` fallback below
+    // still picks the polyline up.
+    if (!response) {
+      response = await page
+        .goto(navUrl, { waitUntil: "domcontentloaded", timeout: 30_000 })
+        .catch(() => null);
+    }
     if (!response || response.status() >= 400) {
-      throw new Error(`Trail page nav failed: ${response?.status() ?? "no response"}`);
+      throw new Error(
+        `Trail page nav failed: ${response?.status() ?? "no response"}`,
+      );
     }
   } finally {
     // Always detach so later evaluate() calls on the same page don't keep

@@ -4,6 +4,11 @@ import { useAuth } from "@/components/providers/auth-provider";
 import { queryClient } from "@/components/providers/query-client-provider";
 import apiClient from "@/lib/api-client";
 
+import type { paths } from "@/types/api";
+
+type ChatSendBody =
+  paths["/api/protected/plans/chat/send"]["post"]["requestBody"]["content"]["application/json"];
+
 export const usePlanChatRead = () => {
   const { isAuthenticated } = useAuth();
   return useMutation({
@@ -48,14 +53,19 @@ export const usePlanChatUnread = () => {
   });
 };
 
-export const usePlanChatMessages = (planId: string) => {
+export const usePlanChatMessages = (planId: string | undefined) => {
   const { isAuthenticated } = useAuth();
 
   return useQuery({
-    queryKey: ["plan-chat", "messages", planId],
-    enabled: () => isAuthenticated,
+    queryKey: ["plan-chat", "messages", planId ?? ""],
+    // NativeTabs eager-mounts sibling tabs before the route-param binding
+    // resolves, so `planId` is briefly undefined even though the type from
+    // useGlobalSearchParams promises a string. Gate on `planId` to avoid
+    // the server's 422 spam during that window. See memory
+    // `feedback_react_query_enabled_guards`.
+    enabled: () => isAuthenticated && !!planId,
     queryFn: async () => {
-      if (!isAuthenticated) return null;
+      if (!isAuthenticated || !planId) return null;
       const { data, error } = await apiClient.GET(
         "/api/protected/plans/chat/all",
         { params: { query: { planId } } },
@@ -79,7 +89,7 @@ export const usePlanChatMessages = (planId: string) => {
 export const usePlanChatSendMessage = () => {
   return useMutation({
     mutationKey: ["plan-chat", "send"],
-    mutationFn: async (input: { planId: string; message: string }) => {
+    mutationFn: async (input: ChatSendBody) => {
       const { data, error } = await apiClient.POST(
         "/api/protected/plans/chat/send",
         { body: input },

@@ -1,9 +1,13 @@
 import * as Linking from "expo-linking";
-import { useGlobalSearchParams } from "expo-router";
+import { Redirect, useGlobalSearchParams, useRouter } from "expo-router";
 import {
+  Bookmark,
+  BookmarkCheck,
   Car,
   Clock,
   Hourglass,
+  Lock,
+  LockOpen,
   Mountain,
   Repeat,
   Route as RouteIcon,
@@ -12,7 +16,6 @@ import {
   TrendingUp,
   TriangleAlert,
 } from "lucide-react-native";
-import type { LucideIcon as LucideIconType } from "lucide-react-native";
 import { useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
@@ -23,12 +26,13 @@ import {
   View,
 } from "react-native";
 
+import { useAuth } from "@/components/providers/auth-provider";
 import { ExternalSourceIcon } from "@/components/route/external-source-icon";
 import { RouteElevationChart } from "@/components/route/route-elevation-chart";
 import { RouteMap } from "@/components/route/route-map";
 import {
-  Avatar,
   LucideIcon,
+  Skeleton,
   ThemedText,
   ThemedView,
   tierColor,
@@ -36,9 +40,10 @@ import {
 import {
   ActionRow,
   BlurredScreenHeader,
+  MountainRowMinimal,
   useBlurredScreenHeaderHeight,
 } from "@/components/ui/molecules";
-import { useRouteByTrailId } from "@/domains/route/route.api";
+import { useRouteById } from "@/domains/route/route.api";
 import {
   difficultyPosition,
   formatDifficulty,
@@ -46,73 +51,127 @@ import {
   formatKm,
   formatMeters,
   isLoopRoute,
+  pickLocalizedDescription,
   pickLocalizedTitle,
 } from "@/domains/route/route.format";
+import {
+  useIsRouteSaved,
+  useSavedRouteAddMutation,
+  useSavedRouteRemoveMutation,
+} from "@/domains/saved/saved-routes.api";
 import { shareDeeplink } from "@/lib/share";
 
-import type { MountainRoute, TrailType } from "@/domains/route/route.types";
-
-const authorSearchUrl = (route: MountainRoute): string => {
-  if (route.source === "wikiloc" && route.author) {
-    return `https://www.wikiloc.com/wikiloc/find.do?q=${encodeURIComponent(route.author)}`;
-  }
-  return route.url;
-};
-
-const initialsFor = (name: string): string => {
-  const parts = name.trim().split(/\s+/).filter(Boolean);
-  if (parts.length === 0) return "?";
-  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-};
+import type { TrailType } from "@/domains/route/route.types";
+import type { MountainData } from "@/types/mountain";
+import type { LucideIcon as LucideIconType } from "lucide-react-native";
 
 export default function RouteDetailScreen() {
   const intl = useIntl();
+  const router = useRouter();
   const { slug, routeId } = useGlobalSearchParams<{
     slug: string;
     routeId: string;
   }>();
-  const route = useRouteByTrailId(slug, routeId);
+  // Routes data is gated to authenticated users (the underlying endpoint
+  // lives under /api/protected/routes). Skip the fetch when signed out so
+  // it doesn't 401.
+  const { isAuthenticated } = useAuth();
+  const { data: route, isLoading } = useRouteById(
+    isAuthenticated ? routeId : undefined,
+  );
   const headerHeight = useBlurredScreenHeaderHeight();
+
+  // Save/unsave bookmarks mirror the mountain-detail save flow. The
+  // `useIsRouteSaved` hook reads the saved-routes query cache so it stays
+  // in sync with the saved-routes screen without a separate per-route fetch.
+  const isSaved = useIsRouteSaved(route?.id);
+  const savedAddMutation = useSavedRouteAddMutation();
+  const savedRemoveMutation = useSavedRouteRemoveMutation();
   // Map starts locked: an overlay above the MapView absorbs touches so a
   // tap or short drag scrolls the parent ScrollView normally. Long-press
   // unlocks it. This sidesteps the common "I tried to scroll the page but
   // the map captured my pan" problem on embedded maps.
   const [mapUnlocked, setMapUnlocked] = useState(false);
-  // Description collapses to 3 lines by default. Wikiloc descriptions are
-  // commonly 1–2KB of author prose and would otherwise push the rest of the
-  // screen far below the fold.
+  // Description collapses to its first paragraph by default. Wikiloc bodies
+  // are commonly 1–2KB of author prose and would otherwise push the rest of
+  // the screen far below the fold. Splitting on the first blank line keeps
+  // a complete thought above the fold instead of slicing mid-sentence at an
+  // arbitrary line count.
   const [descriptionExpanded, setDescriptionExpanded] = useState(false);
+
+  if (!isAuthenticated) {
+    return <Redirect href="/join" />;
+  }
 
   if (!route) {
     return (
       <ThemedView className="flex-1">
         <BlurredScreenHeader>
-          <FormattedMessage defaultMessage="Route" />
-        </BlurredScreenHeader>
-        <View
-          className="flex-1 items-center justify-center px-6"
-          style={{ paddingTop: headerHeight }}
-        >
-          <ThemedText className="text-center text-muted-foreground">
-            <FormattedMessage defaultMessage="Route not found." />
+          <ThemedText
+            numberOfLines={1}
+            className="max-w-56 text-lg font-medium"
+          >
+            <FormattedMessage defaultMessage="Route" />
           </ThemedText>
-        </View>
+        </BlurredScreenHeader>
+        {isLoading ? (
+          <RouteDetailSkeleton headerHeight={headerHeight} />
+        ) : (
+          <View
+            className="flex-1 items-center justify-center px-6"
+            style={{ paddingTop: headerHeight }}
+          >
+            <ThemedText className="text-center text-muted-foreground">
+              <FormattedMessage defaultMessage="Route not found." />
+            </ThemedText>
+          </View>
+        )}
       </ThemedView>
     );
   }
 
   const title = pickLocalizedTitle(route, intl);
+  const description = pickLocalizedDescription(route, intl);
   // If Wikiloc gave us a trailType use it, otherwise infer loop from geometry.
   const effectiveType: TrailType | null =
     route.trailType ?? (isLoopRoute(route) ? "loop" : null);
   const isLoop = effectiveType === "loop";
 
+  const handleToggleSaved = () => {
+    if (!route.id) return;
+    if (isSaved) {
+      savedRemoveMutation.mutate({ routeId: route.id });
+      return;
+    }
+    savedAddMutation.mutate({ routeId: route.id });
+    Alert.alert(
+      intl.formatMessage({ defaultMessage: "Saved for later" }),
+      intl.formatMessage(
+        { defaultMessage: "{name} is on your saved routes list." },
+        { name: title },
+      ),
+      [
+        {
+          text: intl.formatMessage({ defaultMessage: "OK" }),
+          style: "cancel",
+        },
+        {
+          text: intl.formatMessage({ defaultMessage: "View saved" }),
+          onPress: () => router.push("/user/saved-routes"),
+        },
+      ],
+    );
+  };
+
   const handleShare = async (): Promise<void> => {
     if (!slug) return;
+    // Share the DB id (when present); the detail screen + /one endpoint
+    // both look up by uuid. External id is a Wikiloc identifier that the
+    // server can't resolve.
+    const routeIdentifier = route.id ?? route.externalId;
     await shareDeeplink({
       intl,
-      path: `mountain/${slug}/routes/${route.externalId}`,
+      path: `mountain/${slug}/routes/${routeIdentifier}`,
       messages: {
         en: `🥾 Check out this route up ${title} on cims!`,
         es: `🥾 Mira esta ruta ${title} en cims!`,
@@ -278,9 +337,9 @@ export default function RouteDetailScreen() {
           paddingBottom: 96,
         }}
       >
-        {/* Top block: title only, then a 2-col stats grid. Author chip moved
-            to the "Made by" section near the bottom. Stat sizing mirrors the
-            mountain detail header (text-xl font-medium with muted icons). */}
+        {/* Top block: title only, then a 2-col stats grid. Stat sizing
+            mirrors the mountain detail header (text-xl font-medium with
+            muted icons). */}
         <View className="gap-4 px-4 pt-2">
           <ThemedText className="text-2xl font-semibold leading-snug">
             {title}
@@ -339,6 +398,18 @@ export default function RouteDetailScreen() {
             </ActionRow>
           ) : null}
           <ActionRow
+            onPress={handleToggleSaved}
+            icon={isSaved ? BookmarkCheck : Bookmark}
+            intent={isSaved ? "emerald" : "muted"}
+            size="sm"
+          >
+            {isSaved ? (
+              <FormattedMessage defaultMessage="Saved" />
+            ) : (
+              <FormattedMessage defaultMessage="Save for later" />
+            )}
+          </ActionRow>
+          <ActionRow
             onPress={() => void handleShare()}
             icon={ShareIcon}
             intent="muted"
@@ -348,34 +419,48 @@ export default function RouteDetailScreen() {
           </ActionRow>
         </View>
 
-        {route.descriptionRaw ? (
+        {description ? (
           <View className="mt-8 gap-3 px-4">
             <ThemedText className="text-2xl font-semibold">
               <FormattedMessage defaultMessage="Description" />
             </ThemedText>
-            {/* Author's prose scraped from Wikiloc. Collapsed to 3 lines by
-                default — Wikiloc descriptions are often a wall of text and we
-                don't want them dominating the screen. `numberOfLines` is the
-                cheap clip; toggle reveals the full content. */}
-            <ThemedText
-              numberOfLines={descriptionExpanded ? undefined : 3}
-              className="leading-relaxed text-muted-foreground"
-            >
-              {route.descriptionRaw}
-            </ThemedText>
-            <TouchableOpacity
-              onPress={() => setDescriptionExpanded((v) => !v)}
-              activeOpacity={0.6}
-              className="self-start"
-            >
-              <ThemedText className="text-sm font-semibold text-primary">
-                {descriptionExpanded ? (
-                  <FormattedMessage defaultMessage="View less" />
-                ) : (
-                  <FormattedMessage defaultMessage="View more" />
-                )}
-              </ThemedText>
-            </TouchableOpacity>
+            {/* Prefer the Gemini-rewritten summary (lean, paragraphed, locale-
+                appropriate). Falls back to raw Wikiloc prose for older
+                scraper output. Collapsed to the first paragraph. */}
+            {(() => {
+              // Split on the first blank line ("\n\n"). If there isn't one,
+              // fall back to the first newline so single-newline-separated
+              // bodies still collapse. If neither matches we have a single
+              // paragraph and the toggle hides itself.
+              const blankIdx = description.indexOf("\n\n");
+              const splitIdx =
+                blankIdx >= 0 ? blankIdx : description.indexOf("\n");
+              const firstParagraph =
+                splitIdx >= 0 ? description.slice(0, splitIdx).trim() : description;
+              const hasMore = splitIdx >= 0 && splitIdx < description.length - 1;
+              return (
+                <>
+                  <ThemedText className="leading-relaxed text-muted-foreground">
+                    {descriptionExpanded ? description : firstParagraph}
+                  </ThemedText>
+                  {hasMore && (
+                    <TouchableOpacity
+                      onPress={() => setDescriptionExpanded((v) => !v)}
+                      activeOpacity={0.6}
+                      className="self-start"
+                    >
+                      <ThemedText className="text-sm font-semibold text-primary">
+                        {descriptionExpanded ? (
+                          <FormattedMessage defaultMessage="View less" />
+                        ) : (
+                          <FormattedMessage defaultMessage="View more" />
+                        )}
+                      </ThemedText>
+                    </TouchableOpacity>
+                  )}
+                </>
+              );
+            })()}
           </View>
         ) : null}
 
@@ -395,6 +480,11 @@ export default function RouteDetailScreen() {
                     needed because the screen unmounts. `delayLongPress` is
                     400ms — long enough to disambiguate from a scroll start. */}
                 {!mapUnlocked ? (
+                  // Locked: full-bleed Pressable absorbs touches; long-press
+                  // unlocks. The badge sits in the top-left corner (inside
+                  // the Pressable's bounds, so a tap on it still counts as
+                  // a tap on the gate — which does nothing — and only a
+                  // long-press unlocks).
                   <Pressable
                     onLongPress={() => setMapUnlocked(true)}
                     delayLongPress={400}
@@ -406,7 +496,11 @@ export default function RouteDetailScreen() {
                       bottom: 0,
                     }}
                   >
-                    <View className="absolute bottom-3 self-center rounded-full bg-background/85 px-3 py-1.5">
+                    <View
+                      style={{ position: "absolute", top: 8, left: 8 }}
+                      className="flex-row items-center gap-1.5 rounded-full bg-background/85 px-3 py-1.5"
+                    >
+                      <LucideIcon icon={Lock} size={12} />
                       <ThemedText className="text-xs font-medium">
                         <FormattedMessage defaultMessage="Hold to interact with map" />
                       </ThemedText>
@@ -416,9 +510,10 @@ export default function RouteDetailScreen() {
                   <TouchableOpacity
                     onPress={() => setMapUnlocked(false)}
                     activeOpacity={0.8}
-                    style={{ position: "absolute", top: 8, right: 8 }}
-                    className="rounded-full bg-background/85 px-3 py-1.5"
+                    style={{ position: "absolute", top: 8, left: 8 }}
+                    className="flex-row items-center gap-1.5 rounded-full bg-background/85 px-3 py-1.5"
                   >
+                    <LucideIcon icon={LockOpen} size={12} />
                     <ThemedText className="text-xs font-medium">
                       <FormattedMessage defaultMessage="Lock map" />
                     </ThemedText>
@@ -435,6 +530,19 @@ export default function RouteDetailScreen() {
           </View>
         </View>
 
+        {route.mountains && route.mountains.length > 0 ? (
+          <View className="mt-8 gap-3 px-4">
+            <ThemedText className="text-2xl font-semibold">
+              {route.mountains.length > 1 ? (
+                <FormattedMessage defaultMessage="Summits" />
+              ) : (
+                <FormattedMessage defaultMessage="Summit" />
+              )}
+            </ThemedText>
+            <SummitsList mountains={route.mountains} />
+          </View>
+        ) : null}
+
         <View className="mt-8 gap-3 px-4">
           <ThemedText className="text-2xl font-semibold">
             <FormattedMessage defaultMessage="Elevation profile" />
@@ -448,24 +556,6 @@ export default function RouteDetailScreen() {
           )}
         </View>
 
-        {route.author ? (
-          <View className="mt-8 gap-3 px-4">
-            <ThemedText className="text-2xl font-semibold">
-              <FormattedMessage defaultMessage="Made by" />
-            </ThemedText>
-            <ActionRow
-              onPress={() => void Linking.openURL(authorSearchUrl(route))}
-              icon={RouteIcon}
-              iconOverride={
-                <Avatar size="xs" initials={initialsFor(route.author)} />
-              }
-              intent="muted"
-              size="sm"
-            >
-              {route.author}
-            </ActionRow>
-          </View>
-        ) : null}
       </ScrollView>
     </ThemedView>
   );
@@ -518,5 +608,88 @@ const StatTile = ({ icon, label, info, tint }: StatTileProps) => (
       {label}
     </ThemedText>
   </TouchableOpacity>
+);
+
+// Renders one MountainRowMinimal per mountain the route summits. Each row
+// taps through to that mountain's detail page, matching the visual of the
+// mountain-detail screen's mountain rows. Mountain data comes embedded on
+// the route response — no `useMountains` round-trip needed.
+const SummitsList = ({ mountains }: { mountains: MountainData[] }) => (
+  <View className="gap-2">
+    {mountains.map((m) => (
+      <MountainRowMinimal
+        key={m.slug}
+        slug={m.slug}
+        name={m.name}
+        height={m.height}
+        imageUrl={m.imageUrl}
+        essential={m.essential}
+      />
+    ))}
+  </View>
+);
+
+// Structural skeleton that matches the loaded route detail layout: title +
+// 3 stat rows + action rows + description block + map placeholder + summit
+// row. The shapes mirror the real components so the layout doesn't shift
+// when data lands.
+const RouteDetailSkeleton = ({ headerHeight }: { headerHeight: number }) => (
+  <ScrollView
+    contentContainerStyle={{ paddingTop: headerHeight, paddingBottom: 96 }}
+  >
+    <View className="gap-4 px-4 pt-2">
+      <Skeleton className="h-7 w-3/4 rounded" />
+      <View className="gap-3">
+        <View className="flex-row gap-5">
+          <Skeleton className="h-7 w-24 rounded" />
+          <Skeleton className="h-7 w-28 rounded" />
+        </View>
+        <View className="flex-row gap-5">
+          <Skeleton className="h-7 w-20 rounded" />
+          <Skeleton className="h-7 w-20 rounded" />
+          <Skeleton className="h-7 w-24 rounded" />
+        </View>
+        <View className="flex-row gap-5">
+          <Skeleton className="h-7 w-20 rounded" />
+          <Skeleton className="h-7 w-20 rounded" />
+        </View>
+      </View>
+    </View>
+
+    <View className="mt-8 gap-3 px-4">
+      <Skeleton className="h-7 w-24 rounded" />
+      <Skeleton className="h-12 w-full rounded-xl" />
+      <Skeleton className="h-12 w-full rounded-xl" />
+      <Skeleton className="h-12 w-full rounded-xl" />
+    </View>
+
+    <View className="mt-8 gap-3 px-4">
+      <Skeleton className="h-7 w-32 rounded" />
+      <Skeleton className="h-4 w-full rounded" />
+      <Skeleton className="h-4 w-11/12 rounded" />
+      <Skeleton className="h-4 w-9/12 rounded" />
+    </View>
+
+    <View className="mt-8 gap-3 px-4">
+      <Skeleton className="h-7 w-16 rounded" />
+      <Skeleton className="w-full rounded-xl" style={{ height: 320 }} />
+    </View>
+
+    <View className="mt-8 gap-3 px-4">
+      <Skeleton className="h-7 w-24 rounded" />
+      <View className="flex-row items-center gap-3">
+        <Skeleton className="size-10 rounded" />
+        <View className="flex-1 gap-1">
+          <Skeleton className="h-4 w-3/5 rounded" />
+          <Skeleton className="h-3 w-1/3 rounded" />
+        </View>
+      </View>
+    </View>
+
+    <View className="mt-8 gap-3 px-4">
+      <Skeleton className="h-7 w-40 rounded" />
+      <Skeleton className="h-32 w-full rounded-xl" />
+    </View>
+  </ScrollView>
 );
 

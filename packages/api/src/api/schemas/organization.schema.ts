@@ -19,6 +19,13 @@ export const OrganizationDetailSchema = t.Object({
   description: t.Nullable(t.String()),
   websiteUrl: t.Nullable(t.String()),
   imageUrl: t.Nullable(t.String()),
+  // Social URLs — null when the org hasn't filled that platform in.
+  // Mobile renders them as a row of tappable icons on /organization/[id].
+  instagramUrl: t.Nullable(t.String()),
+  tiktokUrl: t.Nullable(t.String()),
+  whatsappUrl: t.Nullable(t.String()),
+  youtubeUrl: t.Nullable(t.String()),
+  stravaUrl: t.Nullable(t.String()),
   createdAt: t.Date(),
   members: t.Array(OrganizationMemberSchema),
 });

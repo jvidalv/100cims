@@ -42,6 +42,11 @@ export const AdminOrganizationDetailSchema = t.Object({
   description: t.Nullable(t.String()),
   websiteUrl: t.Nullable(t.String()),
   imageUrl: t.Nullable(t.String()),
+  instagramUrl: t.Nullable(t.String()),
+  tiktokUrl: t.Nullable(t.String()),
+  whatsappUrl: t.Nullable(t.String()),
+  youtubeUrl: t.Nullable(t.String()),
+  stravaUrl: t.Nullable(t.String()),
   createdAt: t.Date(),
   updatedAt: t.Date(),
   members: t.Array(AdminOrganizationMemberSchema),
@@ -52,6 +57,11 @@ export const AdminOrganizationCreateBodySchema = t.Object({
   description: t.Optional(t.String()),
   websiteUrl: t.Optional(t.String()),
   imageUrl: t.Optional(t.String()),
+  instagramUrl: t.Optional(t.String()),
+  tiktokUrl: t.Optional(t.String()),
+  whatsappUrl: t.Optional(t.String()),
+  youtubeUrl: t.Optional(t.String()),
+  stravaUrl: t.Optional(t.String()),
 });
 
 export const AdminOrganizationUpdateBodySchema = t.Object({
@@ -59,6 +69,11 @@ export const AdminOrganizationUpdateBodySchema = t.Object({
   description: t.Optional(t.Nullable(t.String())),
   websiteUrl: t.Optional(t.Nullable(t.String())),
   imageUrl: t.Optional(t.Nullable(t.String())),
+  instagramUrl: t.Optional(t.Nullable(t.String())),
+  tiktokUrl: t.Optional(t.Nullable(t.String())),
+  whatsappUrl: t.Optional(t.Nullable(t.String())),
+  youtubeUrl: t.Optional(t.Nullable(t.String())),
+  stravaUrl: t.Optional(t.Nullable(t.String())),
 });
 
 export const AdminOrganizationMemberAddBodySchema = t.Object({

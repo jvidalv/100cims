@@ -4,7 +4,6 @@ import { ActivityIndicator, TouchableOpacity, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
 import { ThemedText } from "@/components/ui/atoms";
-import { useUpdateUserMeMutation } from "@/domains/user/user.api";
 import { type Locale, getLocale, setLocale } from "@/lib/locale";
 import { logError } from "@/lib/log-error";
 
@@ -56,16 +55,13 @@ const OPTIONS = [
 export const LanguagePicker = () => {
   const current = getLocale();
   const [pending, setPending] = useState<Locale | null>(null);
-  const { mutateAsync: updateUserMe } = useUpdateUserMeMutation();
 
   const onSelect = async (value: Locale) => {
     if (value === current || pending !== null) return;
     setPending(value);
-    try {
-      await updateUserMe({ locale: value });
-    } catch (error) {
-      logError(error);
-    }
+    // The /api/protected/user/me body schema doesn't accept `locale` —
+    // historically this call was a no-op the server silently dropped. The
+    // local `setLocale` below is what actually rotates the app's language.
     try {
       await setLocale(value);
     } catch (error) {

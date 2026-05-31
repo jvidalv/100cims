@@ -5,6 +5,8 @@ import { queryClient } from "@/components/providers/query-client-provider";
 import apiClient from "@/lib/api-client";
 import { calendarKeys, summitKeys, userKeys } from "@/lib/query-keys";
 
+import type { paths } from "@/types/api";
+
 export const SUMMITS_KEY = ({
   mountainId,
   limit,
@@ -255,10 +257,10 @@ export const useSummitReactions = ({ summitId }: { summitId: string }) => {
   });
 };
 
-type ReactionsData = {
-  reactions: { emoji: string; count: number }[];
-  userReactions: string[];
-};
+// Derived from the API's OpenAPI schema so the optimistic-update cache
+// shape stays in lockstep with the backend response.
+type ReactionsData =
+  paths["/api/protected/summit/reactions"]["get"]["responses"][200]["content"]["application/json"]["message"];
 
 export const useSummitReactionMutation = () => {
   return useMutation({

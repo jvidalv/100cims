@@ -1107,6 +1107,11 @@ export type AdminOrganizationCreateBody = {
   description?: string;
   websiteUrl?: string;
   imageUrl?: string;
+  instagramUrl?: string;
+  tiktokUrl?: string;
+  whatsappUrl?: string;
+  youtubeUrl?: string;
+  stravaUrl?: string;
 };
 
 export const useCreateAdminOrganization = () => {
@@ -1128,6 +1133,11 @@ export type AdminOrganizationUpdateBody = {
   description?: string | null;
   websiteUrl?: string | null;
   imageUrl?: string | null;
+  instagramUrl?: string | null;
+  tiktokUrl?: string | null;
+  whatsappUrl?: string | null;
+  youtubeUrl?: string | null;
+  stravaUrl?: string | null;
 };
 
 export const useUpdateAdminOrganization = (id: string) => {
@@ -1202,6 +1212,45 @@ export const useRemoveAdminOrganizationMember = (orgId: string) => {
     },
   });
 };
+
+export const useAdminRoutes = ({
+  page,
+  q,
+  mountainSlug,
+  multiPeak,
+}: {
+  page: number;
+  q: string;
+  mountainSlug: string;
+  multiPeak: boolean;
+}) =>
+  useQuery({
+    queryKey: adminKeys.routes({ page, q, mountainSlug, multiPeak }),
+    queryFn: async () => {
+      const { data, error } = await api.api.admin.routes.get({
+        query: {
+          page,
+          pageSize: 25,
+          q: q || undefined,
+          mountainSlug: mountainSlug || undefined,
+          multiPeak: multiPeak || undefined,
+        },
+      });
+      if (error) throw error;
+      return data.message;
+    },
+    placeholderData: (prev) => prev,
+  });
+
+export const useAdminRouteDetail = (id: string) =>
+  useQuery({
+    queryKey: adminKeys.routeDetail(id),
+    queryFn: async () => {
+      const { data, error } = await api.api.admin.routes({ id }).get();
+      if (error) throw error;
+      return data.message;
+    },
+  });
 
 // Promote/demote a participant inside a plan. Mirrors the (now-deleted)
 // org-side role hook but targets plan_has_users.role instead.

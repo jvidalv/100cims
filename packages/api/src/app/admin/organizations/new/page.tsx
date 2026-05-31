@@ -19,6 +19,11 @@ export default function AdminOrganizationNewPage() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [websiteUrl, setWebsiteUrl] = useState("");
+  const [instagramUrl, setInstagramUrl] = useState("");
+  const [tiktokUrl, setTiktokUrl] = useState("");
+  const [whatsappUrl, setWhatsappUrl] = useState("");
+  const [youtubeUrl, setYoutubeUrl] = useState("");
+  const [stravaUrl, setStravaUrl] = useState("");
   // `imageValue` is either null, a raw base64 payload (what the API
   // uploads to S3), or an http(s) URL (already-CDN-hosted image kept
   // as-is). Mirrors the plan create/edit pattern.
@@ -50,6 +55,11 @@ export default function AdminOrganizationNewPage() {
         description: description.trim() || undefined,
         websiteUrl: websiteUrl.trim() || undefined,
         imageUrl: imageValue ?? undefined,
+        instagramUrl: instagramUrl.trim() || undefined,
+        tiktokUrl: tiktokUrl.trim() || undefined,
+        whatsappUrl: whatsappUrl.trim() || undefined,
+        youtubeUrl: youtubeUrl.trim() || undefined,
+        stravaUrl: stravaUrl.trim() || undefined,
       },
       {
         onSuccess: ({ id }) => {
@@ -100,6 +110,48 @@ export default function AdminOrganizationNewPage() {
             onChange={(e) => setWebsiteUrl(e.target.value)}
             placeholder="https://…"
           />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="space-y-1">
+            <Label>Instagram URL</Label>
+            <Input
+              value={instagramUrl}
+              onChange={(e) => setInstagramUrl(e.target.value)}
+              placeholder="https://instagram.com/…"
+            />
+          </div>
+          <div className="space-y-1">
+            <Label>TikTok URL</Label>
+            <Input
+              value={tiktokUrl}
+              onChange={(e) => setTiktokUrl(e.target.value)}
+              placeholder="https://tiktok.com/@…"
+            />
+          </div>
+          <div className="space-y-1">
+            <Label>WhatsApp URL</Label>
+            <Input
+              value={whatsappUrl}
+              onChange={(e) => setWhatsappUrl(e.target.value)}
+              placeholder="https://chat.whatsapp.com/…"
+            />
+          </div>
+          <div className="space-y-1">
+            <Label>YouTube URL</Label>
+            <Input
+              value={youtubeUrl}
+              onChange={(e) => setYoutubeUrl(e.target.value)}
+              placeholder="https://youtube.com/@…"
+            />
+          </div>
+          <div className="space-y-1 md:col-span-2">
+            <Label>Strava URL</Label>
+            <Input
+              value={stravaUrl}
+              onChange={(e) => setStravaUrl(e.target.value)}
+              placeholder="https://strava.com/clubs/…"
+            />
+          </div>
         </div>
         <div className="space-y-2">
           <Label>Image</Label>

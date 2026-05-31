@@ -119,12 +119,7 @@ export default function PlansScreen() {
     return [...rawPlans].sort((a, b) => distanceOf(a) - distanceOf(b));
   })();
 
-  // Featured plans float to the top regardless of which secondary sort the
-  // user picked. Stable sort preserves the within-bucket order from above
-  // (either API order or distance-sorted).
-  const plans = [...filteredPlans].sort(
-    (a, b) => Number(b.featured ?? false) - Number(a.featured ?? false),
-  );
+  const plans = filteredPlans;
 
   const filters: { value: Filter; label: string; icon: typeof CalendarDays }[] =
     [

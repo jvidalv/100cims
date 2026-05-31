@@ -3,7 +3,7 @@ import { Circle, Path, Svg } from "react-native-svg";
 import type { RouteSource } from "@/domains/route/route.types";
 
 type Props = {
-  source: RouteSource;
+  source: RouteSource | null;
   size?: number;
 };
 
@@ -20,6 +20,9 @@ const PALETTE: Record<
 };
 
 export const ExternalSourceIcon = ({ source, size = 20 }: Props) => {
+  // Hide entirely when the source can't be identified — better than
+  // rendering a Wikiloc badge for what's actually a Strava route.
+  if (source === null) return null;
   const { disc, accent } = PALETTE[source];
   return (
     <Svg width={size} height={size} viewBox="0 0 64 64">

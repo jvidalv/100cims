@@ -37,7 +37,10 @@ export const createGeminiTextClient = (params: {
           contents: [{ role: "user", parts: [{ text: user }] }],
           generationConfig: {
             temperature: 0.3,
-            maxOutputTokens: 2000,
+            // 5 trails × 3 languages × ~120 words ≈ 2.7k tokens for the
+            // description rewrite; smaller for title rewrites. 8000 is well
+            // under any pricing tier yet leaves headroom for JSON structure.
+            maxOutputTokens: 8000,
             responseMimeType: "application/json",
             // Thinking tokens come out of the same budget as the visible
             // output. For structured rewrites we don't need reasoning, just

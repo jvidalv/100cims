@@ -101,6 +101,11 @@ export const planCreatePostRoute = new Elysia().post(
         userId: user.id,
         planId: plan.id,
         willBringDogs: false,
+        // Creators are the de-facto organizers of their own plan; without
+        // this the new mobile UI ("organizers first" sort + blue badge)
+        // would never highlight the creator on plans they made themselves
+        // until an admin manually promoted them.
+        role: "organizer",
       });
 
       const extraUserIds = Array.from(

@@ -758,6 +758,29 @@ export const userSavedMountainTable = pgTable(
   ],
 );
 
+// Mirrors `userSavedMountainTable` — the user-saved bookmark list, but for
+// routes (Wikiloc trails). Same join-table shape so the React Query plumbing
+// on the mobile side reads the same. Cascading on user OR route delete keeps
+// us from carrying dangling rows after either side disappears.
+export const userSavedRouteTable = pgTable(
+  "user_saved_route",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    userId: uuid()
+      .notNull()
+      .references(() => userTable.id, { onDelete: "cascade" }),
+    routeId: uuid()
+      .notNull()
+      .references(() => routeTable.id, { onDelete: "cascade" }),
+    createdAt: timestamp().notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("user_saved_user_route_unique").on(table.userId, table.routeId),
+    index("user_saved_route_user_id_idx").on(table.userId),
+    index("user_saved_route_route_id_idx").on(table.routeId),
+  ],
+);
+
 // Reddit-style threaded comments on mountains. Depth capped at 2 by the API
 // (reply to a reply gets re-parented to the top-level ancestor). Upvote
 // counts are denormalized here and kept in sync by recalcMountainCommentUpvoteCount
@@ -826,9 +849,126 @@ export const organizationTable = pgTable("organization", {
   description: text(),
   websiteUrl: text(),
   imageUrl: text(),
+  // Social URLs. All nullable — orgs only fill in the platforms they use.
+  // Mobile renders them as a row of social icons on /organization/[id];
+  // admin form has one Input per platform.
+  instagramUrl: text(),
+  tiktokUrl: text(),
+  whatsappUrl: text(),
+  youtubeUrl: text(),
+  stravaUrl: text(),
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp().notNull().defaultNow(),
 });
+
+// Locale-keyed string for routes (title + description). Same shape as the
+// LocalizedString helper on the app side; kept inline here so the schema
+// has no cross-package dependency.
+export type LocalizedString = {
+  en: string;
+  ca: string;
+  es: string;
+};
+
+// Hiking routes — currently sourced from Wikiloc scrapes (the original
+// data lived as static TypeScript files under
+// packages/app/domains/route/data; this table replaces those). Each row
+// is one route. Multi-mountain routes (a single GPS track that summits
+// several catalogued peaks) are joined via `mountain_route` below.
+export const routeTable = pgTable(
+  "route",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    // Stable ID from the source (Wikiloc trail id). Unique per source.
+    externalId: text().notNull(),
+    // Provenance tag — currently always "wikiloc". Lets us add Strava /
+    // user-submitted routes later without conflict.
+    source: text().notNull(),
+    url: text().notNull(),
+    // Author's original title (Wikiloc string, often noisy). Kept for
+    // attribution + as a fallback if the rewritten title is empty.
+    titleRaw: text().notNull(),
+    title: jsonb().notNull().$type<LocalizedString>(),
+    // Author's original description (raw Wikiloc prose). Nullable because
+    // some scrapes had empty descriptions; never shown directly in the UI.
+    descriptionRaw: text(),
+    // Locale-keyed editorial summary (en/ca/es). Nullable until the
+    // Gemini rewrite pass populates it.
+    description: jsonb().$type<LocalizedString>(),
+    author: text(),
+    distanceMeters: integer(),
+    elevationGainMeters: integer(),
+    elevationLossMeters: integer(),
+    maxElevationMeters: integer(),
+    minElevationMeters: integer(),
+    technicalDifficulty: text(),
+    trailType: text(),
+    movingTimeSeconds: integer(),
+    totalTimeSeconds: integer(),
+    coordinatesCount: integer(),
+    uploadedAt: text(),
+    recordedAt: text(),
+    // GPS track. Array of { lat, lng, ele } points. Stored as JSONB so we
+    // don't need a separate coordinate table — read+write are always for
+    // the whole track and route counts are bounded (~2k rows).
+    coordinates: jsonb().$type<{ lat: number; lng: number; ele?: number }[]>(),
+    createdAt: timestamp().notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("route_source_external_id_unq").on(
+      table.source,
+      table.externalId,
+    ),
+    index("route_distance_idx").on(table.distanceMeters),
+    index("route_trail_type_idx").on(table.trailType),
+  ],
+);
+
+// Many-to-many join: which catalogued mountains a route summits. Populated
+// by the geometric summit detector (packages/api/scripts/wikiloc/lib/
+// detect-summits-geometric.ts) — a route appears once per mountain it
+// passes within the threshold of. `ordinal` preserves the detector's
+// closest-approach order so the UI can show "primary summit" first.
+//
+// mountain_slug references mountain.slug (unique) rather than mountain.id
+// because routes were attributed by slug upstream and the slug is the
+// human-readable identifier. Cascade on delete so removing a mountain
+// also drops its route attributions.
+export const mountainRouteTable = pgTable(
+  "mountain_route",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    mountainSlug: text()
+      .notNull()
+      .references(() => mountainTable.slug, { onDelete: "cascade" }),
+    routeId: uuid()
+      .notNull()
+      .references(() => routeTable.id, { onDelete: "cascade" }),
+    ordinal: integer().notNull().default(0),
+  },
+  (table) => [
+    uniqueIndex("mountain_route_slug_route_unq").on(
+      table.mountainSlug,
+      table.routeId,
+    ),
+    index("mountain_route_slug_idx").on(table.mountainSlug),
+    index("mountain_route_route_id_idx").on(table.routeId),
+  ],
+);
+
+export const routeRelations = relations(routeTable, ({ many }) => ({
+  mountainRoutes: many(mountainRouteTable),
+}));
+
+export const mountainRouteRelations = relations(
+  mountainRouteTable,
+  ({ one }) => ({
+    route: one(routeTable, {
+      fields: [mountainRouteTable.routeId],
+      references: [routeTable.id],
+    }),
+  }),
+);
 
 // Many-to-many membership between users and organizations — flat list, no
 // per-membership role. The organizer/member distinction lives on

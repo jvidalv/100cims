@@ -12,6 +12,8 @@ import { adminChallengeDetailGetRoute } from "@/api/routes/admin/admin.challenge
 import { adminChallengeMountainsGetRoute } from "@/api/routes/admin/admin.challenge-mountains.get";
 import { adminChallengeUpdatePostRoute } from "@/api/routes/admin/admin.challenge-update.post";
 import { adminChallengesGetRoute } from "@/api/routes/admin/admin.challenges.get";
+import { adminRouteDetailGetRoute } from "@/api/routes/admin/admin.route-detail.get";
+import { adminRouteListGetRoute } from "@/api/routes/admin/admin.route-list.get";
 import { adminCouponCreatePostRoute } from "@/api/routes/admin/admin.coupon-create.post";
 import { adminCouponDeleteDeleteRoute } from "@/api/routes/admin/admin.coupon-delete.delete";
 import { adminCouponDetailGetRoute } from "@/api/routes/admin/admin.coupon-detail.get";
@@ -131,6 +133,8 @@ export const adminRoutes = new Elysia({ prefix: "/admin" })
   .use(adminChallengeUpdatePostRoute)
   .use(adminChallengeDeleteDeleteRoute)
   .use(adminChallengeMountainsGetRoute)
+  .use(adminRouteListGetRoute)
+  .use(adminRouteDetailGetRoute)
   .use(adminSummitsGetRoute)
   .use(adminSummitDetailGetRoute)
   .use(adminSummitUpdatePostRoute)

@@ -4,7 +4,16 @@ import { queryClient } from "@/components/providers/query-client-provider";
 import apiClient from "@/lib/api-client";
 import { communityChallengeKeys, mountainKeys } from "@/lib/query-keys";
 
+import type { paths } from "@/types/api";
 import type { NewMountainData } from "@/types/mountain";
+
+// Derived from the API's OpenAPI schemas so request shapes stay in lockstep
+// with the backend body validators.
+type CreateBody =
+  paths["/api/protected/community-challenge/create"]["post"]["requestBody"]["content"]["application/json"];
+type UpdateBody =
+  paths["/api/protected/community-challenge/update"]["post"]["requestBody"]["content"]["application/json"];
+export type InlineMountain = NonNullable<CreateBody["newMountains"]>[number];
 
 export const useCommunityChallengesList = (
   params?: { filter?: "mine" | "public" },
@@ -42,16 +51,6 @@ export const useCommunityChallengeDetail = (
   });
 };
 
-export type InlineMountain = {
-  name: string;
-  location: string;
-  height: number;
-  latitude: number;
-  longitude: number;
-  essential?: boolean;
-  image: string;
-};
-
 export const toInlineMountain = (m: NewMountainData): InlineMountain => ({
   name: m.name,
   location: m.location,
@@ -65,16 +64,7 @@ export const toInlineMountain = (m: NewMountainData): InlineMountain => ({
 export const useCommunityChallengeCreate = () => {
   return useMutation({
     mutationKey: ["community-challenge", "create"],
-    mutationFn: async (input: {
-      name: string;
-      country: string;
-      description?: string;
-      emoji?: string;
-      isPublic?: boolean;
-      image?: string;
-      mountainIds?: string[];
-      newMountains?: InlineMountain[];
-    }) => {
+    mutationFn: async (input: CreateBody) => {
       const { data, error } = await apiClient.POST(
         "/api/protected/community-challenge/create",
         { body: input }
@@ -92,17 +82,7 @@ export const useCommunityChallengeCreate = () => {
 export const useCommunityChallengeUpdate = () => {
   return useMutation({
     mutationKey: ["community-challenge", "update"],
-    mutationFn: async (input: {
-      id: string;
-      name?: string;
-      country?: string;
-      description?: string;
-      emoji?: string;
-      isPublic?: boolean;
-      image?: string;
-      mountainIds?: string[];
-      newMountains?: InlineMountain[];
-    }) => {
+    mutationFn: async (input: UpdateBody) => {
       const { data, error } = await apiClient.POST(
         "/api/protected/community-challenge/update",
         { body: input }

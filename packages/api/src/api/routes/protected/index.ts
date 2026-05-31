@@ -14,6 +14,7 @@ import { mountainCommentsRoute } from "@/api/routes/protected/mountain-comments"
 import { mountainsRoute } from "@/api/routes/protected/mountains";
 import { planChatRoute } from "@/api/routes/protected/plan-chat";
 import { plansRoute } from "@/api/routes/protected/plans";
+import { protectedRoutesRoute } from "@/api/routes/protected/routes";
 import { shopRoutes } from "@/api/routes/protected/shop";
 import { summitRoute } from "@/api/routes/protected/summit";
 import { userRoute } from "@/api/routes/protected/user";
@@ -83,6 +84,7 @@ export const protectedRoutes = new Elysia({ prefix: "/protected" })
   .use(summitRoute)
   .use(donorsRoute)
   .use(plansRoute)
+  .use(protectedRoutesRoute)
   .use(planChatRoute)
   .use(challengeRoutes)
   .use(communityChallengeRoute)
