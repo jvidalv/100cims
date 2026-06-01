@@ -105,6 +105,11 @@ export const userTable = pgTable("user", {
     .array()
     .notNull()
     .default(sql`ARRAY[]::text[]`),
+  // Bumped by `user.me.get.ts` on every cold launch / app foreground —
+  // throttled to once per 5 minutes per user so high-frequency tab
+  // focuses don't cost a write each. Drives DAU/MAU analytics
+  // (`COUNT(*) WHERE last_seen_at >= NOW() - INTERVAL '1 day'`).
+  lastSeenAt: timestamp(),
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp().notNull().defaultNow(),
 });

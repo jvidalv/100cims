@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq, isNull, lt, or, sql } from "drizzle-orm";
 import { Elysia } from "elysia";
 
 import { db } from "@/db";
@@ -40,6 +40,27 @@ export const userMeGetRoute = new Elysia().get(
     if (Object.keys(updates).length) {
       await db.update(userTable).set(updates).where(eq(userTable.id, user.id));
     }
+
+    // Drives DAU/MAU. Bumped at most once per user every 5 minutes so a
+    // user who tab-switches a lot doesn't generate a write per /me. The
+    // WHERE makes the throttle atomic — concurrent /me requests can't
+    // race past each other and double-bump. Fire-and-forget: don't make
+    // the response wait on this background write.
+    void db
+      .update(userTable)
+      .set({ lastSeenAt: new Date() })
+      .where(
+        and(
+          eq(userTable.id, user.id),
+          or(
+            isNull(userTable.lastSeenAt),
+            lt(userTable.lastSeenAt, sql`NOW() - INTERVAL '5 minutes'`),
+          ),
+        ),
+      )
+      .catch((err) => {
+        console.warn("[me] lastSeenAt bump failed", err);
+      });
 
     return { success: true, message: { ...user, ...updates } };
   },
