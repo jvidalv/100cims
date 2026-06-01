@@ -75,6 +75,7 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
     "openapi-typescript": "^7.13.0",
+    "playwright": "1.60.0",
     "postcss": "^8",
     "prettier": "^3.8.1",
     "react-email": "^5.2.10",

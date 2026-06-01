@@ -841,6 +841,13 @@
       "when": 1780312645208,
       "tag": "0119_add-shop-request-payment-image",
       "breakpoints": true
+    },
+    {
+      "idx": 120,
+      "version": "7",
+      "when": 1780324091863,
+      "tag": "0120_add-user-last-seen-at",
+      "breakpoints": true
     }
   ]
 }

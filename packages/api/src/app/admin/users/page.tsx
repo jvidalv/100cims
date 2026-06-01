@@ -146,6 +146,10 @@ export default function AdminUsersPage() {
             <SelectItem value="createdAt_asc">Oldest first</SelectItem>
             <SelectItem value="summits_desc">Most summits</SelectItem>
             <SelectItem value="summits_asc">Fewest summits</SelectItem>
+            <SelectItem value="lastSeenAt_desc">Recently active</SelectItem>
+            <SelectItem value="lastSeenAt_asc">
+              Least recently active
+            </SelectItem>
           </SelectContent>
         </Select>
 
@@ -174,6 +178,7 @@ export default function AdminUsersPage() {
                   <th className="py-2 pr-4 font-medium">Push</th>
                   <th className="py-2 pr-4 font-medium text-right">Summits</th>
                   <th className="py-2 pr-4 font-medium">Last summit</th>
+                  <th className="py-2 pr-4 font-medium">Last seen</th>
                   <th className="py-2 pr-4 font-medium">Joined</th>
                 </tr>
               </thead>
@@ -225,6 +230,9 @@ export default function AdminUsersPage() {
                         {u.lastSummitAt ? formatDate(u.lastSummitAt) : "—"}
                       </td>
                       <td className="py-2 pr-4 text-muted-foreground">
+                        {u.lastSeenAt ? formatDate(u.lastSeenAt) : "—"}
+                      </td>
+                      <td className="py-2 pr-4 text-muted-foreground">
                         {formatDate(u.createdAt)}
                       </td>
                     </tr>
@@ -233,7 +241,7 @@ export default function AdminUsersPage() {
                 {data.items.length === 0 && (
                   <tr>
                     <td
-                      colSpan={10}
+                      colSpan={11}
                       className="py-8 text-center text-muted-foreground"
                     >
                       No users match the current filters.

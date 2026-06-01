@@ -44,6 +44,7 @@ export const adminKeys = {
   planMemberLog: (id: string) => ["admin", "plans", id, "member-log"] as const,
   statsTimeseries: (metric: string, range: string) =>
     ["admin", "stats", "timeseries", metric, range] as const,
+  activeUsers: () => ["admin", "active-users"] as const,
   challengesList: () => ["admin", "challenges"] as const,
   challenges: (params: { page: number; q: string; kind: string }) =>
     ["admin", "challenges", params] as const,

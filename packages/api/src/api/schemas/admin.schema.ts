@@ -28,6 +28,9 @@ export const AdminUserEntrySchema = t.Object({
   hasPushToken: t.Boolean(),
   totalSummits: t.Number(),
   lastSummitAt: t.Nullable(t.Date()),
+  // Drives DAU/MAU + sort by recently-active. Null for accounts that
+  // existed before the column was added until their next /me call.
+  lastSeenAt: t.Nullable(t.Date()),
 });
 
 export const AdminUsersResponseSchema = t.Object({

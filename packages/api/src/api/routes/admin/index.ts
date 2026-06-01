@@ -5,6 +5,7 @@ import { getToken } from "next-auth/jwt";
 import { db } from "@/db";
 import { userTable } from "@/db/schema";
 import { setAdminContext } from "@/api/routes/admin/admin-context";
+import { adminActiveUsersGetRoute } from "@/api/routes/admin/admin.active-users.get";
 import { adminCampaignStatsGetRoute } from "@/api/routes/admin/admin.campaign-stats.get";
 import { adminCampaignTriggerPostRoute } from "@/api/routes/admin/admin.campaign-trigger.post";
 import { adminChallengeDeleteDeleteRoute } from "@/api/routes/admin/admin.challenge-delete.delete";
@@ -171,6 +172,7 @@ export const adminRoutes = new Elysia({ prefix: "/admin" })
   .use(adminShopRequestDetailGetRoute)
   .use(adminShopRequestUpdatePostRoute)
   .use(adminStatsTimeseriesGetRoute)
+  .use(adminActiveUsersGetRoute)
   .use(adminCronsGetRoute)
   .use(adminCronsTriggerPostRoute)
   .use(adminEmailTestPostRoute)

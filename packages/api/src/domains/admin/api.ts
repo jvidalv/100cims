@@ -737,6 +737,23 @@ export const useAdminStatsTimeseries = (
     },
   });
 
+// Single-shot DAU/MAU snapshot for the overview header. The endpoint
+// computes both counts from `user.last_seen_at` (rolling 24h / 30d),
+// not tied to any range picker.
+export const useAdminActiveUsers = () =>
+  useQuery({
+    queryKey: adminKeys.activeUsers(),
+    queryFn: async () => {
+      const { data, error } = await api.api.admin["active-users"].get();
+      if (error) throw error;
+      return data.message;
+    },
+    // Bumped every 5 minutes per user on the API side; refresh the
+    // admin numbers at the same cadence so admin doesn't see stale
+    // values when they linger on the page.
+    refetchInterval: 5 * 60_000,
+  });
+
 export const useAdminChallenges = (
   {
     page,
