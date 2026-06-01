@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { use, useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import {
@@ -21,10 +22,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   useAdminCommentDetail,
+  useCreateAdminMountainComment,
   useDeleteAdminComment,
   useUpdateAdminComment,
 } from "@/domains/admin/api";
 import { formatDateTime } from "@/lib/format-date";
+import { adminKeys } from "@/lib/query-keys";
 
 type CommentEntry = NonNullable<
   ReturnType<typeof useAdminCommentDetail>["data"]
@@ -110,18 +113,24 @@ export default function AdminCommentDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const router = useRouter();
+  const qc = useQueryClient();
   const { id } = use(params);
   const detail = useAdminCommentDetail(id);
   const update = useUpdateAdminComment(id);
   const remove = useDeleteAdminComment(id);
+  // Empty string until detail resolves. The reply form lives below the
+  // `if (!detail.data) return null` guard, so the mutation can't fire
+  // with an empty mountainId in practice.
+  const mountainId = detail.data?.comment.mountain.id ?? "";
+  const reply = useCreateAdminMountainComment(mountainId);
 
   const [body, setBody] = useState("");
-  const [initialBody, setInitialBody] = useState("");
+  const [replyBody, setReplyBody] = useState("");
+  const initialBody = detail.data?.comment.body ?? "";
 
   useEffect(() => {
     if (!detail.data || update.isPending) return;
     setBody(detail.data.comment.body);
-    setInitialBody(detail.data.comment.body);
   }, [detail.data, update.isPending]);
 
   const dirty = body !== initialBody;
@@ -130,10 +139,7 @@ export default function AdminCommentDetailPage({
     update.mutate(
       { body },
       {
-        onSuccess: () => {
-          toast.success("Comment updated");
-          setInitialBody(body);
-        },
+        onSuccess: () => toast.success("Comment updated"),
         onError: (e) =>
           toast.error(e instanceof Error ? e.message : "Update failed"),
       },
@@ -148,6 +154,32 @@ export default function AdminCommentDetailPage({
       onError: (e) =>
         toast.error(e instanceof Error ? e.message : "Delete failed"),
     });
+
+  // Reply is parented on THIS comment's thread root: if THIS comment is
+  // itself a reply, post under the same root (the API also enforces
+  // depth-2 by re-parenting, so this is defensive). If THIS comment is
+  // the root, post under it.
+  const onReply = () => {
+    if (!detail.data) return;
+    const parentCommentId =
+      detail.data.comment.parentCommentId ?? detail.data.comment.id;
+    reply.mutate(
+      { body: replyBody, parentCommentId },
+      {
+        onSuccess: () => {
+          toast.success("Reply posted");
+          setReplyBody("");
+          // Refresh the page-being-viewed: when the current comment is a
+          // reply, `parentCommentId` is the thread root, not this page's
+          // id — so invalidating the hook-level keys alone misses the
+          // siblings list we're staring at.
+          void qc.invalidateQueries({ queryKey: adminKeys.commentDetail(id) });
+        },
+        onError: (e) =>
+          toast.error(e instanceof Error ? e.message : "Reply failed"),
+      },
+    );
+  };
 
   if (detail.isLoading && !detail.data) {
     return (
@@ -263,6 +295,35 @@ export default function AdminCommentDetailPage({
                 {update.isPending ? "Saving…" : "Save"}
               </Button>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="space-y-2">
+        <h2 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          Reply
+        </h2>
+        <div className="rounded-lg border p-4 space-y-2">
+          <textarea
+            value={replyBody}
+            onChange={(e) => setReplyBody(e.target.value)}
+            placeholder={
+              isReply ? "Reply to this thread…" : "Reply to this comment…"
+            }
+            className="w-full min-h-[100px] rounded border px-3 py-2 text-sm resize-y bg-background"
+            maxLength={2000}
+          />
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-muted-foreground">
+              {replyBody.length} / 2000
+            </span>
+            <Button
+              size="sm"
+              disabled={reply.isPending || replyBody.trim().length === 0}
+              onClick={onReply}
+            >
+              {reply.isPending ? "Posting…" : "Post reply"}
+            </Button>
           </div>
         </div>
       </section>

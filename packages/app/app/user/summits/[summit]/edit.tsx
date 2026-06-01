@@ -167,8 +167,10 @@ export default function EditSummitScreen() {
                       style={{
                         width: "100%",
                         height: "100%",
-                        resizeMode: "center",
                       }}
+                      // `contain` — see mountain/[slug]/(tabs)/summit.tsx for
+                      // the same pattern + why `center` was wrong here.
+                      resizeMode="contain"
                     />
                   </View>
                   <Image

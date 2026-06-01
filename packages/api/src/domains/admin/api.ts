@@ -333,6 +333,7 @@ export const useCreateAdminMountainComment = (mountainId: string) => {
       void qc.invalidateQueries({
         queryKey: adminKeys.mountainComments(mountainId),
       });
+      void qc.invalidateQueries({ queryKey: adminKeys.commentsList() });
     },
   });
 };

@@ -173,7 +173,7 @@ const SOSTRES_COMARCALS_SLUGS = new Set<string>([
   "tibidabo",
   // Camp de Tarragona / Terres de l'Ebre
   "caro",
-  "tossal-dels-tres-reis",
+  "les-mirandes",
   "tosseta-rasa",
   "xaquera-o-creu-de-santos",
   "tossal-de-la-baltasana",
