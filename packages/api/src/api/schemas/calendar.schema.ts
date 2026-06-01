@@ -26,6 +26,10 @@ export const CalendarPlanEventSchema = t.Object({
   planType: t.Nullable(PlanTypeSchema),
   isPrivate: t.Boolean(),
   isCreator: t.Boolean(),
+  // True when the viewer is in `plan_has_users` OR is the creator. Drives
+  // the bluish person icon on the calendar grid. Public-endpoint variant
+  // hardcodes `false` because anon viewers can't be joined.
+  isJoined: t.Boolean(),
   // Drives the golden star on the calendar grid for days that have at
   // least one featured plan. Additive so old mobile clients ignore it.
   featured: t.Boolean(),

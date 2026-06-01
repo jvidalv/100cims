@@ -1,7 +1,8 @@
-import { and, asc, eq, gte, inArray, lte, or, sql } from "drizzle-orm";
+import { and, asc, eq, gte, inArray, lte, sql } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 
 import { getUserFromRequest } from "@/api/routes/@shared/auth";
+import { planVisibilitySql } from "@/api/routes/@shared/plan-access";
 import { planParticipantsOrderBy } from "@/api/routes/@shared/plan-organization";
 import { CalendarResponseSchema } from "@/api/schemas/calendar.schema";
 import { SuccessResponse } from "@/api/schemas/common.schema";
@@ -49,12 +50,16 @@ export const userCalendarGetRoute = new Elysia().get(
         )
         .orderBy(asc(summitTable.summitedAt)),
 
-      // Left-outer-join plan_has_users with the JOIN condition pinned to the
-      // current user, so at most one participant row matches per plan. That
-      // lets the WHERE keep either creator or participant rows in one pass,
-      // without needing DISTINCT. The WHERE's `gte(startDate, ...)` discards
-      // NULL start dates in Postgres, so `sql<string>` types the field
-      // non-null and downstream code can use it without re-checking.
+      // Left-outer-join plan_has_users with the JOIN condition pinned to
+      // the current user, so the resulting row has the viewer's
+      // participant row (or NULL when they haven't joined). We use that
+      // NULL/NOT NULL as the source of truth for `isJoined` in the
+      // response. The WHERE uses the canonical `planVisibilitySql` helper
+      // — same shape as every other plan-list endpoint — so the calendar
+      // returns all plans the viewer can see (public, creator-of, or
+      // member-of), not just ones they joined. The `gte(startDate, ...)`
+      // discards NULL start dates in Postgres, so `sql<string>` types the
+      // field non-null and downstream code can use it without re-checking.
       db
         .select({
           id: planTable.id,
@@ -66,6 +71,15 @@ export const userCalendarGetRoute = new Elysia().get(
           featured: planTable.featured,
           creatorId: planTable.creatorId,
           imageUrl: planTable.imageUrl,
+          // `IS NOT NULL` over the LEFT JOIN sentinel returns a Postgres
+          // boolean, which node-postgres maps to a JS boolean (matches
+          // the `sql<boolean>` pattern used by other routes like
+          // `admin.users.get.ts`'s `hasPushToken`). Drizzle's own
+          // `isNotNull()` helper infers `boolean | null`, which collides
+          // with the non-nullable TypeBox schema.
+          isJoined: sql<boolean>`${planHasUsersTable.userId} IS NOT NULL`.as(
+            "isJoined",
+          ),
         })
         .from(planTable)
         .leftJoin(
@@ -77,10 +91,7 @@ export const userCalendarGetRoute = new Elysia().get(
         )
         .where(
           and(
-            or(
-              eq(planTable.creatorId, user.id),
-              eq(planHasUsersTable.userId, user.id),
-            ),
+            planVisibilitySql(user.id),
             gte(planTable.startDate, query.from),
             lte(planTable.startDate, query.to),
           ),
@@ -149,6 +160,11 @@ export const userCalendarGetRoute = new Elysia().get(
       isPrivate: row.isPrivate,
       featured: row.featured,
       isCreator: row.creatorId === user.id,
+      // Creators count as joined for UI purposes — matches the org-first
+      // ordering used everywhere else (an organizer is always a
+      // participant in their own plan, even if `plan_has_users` doesn't
+      // carry the row yet at create time).
+      isJoined: row.isJoined || row.creatorId === user.id,
       imageUrl: row.imageUrl,
       mountains: planMountains
         .filter((m) => m.planId === row.id)

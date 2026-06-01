@@ -16,7 +16,10 @@ import { parseLocalDateString } from "@/lib/dates";
 // `date` -> `startDate` to match the historical PlanItemList prop name.
 type CalendarPlanEvent = Extract<CalendarEvent, { type: "plan" }>;
 
-type Props = Omit<CalendarPlanEvent, "type" | "date" | "isCreator"> & {
+type Props = Omit<
+  CalendarPlanEvent,
+  "type" | "date" | "isCreator" | "isJoined"
+> & {
   startDate?: string | null;
   /** Custom plan cover image. Takes precedence over the mountain thumbnail. */
   imageUrl?: string | null;

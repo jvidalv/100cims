@@ -103,7 +103,7 @@ export const ThemedTextInput: FC<InputProps> = ({
       {!!label && (
         <Animated.View
           style={[{ top: style.top }]}
-          className="pointer-events-none absolute left-4 z-10 -mx-1 bg-background px-1"
+          className="pointer-events-none absolute left-3 z-10 -mx-1 bg-background px-1"
         >
           <Animated.Text
             style={[{ fontSize: style.fontSize }]}
@@ -125,12 +125,17 @@ export const ThemedTextInput: FC<InputProps> = ({
         autoComplete={autoComplete}
         textContentType={textContentType}
         className={twMerge(
-          "w-full border-2 border-border rounded flex py-5 px-4 text-foreground focus:border-blue-500",
+          "w-full border-2 border-border rounded flex py-5 px-3 text-foreground focus:border-blue-500",
           disabled && "bg-gray-50 dark:bg-neutral-900 text-foreground/60",
           error && "border-red-500 focus:border-red-500",
           inputClassName,
         )}
-        style={{ fontSize: 16 }}
+        // Force the horizontal padding via style so Android's
+        // platform-default `paddingStart`/`paddingEnd` on TextInput don't
+        // override the NativeWind class. Once `style.paddingLeft` is set
+        // it wins on iOS too, which is why the floating label above also
+        // uses `left-3` to stay aligned with the input text.
+        style={{ fontSize: 16, paddingLeft: 12, paddingRight: 12 }}
         value={!value ? undefined : value}
         defaultValue={!defaultValue ? undefined : defaultValue}
         onChangeText={(text) => {

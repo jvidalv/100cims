@@ -198,6 +198,16 @@ The alias is defined once in `src/db/index.ts` (`typeof db | Parameters<Paramete
 
 See `packages/api/src/api/lib/mountain-ratings.ts` for the canonical example.
 
+#### Booleans from LEFT JOIN / nullable columns
+
+When you need to project a boolean from a `LEFT JOIN` sentinel or a nullable column (e.g. "is this user joined?", "does this user have a push token?"), use:
+
+```ts
+isJoined: sql<boolean>`${planHasUsersTable.userId} IS NOT NULL`.as("isJoined")
+```
+
+— **not** Drizzle's `isNotNull()` helper. The helper infers `boolean | null`, which collides with the non-nullable `t.Boolean()` in the TypeBox response schema and trips Elysia's response validator. The raw `sql<boolean>` form is the canonical pattern across the codebase (see `admin.users.get.ts`'s `hasPushToken` and `user.calendar.get.ts`'s `isJoined`).
+
 ### Schema Validation
 
 ```typescript

@@ -34,15 +34,28 @@ export const useCalendarEvents = ({
 }) => {
   const { isAuthenticated } = useAuth();
 
+  // Two endpoints, identical response shape (`CalendarResponseSchema`):
+  // - protected: user's own summits + plans they joined/created
+  // - public:    every non-private plan in the window, no summits
+  // The mobile consumer doesn't care which one served the data — the
+  // `CalendarEvent` discriminated union is derived from the protected
+  // schema and the public payload is a subset of it.
   return useQuery({
-    queryKey: calendarKeys.events(from, to),
-    enabled: () => isAuthenticated,
+    queryKey: calendarKeys.events(from, to, isAuthenticated),
     // Summits don't change minute-to-minute; refetch only after 5 minutes so
     // tab switches don't trigger a round trip every time.
     staleTime: 5 * 60_000,
     queryFn: async () => {
+      if (isAuthenticated) {
+        const { data, error } = await apiClient.GET(
+          "/api/protected/user/calendar",
+          { params: { query: { from, to } } },
+        );
+        if (error) throw error;
+        return data.message.events;
+      }
       const { data, error } = await apiClient.GET(
-        "/api/protected/user/calendar",
+        "/api/public/plans/calendar",
         { params: { query: { from, to } } },
       );
       if (error) throw error;

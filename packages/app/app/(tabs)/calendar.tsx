@@ -91,17 +91,17 @@ export default function CalendarScreen() {
       // golden star on the calendar grid. We only look at plan events
       // because `featured` is plan-specific (summits don't carry it).
       const featured = new Set<string>();
-      // Set of date keys that contain at least one plan the viewer is part
-      // of. The /calendar endpoint is scoped to plans the authed user joined
-      // or created (creator OR plan_has_users.userId = viewer), so every
-      // plan event in this payload qualifies.
+      // Set of date keys that contain at least one plan the viewer is
+      // part of. Server is the source of truth — protected endpoint sets
+      // `isJoined` from the `plan_has_users` LEFT JOIN (creators too);
+      // public endpoint hardcodes `false` since anon viewers can't join.
       const joined = new Set<string>();
       for (const event of events ?? []) {
         (list[event.date] ??= []).push(event);
         const seen = (types[event.date] ??= []);
         if (!seen.includes(event.type)) seen.push(event.type);
         if (event.type === "plan") {
-          joined.add(event.date);
+          if (event.isJoined) joined.add(event.date);
           if (event.featured) featured.add(event.date);
         }
       }
