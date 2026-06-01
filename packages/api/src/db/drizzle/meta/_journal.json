@@ -848,6 +848,13 @@
       "when": 1780324091863,
       "tag": "0120_add-user-last-seen-at",
       "breakpoints": true
+    },
+    {
+      "idx": 121,
+      "version": "7",
+      "when": 1780326676403,
+      "tag": "0121_fix-montsia-sostre-mirandes",
+      "breakpoints": true
     }
   ]
 }

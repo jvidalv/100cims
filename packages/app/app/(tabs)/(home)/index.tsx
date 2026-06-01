@@ -551,8 +551,12 @@ export default function IndexScreen() {
                       <Image
                         source={{ uri: summitImageUrl }}
                         className="h-24 w-full rounded bg-neutral-300 dark:bg-neutral-800"
+                        // `cover` fills the box uniformly, cropping the longer
+                        // axis. The previous `center` left the image at native
+                        // pixel size, producing the "tiny square in the middle"
+                        // look on the home grid.
                         style={{
-                          resizeMode: "center",
+                          resizeMode: "cover",
                         }}
                       />
                     </Link>

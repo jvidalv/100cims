@@ -185,8 +185,13 @@ export default function SummitMountainScreen() {
                       style={{
                         width: "100%",
                         height: "100%",
-                        resizeMode: "center",
                       }}
+                      // `contain` lets the whole picked photo fit inside the
+                      // box, letterboxed onto the blurred backdrop. Was
+                      // `center`, which shows the source at native pixel size
+                      // (a 4032×3024 phone photo becomes a tiny zoom-crop of
+                      // its centre because the box is 384px tall).
+                      resizeMode="contain"
                     />
                   </View>
                   <Image
@@ -197,6 +202,7 @@ export default function SummitMountainScreen() {
                       height: "100%",
                       opacity: 0.5,
                     }}
+                    resizeMode="cover"
                   />
                 </View>
               ) : (
