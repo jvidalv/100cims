@@ -68,9 +68,13 @@ export const mountainSummitsGetRoute = new Elysia().use(JWT()).get(
 
     const groupedResults = results.reduce(
       (acc, row) => {
+        // Both `userId` (left-joined userTable) and `mountainId` (widened by
+        // the presence of left joins) come through nullable in drizzle's
+        // types — skip the row if either is missing rather than asserting.
+        if (!row.userId || !row.mountainId) return acc;
         const existingSummit = acc.find((s) => s.summitId === row.summitId);
         const user = {
-          id: row.userId!,
+          id: row.userId,
           firstName: row.userFirstName,
           lastName: row.userLastName,
           imageUrl: row.userImageUrl,
@@ -81,7 +85,7 @@ export const mountainSummitsGetRoute = new Elysia().use(JWT()).get(
         } else {
           acc.push({
             summitId: row.summitId,
-            mountainId: row.mountainId!,
+            mountainId: row.mountainId,
             summitedAt: row.summitedAt,
             createdAt: row.createdAt,
             mountainName: row.mountainName,

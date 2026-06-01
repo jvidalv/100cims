@@ -54,16 +54,27 @@ export const adminPlanCreatePostRoute = new Elysia().post(
         startDate: body.startDate
           ? formatDateForPostgresFromISOString(body.startDate)
           : null,
+        startTime: body.startTime ?? null,
+        type: body.type ?? null,
         speed: body.speed ?? "normal",
         status: "open",
         challengeId: body.challengeId ?? DEFAULT_CHALLENGE_ID,
         isPrivate: body.isPrivate ?? false,
+        featured: body.featured ?? false,
+        paid: body.paid ?? false,
+        // Treat empty string as "unaffiliated", matching admin.plan-update's
+        // normalization. Sending "" straight at a uuid FK column would 500.
+        organizationId: body.organizationId ? body.organizationId : null,
       });
 
       await tx.insert(planHasUsersTable).values({
         planId,
         userId: creatorId,
         willBringDogs: false,
+        // Mirror protected/plans/plan.create.post.ts — creator is the
+        // implicit organizer. Admin can demote later via the
+        // /admin/plans/:id/members/:userId/role route if needed.
+        role: "organizer",
       });
 
       if (body.mountainIds?.length) {

@@ -160,6 +160,27 @@ export default function AdminShopRequestDetailPage({
         </pre>
       </div>
 
+      {r.paymentImageUrl && (
+        <div className="space-y-1">
+          <Label>Bizum confirmation screenshot</Label>
+          <a
+            href={r.paymentImageUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="block w-fit rounded border bg-muted/40 p-2 hover:bg-muted/60 transition-colors"
+          >
+            <img
+              src={r.paymentImageUrl}
+              alt="Bizum confirmation"
+              className="max-h-96 w-auto rounded"
+            />
+            <p className="mt-2 text-xs text-muted-foreground">
+              Click to open full size →
+            </p>
+          </a>
+        </div>
+      )}
+
       <div className="space-y-1">
         <Label htmlFor="comments">Admin comments</Label>
         <textarea

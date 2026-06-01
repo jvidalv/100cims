@@ -4,6 +4,7 @@ import {
   boolean,
   check,
   integer,
+  jsonb,
   numeric,
   pgTable,
   real,
@@ -17,8 +18,11 @@ import {
 
 import type {
   CouponDiscountType,
+  PlanMemberRole,
   PlanSpeed,
   PlanStatus,
+  PlanType,
+  PlanUserLogAction,
   ShopRequestStatus,
 } from "@/db/enums";
 
@@ -80,6 +84,10 @@ export const userTable = pgTable("user", {
   locale: text(),
   town: text(),
   phoneNumber: text(),
+  shippingStreet: text(),
+  shippingCity: text(),
+  shippingPostalCode: text(),
+  shippingCountry: text(),
   visibleOnHiscores: boolean().notNull().default(false),
   visibleOnPeopleSearch: boolean().notNull().default(true),
   admin: boolean().notNull().default(false),
@@ -97,6 +105,11 @@ export const userTable = pgTable("user", {
     .array()
     .notNull()
     .default(sql`ARRAY[]::text[]`),
+  // Bumped by `user.me.get.ts` on every cold launch / app foreground —
+  // throttled to once per 5 minutes per user so high-frequency tab
+  // focuses don't cost a write each. Drives DAU/MAU analytics
+  // (`COUNT(*) WHERE last_seen_at >= NOW() - INTERVAL '1 day'`).
+  lastSeenAt: timestamp(),
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp().notNull().defaultNow(),
 });
@@ -247,10 +260,27 @@ export const planTable = pgTable(
     description: text(),
     imageUrl: text(),
     startDate: date(),
+    startTime: text(),
+    type: text().$type<PlanType>(),
     speed: text().notNull().$type<PlanSpeed>(),
     status: text().default("open").notNull().$type<PlanStatus>(),
     routeUrl: text(),
+    whatsappGroupUrl: text(),
+    wikilocUrl: text(),
+    stravaUrl: text(),
     isPrivate: boolean().notNull().default(false),
+    // Admin-curated flag. Off by default; toggled by admins via
+    // /admin/plans/:id and surfaced later for sort/filter in the app.
+    featured: boolean().notNull().default(false),
+    // Whether participating in this plan requires payment. Off by default;
+    // no money flow is wired up yet — the column is informational and the
+    // admin form just exposes it as a checkbox.
+    paid: boolean().notNull().default(false),
+    // Optional hosting organization. Nullable so most plans stay unaffiliated;
+    // `set null` keeps the plan alive if the org is later deleted.
+    organizationId: uuid().references(() => organizationTable.id, {
+      onDelete: "set null",
+    }),
     createdAt: timestamp().notNull().defaultNow(),
     updatedAt: timestamp().notNull().defaultNow(),
   },
@@ -289,6 +319,10 @@ export const planHasUsersTable = pgTable(
       .notNull(),
     joinedAt: timestamp().notNull().defaultNow(),
     willBringDogs: boolean().notNull().default(false),
+    // `member` = regular participant; `organizer` = plan-level admin
+    // (e.g. plan creator, club staff). Defaults to `member` so existing
+    // rows and new joiners pre-promotion stay non-privileged.
+    role: text().notNull().default("member").$type<PlanMemberRole>(),
   },
   (table) => [
     index("plan_has_users_plan_id_idx").on(table.planId),
@@ -312,17 +346,21 @@ export const planMessageTable = pgTable(
   (table) => [index("plan_message_plan_id_idx").on(table.planId)],
 );
 
-export const planUserLogTable = pgTable("plan_user_log", {
-  id: uuid().primaryKey().defaultRandom(),
-  planId: uuid()
-    .references(() => planTable.id, { onDelete: "cascade" })
-    .notNull(),
-  userId: uuid()
-    .references(() => userTable.id, { onDelete: "cascade" })
-    .notNull(),
-  action: text().notNull(), // 'joined' | 'left'
-  timestamp: timestamp().notNull().defaultNow(),
-});
+export const planUserLogTable = pgTable(
+  "plan_user_log",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    planId: uuid()
+      .references(() => planTable.id, { onDelete: "cascade" })
+      .notNull(),
+    userId: uuid()
+      .references(() => userTable.id, { onDelete: "cascade" })
+      .notNull(),
+    action: text().notNull().$type<PlanUserLogAction>(),
+    timestamp: timestamp().notNull().defaultNow(),
+  },
+  (table) => [index("plan_user_log_plan_id_idx").on(table.planId)],
+);
 
 export const userRelations = relations(userTable, ({ many }) => ({
   summitHasUsers: many(summitHasUsersTable),
@@ -655,6 +693,7 @@ export const shopRequestTable = pgTable(
     message: text().notNull(),
     status: text().notNull().default("requested").$type<ShopRequestStatus>(),
     comments: text(),
+    paymentImageUrl: text(),
     createdAt: timestamp().notNull().defaultNow(),
     updatedAt: timestamp().notNull().defaultNow(),
   },
@@ -729,6 +768,29 @@ export const userSavedMountainTable = pgTable(
   ],
 );
 
+// Mirrors `userSavedMountainTable` — the user-saved bookmark list, but for
+// routes (Wikiloc trails). Same join-table shape so the React Query plumbing
+// on the mobile side reads the same. Cascading on user OR route delete keeps
+// us from carrying dangling rows after either side disappears.
+export const userSavedRouteTable = pgTable(
+  "user_saved_route",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    userId: uuid()
+      .notNull()
+      .references(() => userTable.id, { onDelete: "cascade" }),
+    routeId: uuid()
+      .notNull()
+      .references(() => routeTable.id, { onDelete: "cascade" }),
+    createdAt: timestamp().notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("user_saved_user_route_unique").on(table.userId, table.routeId),
+    index("user_saved_route_user_id_idx").on(table.userId),
+    index("user_saved_route_route_id_idx").on(table.routeId),
+  ],
+);
+
 // Reddit-style threaded comments on mountains. Depth capped at 2 by the API
 // (reply to a reply gets re-parented to the top-level ancestor). Upvote
 // counts are denormalized here and kept in sync by recalcMountainCommentUpvoteCount
@@ -748,6 +810,13 @@ export const mountainCommentTable = pgTable(
     // enforces existence + same-mountain on insert.
     parentCommentId: uuid(),
     body: text().notNull(),
+    // JSONB array so each image can carry future metadata (caption,
+    // description) without another schema migration. v1 each element is
+    // `{ url: string }`.
+    images: jsonb()
+      .notNull()
+      .default(sql`'[]'::jsonb`)
+      .$type<{ url: string }[]>(),
     upvoteCount: integer().notNull().default(0),
     createdAt: timestamp().notNull().defaultNow(),
     updatedAt: timestamp().notNull().defaultNow(),
@@ -777,5 +846,171 @@ export const mountainCommentUpvoteTable = pgTable(
       table.userId,
     ),
     index("mountain_comment_upvote_comment_id_idx").on(table.commentId),
+  ],
+);
+
+// Hiking clubs, guide companies, collectives — any group hosting plans.
+// Admin-managed: there's no user-facing creation flow yet. Plans link via
+// the nullable `plan.organization_id` (set-null cascade), so deleting an
+// org leaves its plans alive but unaffiliated.
+export const organizationTable = pgTable("organization", {
+  id: uuid().primaryKey().defaultRandom(),
+  name: text().notNull(),
+  description: text(),
+  websiteUrl: text(),
+  imageUrl: text(),
+  // Social URLs. All nullable — orgs only fill in the platforms they use.
+  // Mobile renders them as a row of social icons on /organization/[id];
+  // admin form has one Input per platform.
+  instagramUrl: text(),
+  tiktokUrl: text(),
+  whatsappUrl: text(),
+  youtubeUrl: text(),
+  stravaUrl: text(),
+  // Showcase gallery (1–10 photos). Distinct from `imageUrl` (the header/logo).
+  // Admin-only upload via /admin/organizations/[id]; rendered as a wrapping
+  // carousel at the bottom of /organization/[id] on mobile.
+  photoUrls: text()
+    .array()
+    .notNull()
+    .default(sql`ARRAY[]::text[]`),
+  createdAt: timestamp().notNull().defaultNow(),
+  updatedAt: timestamp().notNull().defaultNow(),
+});
+
+// Locale-keyed string for routes (title + description). Same shape as the
+// LocalizedString helper on the app side; kept inline here so the schema
+// has no cross-package dependency.
+export type LocalizedString = {
+  en: string;
+  ca: string;
+  es: string;
+};
+
+// Hiking routes — currently sourced from Wikiloc scrapes (the original
+// data lived as static TypeScript files under
+// packages/app/domains/route/data; this table replaces those). Each row
+// is one route. Multi-mountain routes (a single GPS track that summits
+// several catalogued peaks) are joined via `mountain_route` below.
+export const routeTable = pgTable(
+  "route",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    // Stable ID from the source (Wikiloc trail id). Unique per source.
+    externalId: text().notNull(),
+    // Provenance tag — currently always "wikiloc". Lets us add Strava /
+    // user-submitted routes later without conflict.
+    source: text().notNull(),
+    url: text().notNull(),
+    // Author's original title (Wikiloc string, often noisy). Kept for
+    // attribution + as a fallback if the rewritten title is empty.
+    titleRaw: text().notNull(),
+    title: jsonb().notNull().$type<LocalizedString>(),
+    // Author's original description (raw Wikiloc prose). Nullable because
+    // some scrapes had empty descriptions; never shown directly in the UI.
+    descriptionRaw: text(),
+    // Locale-keyed editorial summary (en/ca/es). Nullable until the
+    // Gemini rewrite pass populates it.
+    description: jsonb().$type<LocalizedString>(),
+    author: text(),
+    distanceMeters: integer(),
+    elevationGainMeters: integer(),
+    elevationLossMeters: integer(),
+    maxElevationMeters: integer(),
+    minElevationMeters: integer(),
+    technicalDifficulty: text(),
+    trailType: text(),
+    movingTimeSeconds: integer(),
+    totalTimeSeconds: integer(),
+    coordinatesCount: integer(),
+    uploadedAt: text(),
+    recordedAt: text(),
+    // GPS track. Array of { lat, lng, ele } points. Stored as JSONB so we
+    // don't need a separate coordinate table — read+write are always for
+    // the whole track and route counts are bounded (~2k rows).
+    coordinates: jsonb().$type<{ lat: number; lng: number; ele?: number }[]>(),
+    createdAt: timestamp().notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("route_source_external_id_unq").on(
+      table.source,
+      table.externalId,
+    ),
+    index("route_distance_idx").on(table.distanceMeters),
+    index("route_trail_type_idx").on(table.trailType),
+  ],
+);
+
+// Many-to-many join: which catalogued mountains a route summits. Populated
+// by the geometric summit detector (packages/api/scripts/wikiloc/lib/
+// detect-summits-geometric.ts) — a route appears once per mountain it
+// passes within the threshold of. `ordinal` preserves the detector's
+// closest-approach order so the UI can show "primary summit" first.
+//
+// mountain_slug references mountain.slug (unique) rather than mountain.id
+// because routes were attributed by slug upstream and the slug is the
+// human-readable identifier. Cascade on delete so removing a mountain
+// also drops its route attributions.
+export const mountainRouteTable = pgTable(
+  "mountain_route",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    mountainSlug: text()
+      .notNull()
+      .references(() => mountainTable.slug, { onDelete: "cascade" }),
+    routeId: uuid()
+      .notNull()
+      .references(() => routeTable.id, { onDelete: "cascade" }),
+    ordinal: integer().notNull().default(0),
+  },
+  (table) => [
+    uniqueIndex("mountain_route_slug_route_unq").on(
+      table.mountainSlug,
+      table.routeId,
+    ),
+    index("mountain_route_slug_idx").on(table.mountainSlug),
+    index("mountain_route_route_id_idx").on(table.routeId),
+  ],
+);
+
+export const routeRelations = relations(routeTable, ({ many }) => ({
+  mountainRoutes: many(mountainRouteTable),
+}));
+
+export const mountainRouteRelations = relations(
+  mountainRouteTable,
+  ({ one }) => ({
+    route: one(routeTable, {
+      fields: [mountainRouteTable.routeId],
+      references: [routeTable.id],
+    }),
+  }),
+);
+
+// Many-to-many membership between users and organizations — flat list, no
+// per-membership role. The organizer/member distinction lives on
+// plan_has_users instead (a plan can have organizers from any org or none).
+// UUID PK + uniqueIndex matches the project's join-table convention (see
+// plan_has_users, plan_has_mountains) — composite PKs would be tidier SQL
+// but inconsistent with the rest of the codebase.
+export const organizationMemberTable = pgTable(
+  "organization_member",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    organizationId: uuid()
+      .references(() => organizationTable.id, { onDelete: "cascade" })
+      .notNull(),
+    userId: uuid()
+      .references(() => userTable.id, { onDelete: "cascade" })
+      .notNull(),
+    joinedAt: timestamp().notNull().defaultNow(),
+  },
+  (table) => [
+    index("organization_member_org_id_idx").on(table.organizationId),
+    index("organization_member_user_id_idx").on(table.userId),
+    uniqueIndex("organization_member_org_user_unq_idx").on(
+      table.organizationId,
+      table.userId,
+    ),
   ],
 );

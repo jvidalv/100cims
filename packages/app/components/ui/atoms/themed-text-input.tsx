@@ -9,6 +9,14 @@ import {
 import { ReturnKeyType } from "react-native/Libraries/Components/TextInput/TextInput";
 import { twMerge } from "tailwind-merge";
 
+import { isAndroid } from "@/lib/device";
+
+// Android's TextInput baseline sits lower than iOS's due to
+// `includeFontPadding`, so a label positioned at the same `top` as iOS reads
+// lower than the visible placeholder text. Nudge the resting position up on
+// Android to recenter against the placeholder.
+const LABEL_RESTING_TOP = isAndroid ? 13 : 19;
+
 type InputProps = {
   label?: string;
   value?: string | null;
@@ -28,6 +36,9 @@ type InputProps = {
   autoComplete?: TextInputProps["autoComplete"];
   textContentType?: TextInputProps["textContentType"];
   onChangeText?: (text: string) => void;
+  /** When non-empty, the border turns red and the message renders below
+   *  the input. The caller is responsible for clearing it (e.g. on change). */
+  error?: string | null;
 };
 
 export const ThemedTextInput: FC<InputProps> = ({
@@ -49,6 +60,7 @@ export const ThemedTextInput: FC<InputProps> = ({
   textContentType,
   onBlur,
   onFocus,
+  error,
 }) => {
   const [internalValue, setInternalValue] = useState(value || defaultValue);
   const [isFocused, setIsFocused] = useState(false);
@@ -57,17 +69,28 @@ export const ThemedTextInput: FC<InputProps> = ({
   ).current;
 
   useEffect(() => {
-    Animated.timing(labelPosition, {
+    const animation = Animated.timing(labelPosition, {
       toValue: isFocused || internalValue ? 1 : 0,
       duration: 200,
       useNativeDriver: false,
-    }).start();
+    });
+    animation.start();
+    // Stop the tween + detach listeners on unmount. Without this, if the
+    // input unmounts mid-animation (filter toggle, screen swap, NativeTabs
+    // mount/unmount cycle), the next animation frame fires `__callListeners`
+    // on the now-freed AnimatedValue and crashes with
+    // `undefined is not a function` from AnimatedNode.js.
+    return () => {
+      animation.stop();
+      labelPosition.stopAnimation();
+      labelPosition.removeAllListeners();
+    };
   }, [value, isFocused, labelPosition, defaultValue, internalValue]);
 
   const style = {
     top: labelPosition.interpolate({
       inputRange: [0, 1],
-      outputRange: [19, -9],
+      outputRange: [LABEL_RESTING_TOP, -9],
     }),
     fontSize: labelPosition.interpolate({
       inputRange: [0, 1],
@@ -80,7 +103,7 @@ export const ThemedTextInput: FC<InputProps> = ({
       {!!label && (
         <Animated.View
           style={[{ top: style.top }]}
-          className="pointer-events-none absolute left-4 z-10 -mx-1 bg-background px-1"
+          className="pointer-events-none absolute left-3 z-10 -mx-1 bg-background px-1"
         >
           <Animated.Text
             style={[{ fontSize: style.fontSize }]}
@@ -102,11 +125,17 @@ export const ThemedTextInput: FC<InputProps> = ({
         autoComplete={autoComplete}
         textContentType={textContentType}
         className={twMerge(
-          "w-full border-2 border-border rounded flex py-5 px-4 text-foreground focus:border-blue-500",
+          "w-full border-2 border-border rounded flex py-5 px-3 text-foreground focus:border-blue-500",
           disabled && "bg-gray-50 dark:bg-neutral-900 text-foreground/60",
+          error && "border-red-500 focus:border-red-500",
           inputClassName,
         )}
-        style={{ fontSize: 16 }}
+        // Force the horizontal padding via style so Android's
+        // platform-default `paddingStart`/`paddingEnd` on TextInput don't
+        // override the NativeWind class. Once `style.paddingLeft` is set
+        // it wins on iOS too, which is why the floating label above also
+        // uses `left-3` to stay aligned with the input text.
+        style={{ fontSize: 16, paddingLeft: 12, paddingRight: 12 }}
         value={!value ? undefined : value}
         defaultValue={!defaultValue ? undefined : defaultValue}
         onChangeText={(text) => {
@@ -122,6 +151,11 @@ export const ThemedTextInput: FC<InputProps> = ({
           onBlur?.();
         }}
       />
+      {!!error && (
+        <Animated.Text className="mt-1 px-1 text-xs text-red-500">
+          {error}
+        </Animated.Text>
+      )}
     </View>
   );
 };

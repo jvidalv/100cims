@@ -29,15 +29,19 @@ import {
 } from "@/components/ui/select";
 import { SearchPicker } from "@/app/admin/_lib/search-picker";
 import { useMountainSearch } from "@/app/admin/_lib/use-mountain-search";
+import { useOrganizationSearch } from "@/app/admin/_lib/use-organization-search";
 import {
   type AdminPlanUpdateBody,
   useAddAdminPlanMountain,
   useAdminPlanDetail,
+  useAdminPlanMemberLog,
   useDeleteAdminPlan,
   useRemoveAdminPlanMember,
   useRemoveAdminPlanMountain,
   useUpdateAdminPlan,
+  useUpdateAdminPlanMemberRole,
 } from "@/domains/admin/api";
+import { PLAN_USER_LOG_ACTIONS } from "@/db/enums";
 import {
   formatDate,
   formatDateTime,
@@ -46,22 +50,40 @@ import {
 
 const STATUSES = ["open", "completed", "canceled"] as const;
 const SPEEDS = ["chill", "normal", "fast"] as const;
+const TYPES = ["hike", "trail", "bike"] as const;
 type PlanStatus = (typeof STATUSES)[number];
 type PlanSpeed = (typeof SPEEDS)[number];
+type PlanType = (typeof TYPES)[number];
 
 const isStatus = (v: string): v is PlanStatus =>
   (STATUSES as readonly string[]).includes(v);
 const isSpeed = (v: string): v is PlanSpeed =>
   (SPEEDS as readonly string[]).includes(v);
+const isType = (v: string): v is PlanType =>
+  (TYPES as readonly string[]).includes(v);
 
 type Form = {
   title: string;
   description: string;
   status: PlanStatus;
   speed: PlanSpeed;
+  type: PlanType | "";
   startDate: string;
+  startTime: string;
   imageUrl: string;
   routeUrl: string;
+  whatsappGroupUrl: string;
+  wikilocUrl: string;
+  stravaUrl: string;
+  isPrivate: boolean;
+  featured: boolean;
+  paid: boolean;
+  // Empty string = unaffiliated. The route normalizes "" → null before
+  // hitting the DB, so we send the form value through untouched.
+  // `organizationName` is for display only — never sent to the API; it
+  // lets the chip render the current org without re-fetching it.
+  organizationId: string;
+  organizationName: string;
 };
 
 const emptyForm: Form = {
@@ -69,9 +91,19 @@ const emptyForm: Form = {
   description: "",
   status: "open",
   speed: "normal",
+  type: "",
   startDate: "",
+  startTime: "",
   imageUrl: "",
   routeUrl: "",
+  whatsappGroupUrl: "",
+  wikilocUrl: "",
+  stravaUrl: "",
+  isPrivate: false,
+  featured: false,
+  paid: false,
+  organizationId: "",
+  organizationName: "",
 };
 
 export default function AdminPlanDetailPage({
@@ -82,9 +114,11 @@ export default function AdminPlanDetailPage({
   const router = useRouter();
   const { id } = use(params);
   const detail = useAdminPlanDetail(id);
+  const memberLog = useAdminPlanMemberLog(id);
   const update = useUpdateAdminPlan(id);
   const deletePlan = useDeleteAdminPlan(id);
   const removeMember = useRemoveAdminPlanMember(id);
+  const updatePlanMemberRole = useUpdateAdminPlanMemberRole(id);
   const addMountain = useAddAdminPlanMountain(id);
   const removeMountain = useRemoveAdminPlanMountain(id);
 
@@ -98,16 +132,30 @@ export default function AdminPlanDetailPage({
       description: detail.data.description ?? "",
       status: detail.data.status,
       speed: isSpeed(detail.data.speed) ? detail.data.speed : "normal",
+      type:
+        detail.data.type && isType(detail.data.type) ? detail.data.type : "",
       startDate: toDateInputValue(detail.data.startDate),
+      startTime: detail.data.startTime ?? "",
       imageUrl: detail.data.imageUrl ?? "",
       routeUrl: detail.data.routeUrl ?? "",
+      whatsappGroupUrl: detail.data.whatsappGroupUrl ?? "",
+      wikilocUrl: detail.data.wikilocUrl ?? "",
+      stravaUrl: detail.data.stravaUrl ?? "",
+      isPrivate: detail.data.isPrivate,
+      featured: detail.data.featured,
+      paid: detail.data.paid,
+      organizationId: detail.data.organizationId ?? "",
+      organizationName: detail.data.organizationName ?? "",
     };
     setForm(next);
     setInitial(next);
   }, [detail.data, update.isPending]);
 
   const dirty = (Object.keys(form) as (keyof Form)[]).some(
-    (k) => form[k] !== initial[k],
+    // `organizationName` is display-only (never sent to the API) so changes
+    // to it shouldn't enable Save on their own. `organizationId` drives
+    // affiliation; the name follows.
+    (k) => k !== "organizationName" && form[k] !== initial[k],
   );
 
   const onSave = () => {
@@ -117,12 +165,30 @@ export default function AdminPlanDetailPage({
       body.description = form.description || null;
     if (form.status !== initial.status) body.status = form.status;
     if (form.speed !== initial.speed) body.speed = form.speed;
+    if (form.type !== initial.type) body.type = form.type || null;
     if (form.startDate !== initial.startDate)
       body.startDate = form.startDate || null;
+    if (form.startTime !== initial.startTime)
+      body.startTime = form.startTime || null;
     if (form.imageUrl !== initial.imageUrl)
       body.imageUrl = form.imageUrl || null;
     if (form.routeUrl !== initial.routeUrl)
       body.routeUrl = form.routeUrl || null;
+    if (form.whatsappGroupUrl !== initial.whatsappGroupUrl)
+      body.whatsappGroupUrl = form.whatsappGroupUrl || null;
+    if (form.wikilocUrl !== initial.wikilocUrl)
+      body.wikilocUrl = form.wikilocUrl || null;
+    if (form.stravaUrl !== initial.stravaUrl)
+      body.stravaUrl = form.stravaUrl || null;
+    if (form.isPrivate !== initial.isPrivate) body.isPrivate = form.isPrivate;
+    if (form.featured !== initial.featured) body.featured = form.featured;
+    if (form.paid !== initial.paid) body.paid = form.paid;
+    if (form.organizationId !== initial.organizationId) {
+      // Send "" so the route normalizes to null. Sending null directly is
+      // also fine but the type narrows to string|null vs string, which
+      // would require widening the form's organizationId field.
+      body.organizationId = form.organizationId;
+    }
 
     update.mutate(body, {
       onSuccess: () => toast.success("Saved"),
@@ -286,12 +352,44 @@ export default function AdminPlanDetailPage({
             </Select>
           </div>
           <div className="space-y-1">
+            <Label>Type</Label>
+            <Select
+              value={form.type || "__none"}
+              onValueChange={(v) => {
+                if (v === "__none") setForm((f) => ({ ...f, type: "" }));
+                else if (isType(v)) setForm((f) => ({ ...f, type: v }));
+              }}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__none">—</SelectItem>
+                {TYPES.map((s) => (
+                  <SelectItem key={s} value={s}>
+                    {s}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-1">
             <Label>Start date</Label>
             <Input
               type="date"
               value={form.startDate}
               onChange={(e) =>
                 setForm((f) => ({ ...f, startDate: e.target.value }))
+              }
+            />
+          </div>
+          <div className="space-y-1">
+            <Label>Start time</Label>
+            <Input
+              type="time"
+              value={form.startTime}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, startTime: e.target.value }))
               }
             />
           </div>
@@ -304,6 +402,139 @@ export default function AdminPlanDetailPage({
               }
               placeholder="https://…"
             />
+          </div>
+          <div className="space-y-1">
+            <Label>WhatsApp group URL</Label>
+            <Input
+              value={form.whatsappGroupUrl}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, whatsappGroupUrl: e.target.value }))
+              }
+              placeholder="https://chat.whatsapp.com/…"
+            />
+          </div>
+          <div className="space-y-1">
+            <Label>Wikiloc trail URL</Label>
+            <Input
+              value={form.wikilocUrl}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, wikilocUrl: e.target.value }))
+              }
+              placeholder="https://www.wikiloc.com/…"
+            />
+          </div>
+          <div className="space-y-1">
+            <Label>Strava URL</Label>
+            <Input
+              value={form.stravaUrl}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, stravaUrl: e.target.value }))
+              }
+              placeholder="https://www.strava.com/…"
+            />
+          </div>
+          <div className="md:col-span-2 space-y-1">
+            <Label>Organization</Label>
+            {form.organizationId ? (
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-2 rounded border px-3 py-1.5 text-sm">
+                  <span className="font-medium">
+                    {form.organizationName || form.organizationId}
+                  </span>
+                </span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() =>
+                    setForm((f) => ({
+                      ...f,
+                      organizationId: "",
+                      organizationName: "",
+                    }))
+                  }
+                >
+                  Unaffiliate
+                </Button>
+              </div>
+            ) : (
+              <SearchPicker
+                placeholder="Pick an organization to host this plan…"
+                emptyLabel="No organizations match."
+                useResults={useOrganizationSearch}
+                onPick={(org) =>
+                  setForm((f) => ({
+                    ...f,
+                    organizationId: org.id,
+                    organizationName: org.name,
+                  }))
+                }
+                renderOption={(org) => (
+                  <div className="flex w-full items-center gap-3">
+                    {org.imageUrl ? (
+                      <img
+                        src={org.imageUrl}
+                        alt=""
+                        className="size-8 rounded object-cover shrink-0"
+                      />
+                    ) : (
+                      <div className="size-8 rounded bg-muted flex items-center justify-center text-base shrink-0">
+                        🏔️
+                      </div>
+                    )}
+                    <span className="font-medium truncate">{org.name}</span>
+                  </div>
+                )}
+              />
+            )}
+          </div>
+          <div className="space-y-1">
+            <Label>Private</Label>
+            <label className="flex items-center gap-2 h-9 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={form.isPrivate}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, isPrivate: e.target.checked }))
+                }
+                className="size-4 rounded border-input"
+              />
+              <span className="text-sm text-muted-foreground">
+                Only invited members can see it
+              </span>
+            </label>
+          </div>
+          <div className="space-y-1">
+            <Label>Featured</Label>
+            <label className="flex items-center gap-2 h-9 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={form.featured}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, featured: e.target.checked }))
+                }
+                className="size-4 rounded border-input"
+              />
+              <span className="text-sm text-muted-foreground">
+                Show this plan in the featured list
+              </span>
+            </label>
+          </div>
+          <div className="space-y-1">
+            <Label>Paid</Label>
+            <label className="flex items-center gap-2 h-9 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={form.paid}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, paid: e.target.checked }))
+                }
+                className="size-4 rounded border-input"
+              />
+              <span className="text-sm text-muted-foreground">
+                Joining this plan requires payment
+              </span>
+            </label>
           </div>
           <div className="md:col-span-2 space-y-1">
             <Label>Image URL</Label>
@@ -460,6 +691,34 @@ export default function AdminPlanDetailPage({
                   {m.willBringDogs && (
                     <span className="text-xs text-muted-foreground">🐕</span>
                   )}
+                  <Select
+                    value={m.role}
+                    onValueChange={(v) => {
+                      if (v === "member" || v === "organizer") {
+                        updatePlanMemberRole.mutate(
+                          { userId: m.userId, role: v },
+                          {
+                            onSuccess: () => toast.success("Role updated"),
+                            onError: (err) =>
+                              toast.error(
+                                err instanceof Error
+                                  ? err.message
+                                  : "Role update failed",
+                              ),
+                          },
+                        );
+                      }
+                    }}
+                    disabled={updatePlanMemberRole.isPending}
+                  >
+                    <SelectTrigger className="w-32">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="member">Member</SelectItem>
+                      <SelectItem value="organizer">Organizer</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <span className="text-xs text-muted-foreground">
                     {formatDate(m.joinedAt)}
                   </span>
@@ -526,6 +785,74 @@ export default function AdminPlanDetailPage({
               );
             })}
           </ul>
+        )}
+      </section>
+
+      <section className="space-y-3">
+        <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+          Member activity ({memberLog.data?.length ?? 0})
+        </h2>
+        {memberLog.isLoading && !memberLog.data ? (
+          <p className="text-muted-foreground text-sm">Loading…</p>
+        ) : !memberLog.data || memberLog.data.length === 0 ? (
+          <p className="text-muted-foreground text-sm">
+            No join/leave events yet.
+          </p>
+        ) : (
+          <div className="overflow-x-auto border rounded">
+            <table className="w-full text-sm">
+              <thead className="bg-muted/40">
+                <tr className="text-left">
+                  <th className="py-2 px-3 font-medium">When</th>
+                  <th className="py-2 px-3 font-medium">Member</th>
+                  <th className="py-2 px-3 font-medium">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {memberLog.data.map((event) => {
+                  const name =
+                    [event.firstName, event.lastName]
+                      .filter(Boolean)
+                      .join(" ") ||
+                    event.username ||
+                    "—";
+                  const initials = name.slice(0, 2).toUpperCase();
+                  return (
+                    <tr key={event.id} className="border-t">
+                      <td className="py-2 px-3 text-muted-foreground tabular-nums">
+                        {formatDateTime(event.timestamp)}
+                      </td>
+                      <td className="py-2 px-3">
+                        <Link
+                          href={`/admin/users/${event.userId}`}
+                          className="flex items-center gap-2 hover:underline"
+                        >
+                          <Avatar className="size-6">
+                            {event.imageUrl && (
+                              <AvatarImage src={event.imageUrl} alt={name} />
+                            )}
+                            <AvatarFallback>{initials}</AvatarFallback>
+                          </Avatar>
+                          <span>{name}</span>
+                        </Link>
+                      </td>
+                      <td className="py-2 px-3">
+                        <span
+                          className={`inline-flex items-center rounded px-2 py-0.5 text-xs font-medium ${
+                            event.action === PLAN_USER_LOG_ACTIONS.JOINED
+                              ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300"
+                              : "bg-amber-500/15 text-amber-700 dark:text-amber-300"
+                          }`}
+                        >
+                          {event.action}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         )}
       </section>
 

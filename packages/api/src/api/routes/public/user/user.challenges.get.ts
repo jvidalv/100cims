@@ -25,7 +25,13 @@ export const userChallengesGetRoute = new Elysia().get(
         country: challengeTable.country,
         emoji: challengeTable.emoji,
         imageUrl: challengeTable.imageUrl,
-        summitCount: sql<number>`COUNT(DISTINCT ${summitTable.id})`.as(
+        // Count distinct MOUNTAINS summited within this challenge, not
+        // distinct summit rows — same semantics as
+        // `/api/protected/challenge/my-progress` (`summitedCount`) so the
+        // "X% completat" derived from this field matches the challenge
+        // detail page. Summitting the same mountain twice still counts
+        // as 1 toward the challenge.
+        summitCount: sql<number>`COUNT(DISTINCT ${mountainTable.id})`.as(
           "summitCount",
         ),
       })
@@ -54,7 +60,7 @@ export const userChallengesGetRoute = new Elysia().get(
         challengeTable.emoji,
         challengeTable.imageUrl,
       )
-      .orderBy(desc(sql`COUNT(DISTINCT ${summitTable.id})`));
+      .orderBy(desc(sql`COUNT(DISTINCT ${mountainTable.id})`));
 
     const challenges = results.map((challenge) => ({
       id: challenge.id,

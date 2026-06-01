@@ -1,29 +1,35 @@
 import { isToday } from "date-fns/isToday";
-import { LinearGradient } from "expo-linear-gradient";
 import { Link } from "expo-router";
+import { memo } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 
 import { Skeleton, ThemedText } from "@/components/ui/atoms";
 import { AvatarGroup } from "@/components/ui/molecules/avatar-group";
+import { PlanCoverBackground } from "@/components/ui/molecules/plan-cover-background";
 import { usePlanChatUnread } from "@/domains/plan/plan-chat.api";
+import { useUserMe } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
-import { formatDayDistance } from "@/lib/dates";
+import { formatDayDistance, parseLocalDateString } from "@/lib/dates";
 
-export const PlanItemList = ({
-  id,
-  title,
-  startDate,
-  status,
-  isPrivate,
-  mountains,
-  users,
-}: {
+import type { PlanType } from "@/domains/plan/plan.api";
+
+// memo() pays off because we feed this row from a paginated cache that
+// preserves item identity across renders (`useInfiniteQuery` + `.flatMap`).
+// With a stable identity FlatList's renderItem now reuses the same React
+// fibers when the parent re-renders, fixing the "large list slow to
+// update" warning on long plan feeds.
+type PlanItemListProps = {
   id: string;
   title: string;
+  /** Custom plan cover image. Takes precedence over the mountain collage. */
+  imageUrl?: string | null;
   startDate?: string | null;
   status: "open" | "completed" | "canceled";
+  type?: PlanType | null;
   isPrivate?: boolean;
+  /** Admin-curated. Shown as a golden badge next to the status pill. */
+  featured?: boolean;
   mountains?: {
     imageUrl?: string | null;
   }[];
@@ -33,19 +39,45 @@ export const PlanItemList = ({
     lastName?: string | null;
     imageUrl?: string | null;
   }[];
-}) => {
+};
+
+const PlanItemListBase = ({
+  id,
+  title,
+  imageUrl,
+  startDate,
+  status,
+  type,
+  isPrivate,
+  featured,
+  mountains,
+  users,
+}: PlanItemListProps) => {
   const { data } = usePlanChatUnread();
   const hasUnreadMessages = data?.includes(id);
+  const { data: me } = useUserMe();
+  // Viewer is part of this plan — surfaces the same blue "you're in"
+  // affordance the calendar grid uses (calendar-day's person icon).
+  const isJoined = !!me?.id && users.some((u) => u.id === me.id);
 
   const intl = useIntl();
   const mountainsWithImages = mountains?.filter(({ imageUrl }) => imageUrl);
 
-  const when = startDate
-    ? formatDayDistance(new Date(startDate))
+  const typeLabels: Record<PlanType, string> = {
+    hike: intl.formatMessage({ defaultMessage: "Hike" }),
+    trail: intl.formatMessage({ defaultMessage: "Trail" }),
+    bike: intl.formatMessage({ defaultMessage: "Bike" }),
+  };
+  const typeLabel = type ? typeLabels[type] : null;
+
+  const whenDate = startDate
+    ? formatDayDistance(parseLocalDateString(startDate))
     : intl.formatMessage({ defaultMessage: "Still deciding a date" });
+  const when = typeLabel ? `${typeLabel}, ${whenDate}` : whenDate;
 
   const isOpen = status === "open";
-  const isOngoing = isOpen && startDate && isToday(new Date(startDate));
+  const isOngoing =
+    isOpen && !!startDate && isToday(parseLocalDateString(startDate));
   const isCompleted = status === "completed";
   const isCanceled = status === "canceled";
 
@@ -69,98 +101,23 @@ export const PlanItemList = ({
           />
         </View>
         <View className="relative">
-          {mountainsWithImages?.length ? (
-            <View
-              className="relative flex flex-row overflow-hidden rounded"
-              style={{ width: 100, height: 100 }}
-            >
-              {mountainsWithImages.slice(0, 4).map(({ imageUrl }, i, arr) => {
-                const count = arr.length;
-
-                if (count === 1) {
-                  return (
-                    <Image
-                      key={imageUrl}
-                      source={{ uri: imageUrl!, cache: "force-cache" }}
-                      className="absolute bg-neutral-300 dark:bg-neutral-800"
-                      style={{ width: "100%", height: "100%" }}
-                    />
-                  );
-                }
-
-                if (count === 2) {
-                  return (
-                    <Image
-                      key={imageUrl}
-                      source={{ uri: imageUrl!, cache: "force-cache" }}
-                      className=" bg-neutral-300 dark:bg-neutral-800"
-                      style={{
-                        width: "50%",
-                        height: "100%",
-                      }}
-                    />
-                  );
-                }
-
-                const hasOnlyThree = arr?.length === 3;
-                const isLast = i === arr?.length - 1;
-                const half = "50%";
-                const positionStyle =
-                  i === 0
-                    ? { top: 0, left: 0 }
-                    : i === 1
-                      ? { top: 0, right: 0 }
-                      : i === 2
-                        ? { bottom: 0, left: 0 }
-                        : { bottom: 0, right: 0 };
-
-                return (
-                  <Image
-                    key={imageUrl}
-                    source={{ uri: imageUrl!, cache: "force-cache" }}
-                    className="absolute bg-neutral-300 dark:bg-neutral-800"
-                    style={{
-                      width: hasOnlyThree && isLast ? "100%" : half,
-                      height: half,
-                      ...positionStyle,
-                    }}
-                  />
-                );
-              })}
-              <View className="absolute bottom-0 size-full">
-                <LinearGradient
-                  colors={[
-                    "transparent",
-                    "transparent",
-                    "transparent",
-                    "rgba(0,0,0,0.4)",
-                  ]}
-                  style={StyleSheet.absoluteFill}
-                />
-              </View>
-            </View>
-          ) : (
-            <View
-              className="items-center justify-center bg-neutral-300 dark:bg-neutral-800"
-              style={{
-                width: 100,
-                height: 100,
-                borderRadius: 6,
-                backgroundColor: "#ffd097",
-              }}
-            >
-              <ThemedText className="text-4xl text-background">
-                {title.slice(0, 2).toUpperCase()}
-              </ThemedText>
-            </View>
-          )}
+          <View
+            className="overflow-hidden rounded"
+            style={{ width: 100, height: 100 }}
+          >
+            <PlanCoverBackground
+              customImageUrl={imageUrl}
+              mountains={mountainsWithImages}
+              title={title}
+            />
+          </View>
           {hasUnreadMessages && (
             <View className="absolute -right-1 -top-1 size-4 rounded-full bg-primary" />
           )}
         </View>
         <View className="flex-1 justify-center">
           <View className="items-start gap-1">
-            <View className="flex-row gap-2">
+            <View className="flex-row items-center gap-2">
               {isOpen && !isOngoing && (
                 <ThemedText className="font-semibold text-blue-500">
                   <FormattedMessage defaultMessage="Open" />
@@ -191,6 +148,22 @@ export const PlanItemList = ({
             {!isCanceled && (
               <ThemedText className="font-medium text-muted-foreground">
                 {when}
+                {featured && (
+                  <>
+                    ,{" "}
+                    <ThemedText className="font-medium text-amber-500">
+                      <FormattedMessage defaultMessage="featured" />
+                    </ThemedText>
+                  </>
+                )}
+                {isJoined && (
+                  <>
+                    ,{" "}
+                    <ThemedText className="font-medium text-blue-500">
+                      <FormattedMessage defaultMessage="joined" />
+                    </ThemedText>
+                  </>
+                )}
                 {isPrivate && (
                   <>
                     ,{" "}
@@ -207,6 +180,8 @@ export const PlanItemList = ({
     </Link>
   );
 };
+
+export const PlanItemList = memo(PlanItemListBase);
 
 export const PlanItemListSkeleton = () => (
   <View className="flex flex-row items-center gap-4">

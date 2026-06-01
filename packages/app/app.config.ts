@@ -1,10 +1,21 @@
 import "tsx/cjs"; // Add this to import TypeScript files
 import { ExpoConfig } from "@expo/config-types";
 
+// `@rnmapbox/maps`'s config plugin reads `RNMAPBOX_MAPS_DOWNLOAD_TOKEN` from
+// the environment (its new convention — the plugin option that used to ship
+// the token is now deprecated and prints a "token will be part of your
+// gradle.properties" warning on every prebuild). Our canonical secret name
+// is `MAPBOX_DOWNLOADS_TOKEN` (set in `.env.local` for dev + as an EAS
+// secret for cloud builds), so alias it here at config evaluation time —
+// keeps a single source of truth without renaming the EAS secret.
+if (process.env.MAPBOX_DOWNLOADS_TOKEN && !process.env.RNMAPBOX_MAPS_DOWNLOAD_TOKEN) {
+  process.env.RNMAPBOX_MAPS_DOWNLOAD_TOKEN = process.env.MAPBOX_DOWNLOADS_TOKEN;
+}
+
 const config: ExpoConfig & { newArchEnabled?: boolean } = {
   name: "Cims",
   slug: "100cims",
-  version: "3.1.0",
+  version: "3.2.0",
   orientation: "portrait",
   icon: "./assets/images/icon.png",
   scheme: "centcims",
@@ -122,11 +133,21 @@ const config: ExpoConfig & { newArchEnabled?: boolean } = {
     ],
     "expo-web-browser",
     [
-      "react-native-maps",
+      "@rnmapbox/maps",
       {
-        iosGoogleMapsApiKey: process.env.EXPO_PUBLIC_IOS_GOOGLE_MAPS_API_KEY,
-        androidGoogleMapsApiKey:
-          process.env.EXPO_PUBLIC_ANDROID_GOOGLE_MAPS_API_KEY,
+        // The download token (DOWNLOADS:READ scope) is read from the
+        // `RNMAPBOX_MAPS_DOWNLOAD_TOKEN` env var by the plugin — see the
+        // alias at the top of this file. Don't add the legacy
+        // `RNMapboxMapsDownloadToken` option back: it's deprecated and
+        // makes prebuild write the secret into `gradle.properties`.
+        //
+        // Pin native SDK versions to avoid surprise upgrades. Must match
+        // the Mapbox SDK that `@rnmapbox/maps` (currently 10.3.1) was
+        // built against — see `node_modules/@rnmapbox/maps/package.json`
+        // `mapbox.android` / `mapbox.ios`. Lower pins produce
+        // "Unresolved reference: lineElevationGroundScale /
+        // modelAllowDensityReduction" Kotlin compile errors.
+        RNMapboxMapsVersion: "11.20.1",
       },
     ],
     [

@@ -43,6 +43,32 @@ export const useChallengeDetail = ({ id }: { id: string }) => {
   });
 };
 
+/**
+ * Viewer's per-challenge progress (mountains + essentials summited vs total).
+ * Authenticated route — pass `enabled: false` when the user isn't logged in,
+ * the "Your stats" section then renders nothing.
+ */
+export const useChallengeMyProgress = ({
+  id,
+  enabled = true,
+}: {
+  id: string;
+  enabled?: boolean;
+}) => {
+  return useQuery({
+    queryKey: challengeKeys.myProgress(id),
+    enabled: !!id && enabled,
+    queryFn: async () => {
+      const { data, error } = await apiClient.GET(
+        "/api/protected/challenge/my-progress",
+        { params: { query: { id } } },
+      );
+      if (error) throw error;
+      return data?.message;
+    },
+  });
+};
+
 export const useAdminDeleteChallengeMutation = () => {
   return useMutation({
     mutationKey: ["challenge", "admin-delete"],

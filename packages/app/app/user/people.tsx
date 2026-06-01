@@ -9,12 +9,17 @@ import {
   ThemedText,
   ThemedView,
 } from "@/components/ui/atoms";
-import { PersonRow, ScreenHeader } from "@/components/ui/molecules";
+import {
+  useBlurredScreenHeaderHeight,
+  BlurredScreenHeader,
+  PersonRow,
+} from "@/components/ui/molecules";
 import { useUnlockableUnlock, useUserPeople } from "@/domains/user/user.api";
 import { SITE_URL } from "@/lib/app-links";
 
 export default function UserPeopleScreen() {
   const intl = useIntl();
+  const blurredHeaderHeight = useBlurredScreenHeaderHeight();
   const { data, isPending } = useUserPeople();
   const { mutate: unlock } = useUnlockableUnlock();
 
@@ -32,13 +37,19 @@ export default function UserPeopleScreen() {
 
   return (
     <ThemedView className="flex-1">
-      <ScreenHeader />
-      <View className="mb-6 px-6">
-        <ThemedText className="text-4xl font-bold">
+      <BlurredScreenHeader>
+        <ThemedText numberOfLines={1} className="text-lg font-medium">
           <FormattedMessage defaultMessage="My people" />
         </ThemedText>
-      </View>
-      <ScrollView contentContainerClassName="gap-3 px-6 pb-28">
+      </BlurredScreenHeader>
+      <ScrollView
+        contentContainerStyle={{
+          paddingTop: blurredHeaderHeight,
+          paddingHorizontal: 24,
+          paddingBottom: 112,
+          gap: 12,
+        }}
+      >
         {isPending && (
           <>
             {Array.from({ length: 8 }).map((_, i) => (

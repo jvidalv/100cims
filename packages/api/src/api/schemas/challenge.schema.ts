@@ -12,6 +12,11 @@ export const ChallengeWithCountsSchema = t.Object({
   totalEssentialMountains: t.String(),
   totalUsers: t.String(),
   peakImageUrl: t.Nullable(t.String()),
+  // Mean lat/lng of the challenge's mountains, used by the mobile "Closer"
+  // sort. Both null when the challenge has no linked mountains. Serialised
+  // as numeric strings (same as mountain.latitude / mountain.longitude).
+  centroidLatitude: t.Nullable(t.String()),
+  centroidLongitude: t.Nullable(t.String()),
 });
 
 /**
@@ -57,6 +62,18 @@ export const PublicChallengeUserSchema = t.Object({
 });
 
 /**
+ * Schema for the viewer's progress in a single challenge — drives the
+ * "Your stats" section on the challenge detail page.
+ */
+export const ChallengeMyProgressSchema = t.Object({
+  challengeId: t.String(),
+  totalMountains: t.Number(),
+  totalEssentialMountains: t.Number(),
+  summitedCount: t.Number(),
+  summitedEssentialCount: t.Number(),
+});
+
+/**
  * Schema for public challenge detail response
  */
 export const PublicChallengeDetailSchema = t.Object({
@@ -70,6 +87,7 @@ export const PublicChallengeDetailSchema = t.Object({
   isOfficial: t.Boolean(),
   isPublic: t.Boolean(),
   totalMountains: t.Number(),
+  totalEssentialMountains: t.Number(),
   totalUsers: t.Number(),
   mountains: t.Array(PublicChallengeMountainSchema),
   users: t.Array(PublicChallengeUserSchema),

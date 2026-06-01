@@ -6,10 +6,28 @@ const planJoined = {
   es: (name: string) => `${name} se ha unido a tu plan`,
 } satisfies Record<AppLocale, (name: string) => string>;
 
+const planJoinedOther = {
+  en: (name: string) => `${name} joined the plan`,
+  ca: (name: string) => `${name} s'ha unit al pla`,
+  es: (name: string) => `${name} se ha unido al plan`,
+} satisfies Record<AppLocale, (name: string) => string>;
+
 const planLeft = {
   en: (name: string) => `${name} left your plan`,
   ca: (name: string) => `${name} ha deixat el teu pla`,
   es: (name: string) => `${name} ha dejado tu plan`,
+} satisfies Record<AppLocale, (name: string) => string>;
+
+const planDeleted = {
+  en: "The plan was deleted by its creator",
+  ca: "El pla l'ha eliminat el creador",
+  es: "El plan ha sido eliminado por el creador",
+} satisfies Record<AppLocale, string>;
+
+const friendPlanCreated = {
+  en: (name: string) => `${name} just created a plan`,
+  ca: (name: string) => `${name} acaba de crear un pla`,
+  es: (name: string) => `${name} acaba de crear un plan`,
 } satisfies Record<AppLocale, (name: string) => string>;
 
 const planChat = {
@@ -45,8 +63,17 @@ const mountainSuggestionBody = {
 export const pushPlanJoined = (locale: string | null, name: string) =>
   planJoined[normalizeAppLocale(locale)](name);
 
+export const pushPlanJoinedOther = (locale: string | null, name: string) =>
+  planJoinedOther[normalizeAppLocale(locale)](name);
+
 export const pushPlanLeft = (locale: string | null, name: string) =>
   planLeft[normalizeAppLocale(locale)](name);
+
+export const pushPlanDeleted = (locale: string | null) =>
+  planDeleted[normalizeAppLocale(locale)];
+
+export const pushFriendPlanCreated = (locale: string | null, name: string) =>
+  friendPlanCreated[normalizeAppLocale(locale)](name);
 
 export const pushPlanChat = (locale: string | null) =>
   planChat[normalizeAppLocale(locale)];

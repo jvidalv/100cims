@@ -1,14 +1,6 @@
 import { X } from "lucide-react-native";
 import { useEffect, useState } from "react";
-import {
-  Image,
-  ImageSourcePropType,
-  Modal,
-  StyleSheet,
-  TouchableOpacity,
-  useWindowDimensions,
-  View,
-} from "react-native";
+import { Image as RNImage, ImageSourcePropType, Modal, StyleSheet, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import {
   Gesture,
   GestureDetector,
@@ -22,6 +14,7 @@ import Animated, {
 } from "react-native-reanimated";
 
 import { BlurView, LucideIcon } from "@/components/ui/atoms";
+import { Image } from "@/components/ui/atoms/image";
 
 interface ImagePreviewModalProps {
   visible: boolean;
@@ -35,7 +28,7 @@ const MAX_SCALE = 5;
 const getSourceSize = (
   source: ImageSourcePropType,
 ): { width: number; height: number } | null => {
-  const resolved = Image.resolveAssetSource(source);
+  const resolved = RNImage.resolveAssetSource(source);
   if (resolved?.width && resolved?.height) {
     return { width: resolved.width, height: resolved.height };
   }
@@ -101,7 +94,7 @@ export function ImagePreviewModal({
       return;
     }
     let cancelled = false;
-    Image.getSize(
+    RNImage.getSize(
       uri,
       (width, height) => {
         if (!cancelled) setSize({ width, height });

@@ -1,10 +1,29 @@
 import { t } from "elysia";
 
 import { PaginatedSchema } from "@/api/schemas/common.schema";
-import { PlanStatusSchema } from "@/api/schemas/enums";
+import { PlanStatusSchema, PlanTypeSchema } from "@/api/schemas/enums";
 
 /**
- * Schema for a user participating in a plan
+ * 400 payload returned by plan create/update when one of the link-URL
+ * fields is malformed. `error: "INVALID_URL"` lets old clients keep
+ * showing a generic message; `field` lets new clients highlight the
+ * offending input.
+ */
+export const PlanLinkUrlErrorResponse = t.Object({
+  error: t.Literal("INVALID_URL"),
+  field: t.Union([
+    t.Literal("whatsappGroupUrl"),
+    t.Literal("wikilocUrl"),
+    t.Literal("stravaUrl"),
+  ]),
+});
+
+/**
+ * Schema for a user participating in a plan.
+ *
+ * `role` is additive — older clients that don't read it keep working since
+ * the field is non-required-by-omission for them; new builds use it to sort
+ * organizers first and badge them in the participant list.
  */
 export const PlanUserSchema = t.Object({
   id: t.String(),
@@ -12,6 +31,18 @@ export const PlanUserSchema = t.Object({
   lastName: t.Nullable(t.String()),
   imageUrl: t.Nullable(t.String()),
   willBringDogs: t.Boolean(),
+  role: t.Union([t.Literal("member"), t.Literal("organizer")]),
+});
+
+/**
+ * Schema for the organization hosting a plan, when one is set. Returned as
+ * a nested object on `PlanSchema` / `PlanDetailSchema` so mobile clients
+ * can render a "Hosted by" row without a second round trip.
+ */
+export const PlanOrganizationSchema = t.Object({
+  id: t.String(),
+  name: t.String(),
+  imageUrl: t.Nullable(t.String()),
 });
 
 /**
@@ -48,16 +79,23 @@ export const PlanSchema = t.Object({
   description: t.Nullable(t.String()),
   imageUrl: t.Nullable(t.String()),
   speed: t.Nullable(t.String()),
+  type: t.Nullable(PlanTypeSchema),
   status: PlanStatusSchema,
   routeUrl: t.Nullable(t.String()),
+  whatsappGroupUrl: t.Nullable(t.String()),
+  wikilocUrl: t.Nullable(t.String()),
+  stravaUrl: t.Nullable(t.String()),
   startDate: t.Nullable(t.String()),
+  startTime: t.Nullable(t.String()),
   creatorId: t.String(),
   createdAt: t.Date(),
   updatedAt: t.Date(),
   challengeId: t.Nullable(t.String()),
   isPrivate: t.Boolean(),
+  featured: t.Boolean(),
   users: t.Array(PlanUserSchema),
   mountains: t.Array(PlanMountainSchema),
+  organization: t.Nullable(PlanOrganizationSchema),
 });
 
 /**
@@ -69,15 +107,22 @@ export const PlanDetailSchema = t.Object({
   description: t.Nullable(t.String()),
   imageUrl: t.Nullable(t.String()),
   speed: t.Nullable(t.String()),
+  type: t.Nullable(PlanTypeSchema),
   status: t.String(),
   routeUrl: t.Nullable(t.String()),
+  whatsappGroupUrl: t.Nullable(t.String()),
+  wikilocUrl: t.Nullable(t.String()),
+  stravaUrl: t.Nullable(t.String()),
   startDate: t.Nullable(t.String()),
+  startTime: t.Nullable(t.String()),
   creatorId: t.String(),
   createdAt: t.Date(),
   updatedAt: t.Date(),
   isPrivate: t.Boolean(),
+  featured: t.Boolean(),
   users: t.Array(PlanUserSchema),
   mountains: t.Array(PlanMountainWithEssentialSchema),
+  organization: t.Nullable(PlanOrganizationSchema),
 });
 
 /**
@@ -107,12 +152,20 @@ export const BasicPlanSchema = t.Object({
   description: t.Nullable(t.String()),
   imageUrl: t.Nullable(t.String()),
   speed: t.Nullable(t.String()),
+  type: t.Nullable(PlanTypeSchema),
   status: t.String(),
   routeUrl: t.Nullable(t.String()),
+  whatsappGroupUrl: t.Nullable(t.String()),
+  wikilocUrl: t.Nullable(t.String()),
+  stravaUrl: t.Nullable(t.String()),
   startDate: t.Nullable(t.String()),
+  startTime: t.Nullable(t.String()),
   creatorId: t.String(),
   createdAt: t.Date(),
   updatedAt: t.Date(),
   challengeId: t.Nullable(t.String()),
   isPrivate: t.Boolean(),
+  featured: t.Boolean(),
+  paid: t.Boolean(),
+  organizationId: t.Nullable(t.String()),
 });

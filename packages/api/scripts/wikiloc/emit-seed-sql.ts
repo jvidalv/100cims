@@ -1,0 +1,327 @@
+/**
+ * Generate custom Drizzle migration SQL files that seed the `route` +
+ * `mountain_route` tables from the local scraper output.
+ *
+ * APPEND-ONLY. Existing seed_routes_part_*.sql files (and their journal
+ * entries) are never touched — they represent migrations that have already
+ * shipped. New runs only emit chunks for externalIds that AREN'T already
+ * referenced by an existing seed file. New chunk filenames continue the
+ * numbering after the highest existing seed_routes_part_* entry in the
+ * journal.
+ *
+ * Run:
+ *   yarn tsx scripts/wikiloc/emit-seed-sql.ts
+ *
+ * Re-runnable: each route INSERT also uses `ON CONFLICT (source,
+ * external_id) DO NOTHING` and `mountain_route` uses `ON CONFLICT
+ * (mountain_slug, route_id) DO NOTHING`, so even if the same externalId
+ * slips into a new chunk it won't duplicate. The external-id dedupe is
+ * primarily about not committing 200MB of redundant SQL to git.
+ *
+ * Coordinates are stored at full fidelity (no downsample).
+ */
+import { createHash } from "crypto";
+import { readdirSync, readFileSync, writeFileSync } from "fs";
+import { resolve } from "path";
+
+import type { TrailDetail } from "./lib/types";
+
+type SummitsFile = Record<string, string[]>;
+
+const OUTPUT_DIR = resolve(__dirname, "output");
+const SUMMITS_PATH = resolve(OUTPUT_DIR, "_summits.json");
+const DRIZZLE_DIR = resolve(__dirname, "../../src/db/drizzle");
+const JOURNAL_PATH = resolve(DRIZZLE_DIR, "meta/_journal.json");
+
+const ROUTES_PER_CHUNK = 100;
+
+const TRAILS_REGEX = /export const trails: MountainRoute\[\] = ([\s\S]+);\s*$/m;
+const readTrailsFile = (path: string): TrailDetail[] => {
+  const text = readFileSync(path, "utf8");
+  const match = text.match(TRAILS_REGEX);
+  if (!match) throw new Error(`Could not find trails array in ${path}`);
+  return JSON.parse(match[1]) as TrailDetail[];
+};
+
+// Postgres text literal: double single quotes. Caller wraps in 'X'.
+const pgText = (s: string | null | undefined): string => {
+  if (s === null || s === undefined) return "NULL";
+  return `'${s.replace(/'/g, "''")}'`;
+};
+
+const pgInt = (n: number | null | undefined): string => {
+  if (n === null || n === undefined) return "NULL";
+  return String(Math.round(n));
+};
+
+// JSONB literal: stringify with JSON, then escape for PG text literal, then
+// cast. PG handles unicode happily inside the quoted string.
+const pgJsonb = (v: unknown): string => {
+  if (v === null || v === undefined) return "NULL";
+  return `${pgText(JSON.stringify(v))}::jsonb`;
+};
+
+type SeedRoute = {
+  externalId: string;
+  trail: TrailDetail;
+  mountainSlugs: string[];
+};
+
+const collectRoutes = (): SeedRoute[] => {
+  const summits = JSON.parse(readFileSync(SUMMITS_PATH, "utf8")) as SummitsFile;
+  const files = readdirSync(OUTPUT_DIR)
+    .filter((f) => f.endsWith(".ts"))
+    .sort();
+  const byId = new Map<string, TrailDetail>();
+  for (const fileName of files) {
+    const trails = readTrailsFile(resolve(OUTPUT_DIR, fileName));
+    for (const t of trails) {
+      if (!byId.has(t.externalId)) byId.set(t.externalId, t);
+    }
+  }
+  const routes: SeedRoute[] = [];
+  for (const [externalId, trail] of byId.entries()) {
+    const slugs = summits[externalId];
+    if (!slugs || slugs.length === 0) continue;
+    routes.push({ externalId, trail, mountainSlugs: slugs });
+  }
+  routes.sort((a, b) => a.externalId.localeCompare(b.externalId));
+  return routes;
+};
+
+const ROUTE_COLUMNS = [
+  "source",
+  "external_id",
+  "url",
+  "title_raw",
+  "title",
+  "description_raw",
+  "description",
+  "author",
+  "distance_meters",
+  "elevation_gain_meters",
+  "elevation_loss_meters",
+  "max_elevation_meters",
+  "min_elevation_meters",
+  "technical_difficulty",
+  "trail_type",
+  "moving_time_seconds",
+  "total_time_seconds",
+  "coordinates_count",
+  "uploaded_at",
+  "recorded_at",
+  "coordinates",
+] as const;
+
+const buildRouteValues = (r: SeedRoute): string => {
+  const t = r.trail;
+  // Store full-fidelity coordinates. Migration size cost is paid once on
+  // the first deploy; the seed files can be removed afterwards.
+  const coords = t.coordinates ?? null;
+  const cells = [
+    pgText("wikiloc"),
+    pgText(r.externalId),
+    pgText(t.url),
+    pgText(t.titleRaw),
+    pgJsonb(t.title),
+    pgText(t.descriptionRaw),
+    pgJsonb(t.description),
+    pgText(t.author ?? null),
+    pgInt(t.distanceMeters),
+    pgInt(t.elevationGainMeters),
+    pgInt(t.elevationLossMeters),
+    pgInt(t.maxElevationMeters),
+    pgInt(t.minElevationMeters),
+    pgText(t.technicalDifficulty),
+    pgText(t.trailType),
+    pgInt(t.movingTimeSeconds),
+    pgInt(t.totalTimeSeconds),
+    pgInt(t.coordinatesCount),
+    pgText(t.uploadedAt),
+    pgText(t.recordedAt),
+    pgJsonb(coords),
+  ];
+  return `(${cells.join(", ")})`;
+};
+
+const buildChunkSql = (
+  chunk: SeedRoute[],
+  partNumber: number,
+  totalParts: number,
+): string => {
+  const header = [
+    `-- Seed routes part ${partNumber}/${totalParts} (${chunk.length} routes).`,
+    `-- Generated by packages/api/scripts/wikiloc/emit-seed-sql.ts — do not hand-edit.`,
+    `-- Source: packages/api/scripts/wikiloc/output/<slug>.ts + _summits.json.`,
+    "",
+  ].join("\n");
+
+  // Route inserts. ON CONFLICT (source, external_id) DO NOTHING means
+  // re-running over a populated DB is a no-op.
+  const routeInsert =
+    `INSERT INTO "route" (${ROUTE_COLUMNS.map((c) => `"${c}"`).join(", ")}) VALUES\n` +
+    chunk.map(buildRouteValues).join(",\n") +
+    `\nON CONFLICT ("source", "external_id") DO NOTHING;`;
+
+  // Mountain-route join inserts. We can't FK-reference route.id by UUID here
+  // (we just generated those server-side), so look the row up by
+  // (source, external_id) via a CTE-style subselect.
+  const joinRows: string[] = [];
+  for (const r of chunk) {
+    for (const [i, slug] of r.mountainSlugs.entries()) {
+      joinRows.push(
+        `(${pgText(slug)}, (SELECT "id" FROM "route" WHERE "source" = 'wikiloc' AND "external_id" = ${pgText(r.externalId)}), ${i})`,
+      );
+    }
+  }
+  const joinInsert =
+    joinRows.length > 0
+      ? `INSERT INTO "mountain_route" ("mountain_slug", "route_id", "ordinal") VALUES\n` +
+        joinRows.join(",\n") +
+        `\nON CONFLICT ("mountain_slug", "route_id") DO NOTHING;`
+      : "-- no mountain_route inserts in this chunk";
+
+  return `${header}${routeInsert}\n--> statement-breakpoint\n${joinInsert}\n`;
+};
+
+type JournalEntry = {
+  idx: number;
+  version: string;
+  when: number;
+  tag: string;
+  breakpoints: boolean;
+};
+
+type Journal = {
+  version: string;
+  dialect: string;
+  entries: JournalEntry[];
+};
+
+const SEED_TAG_PREFIX = "seed_routes_part_";
+
+// Pull every external_id referenced by an existing seed_routes_part_*.sql
+// file. Used to skip routes that have already been emitted in a prior run
+// (and presumably already applied to prod). Parses just the route INSERT
+// VALUES rows where externalId is the second column (`'wikiloc', '<id>',
+// ...`).
+const ROUTE_EXTERNAL_ID_REGEX = /\(\s*'wikiloc'\s*,\s*'([^']+)'/g;
+
+const collectAlreadySeededExternalIds = (): Set<string> => {
+  const seeded = new Set<string>();
+  for (const f of readdirSync(DRIZZLE_DIR)) {
+    if (!(f.endsWith(".sql") && f.includes(SEED_TAG_PREFIX))) continue;
+    const text = readFileSync(resolve(DRIZZLE_DIR, f), "utf8");
+    let m: RegExpExecArray | null;
+    ROUTE_EXTERNAL_ID_REGEX.lastIndex = 0;
+    while ((m = ROUTE_EXTERNAL_ID_REGEX.exec(text)) !== null) {
+      seeded.add(m[1]);
+    }
+  }
+  return seeded;
+};
+
+// drizzle's snapshot hash; computed by the kit but we can recompute here
+// for the journal entry. The simpler path is to leave the snapshot files
+// alone — adding pure-data migrations doesn't change the schema snapshot.
+const padIdx = (n: number): string => String(n).padStart(4, "0");
+
+// Find the highest seed_routes_part_* part number already in the journal
+// so the new files continue the numbering from there. Anchored to end-of-tag
+// so a tag containing the prefix twice (or a hand-edited tag with arbitrary
+// suffixes) can't trip the parse.
+const SEED_TAG_PART_REGEX = new RegExp(`${SEED_TAG_PREFIX}(\\d+)$`);
+const highestExistingPartNumber = (journal: Journal): number => {
+  let max = 0;
+  for (const e of journal.entries) {
+    const match = SEED_TAG_PART_REGEX.exec(e.tag);
+    if (!match) continue;
+    const partNum = parseInt(match[1], 10);
+    if (!Number.isNaN(partNum) && partNum > max) max = partNum;
+  }
+  return max;
+};
+
+// Highest idx already in the journal — used as the floor for new entries so
+// the numbering doesn't collide if the array ever has gaps (e.g. a manually
+// deleted entry). entries.length would silently overwrite an existing idx.
+const highestExistingIdx = (journal: Journal): number => {
+  let max = -1;
+  for (const e of journal.entries) {
+    if (e.idx > max) max = e.idx;
+  }
+  return max;
+};
+
+const main = (): void => {
+  console.log("[seed-sql] reading scraper output…");
+  const routes = collectRoutes();
+  console.log(`[seed-sql] ${routes.length} unique routes in output/`);
+
+  console.log("[seed-sql] scanning existing seed files for prior externalIds…");
+  const alreadySeeded = collectAlreadySeededExternalIds();
+  console.log(`[seed-sql] ${alreadySeeded.size} already in prior seed files`);
+
+  const newRoutes = routes.filter((r) => !alreadySeeded.has(r.externalId));
+  console.log(`[seed-sql] ${newRoutes.length} new routes to emit`);
+
+  if (newRoutes.length === 0) {
+    console.log("[seed-sql] nothing to do — exiting");
+    return;
+  }
+
+  const chunks: SeedRoute[][] = [];
+  for (let i = 0; i < newRoutes.length; i += ROUTES_PER_CHUNK) {
+    chunks.push(newRoutes.slice(i, i + ROUTES_PER_CHUNK));
+  }
+  console.log(
+    `[seed-sql] ${chunks.length} chunks of up to ${ROUTES_PER_CHUNK} routes`,
+  );
+
+  const journalRaw = readFileSync(JOURNAL_PATH, "utf8");
+  const journal = JSON.parse(journalRaw) as Journal;
+  const baseIdx = highestExistingIdx(journal) + 1;
+  const basePartNumber = highestExistingPartNumber(journal);
+  const now = Date.now();
+
+  for (const [i, chunk] of chunks.entries()) {
+    const idx = baseIdx + i;
+    const partNumber = basePartNumber + i + 1;
+    const tag = `${padIdx(idx)}_${SEED_TAG_PREFIX}${padIdx(partNumber)}`;
+    const sql = buildChunkSql(
+      chunk,
+      partNumber,
+      basePartNumber + chunks.length,
+    );
+    const fileName = `${tag}.sql`;
+    writeFileSync(resolve(DRIZZLE_DIR, fileName), sql, "utf8");
+    journal.entries.push({
+      idx,
+      version: "7",
+      when: now + i, // monotonic for ordering
+      tag,
+      breakpoints: true,
+    });
+    if ((i + 1) % 5 === 0 || i + 1 === chunks.length) {
+      console.log(`[seed-sql] wrote ${fileName}`);
+    }
+  }
+
+  writeFileSync(JOURNAL_PATH, JSON.stringify(journal, null, 2) + "\n", "utf8");
+  console.log(
+    `[seed-sql] done — ${chunks.length} new chunks (parts ${basePartNumber + 1}..${basePartNumber + chunks.length}), journal at idx ${baseIdx + chunks.length - 1}`,
+  );
+  // Sanity-check hash so we notice if the emitter output changes
+  // unexpectedly between runs.
+  const totalSize = chunks.reduce(
+    (acc, c) => acc + c.reduce((a, r) => a + JSON.stringify(r).length, 0),
+    0,
+  );
+  const hash = createHash("sha256")
+    .update(String(totalSize))
+    .digest("hex")
+    .slice(0, 8);
+  console.log(`[seed-sql] payload signature ${hash} (size ${totalSize})`);
+};
+
+main();

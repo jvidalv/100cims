@@ -70,8 +70,9 @@ export const challengeDetailGetRoute = new Elysia().get(
       .where(eq(challengeHasMountainTable.challengeId, query.id))
       .orderBy(desc(sql`CAST(${mountainTable.height} AS FLOAT)`));
 
-    // Get total mountain count
+    // Get total mountain count + essential count
     const totalMountains = mountains.length;
+    const totalEssentialMountains = mountains.filter((m) => m.essential).length;
 
     // Fetch users who have summited mountains in this challenge, with summit count
     // Run count and list queries in parallel
@@ -156,6 +157,7 @@ export const challengeDetailGetRoute = new Elysia().get(
         isOfficial,
         isPublic: challenge.isPublic,
         totalMountains,
+        totalEssentialMountains,
         totalUsers,
         mountains: mountains.slice(0, 3).map((m) => ({
           id: m.id,

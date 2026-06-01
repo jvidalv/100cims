@@ -3,11 +3,25 @@ import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient } from "@/components/providers/query-client-provider";
 import { useUserMe } from "@/domains/user/user.api";
 import apiClient from "@/lib/api-client";
-import { planKeys } from "@/lib/query-keys";
+import { calendarKeys, planKeys } from "@/lib/query-keys";
+
+import type { paths } from "@/types/api";
 
 const PLANS_PAGE_SIZE = 20;
 
 export type PlanStatus = "open" | "completed" | "canceled";
+export type PlanType = "hike" | "trail" | "bike";
+
+// Body shapes for plan-create / plan-update / plan-delete derived from the
+// API's OpenAPI schemas so they stay in lockstep with the backend body
+// validators — adding/renaming/optional-ising a field on the server
+// immediately surfaces it here.
+type PlanCreateBody =
+  paths["/api/protected/plans/create"]["post"]["requestBody"]["content"]["application/json"];
+type PlanUpdateBody =
+  paths["/api/protected/plans/update"]["post"]["requestBody"]["content"]["application/json"];
+type PlanDeleteBody =
+  paths["/api/protected/plans/delete"]["post"]["requestBody"]["content"]["application/json"];
 
 export const usePlans = (
   params?: {
@@ -16,6 +30,10 @@ export const usePlans = (
     creatorId?: string;
     userId?: string;
     sort?: "upcoming";
+    /** Server-side drop plans whose `startDate` is in the past (and any
+     *  plan with a null startDate). Off by default so /user/plans and
+     *  other historical surfaces keep showing completed/canceled rows. */
+    futureOnly?: boolean;
   },
   { enabled }: { enabled?: boolean } = {},
 ) => {
@@ -32,12 +50,36 @@ export const usePlans = (
   });
 };
 
+/**
+ * Admin-curated featured open plans. Backs the home "Upcoming plans"
+ * section, where featured plans are rendered above the regular upcoming
+ * window (and deduped so a featured plan that also falls in the upcoming
+ * limit only shows once). Separate from `usePlans` so the existing list
+ * surfaces (/plans, mountain detail) keep their stable sort.
+ */
+export const useFeaturedPlans = (params?: {
+  limit?: number;
+  futureOnly?: boolean;
+}) =>
+  useQuery({
+    queryKey: planKeys.featured(params),
+    queryFn: async () => {
+      const { data, error } = await apiClient.GET(
+        "/api/public/plans/featured",
+        { params: { query: params ?? {} } },
+      );
+      if (error) throw error;
+      return data.message;
+    },
+  });
+
 export const usePlansInfinite = (params?: {
   status?: PlanStatus;
   creatorId?: string;
   userId?: string;
   sort?: "upcoming";
   challengeId?: string;
+  futureOnly?: boolean;
 }) => {
   return useInfiniteQuery({
     queryKey: planKeys.listInfinite(params),
@@ -59,12 +101,35 @@ export const usePlansInfinite = (params?: {
   });
 };
 
-export const usePlanOne = ({ id }: { id: string }) => {
+/**
+ * Open plans (status === "open") that include the given mountain. Sorted by
+ * start date ascending — soonest first. Response is shaped like the calendar
+ * plan-event so the existing `PlanItemListCompact` row consumes it as-is.
+ */
+export const usePlansByMountain = (mountainSlug: string | undefined) => {
   return useQuery({
-    queryKey: planKeys.one(id),
+    queryKey: mountainSlug
+      ? planKeys.byMountain(mountainSlug)
+      : (["noop"] as const),
+    enabled: !!mountainSlug,
+    queryFn: async () => {
+      const { data, error } = await apiClient.GET(
+        "/api/public/plans/by-mountain",
+        { params: { query: { mountainSlug: mountainSlug ?? "" } } },
+      );
+      if (error) throw error;
+      return data.message.events;
+    },
+  });
+};
+
+export const usePlanOne = ({ id }: { id: string | undefined }) => {
+  return useQuery({
+    queryKey: planKeys.one(id ?? ""),
+    enabled: !!id,
     queryFn: async () => {
       const { data, error } = await apiClient.GET("/api/public/plans/one", {
-        params: { query: { id } },
+        params: { query: { id: id ?? "" } },
       });
       if (error) throw error;
       return data.message;
@@ -77,11 +142,15 @@ export const useNewPlansCount = () => {
 
   return useQuery({
     queryKey: planKeys.countNew(user?.id),
+    // Skip the request entirely when there's no user — there's no userId
+    // to scope the count against, and unauth visitors don't have a badge.
+    enabled: !!user?.id,
     queryFn: async () => {
+      if (!user?.id) return null;
       const { data, error } = await apiClient.GET(
         "/api/public/plans/count-new",
         {
-          params: { query: user?.id ? { userId: user.id } : {} },
+          params: { query: { userId: user.id } },
         },
       );
       if (error) throw error;
@@ -96,9 +165,13 @@ export const useMarkPlansAsVisited = () => {
   return useMutation({
     mutationKey: ["plans", "mark-visited"],
     mutationFn: async () => {
+      // No-op when there's no signed-in user. Callers should also gate, but
+      // an explicit early return avoids the non-null assertion and keeps the
+      // mutation safe to call eagerly during tab focus / first-render races.
+      if (!user?.id) return null;
       const { data, error } = await apiClient.POST(
         "/api/public/plans/count-new",
-        { body: { userId: user!.id } },
+        { body: { userId: user.id } },
       );
       if (error) throw error;
       return data;
@@ -114,14 +187,7 @@ export const useMarkPlansAsVisited = () => {
 export const usePlanCreate = () => {
   return useMutation({
     mutationKey: ["plan", "create"],
-    mutationFn: async (input: {
-      title: string;
-      description: string;
-      startDate?: string;
-      mountainIds?: string[];
-      userIds?: string[];
-      isPrivate?: boolean;
-    }) => {
+    mutationFn: async (input: PlanCreateBody) => {
       const { data, error } = await apiClient.POST(
         "/api/protected/plans/create",
         { body: input },
@@ -131,6 +197,7 @@ export const usePlanCreate = () => {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: planKeys.all });
+      void queryClient.invalidateQueries({ queryKey: calendarKeys.all });
     },
   });
 };
@@ -138,16 +205,7 @@ export const usePlanCreate = () => {
 export const usePlanUpdate = () => {
   return useMutation({
     mutationKey: ["plan", "update"],
-    mutationFn: async (input: {
-      id: string;
-      title?: string;
-      description?: string;
-      mountainIds?: string[];
-      startDate?: string;
-      userIds?: string[];
-      status?: PlanStatus;
-      isPrivate?: boolean;
-    }) => {
+    mutationFn: async (input: PlanUpdateBody) => {
       const { data, error } = await apiClient.POST(
         "/api/protected/plans/update",
         { body: input },
@@ -157,6 +215,7 @@ export const usePlanUpdate = () => {
     },
     onSuccess: (_data, variables) => {
       void queryClient.invalidateQueries({ queryKey: planKeys.all });
+      void queryClient.invalidateQueries({ queryKey: calendarKeys.all });
       void queryClient.invalidateQueries({ queryKey: planKeys.one(variables.id) });
     },
   });
@@ -165,7 +224,7 @@ export const usePlanUpdate = () => {
 export const usePlanDelete = () => {
   return useMutation({
     mutationKey: ["plan", "delete"],
-    mutationFn: async (input: { id: string }) => {
+    mutationFn: async (input: PlanDeleteBody) => {
       const { data, error } = await apiClient.POST(
         "/api/protected/plans/delete",
         { body: input },
@@ -175,15 +234,20 @@ export const usePlanDelete = () => {
     },
     onSuccess: (_data, variables) => {
       void queryClient.invalidateQueries({ queryKey: planKeys.all });
+      void queryClient.invalidateQueries({ queryKey: calendarKeys.all });
       void queryClient.removeQueries({ queryKey: planKeys.one(variables.id) });
     },
   });
 };
 
-export const usePlanJoin = (planId: string) => {
+export const usePlanJoin = (planId: string | undefined) => {
   return useMutation({
     mutationKey: ["plan", "join"],
     mutationFn: async () => {
+      // The NativeTabs eager-mount window leaves planId briefly undefined
+      // — surface that explicitly instead of POSTing { id: undefined } and
+      // getting a 422 from TypeBox.
+      if (!planId) throw new Error("PLAN_ID_UNRESOLVED");
       const { data, error } = await apiClient.POST(
         "/api/protected/plans/join",
         { body: { id: planId } },
@@ -193,15 +257,19 @@ export const usePlanJoin = (planId: string) => {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: planKeys.all });
-      void queryClient.invalidateQueries({ queryKey: planKeys.one(planId) });
+      void queryClient.invalidateQueries({ queryKey: calendarKeys.all });
+      if (planId) {
+        void queryClient.invalidateQueries({ queryKey: planKeys.one(planId) });
+      }
     },
   });
 };
 
-export const usePlanLeave = (planId: string) => {
+export const usePlanLeave = (planId: string | undefined) => {
   return useMutation({
     mutationKey: ["plan", "leave"],
     mutationFn: async () => {
+      if (!planId) throw new Error("PLAN_ID_UNRESOLVED");
       const { data, error } = await apiClient.POST(
         "/api/protected/plans/leave",
         { body: { id: planId } },
@@ -211,7 +279,10 @@ export const usePlanLeave = (planId: string) => {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: planKeys.all });
-      void queryClient.invalidateQueries({ queryKey: planKeys.one(planId) });
+      void queryClient.invalidateQueries({ queryKey: calendarKeys.all });
+      if (planId) {
+        void queryClient.invalidateQueries({ queryKey: planKeys.one(planId) });
+      }
     },
   });
 };
@@ -229,6 +300,7 @@ export const useAdminDeletePlanMutation = () => {
     },
     onSuccess: (_, { planId }) => {
       void queryClient.invalidateQueries({ queryKey: planKeys.all });
+      void queryClient.invalidateQueries({ queryKey: calendarKeys.all });
       void queryClient.removeQueries({ queryKey: planKeys.one(planId) });
     },
   });

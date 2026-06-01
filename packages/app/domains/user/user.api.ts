@@ -1,12 +1,28 @@
 import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 
-import { queryClient } from "@/components/providers/query-client-provider";
 import { useAuth } from "@/components/providers/auth-provider";
+import { queryClient } from "@/components/providers/query-client-provider";
 import apiClient from "@/lib/api-client";
 import { userKeys, challengeKeys, mountainKeys } from "@/lib/query-keys";
 
+import type { paths } from "@/types/api";
+
 export const UNAUTHORIZED = "Unauthorized";
+
+// Shapes derived from the API's OpenAPI schemas so they stay in lockstep
+// with the backend handlers — adding/renaming a field server-side surfaces
+// it here without an extra hand-edit.
+type PersonListItem =
+  paths["/api/protected/user/people"]["get"]["responses"][200]["content"]["application/json"]["message"][number];
+type JoinBody =
+  paths["/api/public/join"]["post"]["requestBody"]["content"]["application/json"];
+type UpdateMeBody =
+  paths["/api/protected/user/me"]["post"]["requestBody"]["content"]["application/json"];
+type SuggestionBody =
+  paths["/api/protected/user/suggestion"]["post"]["requestBody"]["content"]["application/json"];
+type UnlockableBody =
+  paths["/api/protected/user/unlockables"]["post"]["requestBody"]["content"]["application/json"];
 
 export const useUserMe = () => {
   const { isAuthenticated, logout } = useAuth();
@@ -118,12 +134,17 @@ export const useUserAllSummits = (
   });
 };
 
-export const useUserOneGet = ({ userId }: { userId: string }) => {
+export const useUserOneGet = ({
+  userId,
+}: {
+  userId: string | undefined;
+}) => {
   const props = useQuery({
-    queryKey: userKeys.one(userId),
+    queryKey: userKeys.one(userId ?? ""),
+    enabled: !!userId,
     queryFn: async () => {
       const { data, error } = await apiClient.GET("/api/public/user/one", {
-        params: { query: { userId } },
+        params: { query: { userId: userId ?? "" } },
       });
       if (error) throw error;
       return data.message;
@@ -133,9 +154,16 @@ export const useUserOneGet = ({ userId }: { userId: string }) => {
   return props;
 };
 
-export const useAnyUserSummits = ({ userId }: { userId: string }) => {
+export const useAnyUserSummits = ({
+  userId,
+  enabled = true,
+}: {
+  userId: string;
+  enabled?: boolean;
+}) => {
   const props = useQuery({
     queryKey: userKeys.summitsById(userId),
+    enabled,
     queryFn: async () => {
       const { data, error } = await apiClient.GET("/api/public/user/summits", {
         params: { query: { userId } },
@@ -148,13 +176,45 @@ export const useAnyUserSummits = ({ userId }: { userId: string }) => {
   return props;
 };
 
-export const useUserProfile = ({ userId }: { userId: string }) => {
+/**
+ * Paginated variant of `useAnyUserSummits` — fetches another user's summits
+ * 24 at a time. Used by the public profile (`/user/[user]`) to avoid
+ * loading 500+ cards up front. The legacy `useAnyUserSummits` stays for
+ * any caller still on the old non-paginated endpoint.
+ */
+export const useAnyUserAllSummits = ({
+  userId,
+}: {
+  userId: string | undefined;
+}) =>
+  useInfiniteQuery({
+    queryKey: userKeys.summitsByIdAll(userId ?? ""),
+    enabled: !!userId,
+    initialPageParam: 1,
+    queryFn: async ({ pageParam }) => {
+      const { data, error } = await apiClient.GET(
+        "/api/public/user/summits/all",
+        { params: { query: { userId: userId ?? "", page: pageParam } } },
+      );
+      if (error) throw error;
+      return data.message;
+    },
+    getNextPageParam: (last) =>
+      last.pagination.hasMore ? last.pagination.page + 1 : undefined,
+  });
+
+export const useUserProfile = ({
+  userId,
+}: {
+  userId: string | undefined;
+}) => {
   const props = useQuery({
-    queryKey: userKeys.profile(userId),
+    queryKey: userKeys.profile(userId ?? ""),
+    enabled: !!userId,
     queryFn: async () => {
       const { data, error } = await apiClient.GET(
         "/api/public/user/user-profile",
-        { params: { query: { userId } } },
+        { params: { query: { userId: userId ?? "" } } },
       );
       if (error) throw error;
       return data.message;
@@ -179,14 +239,6 @@ export const useUserPeople = () => {
   });
 };
 
-type PersonListItem = {
-  userId: string;
-  firstName: string | null;
-  lastName: string | null;
-  imageUrl: string | null;
-  connectedAt: string;
-  sharedSummitCount: number;
-};
 
 export const useAddUserPerson = () => {
   return useMutation({
@@ -263,9 +315,16 @@ export const useRemoveUserPerson = () => {
   });
 };
 
-export const useUserChallenges = ({ userId }: { userId: string }) => {
+export const useUserChallenges = ({
+  userId,
+  enabled = true,
+}: {
+  userId: string;
+  enabled?: boolean;
+}) => {
   const props = useQuery({
     queryKey: userKeys.challenges(userId),
+    enabled: enabled && userId.length > 0,
     queryFn: async () => {
       const { data, error } = await apiClient.GET(
         "/api/public/user/challenges",
@@ -282,13 +341,7 @@ export const useUserChallenges = ({ userId }: { userId: string }) => {
 export const useJoinMutation = () => {
   return useMutation({
     mutationKey: ["user", "join"],
-    mutationFn: async (input: {
-      provider: "apple" | "google";
-      identityToken: string;
-      locale?: string;
-      firstName?: string;
-      lastName?: string;
-    }) => {
+    mutationFn: async (input: JoinBody) => {
       const { data, error } = await apiClient.POST("/api/public/join", {
         body: input,
       });
@@ -301,17 +354,7 @@ export const useJoinMutation = () => {
 export const useUpdateUserMeMutation = () => {
   return useMutation({
     mutationKey: ["user", "update", "me"],
-    mutationFn: async (input: {
-      firstName?: string;
-      lastName?: string;
-      imageUrl?: string;
-      locale?: string;
-      town?: string;
-      phoneNumber?: string;
-      visibleOnHiscores?: boolean;
-      visibleOnPeopleSearch?: boolean;
-      activeChallengeId?: string;
-    }) => {
+    mutationFn: async (input: UpdateMeBody) => {
       if (Object.values(input).every((v) => v === undefined)) {
         return { success: true } as const;
       }
@@ -327,7 +370,15 @@ export const useUpdateUserMeMutation = () => {
       if (variables.activeChallengeId) {
         void queryClient.invalidateQueries({ queryKey: challengeKeys.active() });
         void queryClient.invalidateQueries({ queryKey: userKeys.summits() });
-        void queryClient.invalidateQueries({ queryKey: mountainKeys.all });
+        // `removeQueries` (not invalidate) so the cache is wiped, not just
+        // marked stale. The /mountains screen remounts on activeChallengeId
+        // change; if we only invalidated, the previous observer's refetch
+        // would land BEFORE the remount, the new mount would inherit the
+        // already-fresh entry, and `mountains` (and `mountainsKey`) would
+        // never change → the camera-fit effect wouldn't re-fire → the map
+        // would stay parked on the previous challenge's region (or worse,
+        // never get a fit at all and show Mapbox's default world view).
+        queryClient.removeQueries({ queryKey: mountainKeys.all });
       }
     },
   });
@@ -346,7 +397,7 @@ export const useDeleteAccountMutation = () => {
 
 export const useUnlockableUnlock = () => {
   return useMutation({
-    mutationFn: async (key: "merch" | "share" | "forcat" | "picat") => {
+    mutationFn: async (key: UnlockableBody["key"]) => {
       const { data, error } = await apiClient.POST(
         "/api/protected/user/unlockables",
         { body: { key } },
@@ -363,7 +414,7 @@ export const useUnlockableUnlock = () => {
 export const useSubmitSuggestionMutation = () => {
   return useMutation({
     mutationKey: ["user", "suggestion"],
-    mutationFn: async (input: { suggestion: string }) => {
+    mutationFn: async (input: SuggestionBody) => {
       const { data, error } = await apiClient.POST(
         "/api/protected/user/suggestion",
         {

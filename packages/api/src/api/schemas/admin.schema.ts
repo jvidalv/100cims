@@ -1,9 +1,12 @@
 import { t } from "elysia";
 
+import { PlanMemberRoleSchema } from "@/api/schemas/admin-organization.schema";
 import {
   CouponDiscountTypeSchema,
   PlanSpeedSchema,
   PlanStatusSchema,
+  PlanTypeSchema,
+  PlanUserLogActionSchema,
   ShopRequestStatusSchema,
 } from "@/api/schemas/enums";
 import { UnlockablesArraySchema } from "@/api/schemas/unlockables";
@@ -25,6 +28,9 @@ export const AdminUserEntrySchema = t.Object({
   hasPushToken: t.Boolean(),
   totalSummits: t.Number(),
   lastSummitAt: t.Nullable(t.Date()),
+  // Drives DAU/MAU + sort by recently-active. Null for accounts that
+  // existed before the column was added until their next /me call.
+  lastSeenAt: t.Nullable(t.Date()),
 });
 
 export const AdminUsersResponseSchema = t.Object({
@@ -49,6 +55,10 @@ export const AdminUserDetailSchema = t.Object({
   imageUrl: t.Nullable(t.String()),
   town: t.Nullable(t.String()),
   phoneNumber: t.Nullable(t.String()),
+  shippingStreet: t.Nullable(t.String()),
+  shippingCity: t.Nullable(t.String()),
+  shippingPostalCode: t.Nullable(t.String()),
+  shippingCountry: t.Nullable(t.String()),
   country: t.Nullable(t.String()),
   platform: t.Nullable(t.String()),
   appVersion: t.Nullable(t.String()),
@@ -73,6 +83,10 @@ export const AdminUserUpdateBodySchema = t.Object({
   username: t.Optional(t.String()),
   town: t.Optional(t.Nullable(t.String())),
   phoneNumber: t.Optional(t.Nullable(t.String())),
+  shippingStreet: t.Optional(t.Nullable(t.String())),
+  shippingCity: t.Optional(t.Nullable(t.String())),
+  shippingPostalCode: t.Optional(t.Nullable(t.String())),
+  shippingCountry: t.Optional(t.Nullable(t.String())),
   country: t.Optional(t.Nullable(t.String())),
   locale: t.Optional(t.Nullable(t.String())),
   visibleOnHiscores: t.Optional(t.Boolean()),
@@ -180,6 +194,8 @@ export const AdminPlanEntrySchema = t.Object({
   description: t.Nullable(t.String()),
   imageUrl: t.Nullable(t.String()),
   startDate: t.Nullable(t.String()),
+  startTime: t.Nullable(t.String()),
+  type: t.Nullable(PlanTypeSchema),
   speed: t.String(),
   status: PlanStatusSchema,
   isPrivate: t.Boolean(),
@@ -216,6 +232,22 @@ export const AdminPlanParticipantSchema = t.Object({
   joinedAt: t.Date(),
   willBringDogs: t.Boolean(),
   isCreator: t.Boolean(),
+  role: PlanMemberRoleSchema,
+});
+
+export const AdminPlanMemberLogEntrySchema = t.Object({
+  id: t.String(),
+  userId: t.String(),
+  username: t.String(),
+  firstName: t.Nullable(t.String()),
+  lastName: t.Nullable(t.String()),
+  imageUrl: t.Nullable(t.String()),
+  action: PlanUserLogActionSchema,
+  timestamp: t.Date(),
+});
+
+export const AdminPlanMemberLogResponseSchema = t.Object({
+  items: t.Array(AdminPlanMemberLogEntrySchema),
 });
 
 export const AdminPlanMountainSchema = t.Object({
@@ -244,10 +276,19 @@ export const AdminPlanDetailSchema = t.Object({
   description: t.Nullable(t.String()),
   imageUrl: t.Nullable(t.String()),
   routeUrl: t.Nullable(t.String()),
+  whatsappGroupUrl: t.Nullable(t.String()),
+  wikilocUrl: t.Nullable(t.String()),
+  stravaUrl: t.Nullable(t.String()),
   startDate: t.Nullable(t.String()),
+  startTime: t.Nullable(t.String()),
+  type: t.Nullable(PlanTypeSchema),
   speed: t.String(),
   status: PlanStatusSchema,
   isPrivate: t.Boolean(),
+  featured: t.Boolean(),
+  paid: t.Boolean(),
+  organizationId: t.Nullable(t.String()),
+  organizationName: t.Nullable(t.String()),
   creatorId: t.String(),
   challengeId: t.Nullable(t.String()),
   challengeName: t.Nullable(t.String()),
@@ -270,16 +311,28 @@ export const AdminPlanUpdateBodySchema = t.Object({
   description: t.Optional(t.Nullable(t.String())),
   status: t.Optional(PlanStatusSchema),
   speed: t.Optional(PlanSpeedSchema),
+  type: t.Optional(t.Nullable(PlanTypeSchema)),
   startDate: t.Optional(t.Nullable(t.String())),
+  startTime: t.Optional(t.Nullable(t.String())),
   imageUrl: t.Optional(t.Nullable(t.String())),
   routeUrl: t.Optional(t.Nullable(t.String())),
+  whatsappGroupUrl: t.Optional(t.Nullable(t.String())),
+  wikilocUrl: t.Optional(t.Nullable(t.String())),
+  stravaUrl: t.Optional(t.Nullable(t.String())),
   isPrivate: t.Optional(t.Boolean()),
+  featured: t.Optional(t.Boolean()),
+  paid: t.Optional(t.Boolean()),
+  // Pass `null` (or empty string, which the route normalizes to null) to
+  // unaffiliate a plan from its current organization.
+  organizationId: t.Optional(t.Nullable(t.String())),
 });
 
 export const AdminPlanCreateBodySchema = t.Object({
   title: t.String({ minLength: 1 }),
   description: t.Optional(t.String()),
   startDate: t.Optional(t.String()),
+  startTime: t.Optional(t.String()),
+  type: t.Optional(PlanTypeSchema),
   speed: t.Optional(PlanSpeedSchema),
   mountainIds: t.Optional(t.Array(t.String())),
   challengeId: t.Optional(t.String()),
@@ -287,6 +340,9 @@ export const AdminPlanCreateBodySchema = t.Object({
   // Either an http(s) URL (keep as-is) or a raw base64 payload (uploaded to S3).
   imageUrl: t.Optional(t.Nullable(t.String())),
   publishAsCims: t.Optional(t.Boolean()),
+  featured: t.Optional(t.Boolean()),
+  paid: t.Optional(t.Boolean()),
+  organizationId: t.Optional(t.String()),
 });
 
 export const MerchVariantSchema = t.Object({
@@ -438,6 +494,7 @@ export const AdminShopRequestEntrySchema = t.Object({
   message: t.String(),
   status: ShopRequestStatusSchema,
   comments: t.Nullable(t.String()),
+  paymentImageUrl: t.Nullable(t.String()),
   createdAt: t.Date(),
   updatedAt: t.Date(),
 });

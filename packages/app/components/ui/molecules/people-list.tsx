@@ -91,7 +91,7 @@ export const PeopleList = ({
         disabled={editDisabled}
         onPress={openPicker}
       >
-        <View className="size-12 items-center justify-center rounded-full border-2 border-muted-foreground/50">
+        <View className="size-12 items-center justify-center rounded-full border-2 border-border">
           {editDisabled ? (
             <ActivityIndicator size="sm" />
           ) : (

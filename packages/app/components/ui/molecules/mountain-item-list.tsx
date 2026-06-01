@@ -1,9 +1,10 @@
 import { Link } from "expo-router";
 import { Camera } from "lucide-react-native";
 import { FormattedMessage } from "react-intl";
-import { Image, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 
 import { LucideIcon, ThemedText } from "@/components/ui/atoms";
+import { Image } from "@/components/ui/atoms/image";
 import { useUserChallengeSummits } from "@/domains/user/user.api";
 
 interface InternalProps {

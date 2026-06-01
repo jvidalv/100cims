@@ -31,6 +31,10 @@ export const MeSchema = t.Intersect([
   UserSchema,
   t.Object({
     phoneNumber: t.Nullable(t.String()),
+    shippingStreet: t.Nullable(t.String()),
+    shippingCity: t.Nullable(t.String()),
+    shippingPostalCode: t.Nullable(t.String()),
+    shippingCountry: t.Nullable(t.String()),
   }),
 ]);
 
@@ -125,6 +129,22 @@ export const PublicSummitSchema = t.Object({
  * Schema for array of public summits
  */
 export const PublicSummitsArraySchema = t.Array(PublicSummitSchema);
+
+/**
+ * Schema for paginated public summits of any user. Used by
+ * `/api/public/user/summits/all` — the non-paginated `/summits` stays in
+ * place so old mobile clients keep working.
+ */
+export const PublicUserSummitsAllResponseSchema = t.Object({
+  items: t.Array(PublicSummitSchema),
+  pagination: t.Object({
+    page: t.Number(),
+    pageSize: t.Number(),
+    totalItems: t.Number(),
+    totalPages: t.Number(),
+    hasMore: t.Boolean(),
+  }),
+});
 
 /**
  * Schema for shared user with score

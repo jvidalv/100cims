@@ -1,10 +1,12 @@
 import { format } from "date-fns/format";
-import { Image, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
 import { ThemedText } from "@/components/ui/atoms";
+import { Image } from "@/components/ui/atoms/image";
 import { AvatarGroup } from "@/components/ui/molecules";
 import { getFullName } from "@/domains/user/user.utils";
+import { parseLocalDateString } from "@/lib/dates";
 
 type SummitCardProps = {
   summit: {
@@ -72,7 +74,7 @@ export function SummitCard({
           </View>
           <View className="flex-row items-center justify-between gap-2">
             <ThemedText className="text-muted-foreground text-xs">
-              {format(summit.summitedAt, "dd MMM yyyy")}
+              {format(parseLocalDateString(summit.summitedAt), "dd MMM yyyy")}
             </ThemedText>
           </View>
         </View>

@@ -65,3 +65,35 @@ export const pickAndOptimizeImage = async (options?: {
   const optimized = await getImageOptimized(picked);
   return { picked, optimized };
 };
+
+/**
+ * Multi-image variant: launches the system picker with multi-selection on,
+ * then optimizes each picked asset in parallel. Returns `null` when the user
+ * cancels; otherwise an array of picked + optimized pairs in the order the
+ * picker emitted them.
+ *
+ * `selectionLimit` caps how many assets the picker itself lets the user
+ * pick (the OS enforces it). `allowsEditing` is incompatible with multi-
+ * selection on both iOS and Android, so it's not exposed here.
+ */
+export const pickAndOptimizeImages = async (options: {
+  selectionLimit: number;
+}) => {
+  if (options.selectionLimit < 1) return null;
+
+  const result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ["images"],
+    allowsMultipleSelection: true,
+    selectionLimit: options.selectionLimit,
+    quality: 1,
+  });
+
+  if (result.canceled) return null;
+
+  return Promise.all(
+    result.assets.map(async (picked) => ({
+      picked,
+      optimized: await getImageOptimized(picked),
+    })),
+  );
+};

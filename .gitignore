@@ -65,3 +65,15 @@ ios/
 android/
 
 *.psd
+
+# Wikiloc scraper — every artifact in `output/` is regenerable from a
+# fresh scrape, and the canonical data ships as seed SQL chunks under
+# src/db/drizzle/. Keeping these in git would just inflate the repo and
+# tempt a future maintainer to edit them by hand.
+packages/api/scripts/wikiloc/output/
+
+# Agent-tooling state (per-cwd; harmless duplicates show up when Claude is
+# launched from a subpackage). The repo only intentionally commits files
+# under .claude/skills/ at the monorepo root.
+**/.claude/scheduled_tasks.lock
+**/.claude/settings.local.json

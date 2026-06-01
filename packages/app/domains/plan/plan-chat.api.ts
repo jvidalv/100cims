@@ -1,13 +1,24 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { useIsFocused } from "expo-router";
 
 import { useAuth } from "@/components/providers/auth-provider";
 import { queryClient } from "@/components/providers/query-client-provider";
 import apiClient from "@/lib/api-client";
 
+import type { paths } from "@/types/api";
+
+type ChatSendBody =
+  paths["/api/protected/plans/chat/send"]["post"]["requestBody"]["content"]["application/json"];
+
 export const usePlanChatRead = () => {
+  const { isAuthenticated } = useAuth();
   return useMutation({
     mutationKey: ["plan-chat", "read"],
     mutationFn: async (planId: string) => {
+      // Endpoint is protected — skip the request for unauth users instead of
+      // letting it round-trip to a 401. Callers (chat screen) fire this on
+      // mount/unmount regardless of auth state.
+      if (!isAuthenticated) return null;
       const { data, error } = await apiClient.POST(
         "/api/protected/plans/chat/read",
         { body: { planId } },
@@ -43,14 +54,26 @@ export const usePlanChatUnread = () => {
   });
 };
 
-export const usePlanChatMessages = (planId: string) => {
+export const usePlanChatMessages = (planId: string | undefined) => {
   const { isAuthenticated } = useAuth();
+  // Polls only when the chat screen is actually focused. NativeTabs
+  // eager-mounts every plan tab, so without this gate the chat query
+  // fires every 2.5s even while the user is on the Details tab — flooding
+  // the server with `/plans/chat/all?planId=…` calls that nobody reads.
+  // `useIsFocused` flips to true when the chat screen becomes the active
+  // tab, and back to false when the user navigates away.
+  const isFocused = useIsFocused();
 
   return useQuery({
-    queryKey: ["plan-chat", "messages", planId],
-    enabled: () => isAuthenticated,
+    queryKey: ["plan-chat", "messages", planId ?? ""],
+    // NativeTabs eager-mounts sibling tabs before the route-param binding
+    // resolves, so `planId` is briefly undefined even though the type from
+    // useGlobalSearchParams promises a string. Gate on `planId` to avoid
+    // the server's 422 spam during that window. See memory
+    // `feedback_react_query_enabled_guards`.
+    enabled: () => isAuthenticated && !!planId && isFocused,
     queryFn: async () => {
-      if (!isAuthenticated) return null;
+      if (!isAuthenticated || !planId) return null;
       const { data, error } = await apiClient.GET(
         "/api/protected/plans/chat/all",
         { params: { query: { planId } } },
@@ -58,17 +81,25 @@ export const usePlanChatMessages = (planId: string) => {
       if (error) throw error;
       return data.message.map((msg) => ({
         ...msg,
-        createdAt: new Date(msg.createdAt as string | number),
+        // OpenAPI schema includes a `Record<string, never>` variant from a
+        // TypeBox quirk, but the server always returns a string or number.
+        createdAt: new Date(
+          typeof msg.createdAt === "string" || typeof msg.createdAt === "number"
+            ? msg.createdAt
+            : 0,
+        ),
       }));
     },
-    refetchInterval: 2500,
+    // 5s while focused; `false` (no polling) when blurred — paired with
+    // the `enabled` gate so the query is fully idle on other tabs.
+    refetchInterval: isFocused ? 5000 : false,
   });
 };
 
 export const usePlanChatSendMessage = () => {
   return useMutation({
     mutationKey: ["plan-chat", "send"],
-    mutationFn: async (input: { planId: string; message: string }) => {
+    mutationFn: async (input: ChatSendBody) => {
       const { data, error } = await apiClient.POST(
         "/api/protected/plans/chat/send",
         { body: input },

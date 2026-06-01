@@ -5,11 +5,17 @@
   "+3x+Vt": {
     "defaultMessage": "Show 1 more reply"
   },
+  "+4A/sX": {
+    "defaultMessage": "Open {network}"
+  },
   "+QiHz4": {
     "defaultMessage": "One more thing"
   },
   "+Z/Wja": {
     "defaultMessage": "I don't know exactly when."
+  },
+  "+a+2ug": {
+    "defaultMessage": "Members"
   },
   "+hctbG": {
     "defaultMessage": "Already added"
@@ -23,8 +29,17 @@
   "///zLu": {
     "defaultMessage": "Challenges"
   },
+  "/3qO89": {
+    "defaultMessage": "My saved mountains ({count})"
+  },
+  "/7SgnZ": {
+    "defaultMessage": "Join the plan to see and write messages"
+  },
   "/9Fvcu": {
     "defaultMessage": "Very Hard"
+  },
+  "/GCoTA": {
+    "defaultMessage": "Clear"
   },
   "/LG2tT": {
     "defaultMessage": "Latitude must be between -90 and 90"
@@ -32,8 +47,17 @@
   "/V1GsM": {
     "defaultMessage": "Country/Region"
   },
+  "/VnDMl": {
+    "defaultMessage": "Other"
+  },
+  "/WXWuR": {
+    "defaultMessage": "Strava"
+  },
   "/awD4G": {
     "defaultMessage": "Used in {count} challenge"
+  },
+  "/dfahw": {
+    "defaultMessage": "Out & back"
   },
   "/n7LBX": {
     "defaultMessage": "Posting…"
@@ -53,6 +77,9 @@
   "05nKhi": {
     "defaultMessage": "Location is required"
   },
+  "09igac": {
+    "defaultMessage": "No products match your search."
+  },
   "0BUTMv": {
     "defaultMessage": "Search..."
   },
@@ -68,6 +95,15 @@
   "0duFmF": {
     "defaultMessage": "Be the first to share tips, warnings or recent conditions."
   },
+  "0fR+fE": {
+    "defaultMessage": "Route"
+  },
+  "0tTY6A": {
+    "defaultMessage": "Remove cover photo?"
+  },
+  "15nyhC": {
+    "defaultMessage": "Pick a country"
+  },
   "1F6Xt8": {
     "defaultMessage": "Edit summit"
   },
@@ -76,6 +112,15 @@
   },
   "1MZdzG": {
     "defaultMessage": "Share on social"
+  },
+  "1OQntw": {
+    "defaultMessage": "Coupon code (optional)"
+  },
+  "1bFpet": {
+    "defaultMessage": "Most completed"
+  },
+  "1nalV/": {
+    "defaultMessage": "Share mountain"
   },
   "1ps8x4": {
     "defaultMessage": "Are you sure you want to delete this challenge? This action cannot be undone."
@@ -92,6 +137,9 @@
   "2E0xhC": {
     "defaultMessage": "Share Cims with a friend."
   },
+  "2HxZwB": {
+    "defaultMessage": "I don't know how to do this"
+  },
   "2YBqTq": {
     "defaultMessage": "Mountains"
   },
@@ -103,6 +151,12 @@
   },
   "3AkXqy": {
     "defaultMessage": "Delete mountain"
+  },
+  "3BSMMe": {
+    "defaultMessage": "Total metres descended. On a loop it equals the gain; on a one-way trail it can differ."
+  },
+  "3EnruA": {
+    "defaultMessage": "Postal code"
   },
   "3GLhZz": {
     "defaultMessage": "No one summited yet."
@@ -116,11 +170,14 @@
   "3Sssqr": {
     "defaultMessage": "Most upvoted"
   },
+  "3VsE5J": {
+    "defaultMessage": "The plan will fall back to its mountain images."
+  },
   "3Ykujz": {
     "defaultMessage": "Safest for kids"
   },
-  "3a5wL8": {
-    "defaultMessage": "Active"
+  "3ZdGoj": {
+    "defaultMessage": "Closer"
   },
   "3cc4Ct": {
     "defaultMessage": "Light"
@@ -133,6 +190,9 @@
   },
   "3wJHrF": {
     "defaultMessage": "Join plan"
+  },
+  "3xN/Yn": {
+    "defaultMessage": "Uploading…"
   },
   "4+p0E9": {
     "defaultMessage": "Do you know?"
@@ -149,8 +209,17 @@
   "4CrCbD": {
     "defaultMessage": "Community"
   },
+  "4OB54U": {
+    "defaultMessage": "featured"
+  },
+  "4YJHut": {
+    "defaultMessage": "Clear search"
+  },
   "4YNAwW": {
     "defaultMessage": "Searching all mountains"
+  },
+  "4iwFM7": {
+    "defaultMessage": "Center map on my location"
   },
   "4tflZQ": {
     "defaultMessage": "Delete plan?"
@@ -158,11 +227,14 @@
   "4wpUNc": {
     "defaultMessage": "Or"
   },
-  "53YYSH": {
-    "defaultMessage": "Cancel plan"
+  "5D+9E8": {
+    "defaultMessage": "WhatsApp group"
   },
   "5I/9L2": {
     "defaultMessage": "{name} is on your saved mountains list."
+  },
+  "5PitCN": {
+    "defaultMessage": "Join this plan first"
   },
   "5YsvtF": {
     "defaultMessage": "Altitude"
@@ -173,14 +245,26 @@
   "5djesH": {
     "defaultMessage": "Keep it private if you want"
   },
+  "5jeq8P": {
+    "defaultMessage": "Unknown"
+  },
   "5lwgvM": {
     "defaultMessage": "Visible on people search?"
   },
+  "5mhKmC": {
+    "defaultMessage": "{percent}% completed"
+  },
+  "6E9KKY": {
+    "defaultMessage": "Open cart"
+  },
+  "6Jl56G": {
+    "defaultMessage": "Safe for kids"
+  },
+  "6bmcE1": {
+    "defaultMessage": "No members yet."
+  },
   "6n4LpX": {
     "defaultMessage": "Easy"
-  },
-  "71GNdG": {
-    "defaultMessage": "are worth x2. Summit them!"
   },
   "72jGas": {
     "defaultMessage": "essential"
@@ -194,8 +278,11 @@
   "7JlauX": {
     "defaultMessage": "Explore"
   },
-  "7Ni8Cl": {
-    "defaultMessage": "No plans found for given status."
+  "7MTfrK": {
+    "defaultMessage": "Most active"
+  },
+  "7Tnp2W": {
+    "defaultMessage": "Longest"
   },
   "7qOQpv": {
     "defaultMessage": "Select a date"
@@ -209,14 +296,26 @@
   "82GzU3": {
     "defaultMessage": "Upcoming plans"
   },
+  "82UPI7": {
+    "defaultMessage": "Bike"
+  },
+  "89WWaR": {
+    "defaultMessage": "Go to cart"
+  },
   "89eDMC": {
     "defaultMessage": "Picat"
+  },
+  "8HDT+F": {
+    "defaultMessage": "Mark as summited again"
   },
   "8N2GKa": {
     "defaultMessage": "Your cart is empty."
   },
   "8Rj4Wg": {
     "defaultMessage": "Copy message"
+  },
+  "8mRNBD": {
+    "defaultMessage": "Previous month"
   },
   "9+Ddtu": {
     "defaultMessage": "Next"
@@ -236,14 +335,20 @@
   "9MidH4": {
     "defaultMessage": "Challenge"
   },
-  "9RZWmW": {
-    "defaultMessage": "Participants will be notified."
-  },
   "9Syri2": {
     "defaultMessage": "Stay in the loop"
   },
   "9T5wiX": {
     "defaultMessage": "Need a good-looking app?"
+  },
+  "9Voj7P": {
+    "defaultMessage": "Lock map"
+  },
+  "9WRlF4": {
+    "defaultMessage": "Send"
+  },
+  "9XiW3x": {
+    "defaultMessage": "Loop"
   },
   "9cfIxB": {
     "defaultMessage": "My mountains"
@@ -251,11 +356,20 @@
   "9j3stl": {
     "defaultMessage": "No mountains match these filters."
   },
-  "9nBDqM": {
-    "defaultMessage": "Comments on {name}"
+  "9khnVR": {
+    "defaultMessage": "Photos"
+  },
+  "9yIVmN": {
+    "defaultMessage": "Open photo"
   },
   "9yslhD": {
     "defaultMessage": "Yes, I'm sure"
+  },
+  "9zQ6b/": {
+    "defaultMessage": "Could not load image, try another one."
+  },
+  "A4HOMT": {
+    "defaultMessage": "Select meeting time"
   },
   "A9uIjl": {
     "defaultMessage": "Share your ideas to improve the app!"
@@ -293,11 +407,11 @@
   "AouTVa": {
     "defaultMessage": "Failed to update mountain"
   },
-  "ArER+u": {
-    "defaultMessage": "Have a coupon code?"
-  },
   "AryDSl": {
     "defaultMessage": "Support the app"
+  },
+  "As0/We": {
+    "defaultMessage": "Meeting time {time}"
   },
   "B7WSNk": {
     "defaultMessage": "Reset image (admin)"
@@ -311,11 +425,17 @@
   "BWpuKl": {
     "defaultMessage": "Update"
   },
+  "BaIwdV": {
+    "defaultMessage": "Street"
+  },
   "BcfQf8": {
     "defaultMessage": "Could not post reply"
   },
   "BrWLlb": {
     "defaultMessage": "Plans can now be private — only the people you invite will see them."
+  },
+  "C5EExJ": {
+    "defaultMessage": "Fill in your address to send the order."
   },
   "C81/uG": {
     "defaultMessage": "Logout"
@@ -329,8 +449,20 @@
   "CFPRDL": {
     "defaultMessage": "Create plan"
   },
+  "CLLYQK": {
+    "defaultMessage": "Export your summits?"
+  },
+  "CUaVX3": {
+    "defaultMessage": "No products available."
+  },
+  "CnPG8j": {
+    "defaultMessage": "Featured"
+  },
   "D0uMjm": {
     "defaultMessage": "Difficulty reflects the easiest route up."
+  },
+  "D2Qvad": {
+    "defaultMessage": "Route not found."
   },
   "DJbyE/": {
     "defaultMessage": "You summited this mountain"
@@ -356,6 +488,12 @@
   "DtYaOc": {
     "defaultMessage": "Recent first"
   },
+  "DvL1te": {
+    "defaultMessage": "Difficult"
+  },
+  "DxLDGr": {
+    "defaultMessage": "My summits ({count})"
+  },
   "Dxd1uB": {
     "defaultMessage": "Shop"
   },
@@ -364,6 +502,9 @@
   },
   "E1EEy4": {
     "defaultMessage": "Error, try again or use another image."
+  },
+  "E80WrK": {
+    "defaultMessage": "Information"
   },
   "E92c/O": {
     "defaultMessage": "Last {count}"
@@ -374,14 +515,20 @@
   "EIJT7Y": {
     "defaultMessage": "Danger zone"
   },
+  "EL/qFv": {
+    "defaultMessage": "Save mountain"
+  },
   "EPpeif": {
     "defaultMessage": "Share plan"
   },
-  "EWw/tK": {
-    "defaultMessage": "Apply"
+  "EVFai9": {
+    "defaultMessage": "View less"
   },
   "Ep56/Z": {
     "defaultMessage": "Longitude must be between -180 and 180"
+  },
+  "EznEKz": {
+    "defaultMessage": "Reach the summit then come back the same way."
   },
   "F4gyn3": {
     "defaultMessage": "Clear filters"
@@ -392,8 +539,14 @@
   "FDVuFX": {
     "defaultMessage": "You can now create more plans and share them!"
   },
+  "FPSRh4": {
+    "defaultMessage": "No elevation data."
+  },
   "FS5//y": {
     "defaultMessage": "{count} of {total}"
+  },
+  "Fd09/9": {
+    "defaultMessage": "Hosted by"
   },
   "Ff9qrH": {
     "defaultMessage": "Can’t find someone? They may have “Visible on people search” turned off in their profile — ask them to enable it."
@@ -404,8 +557,14 @@
   "FrIr1g": {
     "defaultMessage": "View saved"
   },
+  "FsR6xY": {
+    "defaultMessage": "Very difficult"
+  },
   "G/yZLu": {
     "defaultMessage": "Remove"
+  },
+  "G20bPa": {
+    "defaultMessage": "Elevation profile"
   },
   "G5/5eb": {
     "defaultMessage": "What's new"
@@ -415,6 +574,9 @@
   },
   "G7O3x8": {
     "defaultMessage": "This removes the plan for everyone. Continue?"
+  },
+  "GIFFBZ": {
+    "defaultMessage": "Add photo"
   },
   "GQNYob": {
     "defaultMessage": "Share link"
@@ -440,20 +602,26 @@
   "H5v61s": {
     "defaultMessage": "Set plan date"
   },
+  "HFQgWE": {
+    "defaultMessage": "You'll get a CSV file — a spreadsheet you can open in Excel, Numbers or Google Sheets."
+  },
   "HMQOVv": {
     "defaultMessage": "Fresh new look. You can now edit summits, create community challenges, and add your own mountains. Share summits and your profile straight to social."
   },
   "HV9rgD": {
     "defaultMessage": "Product not found"
   },
-  "HaD+k2": {
-    "defaultMessage": "For you to know"
+  "HZcTDX": {
+    "defaultMessage": "Once you join, you'll be able to open the WhatsApp group."
   },
   "HpQONe": {
     "defaultMessage": "Help & Suggestions"
   },
   "Hsq7Fe": {
     "defaultMessage": "Delete challenge"
+  },
+  "HtAUIW": {
+    "defaultMessage": "Back to today"
   },
   "HucKse": {
     "defaultMessage": "You can now create your own challenges and also your mountains, other people can join these challenges!"
@@ -467,20 +635,47 @@
   "I5NMJ8": {
     "defaultMessage": "More"
   },
+  "ID8Us+": {
+    "defaultMessage": "How points work"
+  },
+  "IMgaIg": {
+    "defaultMessage": "Add {amount}€ more to get free shipping."
+  },
+  "INbfet": {
+    "defaultMessage": "Hold to interact with map"
+  },
+  "IUPPsb": {
+    "defaultMessage": "My challenges ({count}/{max})"
+  },
+  "IWU2ya": {
+    "defaultMessage": "Pay {amount}€ via Bizum"
+  },
   "IXIWgD": {
     "defaultMessage": "How to rate"
+  },
+  "IeKhkd": {
+    "defaultMessage": "The Strava link doesn't look right. Must point to strava.com."
   },
   "IkgeEo": {
     "defaultMessage": "No mountains yet. Create mountains when adding them to a challenge."
   },
+  "ItB/tz": {
+    "defaultMessage": "Total time"
+  },
   "Iu60EH": {
     "defaultMessage": "Are you sure you want to continue?"
+  },
+  "IuFETn": {
+    "defaultMessage": "Duration"
   },
   "J12A5M": {
     "defaultMessage": "My plans"
   },
   "J9wo18": {
     "defaultMessage": "more mountains"
+  },
+  "JLWim+": {
+    "defaultMessage": "Open your bank app and send this amount."
   },
   "JLegne": {
     "defaultMessage": "Forcat"
@@ -497,14 +692,32 @@
   "JqiqNj": {
     "defaultMessage": "Something went wrong"
   },
+  "JrGfJ1": {
+    "defaultMessage": "View more on Wikiloc"
+  },
+  "Jrw8G7": {
+    "defaultMessage": "Modify"
+  },
   "K/unOm": {
     "defaultMessage": "Your cart"
   },
   "K3r6DQ": {
     "defaultMessage": "Delete"
   },
+  "K5MMUu": {
+    "defaultMessage": "Price ↑"
+  },
   "KTlYr+": {
     "defaultMessage": "Deleting your account is permanent. All your summits and plans will be lost."
+  },
+  "L4s3LM": {
+    "defaultMessage": "Thanks, we'll be in touch."
+  },
+  "L8seEc": {
+    "defaultMessage": "Subtotal"
+  },
+  "LGas/S": {
+    "defaultMessage": "Search country"
   },
   "LMkYs1": {
     "defaultMessage": "{count} summit"
@@ -518,17 +731,35 @@
   "Lv0zJu": {
     "defaultMessage": "Details"
   },
+  "LwSvQR": {
+    "defaultMessage": "Couldn't export your summits"
+  },
+  "M6FEJy": {
+    "defaultMessage": "Mark as summited"
+  },
+  "MEYs9c": {
+    "defaultMessage": "Only experts"
+  },
   "MJ2jZQ": {
     "defaultMessage": "Total"
   },
   "MUP7n7": {
     "defaultMessage": "Still deciding a date"
   },
+  "MmfK1A": {
+    "defaultMessage": "Min {value}"
+  },
   "MmuKRi": {
     "defaultMessage": "Cims costs around 50€ a month to run. Pick up some merch to help keep it free."
   },
+  "N3X/Sq": {
+    "defaultMessage": "Hike"
+  },
   "N4mgpU": {
     "defaultMessage": "Delete (admin)"
+  },
+  "N5JSRZ": {
+    "defaultMessage": "Doesn't look like a valid link."
   },
   "NDV5Mq": {
     "defaultMessage": "Options"
@@ -551,8 +782,14 @@
   "NozjOy": {
     "defaultMessage": "Color: {color}"
   },
+  "O5cG1R": {
+    "defaultMessage": "Checking coupon…"
+  },
   "O7kE5P": {
     "defaultMessage": "Report summit photo"
+  },
+  "O95R3Z": {
+    "defaultMessage": "Phone"
   },
   "OHvDJa": {
     "defaultMessage": "Suggest a new challenge"
@@ -563,14 +800,14 @@
   "OKhRC6": {
     "defaultMessage": "Share"
   },
+  "OPXh2C": {
+    "defaultMessage": "Invalid coupon code."
+  },
   "ObEm2I": {
     "defaultMessage": "Highest first"
   },
   "OggXKL": {
     "defaultMessage": "Vell"
-  },
-  "Oj1HSZ": {
-    "defaultMessage": "No extra information added."
   },
   "OlIql8": {
     "defaultMessage": "Moderate"
@@ -590,29 +827,59 @@
   "P7PLVj": {
     "defaultMessage": "Date"
   },
+  "P8JC58": {
+    "defaultMessage": "Distance"
+  },
+  "PEWixn": {
+    "defaultMessage": "Moving time"
+  },
   "PFtMy9": {
     "defaultMessage": "Canceled"
+  },
+  "PPDYv4": {
+    "defaultMessage": "Bizum number copied"
+  },
+  "PRlD0A": {
+    "defaultMessage": "Shipping"
   },
   "Pe0ogR": {
     "defaultMessage": "Theme"
   },
+  "PqNw34": {
+    "defaultMessage": "No routes match your filters"
+  },
+  "PqmLVn": {
+    "defaultMessage": "Next month"
+  },
+  "PshMiu": {
+    "defaultMessage": "Open plans"
+  },
   "Q0rG1w": {
     "defaultMessage": "My people"
+  },
+  "Q5CLtp": {
+    "defaultMessage": "Plans"
+  },
+  "Q7i8B0": {
+    "defaultMessage": "{name} is on your saved routes list."
   },
   "Q8Qw5B": {
     "defaultMessage": "Description"
   },
+  "QCO2qW": {
+    "defaultMessage": "The Wikiloc link doesn't look right. Must point to wikiloc.com."
+  },
   "QJmOKA": {
     "defaultMessage": "Please pick a color before adding to cart."
-  },
-  "QSnZL6": {
-    "defaultMessage": "Private plan"
   },
   "QVgzSj": {
     "defaultMessage": "About the app"
   },
   "QZoli7": {
     "defaultMessage": "Edit challenge"
+  },
+  "QbGIBZ": {
+    "defaultMessage": "Your stats"
   },
   "Qh4l3L": {
     "defaultMessage": "Other participants"
@@ -629,11 +896,17 @@
   "RNnNfX": {
     "defaultMessage": "Member since {date}"
   },
+  "RZdKSM": {
+    "defaultMessage": "Remove cover photo"
+  },
+  "Rif5+t": {
+    "defaultMessage": "The WhatsApp group link doesn't look right. Must point to chat.whatsapp.com or wa.me."
+  },
+  "Ru4HPF": {
+    "defaultMessage": "Elevation gain"
+  },
   "S+o8nA": {
     "defaultMessage": "Delete message?"
-  },
-  "SDgHvJ": {
-    "defaultMessage": "100 points"
   },
   "SDwmRo": {
     "defaultMessage": "Higher first"
@@ -641,8 +914,20 @@
   "SEtMn+": {
     "defaultMessage": "At least one mountain is required"
   },
+  "SQJto2": {
+    "defaultMessage": "Sign in"
+  },
+  "SVwJTM": {
+    "defaultMessage": "Export"
+  },
   "SWMHO+": {
     "defaultMessage": "Go home"
+  },
+  "SyqyPU": {
+    "defaultMessage": "All summits ({count})"
+  },
+  "T0vl24": {
+    "defaultMessage": "My mountains ({count})"
   },
   "T4DiF1": {
     "defaultMessage": "Share summit image!"
@@ -650,8 +935,26 @@
   "T4VxQN": {
     "defaultMessage": "Loading…"
   },
+  "T7Ry38": {
+    "defaultMessage": "Message"
+  },
+  "T8aJHS": {
+    "defaultMessage": "Pick a cover photo"
+  },
   "T9bZ8o": {
     "defaultMessage": "Edit mountains"
+  },
+  "TE4fIS": {
+    "defaultMessage": "City"
+  },
+  "TH/kb0": {
+    "defaultMessage": "Current challenge"
+  },
+  "TLUq2I": {
+    "defaultMessage": "In my plans"
+  },
+  "TTzatr": {
+    "defaultMessage": "Start and finish at different points. Plan transport accordingly."
   },
   "TV3YdK": {
     "defaultMessage": "Share profile"
@@ -668,6 +971,9 @@
   "TwyMau": {
     "defaultMessage": "Account"
   },
+  "TzA0f8": {
+    "defaultMessage": "Max elevation"
+  },
   "U/jWmk": {
     "defaultMessage": "Save for later"
   },
@@ -677,6 +983,15 @@
   "U52Gl4": {
     "defaultMessage": "I want to be visible on the hiscores"
   },
+  "U78NhE": {
+    "defaultMessage": "Complete"
+  },
+  "UP7WWl": {
+    "defaultMessage": "{summited} of {total} essentials"
+  },
+  "UV5XeF": {
+    "defaultMessage": "Map unavailable — missing access token."
+  },
   "UXY08P": {
     "defaultMessage": "Start the conversation"
   },
@@ -685,6 +1000,12 @@
   },
   "Uf3+S6": {
     "defaultMessage": "Help & Support"
+  },
+  "V5L8fp": {
+    "defaultMessage": "No plans match your search."
+  },
+  "VHUGly": {
+    "defaultMessage": "One summit of 1000 meters equals 100 points. Essentials are worth x2 — summit them!"
   },
   "VKfWR3": {
     "defaultMessage": "Recommended"
@@ -704,14 +1025,32 @@
   "WIwKkx": {
     "defaultMessage": "Your profile"
   },
+  "WJ84tC": {
+    "defaultMessage": "Wikiloc trail"
+  },
+  "WNcxGO": {
+    "defaultMessage": "joined"
+  },
+  "WTrOy3": {
+    "defaultMessage": "Chat"
+  },
   "WXGcL+": {
     "defaultMessage": "Create challenge"
+  },
+  "WYzHAI": {
+    "defaultMessage": "Skip for now"
+  },
+  "WtM7Ok": {
+    "defaultMessage": "Upload screenshot"
   },
   "Ww0lYU": {
     "defaultMessage": "Unsafe"
   },
   "X0ha1a": {
     "defaultMessage": "Save changes"
+  },
+  "X1lqU8": {
+    "defaultMessage": "One way"
   },
   "XPJk0V": {
     "defaultMessage": "My saved mountains"
@@ -722,8 +1061,8 @@
   "XYsvl5": {
     "defaultMessage": "Delete message"
   },
-  "Xai36g": {
-    "defaultMessage": "Cancel this plan?"
+  "XjNXDk": {
+    "defaultMessage": "Sign in to join the plan and chat"
   },
   "XqXMjU": {
     "defaultMessage": "View full thread"
@@ -755,14 +1094,26 @@
   "Z14ALL": {
     "defaultMessage": "Write a reply…"
   },
-  "ZPboiN": {
-    "defaultMessage": "Chat with others"
+  "Z6p8E/": {
+    "defaultMessage": "View mountain"
+  },
+  "ZIOZBL": {
+    "defaultMessage": "Replace cover photo"
   },
   "ZQv4i6": {
     "defaultMessage": "Based on {count} from summiters, this mountain is rated {label} for dogs."
   },
+  "ZS59xf": {
+    "defaultMessage": "Amount to send"
+  },
   "ZYxiR7": {
     "defaultMessage": "Remove from your people?"
+  },
+  "ZpVtCa": {
+    "defaultMessage": "Shipping address"
+  },
+  "ZvKSfJ": {
+    "defaultMessage": "Events"
   },
   "ZyG8IL": {
     "defaultMessage": "Top comments"
@@ -781,6 +1132,12 @@
   },
   "aKkZ55": {
     "defaultMessage": "Location unavailable"
+  },
+  "aQFfF9": {
+    "defaultMessage": "Total metres climbed across the whole route. Includes every up — small descents and re-climbs add to it."
+  },
+  "acrOoz": {
+    "defaultMessage": "Continue"
   },
   "af+8l+": {
     "defaultMessage": "Please pick a size before adding to cart."
@@ -803,9 +1160,6 @@
   "aqHNbT": {
     "defaultMessage": "No comments match your search."
   },
-  "aqaOUn": {
-    "defaultMessage": "{count} of {max} challenges"
-  },
   "b1zuN9": {
     "defaultMessage": "Price"
   },
@@ -815,17 +1169,20 @@
   "bVfBOs": {
     "defaultMessage": "No comments yet"
   },
+  "bW7B87": {
+    "defaultMessage": "New"
+  },
   "bWST2F": {
     "defaultMessage": "Add to your people"
   },
   "bbPfn0": {
     "defaultMessage": "Longitude"
   },
+  "beUIjd": {
+    "defaultMessage": "Safe for dogs"
+  },
   "bhN9Hq": {
     "defaultMessage": "Delete your account"
-  },
-  "bjTpk9": {
-    "defaultMessage": "Dog"
   },
   "c1AKgx": {
     "defaultMessage": "Missing information."
@@ -866,6 +1223,9 @@
   "dEo+/0": {
     "defaultMessage": "and be part of a thriving community"
   },
+  "dNRnr+": {
+    "defaultMessage": "Tap the bookmark on any route to save it here."
+  },
   "dUCA4K": {
     "defaultMessage": "Not now"
   },
@@ -875,8 +1235,8 @@
   "dcC0V9": {
     "defaultMessage": "Challenge name"
   },
-  "diwwOr": {
-    "defaultMessage": "Modify plan"
+  "e61Jf3": {
+    "defaultMessage": "Coming soon"
   },
   "eAxGGJ": {
     "defaultMessage": "Remove from your people"
@@ -902,6 +1262,15 @@
   "eiaPxp": {
     "defaultMessage": "Add comment"
   },
+  "ejEGdx": {
+    "defaultMessage": "Home"
+  },
+  "eqno3u": {
+    "defaultMessage": "Elevation loss"
+  },
+  "eyx5By": {
+    "defaultMessage": "Routes"
+  },
   "f3iukN": {
     "defaultMessage": "{distance} km away from you"
   },
@@ -911,8 +1280,20 @@
   "fVJK/6": {
     "defaultMessage": "Sharing plans with others is a great way to meet people with similar interests!"
   },
+  "famWVn": {
+    "defaultMessage": "Open organization website"
+  },
+  "fbzr0S": {
+    "defaultMessage": "Notifications are off"
+  },
   "fdCS5/": {
     "defaultMessage": "Reload"
+  },
+  "fddi7D": {
+    "defaultMessage": "Circular"
+  },
+  "ff2VGL": {
+    "defaultMessage": "Sending…"
   },
   "fnihsY": {
     "defaultMessage": "Leave"
@@ -926,6 +1307,12 @@
   "g5pX+a": {
     "defaultMessage": "About"
   },
+  "gUkajj": {
+    "defaultMessage": "Time actually in motion — breaks and stops are excluded. A rough estimate of how long the trail takes at the author's pace."
+  },
+  "gpoyfj": {
+    "defaultMessage": "Multi-peak"
+  },
   "grf9Y7": {
     "defaultMessage": "Active challenge"
   },
@@ -934,6 +1321,9 @@
   },
   "hP78XN": {
     "defaultMessage": "My challenges"
+  },
+  "hR0gI9": {
+    "defaultMessage": "No more challenges to show."
   },
   "hd9nqu": {
     "defaultMessage": "New challenge"
@@ -953,20 +1343,26 @@
   "iV2iNU": {
     "defaultMessage": "Updating plan"
   },
-  "iZPMxC": {
-    "defaultMessage": "Creating a plan"
-  },
-  "icHbvn": {
-    "defaultMessage": "All summits"
-  },
   "ihTd0A": {
     "defaultMessage": "No summits match \"{query}\""
+  },
+  "iwT6/W": {
+    "defaultMessage": "Saved routes ({count})"
   },
   "jAkDuA": {
     "defaultMessage": "Yes, report"
   },
+  "jPUO6p": {
+    "defaultMessage": "Price ↓"
+  },
+  "jS/rrZ": {
+    "defaultMessage": "Tell us what's stuck — Bizum problems, payment failed, anything else. We'll get back to you within a day."
+  },
   "jdJhOL": {
     "defaultMessage": "Phone number"
+  },
+  "jeHY2x": {
+    "defaultMessage": "No challenges match your search."
   },
   "jvo0vs": {
     "defaultMessage": "Save"
@@ -974,14 +1370,29 @@
   "kAEQyV": {
     "defaultMessage": "OK"
   },
+  "kM6XaM": {
+    "defaultMessage": "Export to CSV"
+  },
   "khcfUd": {
     "defaultMessage": "Select size"
   },
   "kkpP2k": {
     "defaultMessage": "today"
   },
+  "klW1Wb": {
+    "defaultMessage": "Coupon {code} applied — saved {amount}€"
+  },
+  "koCg5W": {
+    "defaultMessage": "Highest point reached on the route — usually the summit or a high pass."
+  },
+  "krty63": {
+    "defaultMessage": "Need help?"
+  },
   "kyYf9Q": {
     "defaultMessage": "{points} pts"
+  },
+  "kyc6Aj": {
+    "defaultMessage": "Full elapsed time, including breaks. Useful when planning a day out."
   },
   "l1LOYZ": {
     "defaultMessage": "Size: {size}"
@@ -1001,8 +1412,17 @@
   "lnUmYp": {
     "defaultMessage": "I'll join later"
   },
+  "lu+CdU": {
+    "defaultMessage": "Organizer"
+  },
+  "lyShyC": {
+    "defaultMessage": "Saved routes"
+  },
   "mKa7fP": {
     "defaultMessage": "Dogs"
+  },
+  "mYsCZQ": {
+    "defaultMessage": "Enable notifications in Settings"
   },
   "n0cU4E": {
     "defaultMessage": "Recommend"
@@ -1018,6 +1438,9 @@
   },
   "nNIocP": {
     "defaultMessage": "{count} cims"
+  },
+  "nOk9mh": {
+    "defaultMessage": "List"
   },
   "nYqRsC": {
     "defaultMessage": "Create your first plan"
@@ -1043,20 +1466,32 @@
   "o863Ko": {
     "defaultMessage": "App icon"
   },
+  "oGIECt": {
+    "defaultMessage": "Drive to start"
+  },
   "oL/Koa": {
     "defaultMessage": "Add more merch before sending."
   },
   "oUWADl": {
     "defaultMessage": "No"
   },
+  "oZg4DR": {
+    "defaultMessage": "Shortest"
+  },
+  "ophUeg": {
+    "defaultMessage": "Free shipping unlocked."
+  },
   "p/Xd3M": {
     "defaultMessage": "Share with a friend"
   },
-  "pNTyiX": {
-    "defaultMessage": "Keep"
-  },
   "pONqz8": {
     "defaultMessage": "First name"
+  },
+  "pe6oHl": {
+    "defaultMessage": "Send the amount to this Bizum number, then upload your confirmation screenshot."
+  },
+  "pkmThu": {
+    "defaultMessage": "The trail starts and ends at the same point. You return on a different path."
   },
   "poRHYt": {
     "defaultMessage": "Please pick a color and size before adding to cart."
@@ -1064,8 +1499,17 @@
   "q6F4vK": {
     "defaultMessage": "Not authorized"
   },
+  "qCcwo3": {
+    "defaultMessage": "Links"
+  },
+  "qPecch": {
+    "defaultMessage": "Bizum number"
+  },
   "qR1oV/": {
     "defaultMessage": "Add mountain"
+  },
+  "qXIV9W": {
+    "defaultMessage": "Remove photo"
   },
   "qbkIE0": {
     "defaultMessage": "All plans"
@@ -1073,20 +1517,17 @@
   "qdhixG": {
     "defaultMessage": "Plans can be deleted later without any obligation."
   },
+  "qo8V27": {
+    "defaultMessage": "Who's coming?"
+  },
   "qpsZME": {
     "defaultMessage": "I'm not doing a summit"
   },
   "qq3cjt": {
     "defaultMessage": "You're not ranked yet. Summit a mountain to appear on the hiscores."
   },
-  "qvc9uM": {
-    "defaultMessage": "This cannot be undone."
-  },
   "r+6lRr": {
     "defaultMessage": "You haven't summited any mountains yet."
-  },
-  "r0u4TP": {
-    "defaultMessage": "Coupon code"
   },
   "rGmxAI": {
     "defaultMessage": "Difficulty"
@@ -1121,8 +1562,11 @@
   "rzCvRt": {
     "defaultMessage": "Family"
   },
-  "sY8bMH": {
-    "defaultMessage": "Summit again"
+  "sYQGsN": {
+    "defaultMessage": "No GPS track available."
+  },
+  "sp5kfQ": {
+    "defaultMessage": "Trail"
   },
   "sxWhq6": {
     "defaultMessage": "We couldn't load this screen. Please try again."
@@ -1132,6 +1576,9 @@
   },
   "tOdNiY": {
     "defaultMessage": "Dark"
+  },
+  "tf1lIh": {
+    "defaultMessage": "Free"
   },
   "tmsPkP": {
     "defaultMessage": "Saved for later"
@@ -1163,6 +1610,12 @@
   "v0btUQ": {
     "defaultMessage": "No one has yet reached the hiscores."
   },
+  "vONi+O": {
+    "defaultMessage": "Country"
+  },
+  "vPMKpw": {
+    "defaultMessage": "Total length of the route, following the GPS track end-to-end."
+  },
   "vYGdjC": {
     "defaultMessage": "Delete this comment?"
   },
@@ -1178,8 +1631,8 @@
   "w04v+E": {
     "defaultMessage": "We hope it was amazing"
   },
-  "w6oJwY": {
-    "defaultMessage": "One summit of 1000 meters ="
+  "w59TnD": {
+    "defaultMessage": "{summited} of {total} mountains"
   },
   "wBMkI1": {
     "defaultMessage": "Mountain"
@@ -1229,6 +1682,12 @@
   "xkgeNE": {
     "defaultMessage": "Activity title"
   },
+  "xttcrA": {
+    "defaultMessage": "Trail shape"
+  },
+  "xukzKg": {
+    "defaultMessage": "Networks"
+  },
   "xxK2sQ": {
     "defaultMessage": "Write a comment…"
   },
@@ -1241,6 +1700,9 @@
   "y5oyGg": {
     "defaultMessage": "View on maps"
   },
+  "yBi1/p": {
+    "defaultMessage": "Technical difficulty reported by the author — accounts for terrain, exposure, and any tricky sections."
+  },
   "yEc3Wd": {
     "defaultMessage": "This removes the challenge for everyone. Continue?"
   },
@@ -1252,6 +1714,15 @@
   },
   "yTrowV": {
     "defaultMessage": "Got it!"
+  },
+  "yZ8xJJ": {
+    "defaultMessage": "Max {value}"
+  },
+  "yeCVRO": {
+    "defaultMessage": "Open on Wikiloc"
+  },
+  "yi0MYf": {
+    "defaultMessage": "Participants will be notified. This cannot be undone."
   },
   "ykQinU": {
     "defaultMessage": "Failed to delete challenge"
@@ -1270,6 +1741,9 @@
   },
   "zSOvI0": {
     "defaultMessage": "Filters"
+  },
+  "zWgbGg": {
+    "defaultMessage": "Today"
   },
   "ziHJSK": {
     "defaultMessage": "What are you doing?"

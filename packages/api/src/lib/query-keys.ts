@@ -29,6 +29,10 @@ export const adminKeys = {
     ["admin", "mountains", id, "ratings"] as const,
   mountainComments: (id: string) =>
     ["admin", "mountains", id, "comments"] as const,
+  commentsList: () => ["admin", "comments"] as const,
+  comments: (params: { page: number; q: string; sort: string }) =>
+    ["admin", "comments", params] as const,
+  commentDetail: (id: string) => ["admin", "comments", id] as const,
   summitsList: () => ["admin", "summits"] as const,
   summits: (params: { page: number; q: string; validated: string }) =>
     ["admin", "summits", params] as const,
@@ -37,8 +41,10 @@ export const adminKeys = {
   plans: (params: { page: number; q: string; status: string; speed: string }) =>
     ["admin", "plans", params] as const,
   planDetail: (id: string) => ["admin", "plans", id] as const,
+  planMemberLog: (id: string) => ["admin", "plans", id, "member-log"] as const,
   statsTimeseries: (metric: string, range: string) =>
     ["admin", "stats", "timeseries", metric, range] as const,
+  activeUsers: () => ["admin", "active-users"] as const,
   challengesList: () => ["admin", "challenges"] as const,
   challenges: (params: { page: number; q: string; kind: string }) =>
     ["admin", "challenges", params] as const,
@@ -53,4 +59,16 @@ export const adminKeys = {
   shopRequestDetail: (id: string) => ["admin", "shop-requests", id] as const,
   campaignStats: (slug: string) =>
     ["admin", "campaigns", slug, "stats"] as const,
+  organizationsList: () => ["admin", "organizations"] as const,
+  organizations: (params: { page: number; q: string }) =>
+    ["admin", "organizations", params] as const,
+  organizationDetail: (id: string) => ["admin", "organizations", id] as const,
+  routesList: () => ["admin", "routes"] as const,
+  routes: (params: {
+    page: number;
+    q: string;
+    mountainSlug: string;
+    multiPeak: boolean;
+  }) => ["admin", "routes", params] as const,
+  routeDetail: (id: string) => ["admin", "routes", id] as const,
 };

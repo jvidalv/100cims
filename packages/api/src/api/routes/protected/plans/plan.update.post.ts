@@ -2,7 +2,8 @@ import { and, eq, inArray } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 
 import { db } from "@/db";
-import { PlanStatusSchema } from "@/api/schemas/enums";
+import { PLAN_USER_LOG_ACTIONS } from "@/db/enums";
+import { PlanStatusSchema, PlanTypeSchema } from "@/api/schemas/enums";
 import {
   planTable,
   planHasUsersTable,
@@ -10,12 +11,22 @@ import {
   planUserLogTable,
 } from "@/db/schema";
 import { formatDateForPostgresFromISOString } from "@/api/lib/dates";
+import { reportImageTooBig } from "@/api/lib/images";
+import { PlanImageError, resolvePlanImageUrl } from "@/api/lib/plan-images";
+import {
+  findInvalidPlanLinkUrl,
+  normalizePlanLinkUrl,
+} from "@/api/lib/plan-link-urls";
 import { getUserFromRequest } from "@/api/routes/@shared/auth";
+import { IMAGE_TO_BIG } from "@/api/routes/@shared/error-codes";
 import {
   SuccessResponse,
   ErrorFieldResponse,
 } from "@/api/schemas/common.schema";
-import { BasicPlanSchema } from "@/api/schemas/plan.schema";
+import {
+  BasicPlanSchema,
+  PlanLinkUrlErrorResponse,
+} from "@/api/schemas/plan.schema";
 
 export const planUpdatePostRoute = new Elysia().post(
   "/update",
@@ -33,6 +44,54 @@ export const planUpdatePostRoute = new Elysia().post(
       return { error: "Not authorized to update this plan" };
     }
 
+    const whatsappGroupUrl =
+      body.whatsappGroupUrl !== undefined
+        ? normalizePlanLinkUrl(body.whatsappGroupUrl)
+        : undefined;
+    const wikilocUrl =
+      body.wikilocUrl !== undefined
+        ? normalizePlanLinkUrl(body.wikilocUrl)
+        : undefined;
+    const stravaUrl =
+      body.stravaUrl !== undefined
+        ? normalizePlanLinkUrl(body.stravaUrl)
+        : undefined;
+
+    const invalidField = findInvalidPlanLinkUrl({
+      whatsappGroupUrl,
+      wikilocUrl,
+      stravaUrl,
+    });
+    if (invalidField) {
+      set.status = 400;
+      return { error: "INVALID_URL" as const, field: invalidField };
+    }
+
+    // Resolve the (optional) new image up-front. `undefined` → leave alone;
+    // `null` → clear; string → either http URL (kept) or base64 (uploaded).
+    let imageUrl: string | null | undefined;
+    if (body.imageUrl === undefined) {
+      imageUrl = undefined;
+    } else {
+      try {
+        imageUrl = await resolvePlanImageUrl(body.imageUrl, body.id);
+      } catch (e) {
+        if (e instanceof PlanImageError && e.status === 400) {
+          if (body.imageUrl && !body.imageUrl.startsWith("http")) {
+            reportImageTooBig(request, {
+              route: "plans/update",
+              base64Data: body.imageUrl,
+              userId: user.id,
+            });
+          }
+          set.status = 500;
+          return { error: IMAGE_TO_BIG };
+        }
+        set.status = 500;
+        return { error: "Image upload failed" };
+      }
+    }
+
     const updated = await db.transaction(async (tx) => {
       const [plan] = await tx
         .update(planTable)
@@ -40,11 +99,16 @@ export const planUpdatePostRoute = new Elysia().post(
           title: body.title,
           description: body.description,
           status: body.status,
-          imageUrl: body.imageUrl ?? undefined,
+          imageUrl,
           routeUrl: body.routeUrl ?? undefined,
+          whatsappGroupUrl,
+          wikilocUrl,
+          stravaUrl,
           startDate: body.startDate
             ? formatDateForPostgresFromISOString(body.startDate)
             : undefined,
+          startTime: body.startTime,
+          type: body.type,
           isPrivate: body.isPrivate,
           updatedAt: new Date(),
         })
@@ -95,7 +159,7 @@ export const planUpdatePostRoute = new Elysia().post(
             toRemove.map((id) => ({
               planId: body.id,
               userId: id,
-              action: "left",
+              action: PLAN_USER_LOG_ACTIONS.LEFT,
             })),
           );
         }
@@ -113,7 +177,7 @@ export const planUpdatePostRoute = new Elysia().post(
             toAdd.map((id) => ({
               planId: body.id,
               userId: id,
-              action: "joined",
+              action: PLAN_USER_LOG_ACTIONS.JOINED,
             })),
           );
         }
@@ -129,17 +193,26 @@ export const planUpdatePostRoute = new Elysia().post(
       id: t.String(),
       title: t.Optional(t.String()),
       description: t.Optional(t.String()),
-      imageUrl: t.Optional(t.String()),
+      // Either an http(s) URL (kept), a raw base64 payload (uploaded), or
+      // null (clear). Omit to leave the column alone.
+      imageUrl: t.Optional(t.Nullable(t.String())),
       status: t.Optional(PlanStatusSchema),
       routeUrl: t.Optional(t.String()),
       startDate: t.Optional(t.String()),
+      startTime: t.Optional(t.Nullable(t.String())),
+      type: t.Optional(t.Nullable(PlanTypeSchema)),
       mountainIds: t.Optional(t.Array(t.String())),
       userIds: t.Optional(t.Array(t.String())),
       isPrivate: t.Optional(t.Boolean()),
+      whatsappGroupUrl: t.Optional(t.Nullable(t.String())),
+      wikilocUrl: t.Optional(t.Nullable(t.String())),
+      stravaUrl: t.Optional(t.Nullable(t.String())),
     }),
     response: {
       200: SuccessResponse(BasicPlanSchema),
+      400: PlanLinkUrlErrorResponse,
       403: ErrorFieldResponse,
+      500: ErrorFieldResponse,
     },
   },
 );

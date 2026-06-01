@@ -13,6 +13,7 @@ import {
   userTable,
   planHasMountainsTable,
   mountainTable,
+  organizationTable,
 } from "@/db/schema";
 import { JWT } from "@/api/routes/@shared/jwt";
 import {
@@ -20,6 +21,12 @@ import {
   getOptionalUserId,
 } from "@/api/routes/@shared/optional-auth";
 import { planVisibilitySql } from "@/api/routes/@shared/plan-access";
+import { planFutureOnlySql } from "@/api/routes/@shared/plan-future-only";
+import {
+  assemblePlanOrganization,
+  planOrganizationSelection,
+  planParticipantsOrderBy,
+} from "@/api/routes/@shared/plan-organization";
 import { SuccessResponse } from "@/api/schemas/common.schema";
 import { PlansArraySchema } from "@/api/schemas/plan.schema";
 import { PlanStatusSchema } from "@/api/schemas/enums";
@@ -36,6 +43,7 @@ export const planAllGetRoute = new Elysia().use(JWT()).get(
         ? eq(planTable.challengeId, query.challengeId)
         : undefined,
       query?.userId ? eq(planHasUsersTable.userId, query.userId) : undefined,
+      planFutureOnlySql(query?.futureOnly),
       planVisibilitySql(viewerId),
     ].filter(Boolean);
 
@@ -50,17 +58,26 @@ export const planAllGetRoute = new Elysia().use(JWT()).get(
       description: planTable.description,
       imageUrl: planTable.imageUrl,
       speed: planTable.speed,
+      type: planTable.type,
       status: planTable.status,
       routeUrl: planTable.routeUrl,
+      whatsappGroupUrl: planTable.whatsappGroupUrl,
+      wikilocUrl: planTable.wikilocUrl,
+      stravaUrl: planTable.stravaUrl,
       startDate: planTable.startDate,
+      startTime: planTable.startTime,
       creatorId: planTable.creatorId,
       createdAt: planTable.createdAt,
       updatedAt: planTable.updatedAt,
       challengeId: planTable.challengeId,
       isPrivate: planTable.isPrivate,
+      featured: planTable.featured,
+      // Org-on-plan LEFT JOIN columns — collapsed into the nested
+      // `organization` field per-row below.
+      ...planOrganizationSelection,
     };
 
-    const baseQuery = query?.userId
+    const baseFromUserJoin = query?.userId
       ? db
           .select(selection)
           .from(planTable)
@@ -68,8 +85,14 @@ export const planAllGetRoute = new Elysia().use(JWT()).get(
             planHasUsersTable,
             eq(planHasUsersTable.planId, planTable.id),
           )
-          .$dynamic()
-      : db.select(selection).from(planTable).$dynamic();
+      : db.select(selection).from(planTable);
+
+    const baseQuery = baseFromUserJoin
+      .leftJoin(
+        organizationTable,
+        eq(planTable.organizationId, organizationTable.id),
+      )
+      .$dynamic();
 
     const filtered = filters.length
       ? baseQuery.where(and(...filters))
@@ -91,10 +114,15 @@ export const planAllGetRoute = new Elysia().use(JWT()).get(
           lastName: userTable.lastName,
           imageUrl: userTable.imageUrl,
           willBringDogs: planHasUsersTable.willBringDogs,
+          role: planHasUsersTable.role,
         })
         .from(planHasUsersTable)
         .innerJoin(userTable, eq(planHasUsersTable.userId, userTable.id))
-        .where(inArray(planHasUsersTable.planId, planIds)),
+        .where(inArray(planHasUsersTable.planId, planIds))
+        // Organizers first, joinedAt DESC within each role. Shared with
+        // every other plan-list endpoint via `planParticipantsOrderBy`.
+        // The per-plan `.filter` below preserves this row order.
+        .orderBy(...planParticipantsOrderBy()),
 
       db
         .select({
@@ -114,28 +142,51 @@ export const planAllGetRoute = new Elysia().use(JWT()).get(
         .where(inArray(planHasMountainsTable.planId, planIds)),
     ]);
 
-    const plansWithRelations = plans.map((plan) => ({
-      ...plan,
-      users: users
-        .filter((u) => u.planId === plan.id)
-        .map(({ userId, firstName, lastName, imageUrl, willBringDogs }) => ({
-          id: userId,
-          firstName,
-          lastName,
-          imageUrl,
-          willBringDogs,
-        })),
-      mountains: mountains
-        .filter((m) => m.planId === plan.id)
-        .map(({ mountainId, name, slug, imageUrl, location, height }) => ({
-          id: mountainId,
-          name,
-          slug,
-          imageUrl,
-          location,
-          height,
-        })),
-    }));
+    const plansWithRelations = plans.map((plan) => {
+      const {
+        organizationId,
+        organizationName,
+        organizationImageUrl,
+        ...planFields
+      } = plan;
+      return {
+        ...planFields,
+        users: users
+          .filter((u) => u.planId === plan.id)
+          .map(
+            ({
+              userId,
+              firstName,
+              lastName,
+              imageUrl,
+              willBringDogs,
+              role,
+            }) => ({
+              id: userId,
+              firstName,
+              lastName,
+              imageUrl,
+              willBringDogs,
+              role,
+            }),
+          ),
+        mountains: mountains
+          .filter((m) => m.planId === plan.id)
+          .map(({ mountainId, name, slug, imageUrl, location, height }) => ({
+            id: mountainId,
+            name,
+            slug,
+            imageUrl,
+            location,
+            height,
+          })),
+        organization: assemblePlanOrganization({
+          organizationId,
+          organizationName,
+          organizationImageUrl,
+        }),
+      };
+    });
 
     return {
       success: true,
@@ -151,6 +202,7 @@ export const planAllGetRoute = new Elysia().use(JWT()).get(
         userId: t.Optional(t.String()),
         sort: t.Optional(t.String()),
         challengeId: t.Optional(t.String()),
+        futureOnly: t.Optional(t.Boolean()),
       }),
     ),
     response: SuccessResponse(PlansArraySchema),

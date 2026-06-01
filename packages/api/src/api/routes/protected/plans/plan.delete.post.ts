@@ -1,8 +1,11 @@
-import { eq } from "drizzle-orm";
+import { and, eq, ne } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 
 import { db } from "@/db";
-import { planTable } from "@/db/schema";
+import { planHasUsersTable, planTable } from "@/db/schema";
+import { sendPushLocalized } from "@/api/lib/push";
+import { PUSH_TYPE } from "@/api/lib/push-types";
+import { pushPlanDeleted } from "@/api/lib/push-translations";
 import { getUserFromRequest } from "@/api/routes/@shared/auth";
 
 export const planDeletePostRoute = new Elysia().post(
@@ -11,7 +14,7 @@ export const planDeletePostRoute = new Elysia().post(
     const user = getUserFromRequest(request);
 
     const existing = await db
-      .select({ creatorId: planTable.creatorId })
+      .select({ creatorId: planTable.creatorId, title: planTable.title })
       .from(planTable)
       .where(eq(planTable.id, body.id))
       .limit(1);
@@ -23,7 +26,32 @@ export const planDeletePostRoute = new Elysia().post(
       };
     }
 
+    // Capture the participant set before the row disappears. Skip the
+    // creator — they triggered the action, no need to notify themselves.
+    const participants = await db
+      .select({ userId: planHasUsersTable.userId })
+      .from(planHasUsersTable)
+      .where(
+        and(
+          eq(planHasUsersTable.planId, body.id),
+          ne(planHasUsersTable.userId, user.id),
+        ),
+      );
+
     await db.delete(planTable).where(eq(planTable.id, body.id));
+
+    if (participants.length) {
+      void sendPushLocalized(
+        participants.map((p) => p.userId),
+        (locale) => ({
+          title: existing[0].title,
+          body: pushPlanDeleted(locale),
+        }),
+        // The plan is gone; the client routes this push to /plans rather
+        // than the now-404 /plan/:id.
+        { type: PUSH_TYPE.PLAN_DELETED },
+      );
+    }
 
     return { success: true, message: "Plan deleted successfully" };
   },

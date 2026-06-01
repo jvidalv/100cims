@@ -62,7 +62,9 @@ export const CommunityChallengeSchema = t.Object({
 
 /**
  * Schema for a community challenge as returned by the list route — adds
- * `peakImageUrl` (image of the tallest essential mountain, if any).
+ * `peakImageUrl` (image of the tallest essential mountain, if any) and
+ * `centroidLatitude` / `centroidLongitude` (mean lat/lng of member mountains,
+ * used by the mobile "Closer" sort).
  */
 export const CommunityChallengeListItemSchema = t.Object({
   id: t.String(),
@@ -78,6 +80,8 @@ export const CommunityChallengeListItemSchema = t.Object({
   totalUsers: t.String(),
   createdAt: t.String(),
   peakImageUrl: t.Union([t.String(), t.Null()]),
+  centroidLatitude: t.Union([t.String(), t.Null()]),
+  centroidLongitude: t.Union([t.String(), t.Null()]),
 });
 
 /**

@@ -68,6 +68,14 @@ export const challengeListGetRoute = new Elysia().get(
           ORDER BY CAST(${mountainTable.height} AS FLOAT) DESC
           LIMIT 1
         )`,
+        // Mean lat/lng of the challenge's member mountains; null when the
+        // challenge has none. Used by the mobile "Closer" sort.
+        centroidLatitude: sql<
+          string | null
+        >`AVG(${mountainTable.latitude})::text`,
+        centroidLongitude: sql<
+          string | null
+        >`AVG(${mountainTable.longitude})::text`,
       })
       .from(challengeTable)
       .leftJoin(
@@ -108,6 +116,8 @@ export const challengeListGetRoute = new Elysia().get(
         totalUsers: c.totalUsers,
         createdAt: c.createdAt.toISOString(),
         peakImageUrl: c.peakImageUrl,
+        centroidLatitude: c.centroidLatitude,
+        centroidLongitude: c.centroidLongitude,
       })),
     };
   },

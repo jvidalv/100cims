@@ -21,7 +21,10 @@ import {
   ThemedTextInput,
   Avatar,
 } from "@/components/ui/atoms";
-import { ScreenHeader } from "@/components/ui/molecules";
+import {
+  useBlurredScreenHeaderHeight,
+  BlurredScreenHeader,
+} from "@/components/ui/molecules";
 import { LanguagePicker } from "@/components/user/language-picker";
 import { ThemePicker } from "@/components/user/theme-picker";
 import { useHiscoresGet } from "@/domains/hiscores/hiscores.api";
@@ -41,6 +44,7 @@ type Tab = "details" | "privacy" | "theme" | "account";
 
 export default function UserMeScreen() {
   const router = useRouter();
+  const blurredHeaderHeight = useBlurredScreenHeaderHeight();
   const { logout } = useAuth();
   const intl = useIntl();
   const { refetch: refetchHiscores } = useHiscoresGet();
@@ -210,11 +214,15 @@ export default function UserMeScreen() {
 
   return (
     <ThemedKeyboardAvoidingView>
-      <ScreenHeader />
-      <View className="px-6">
-        <ThemedText className="mb-4 text-4xl font-bold">
+      <BlurredScreenHeader>
+        <ThemedText numberOfLines={1} className="text-lg font-medium">
           <FormattedMessage defaultMessage="Me" />
         </ThemedText>
+      </BlurredScreenHeader>
+      <View
+        className="px-6"
+        style={{ paddingTop: blurredHeaderHeight }}
+      >
         <View className="relative mb-6 items-center justify-center">
           <TouchableOpacity onPress={pickImage} className="relative">
             <Avatar
@@ -259,7 +267,7 @@ export default function UserMeScreen() {
           })}
         </View>
       </View>
-      <ScrollView className="flex-1 px-6 pt-4">
+      <ScrollView className="flex-1" contentContainerClassName="px-6 pt-4">
         {tab === "details" && (
           <View className="gap-6 pb-8">
             <ThemedTextInput

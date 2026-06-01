@@ -10,23 +10,35 @@ import type { LucideIcon } from "lucide-react-native";
 export type ActionRowIntent =
   | "primary"
   | "muted"
+  | "foreground"
   | "blue"
   | "emerald"
   | "danger"
-  | "gold";
+  | "gold"
+  | "accent";
 
 const INTENT_STYLES: Record<
   ActionRowIntent,
   { bg: string; text: string; iconColor?: string }
 > = {
   primary: {
-    bg: "bg-primary/10",
+    // `bg-primary/10` is too faint against the black dark-mode background;
+    // bump opacity in dark mode while staying in-palette.
+    bg: "bg-primary/10 dark:bg-primary/30",
     text: "text-primary",
     iconColor: Colors.light.primary,
   },
   muted: {
     bg: "bg-gray-200 dark:bg-gray-700",
     text: "text-muted-foreground",
+  },
+  // Same chip background as `muted` but the label keeps the page's default
+  // foreground colour. Useful when the row is information-bearing rather
+  // than secondary (e.g. social-network links where the brand sits in the
+  // icon and the label should read as primary copy).
+  foreground: {
+    bg: "bg-gray-200 dark:bg-gray-700",
+    text: "text-foreground",
   },
   blue: {
     bg: "bg-blue-100 dark:bg-blue-900",
@@ -47,6 +59,12 @@ const INTENT_STYLES: Record<
     bg: "bg-yellow-100 dark:bg-yellow-900/40",
     text: "text-yellow-600 dark:text-yellow-500",
     iconColor: "#eab308",
+  },
+  accent: {
+    // Same reasoning as `primary` — `/10` opacity disappears against black.
+    bg: "bg-accent/10 dark:bg-accent/30",
+    text: "text-accent",
+    iconColor: Colors.light.accent,
   },
 };
 

@@ -1,5 +1,8 @@
 {
   "ios": {
     "bundleIdentifier": "com.vidalv.100cims-monorepo"
+  },
+  "android": {
+    "package": "com.vidalv.x100cimsmonorepo"
   }
 }

@@ -2,7 +2,7 @@ import { Link, Redirect } from "expo-router";
 import { Bookmark } from "lucide-react-native";
 import { memo, useCallback, useMemo } from "react";
 import { FormattedMessage } from "react-intl";
-import { FlatList, Image, TouchableOpacity, View } from "react-native";
+import { FlatList, TouchableOpacity, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
 import {
@@ -11,7 +11,11 @@ import {
   ThemedText,
   ThemedView,
 } from "@/components/ui/atoms";
-import { ScreenHeader } from "@/components/ui/molecules";
+import { Image } from "@/components/ui/atoms/image";
+import {
+  useBlurredScreenHeaderHeight,
+  BlurredScreenHeader,
+} from "@/components/ui/molecules";
 import { useSavedGet, type SavedMountain } from "@/domains/saved/saved.api";
 import { useUserChallengeSummits, useUserMe } from "@/domains/user/user.api";
 
@@ -75,6 +79,7 @@ const SavedRow = memo(function SavedRow({
 });
 
 export default function UserSavedScreen() {
+  const blurredHeaderHeight = useBlurredScreenHeaderHeight();
   const { data: me } = useUserMe();
   const { data, isPending } = useSavedGet();
   const { data: userSummits } = useUserChallengeSummits();
@@ -97,22 +102,20 @@ export default function UserSavedScreen() {
 
   return (
     <ThemedView className="flex-1">
-      <ScreenHeader />
+      <BlurredScreenHeader>
+        <ThemedText numberOfLines={1} className="text-lg font-medium">
+          <FormattedMessage
+            defaultMessage="My saved mountains ({count})"
+            values={{ count: data?.length ?? 0 }}
+          />
+        </ThemedText>
+      </BlurredScreenHeader>
       <FlatList
         data={data ?? []}
         initialNumToRender={25}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
-        ListHeaderComponent={
-          <View className="px-6 pb-4">
-            <ThemedText className="mb-2 text-4xl font-bold">
-              <FormattedMessage defaultMessage="My saved mountains" />{" "}
-              <ThemedText className="text-lg font-semibold text-muted-foreground">
-                {data?.length ?? 0}
-              </ThemedText>
-            </ThemedText>
-          </View>
-        }
+        contentContainerStyle={{ paddingTop: blurredHeaderHeight }}
         ListEmptyComponent={
           isPending ? (
             <View className="px-6">

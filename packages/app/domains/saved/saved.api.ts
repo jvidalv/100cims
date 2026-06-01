@@ -5,16 +5,12 @@ import { queryClient } from "@/components/providers/query-client-provider";
 import apiClient from "@/lib/api-client";
 import { userKeys } from "@/lib/query-keys";
 
-export type SavedMountain = {
-  mountainId: string;
-  slug: string;
-  name: string;
-  location: string;
-  height: string;
-  essential: boolean;
-  imageUrl: string | null;
-  savedAt: string | number | object;
-};
+import type { paths } from "@/types/api";
+
+// Derived from the API's OpenAPI schema so the saved-mountain row shape
+// stays in lockstep with `SavedMountainSchema` in the backend.
+export type SavedMountain =
+  paths["/api/protected/user/saved"]["get"]["responses"][200]["content"]["application/json"]["message"][number];
 
 export const useSavedGet = () => {
   const { isAuthenticated } = useAuth();
@@ -22,7 +18,7 @@ export const useSavedGet = () => {
   return useQuery({
     queryKey: userKeys.saved(),
     enabled: () => isAuthenticated,
-    queryFn: async (): Promise<SavedMountain[]> => {
+    queryFn: async () => {
       const { data, error } = await apiClient.GET(
         "/api/protected/user/saved",
         {},

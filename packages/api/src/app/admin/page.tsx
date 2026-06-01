@@ -24,6 +24,7 @@ import {
 import {
   type StatsMetric,
   type StatsRange,
+  useAdminActiveUsers,
   useAdminStatsTimeseries,
 } from "@/domains/admin/api";
 import { toDateInputValue } from "@/lib/format-date";
@@ -108,6 +109,7 @@ export default function AdminPage() {
       </div>
 
       <div className="space-y-8">
+        <ActiveUsersCards />
         <ChartCard title="New users" metric="new-users" range={range} />
         <ChartCard title="Summits" metric="summits" range={range} />
         <ChartCard title="Plans created" metric="plans" range={range} />
@@ -234,6 +236,119 @@ function ChartCard({
         </div>
       )}
     </div>
+  );
+}
+
+function ActiveUsersCards() {
+  const { data, error, isLoading } = useAdminActiveUsers();
+
+  return (
+    <div className="grid grid-cols-2 gap-4">
+      <MetricCard
+        label="DAU"
+        sublabel="Active in the last 24 hours"
+        value={data?.dau}
+        loading={isLoading && !data}
+        error={error?.message}
+      />
+      <MetricCard
+        label="MAU"
+        sublabel="Active in the last 30 days"
+        value={data?.mau}
+        loading={isLoading && !data}
+        error={error?.message}
+        deltas={
+          data
+            ? [
+                {
+                  label: "vs last month",
+                  current: data.mau,
+                  baseline: data.mauPrevMonth,
+                },
+                {
+                  label: "vs 6 months ago",
+                  current: data.mau,
+                  baseline: data.mauSixMonthsAgo,
+                },
+              ]
+            : undefined
+        }
+      />
+    </div>
+  );
+}
+
+type Delta = { label: string; current: number; baseline: number };
+
+function MetricCard({
+  label,
+  sublabel,
+  value,
+  loading,
+  error,
+  deltas,
+}: {
+  label: string;
+  sublabel: string;
+  value: number | undefined;
+  loading: boolean;
+  error: string | undefined;
+  deltas?: Delta[];
+}) {
+  return (
+    <div className="rounded border bg-card p-6 space-y-2">
+      <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+        {label}
+      </p>
+      {error ? (
+        <p className="text-red-600 text-sm">{error}</p>
+      ) : loading ? (
+        <p className="text-muted-foreground text-sm">Loading…</p>
+      ) : (
+        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+          <p className="text-4xl font-bold tabular-nums">{value ?? 0}</p>
+          {deltas && deltas.length > 0 && (
+            <div className="flex flex-col gap-0.5">
+              {deltas.map((d) => (
+                <DeltaPill key={d.label} delta={d} />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+      <p className="text-xs text-muted-foreground">{sublabel}</p>
+    </div>
+  );
+}
+
+function DeltaPill({ delta }: { delta: Delta }) {
+  // Baseline of 0 makes the percentage undefined — show "—" rather
+  // than `∞%` or `NaN%`. Otherwise render with a +/- sign and color
+  // the value emerald (up) or red (down). Equal counts → neutral.
+  if (delta.baseline === 0) {
+    return (
+      <p className="text-xs text-muted-foreground tabular-nums">
+        — <span className="text-muted-foreground/70">{delta.label}</span>
+      </p>
+    );
+  }
+  const ratio = (delta.current - delta.baseline) / delta.baseline;
+  const pct = Math.round(ratio * 100);
+  const sign = pct > 0 ? "+" : "";
+  const cls =
+    pct > 0
+      ? "text-emerald-600 dark:text-emerald-400"
+      : pct < 0
+        ? "text-red-600 dark:text-red-400"
+        : "text-muted-foreground";
+  return (
+    <p className="text-xs tabular-nums">
+      <span className={`font-semibold ${cls}`}>
+        {sign}
+        {pct}%
+      </span>{" "}
+      <span className="text-muted-foreground/70">{delta.label}</span>
+    </p>
   );
 }
 

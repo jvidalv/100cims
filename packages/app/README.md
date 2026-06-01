@@ -2,7 +2,7 @@
   <img src="https://i.imgur.com/UtFHXCj.png" alt="cims"  />
 </p>
 
-# [Cims](https://cims-sempre-amunt.app) - Mobile App
+# [Cims](https://fescims.com) - Mobile App
 
 > **Part of the 100cims monorepo.** See the [root README](../../README.md) for an overview of the full project structure.
 
@@ -64,13 +64,17 @@ Authentication supports both **Google** and **Apple** sign-in.
 
 ## 🌍 Translations
 
-To update translations:
+After adding a new `intl.formatMessage(...)` or `<FormattedMessage>`:
 
 ```bash
-yarn translations
+yarn translations            # extract → raw-en.json, compile → en.json
 ```
 
-This will extract messages and update `translations/raw-en.json`. Copy the new keys manually into `ca.json` and `es.json`.
+Then **manually copy each new hash into `translations/ca.json` and
+`translations/es.json`** (alphabetical order by hash) and translate. Verify all
+four files have the new hash with
+`grep '"<hash>"' translations/*.json`. Shipping English-only strings is a
+regression — most users run the app in Catalan or Spanish.
 
 ## 🩱 Stack Highlights
 
