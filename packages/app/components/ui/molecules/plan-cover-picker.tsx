@@ -1,8 +1,8 @@
 import { Camera, X } from "lucide-react-native";
-import { FormattedMessage, useIntl } from "react-intl";
+import { useIntl } from "react-intl";
 import { Alert, Pressable, TouchableOpacity, View } from "react-native";
 
-import { LucideIcon, ThemedText, ThemedView } from "@/components/ui/atoms";
+import { LucideIcon } from "@/components/ui/atoms";
 import { PlanCoverBackground } from "@/components/ui/molecules/plan-cover-background";
 import { pickAndOptimizeImage } from "@/lib/images";
 
@@ -12,28 +12,24 @@ type Props = {
   imagePreview: string | null;
   /** Called with `(uri, base64)` after a successful pick. */
   onPicked: (preview: string, base64: string) => void;
-  /** Called when the user long-presses (or — in a future variant — taps a
-   *  remove affordance). The form should send `null` for `imageUrl` at
-   *  submit time so the column gets cleared. */
+  /** Called when the user clears the photo. The form should send `null`
+   *  for `imageUrl` at submit time so the column gets cleared. */
   onCleared: () => void;
-  /** Plumbed into the right-side thumbnail so the empty state mirrors the
-   *  row/detail fallback (mountain collage, or initials when no mountains
-   *  are selected). */
+  /** Selected mountains for the cover-background fallback. Mirrors the
+   *  render order used on the plan-detail header: customImageUrl ›
+   *  mountain collage › initials. */
   mountains?: { imageUrl?: string | null }[];
-  /** Used for the initials fallback when neither a custom image nor any
-   *  mountain image is available. */
+  /** Title used by `PlanCoverBackground` for the initials fallback. */
   title: string;
 };
 
 /**
- * Row-shaped plan-cover picker. Matches `ThemedSwitch`'s outlined-row
- * visual: floating label + body text on the left, a small thumbnail on
- * the right. The thumbnail previews exactly what the plan list and
- * detail will render — custom image when set, else mountain collage,
- * else initials.
- *
- * Tap anywhere to pick a new photo. When one is set, a visible X button
- * clears it (long-press also works as a power-user shortcut).
+ * Full-width plan-cover picker. Shows the same `PlanCoverBackground` the
+ * plan-detail header uses, so the user sees the exact preview they'll get
+ * downstream: picked photo › collage of selected-mountain images ›
+ * initials over the brand background. Tap anywhere to pick or replace; a
+ * small X in the corner clears the picked photo (the picker then falls
+ * back to the collage or initials).
  */
 export const PlanCoverPicker = ({
   imagePreview,
@@ -46,11 +42,9 @@ export const PlanCoverPicker = ({
 
   const pick = async () => {
     try {
-      // Match the dominant render surface (square thumbnails in the list
-      // rows and the picker preview) so the user's crop is what they see.
-      // The parallax header on the detail screen is wider than tall, so
-      // it'll center-crop a strip off the edges — acceptable tradeoff
-      // against the previous 16:9 that lost top/bottom in every list row.
+      // Square crop matches the dominant render surface (square thumbnails
+      // in the list rows and on this picker) so the user sees the same
+      // crop they'll get on every other surface.
       const result = await pickAndOptimizeImage({ aspect: [1, 1] });
       if (!result?.optimized.base64) return;
       onPicked(result.picked.uri, result.optimized.base64);
@@ -81,33 +75,33 @@ export const PlanCoverPicker = ({
     );
   };
 
-  const label = intl.formatMessage({ defaultMessage: "Cover photo" });
+  const a11yLabel = imagePreview
+    ? intl.formatMessage({ defaultMessage: "Replace cover photo" })
+    : intl.formatMessage({ defaultMessage: "Pick a cover photo" });
+
   return (
     <Pressable
       onPress={pick}
-      onLongPress={confirmClear}
-      accessibilityLabel={intl.formatMessage({
-        defaultMessage: "Pick a cover photo",
-      })}
-      className="flex-row items-center justify-between gap-3 rounded border-2 border-border px-4 py-3"
+      accessibilityLabel={a11yLabel}
+      // h-32 = 128px — same vertical heft as a parallax header preview at a
+      // glance. Rounded + overflow-hidden so the background fills cleanly
+      // up to the rounded corners. `mb-3` adds a little breathing room
+      // beyond the form's default 24px gap so the title input doesn't
+      // crowd the picker.
+      className="relative mb-3 h-32 w-full items-center justify-center overflow-hidden rounded"
     >
-      <ThemedView className="absolute -top-3 left-4 z-10 -mx-1 bg-background px-1">
-        <ThemedText
-          className="text-muted-foreground"
-          style={{ fontSize: 14, lineHeight: 15 }}
-        >
-          {label}
-        </ThemedText>
-      </ThemedView>
-      <View className="flex-1 flex-row items-center gap-2">
-        <LucideIcon icon={Camera} size={18} muted />
-        <ThemedText className="text-muted-foreground">
-          {imagePreview ? (
-            <FormattedMessage defaultMessage="Tap to replace" />
-          ) : (
-            <FormattedMessage defaultMessage="Tap to add (optional)" />
-          )}
-        </ThemedText>
+      <View className="absolute inset-0">
+        <PlanCoverBackground
+          customImageUrl={imagePreview}
+          mountains={mountains}
+          title={title}
+          withBottomGradient={false}
+        />
+      </View>
+      {/* Translucent disc keeps the camera icon legible against any
+          background (custom photo, collage, or the brand-color initials). */}
+      <View className="size-12 items-center justify-center rounded-full bg-black/45">
+        <LucideIcon icon={Camera} size={22} color="#ffffff" />
       </View>
       {imagePreview && (
         <TouchableOpacity
@@ -116,20 +110,11 @@ export const PlanCoverPicker = ({
           })}
           hitSlop={8}
           onPress={confirmClear}
-          className="size-8 items-center justify-center rounded-full bg-muted"
+          className="absolute right-2 top-2 size-7 items-center justify-center rounded-full bg-black/55"
         >
-          <LucideIcon icon={X} size={16} muted />
+          <LucideIcon icon={X} size={14} color="#ffffff" />
         </TouchableOpacity>
       )}
-      <View className="size-12 overflow-hidden rounded">
-        <PlanCoverBackground
-          customImageUrl={imagePreview}
-          mountains={mountains}
-          title={title}
-          withBottomGradient={false}
-          initialsSize="sm"
-        />
-      </View>
     </Pressable>
   );
 };

@@ -175,7 +175,8 @@ const main = async (): Promise<void> => {
       }
 
       // Rate-limit guard: if Wikiloc starts 403'ing in clusters, sleep for
-      // 15 min and resume. After 3 cooldowns it gives up.
+      // COOLDOWN_MS (see rate-limit-guard.ts) and resume. After 3 cooldowns
+      // it gives up.
       const decision = await noticeMountainOutcome(errorForGuard);
       if (decision === "abort") {
         console.error("[scrape] guard aborting run");

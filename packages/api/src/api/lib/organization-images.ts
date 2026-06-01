@@ -41,3 +41,41 @@ export const resolveOrganizationImageUrl = async (
   }
   return getPublicUrl(key);
 };
+
+export const MAX_ORGANIZATION_PHOTOS = 10;
+
+/**
+ * Resolve the org's showcase-gallery `photoUrls` array (0–10 photos). Each
+ * element is either an existing `http(s)` URL (kept as-is, supports admin
+ * re-ordering without re-upload) or a base64 payload (uploaded to S3 under
+ * `<APP_NAME>/organizations/<orgId>/photos/<uuid>.jpeg`). Mirrors
+ * `resolveMerchImageUrls` so the size validation and per-org keying stay
+ * consistent across the codebase.
+ */
+export const resolveOrganizationPhotoUrls = async (
+  inputs: string[],
+  organizationId: string,
+): Promise<string[]> => {
+  if (inputs.length > MAX_ORGANIZATION_PHOTOS) {
+    throw new OrganizationImageError(
+      400,
+      `Too many photos (max ${MAX_ORGANIZATION_PHOTOS})`,
+    );
+  }
+  const prefix = `${process.env.APP_NAME}/organizations/${organizationId}/photos`;
+  return Promise.all(
+    inputs.map(async (value) => {
+      if (value.startsWith("http")) return value;
+      if (!isBase64SizeValid(value)) {
+        throw new OrganizationImageError(400, "Image too large");
+      }
+      const key = `${prefix}/${uuidv7()}.jpeg`;
+      try {
+        await putImageOnS3(key, Buffer.from(value, "base64"));
+      } catch {
+        throw new OrganizationImageError(500, "Image upload failed");
+      }
+      return getPublicUrl(key);
+    }),
+  );
+};

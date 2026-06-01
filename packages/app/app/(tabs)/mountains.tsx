@@ -43,6 +43,7 @@ import {
   type SettingsGroup,
 } from "@/components/ui/molecules";
 import { Colors } from "@/constants/colors";
+import { useActiveChallenge } from "@/domains/challenge/challenge.api";
 import {
   MountainsMap,
   type MountainPreview,
@@ -92,8 +93,42 @@ type SettingsFilter =
 // background.
 export default function MountainsScreen() {
   const { isAuthenticated } = useAuth();
+  const { data: mountainsData } = useMountains();
+  const { data: activeChallenge, isPending: isPendingActiveChallenge } =
+    useActiveChallenge();
+  // Track the last challenge id we rendered the inner screen for. When it
+  // changes we force a single skeleton render BEFORE the next inner mount —
+  // that ensures the previous AuthedMountainsScreen unmounts so the next
+  // mount of the MapView reads fresh `defaultSettings` bounds. Without
+  // this, the inner stays mounted across the swap, useMountains data
+  // changes underneath it, but the Camera was already initialised on the
+  // old bounds and never re-fits.
+  const lastChallengeIdRef = useRef<string | null>(null);
   if (!isAuthenticated) return <RedirectMountainsScreen />;
+  const currentChallengeId = activeChallenge?.id ?? null;
+  const challengeChanged =
+    lastChallengeIdRef.current !== null &&
+    currentChallengeId !== null &&
+    lastChallengeIdRef.current !== currentChallengeId;
+  if (
+    !mountainsData ||
+    isPendingActiveChallenge ||
+    challengeChanged
+  ) {
+    // Record the now-current challenge so the NEXT render (after the
+    // skeleton-driven unmount + remount) passes the equality check and
+    // mounts the inner with the new bounds.
+    lastChallengeIdRef.current = currentChallengeId;
+    return <MountainsScreenSkeleton />;
+  }
+  lastChallengeIdRef.current = currentChallengeId;
   return <AuthedMountainsScreen />;
+}
+
+// Minimal placeholder while the data + user query resolve. Matches the
+// authed screen's background so there's no flash of contrast on swap.
+function MountainsScreenSkeleton() {
+  return <ThemedView className="flex-1" />;
 }
 
 // Unauth branch: render nothing until the tab is actually focused, then

@@ -44,9 +44,6 @@
   "/LG2tT": {
     "defaultMessage": "Latitude must be between -90 and 90"
   },
-  "/RFX6r": {
-    "defaultMessage": "No routes yet"
-  },
   "/V1GsM": {
     "defaultMessage": "Country/Region"
   },
@@ -104,6 +101,9 @@
   "0tTY6A": {
     "defaultMessage": "Remove cover photo?"
   },
+  "15nyhC": {
+    "defaultMessage": "Pick a country"
+  },
   "1F6Xt8": {
     "defaultMessage": "Edit summit"
   },
@@ -112,6 +112,9 @@
   },
   "1MZdzG": {
     "defaultMessage": "Share on social"
+  },
+  "1OQntw": {
+    "defaultMessage": "Coupon code (optional)"
   },
   "1bFpet": {
     "defaultMessage": "Most completed"
@@ -148,6 +151,9 @@
   },
   "3BSMMe": {
     "defaultMessage": "Total metres descended. On a loop it equals the gain; on a one-way trail it can differ."
+  },
+  "3EnruA": {
+    "defaultMessage": "Postal code"
   },
   "3GLhZz": {
     "defaultMessage": "No one summited yet."
@@ -242,6 +248,9 @@
   "5mhKmC": {
     "defaultMessage": "{percent}% completed"
   },
+  "6E9KKY": {
+    "defaultMessage": "Open cart"
+  },
   "6Jl56G": {
     "defaultMessage": "Safe for kids"
   },
@@ -335,6 +344,12 @@
   "9j3stl": {
     "defaultMessage": "No mountains match these filters."
   },
+  "9khnVR": {
+    "defaultMessage": "Photos"
+  },
+  "9yIVmN": {
+    "defaultMessage": "Open photo"
+  },
   "9yslhD": {
     "defaultMessage": "Yes, I'm sure"
   },
@@ -380,9 +395,6 @@
   "AouTVa": {
     "defaultMessage": "Failed to update mountain"
   },
-  "ArER+u": {
-    "defaultMessage": "Have a coupon code?"
-  },
   "AryDSl": {
     "defaultMessage": "Support the app"
   },
@@ -401,11 +413,17 @@
   "BWpuKl": {
     "defaultMessage": "Update"
   },
+  "BaIwdV": {
+    "defaultMessage": "Street"
+  },
   "BcfQf8": {
     "defaultMessage": "Could not post reply"
   },
   "BrWLlb": {
     "defaultMessage": "Plans can now be private — only the people you invite will see them."
+  },
+  "C5EExJ": {
+    "defaultMessage": "Fill in your address to send the order."
   },
   "C81/uG": {
     "defaultMessage": "Logout"
@@ -493,9 +511,6 @@
   },
   "EVFai9": {
     "defaultMessage": "View less"
-  },
-  "EWw/tK": {
-    "defaultMessage": "Apply"
   },
   "Ep56/Z": {
     "defaultMessage": "Longitude must be between -180 and 180"
@@ -674,6 +689,9 @@
   "KTlYr+": {
     "defaultMessage": "Deleting your account is permanent. All your summits and plans will be lost."
   },
+  "LGas/S": {
+    "defaultMessage": "Search country"
+  },
   "LMkYs1": {
     "defaultMessage": "{count} summit"
   },
@@ -737,8 +755,14 @@
   "NozjOy": {
     "defaultMessage": "Color: {color}"
   },
+  "O5cG1R": {
+    "defaultMessage": "Checking coupon…"
+  },
   "O7kE5P": {
     "defaultMessage": "Report summit photo"
+  },
+  "O95R3Z": {
+    "defaultMessage": "Phone"
   },
   "OHvDJa": {
     "defaultMessage": "Suggest a new challenge"
@@ -748,6 +772,9 @@
   },
   "OKhRC6": {
     "defaultMessage": "Share"
+  },
+  "OPXh2C": {
+    "defaultMessage": "Invalid coupon code."
   },
   "ObEm2I": {
     "defaultMessage": "Highest first"
@@ -880,6 +907,9 @@
   },
   "T9bZ8o": {
     "defaultMessage": "Edit mountains"
+  },
+  "TE4fIS": {
+    "defaultMessage": "City"
   },
   "TH/kb0": {
     "defaultMessage": "Current challenge"
@@ -1025,11 +1055,17 @@
   "Z6p8E/": {
     "defaultMessage": "View mountain"
   },
+  "ZIOZBL": {
+    "defaultMessage": "Replace cover photo"
+  },
   "ZQv4i6": {
     "defaultMessage": "Based on {count} from summiters, this mountain is rated {label} for dogs."
   },
   "ZYxiR7": {
     "defaultMessage": "Remove from your people?"
+  },
+  "ZpVtCa": {
+    "defaultMessage": "Shipping address"
   },
   "ZvKSfJ": {
     "defaultMessage": "Events"
@@ -1094,9 +1130,6 @@
   "bWST2F": {
     "defaultMessage": "Add to your people"
   },
-  "bab3Ah": {
-    "defaultMessage": "Tap to replace"
-  },
   "bbPfn0": {
     "defaultMessage": "Longitude"
   },
@@ -1105,9 +1138,6 @@
   },
   "bhN9Hq": {
     "defaultMessage": "Delete your account"
-  },
-  "bsRl2D": {
-    "defaultMessage": "Tap to add (optional)"
   },
   "c1AKgx": {
     "defaultMessage": "Missing information."
@@ -1174,9 +1204,6 @@
   },
   "eKv7yX": {
     "defaultMessage": "Post"
-  },
-  "eU7N98": {
-    "defaultMessage": "We're rolling out scraped Wikiloc routes mountain by mountain. This one isn't covered yet."
   },
   "eUb6NB": {
     "defaultMessage": "Image is required"
@@ -1274,9 +1301,6 @@
   "iwT6/W": {
     "defaultMessage": "Saved routes ({count})"
   },
-  "j1qOou": {
-    "defaultMessage": "Cover photo"
-  },
   "jAkDuA": {
     "defaultMessage": "Yes, report"
   },
@@ -1303,6 +1327,9 @@
   },
   "kkpP2k": {
     "defaultMessage": "today"
+  },
+  "klW1Wb": {
+    "defaultMessage": "Coupon {code} applied — saved {amount}€"
   },
   "koCg5W": {
     "defaultMessage": "Highest point reached on the route — usually the summit or a high pass."
@@ -1439,9 +1466,6 @@
   "r+6lRr": {
     "defaultMessage": "You haven't summited any mountains yet."
   },
-  "r0u4TP": {
-    "defaultMessage": "Coupon code"
-  },
   "rGmxAI": {
     "defaultMessage": "Difficulty"
   },
@@ -1520,6 +1544,9 @@
   "v0btUQ": {
     "defaultMessage": "No one has yet reached the hiscores."
   },
+  "vONi+O": {
+    "defaultMessage": "Country"
+  },
   "vPMKpw": {
     "defaultMessage": "Total length of the route, following the GPS track end-to-end."
   },
@@ -1591,6 +1618,9 @@
   },
   "xttcrA": {
     "defaultMessage": "Trail shape"
+  },
+  "xukzKg": {
+    "defaultMessage": "Networks"
   },
   "xxK2sQ": {
     "defaultMessage": "Write a comment…"

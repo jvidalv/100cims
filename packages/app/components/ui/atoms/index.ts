@@ -17,6 +17,7 @@ export { ThemedToggleInput } from "./themed-toggle-input";
 export { BlurView } from "./blur-view";
 export { EnrichedThemedText } from "./enriched-themed-text";
 export { FeaturedStar } from "./featured-star";
+export { NewBadge } from "./new-badge";
 export { ThemedLogo } from "./themed-logo";
 export {
   InstagramIcon,

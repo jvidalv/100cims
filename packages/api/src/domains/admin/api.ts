@@ -15,6 +15,24 @@ import type { PlanMemberRole } from "@/db/enums";
 import { api } from "@/lib/api";
 import { adminKeys } from "@/lib/query-keys";
 
+/**
+ * Eden Treaty surfaces errors as `{ status, value }` with `value` being the
+ * server's JSON body — typically `{ error: "..." }` for our admin routes. A
+ * bare `throw error` then makes react-query stringify the non-Error to
+ * `[object Object]` when it bubbles up to `toast.error(e.message)`. Build an
+ * Error with the real server message instead.
+ */
+const apiErrorFromEden = (error: unknown): Error => {
+  if (error && typeof error === "object") {
+    const value = (error as { value?: unknown }).value;
+    if (value && typeof value === "object" && "error" in value) {
+      return new Error(String((value as { error: unknown }).error));
+    }
+    if (typeof value === "string") return new Error(value);
+  }
+  return new Error("Request failed");
+};
+
 export const useCrons = () =>
   useQuery({
     queryKey: adminKeys.crons(),
@@ -80,6 +98,10 @@ export type AdminUserUpdateBody = {
   username?: string;
   town?: string | null;
   phoneNumber?: string | null;
+  shippingStreet?: string | null;
+  shippingCity?: string | null;
+  shippingPostalCode?: string | null;
+  shippingCountry?: string | null;
   country?: string | null;
   locale?: string | null;
   visibleOnHiscores?: boolean;
@@ -1112,6 +1134,7 @@ export type AdminOrganizationCreateBody = {
   whatsappUrl?: string;
   youtubeUrl?: string;
   stravaUrl?: string;
+  photoUrls?: string[];
 };
 
 export const useCreateAdminOrganization = () => {
@@ -1119,7 +1142,7 @@ export const useCreateAdminOrganization = () => {
   return useMutation({
     mutationFn: async (body: AdminOrganizationCreateBody) => {
       const { data, error } = await api.api.admin.organizations.post(body);
-      if (error) throw error;
+      if (error) throw apiErrorFromEden(error);
       return data.message;
     },
     onSuccess: () => {
@@ -1138,6 +1161,7 @@ export type AdminOrganizationUpdateBody = {
   whatsappUrl?: string | null;
   youtubeUrl?: string | null;
   stravaUrl?: string | null;
+  photoUrls?: string[];
 };
 
 export const useUpdateAdminOrganization = (id: string) => {
@@ -1147,7 +1171,7 @@ export const useUpdateAdminOrganization = (id: string) => {
       const { data, error } = await api.api.admin
         .organizations({ id })
         .post(body);
-      if (error) throw error;
+      if (error) throw apiErrorFromEden(error);
       return data;
     },
     onSuccess: () => {

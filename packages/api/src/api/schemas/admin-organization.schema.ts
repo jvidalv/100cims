@@ -47,6 +47,7 @@ export const AdminOrganizationDetailSchema = t.Object({
   whatsappUrl: t.Nullable(t.String()),
   youtubeUrl: t.Nullable(t.String()),
   stravaUrl: t.Nullable(t.String()),
+  photoUrls: t.Array(t.String()),
   createdAt: t.Date(),
   updatedAt: t.Date(),
   members: t.Array(AdminOrganizationMemberSchema),
@@ -62,6 +63,9 @@ export const AdminOrganizationCreateBodySchema = t.Object({
   whatsappUrl: t.Optional(t.String()),
   youtubeUrl: t.Optional(t.String()),
   stravaUrl: t.Optional(t.String()),
+  // Showcase gallery — 0–10 photo URLs or base64 payloads. Optional on
+  // create so existing admin flows that don't touch photos still work.
+  photoUrls: t.Optional(t.Array(t.String())),
 });
 
 export const AdminOrganizationUpdateBodySchema = t.Object({
@@ -74,6 +78,11 @@ export const AdminOrganizationUpdateBodySchema = t.Object({
   whatsappUrl: t.Optional(t.Nullable(t.String())),
   youtubeUrl: t.Optional(t.Nullable(t.String())),
   stravaUrl: t.Optional(t.Nullable(t.String())),
+  // Pass the full desired array; absent key leaves the column alone. Each
+  // element is either an existing http(s) URL (kept as-is, supports
+  // reordering without re-upload) or a base64 payload (uploaded). Pass
+  // `[]` to clear the gallery.
+  photoUrls: t.Optional(t.Array(t.String())),
 });
 
 export const AdminOrganizationMemberAddBodySchema = t.Object({

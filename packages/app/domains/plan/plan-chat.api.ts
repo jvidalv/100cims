@@ -1,4 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { useIsFocused } from "expo-router";
 
 import { useAuth } from "@/components/providers/auth-provider";
 import { queryClient } from "@/components/providers/query-client-provider";
@@ -55,6 +56,13 @@ export const usePlanChatUnread = () => {
 
 export const usePlanChatMessages = (planId: string | undefined) => {
   const { isAuthenticated } = useAuth();
+  // Polls only when the chat screen is actually focused. NativeTabs
+  // eager-mounts every plan tab, so without this gate the chat query
+  // fires every 2.5s even while the user is on the Details tab — flooding
+  // the server with `/plans/chat/all?planId=…` calls that nobody reads.
+  // `useIsFocused` flips to true when the chat screen becomes the active
+  // tab, and back to false when the user navigates away.
+  const isFocused = useIsFocused();
 
   return useQuery({
     queryKey: ["plan-chat", "messages", planId ?? ""],
@@ -63,7 +71,7 @@ export const usePlanChatMessages = (planId: string | undefined) => {
     // useGlobalSearchParams promises a string. Gate on `planId` to avoid
     // the server's 422 spam during that window. See memory
     // `feedback_react_query_enabled_guards`.
-    enabled: () => isAuthenticated && !!planId,
+    enabled: () => isAuthenticated && !!planId && isFocused,
     queryFn: async () => {
       if (!isAuthenticated || !planId) return null;
       const { data, error } = await apiClient.GET(
@@ -82,7 +90,9 @@ export const usePlanChatMessages = (planId: string | undefined) => {
         ),
       }));
     },
-    refetchInterval: 2500,
+    // 5s while focused; `false` (no polling) when blurred — paired with
+    // the `enabled` gate so the query is fully idle on other tabs.
+    refetchInterval: isFocused ? 5000 : false,
   });
 };
 

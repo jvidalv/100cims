@@ -19574,7 +19574,12 @@ export const trails: MountainRoute[] = [
         "lng": 1.384167,
         "ele": 1807.9
       }
-    ]
+    ],
+    "description": {
+      "en": "This demanding 21.9 km loop to Pica d'Estats, with 1639m of elevation gain, starts at La Molinassa parking, accessible by any car via an asphalted track. The route begins with an early morning start, passing Refugi Vallferrera and entering a steep, vegetated path.\n\nAround 2 km in, a short section with chains provides a minor technical challenge. The trail continues alongside a stream, crossing wooden walkways at Pla de Sotllo to protect vegetation. After a climb, it reaches Estany de Sotllo, then Estany d'Estats, before the final ascent to the summit.\n\nThe climb involves some scrambling and a scree slope with small stones. This is a physically very demanding route to complete in a single day, suitable for experienced hikers.",
+      "ca": "Aquesta exigent ruta circular de 21,9 km a la Pica d'Estats, amb 1639 m de desnivell positiu, comença a l'aparcament de la Molinassa, accessible amb qualsevol cotxe per una pista asfaltada. La ruta s'inicia ben d'hora al matí, passant pel Refugi Vallferrera i endinsant-se en un corriol empinat i amb vegetació.\n\nAproximadament als 2 km, un curt tram amb cadenes ofereix un petit repte tècnic. El camí continua vorejant un riuet, travessant passarel·les de fusta al Pla de Sotllo per protegir la vegetació. Després d'una pujada, s'arriba a l'Estany de Sotllo, i després a l'Estany d'Estats, abans de l'ascens final al cim.\n\nLa pujada inclou algunes grimpades i una tartera de pedra petita. És una ruta molt exigent físicament per fer en un sol dia, apta per a excursionistes experimentats.",
+      "es": "Esta exigente ruta circular de 21,9 km a la Pica d'Estats, con 1639 m de desnivel positivo, comienza en el aparcamiento de La Molinassa, accesible con cualquier coche por una pista asfaltada. La ruta se inicia temprano por la mañana, pasando por el Refugio Vallferrera y adentrándose en un sendero empinado y con vegetación.\n\nAproximadamente a los 2 km, un corto tramo con cadenas ofrece un pequeño desafío técnico. El camino continúa bordeando un riachuelo, cruzando pasarelas de madera en el Pla de Sotllo para proteger la vegetación. Tras una subida, se llega al Estany de Sotllo, y luego al Estany d'Estats, antes del ascenso final a la cumbre.\n\nLa subida implica algunas trepadas y una tartera de piedra pequeña. Es una ruta físicamente muy exigente para completar en un solo día, adecuada para excursionistas experimentados."
+    }
   },
   {
     "source": "wikiloc",
@@ -32096,7 +32101,12 @@ export const trails: MountainRoute[] = [
         "lng": 1.384143,
         "ele": 1878.6
       }
-    ]
+    ],
+    "description": {
+      "en": "This 13.8 km loop, with 852m of elevation gain, offers an approach to Pica d'Estats starting from the Molinassa parking area near Refugi de Vallferrera. The trail leads through the valley towards the high mountain lakes.\n\nAround 2.8 km from the start, hikers will encounter a well-secured section with chains that requires some scrambling. The route continues to Estany de Sotllo and Estany d'Estats, providing a moderate but engaging hike through the scenic landscape.",
+      "ca": "Aquesta ruta circular de 13,8 km, amb 852 m de desnivell positiu, ofereix una aproximació a la Pica d'Estats des de l'aparcament de la Molinassa, prop del Refugi de Vallferrera. El camí s'endinsa per la vall cap als estanys d'alta muntanya.\n\nAproximadament als 2,8 km de l'inici, els excursionistes trobaran un tram amb cadenes ben assegurades que requereix una petita grimpada. La ruta continua cap a l'Estany de Sotllo i l'Estany d'Estats, oferint una caminada moderada però atractiva a través del paisatge escènic.",
+      "es": "Esta ruta circular de 13,8 km, con 852 m de desnivel positivo, ofrece una aproximación a la Pica d'Estats desde el aparcamiento de la Molinassa, cerca del Refugio de Vallferrera. El camino se adentra por el valle hacia los lagos de alta montaña.\n\nAproximadamente a los 2,8 km del inicio, los excursionistas encontrarán un tramo con cadenas bien aseguradas que requiere una pequeña trepada. La ruta continúa hacia el Estany de Sotllo y el Estany d'Estats, ofreciendo una caminata moderada pero atractiva a través del paisaje escénico."
+    }
   },
   {
     "source": "wikiloc",
@@ -37078,7 +37088,12 @@ export const trails: MountainRoute[] = [
         "lng": 1.396569,
         "ele": 2234.1
       }
-    ]
+    ],
+    "description": {
+      "en": "This 5.3 km one-way route, with a significant 1080m elevation gain, serves as the first stage of an ascent to Pica d'Estats, leading from Artigue Parking to Refuge du Pinet. The trail begins with a gradual but steady climb.\n\nThe initial section winds through a beautiful forest, characterized by light and shadow and moss-covered stones and trunks. As the route progresses, it emerges from the woodland, opening up to expansive mountain views before reaching Étang Sourd and finally the Refuge du Pinet. This stage is moderately difficult due to the sustained ascent.",
+      "ca": "Aquesta ruta lineal de 5,3 km, amb un important desnivell de 1080 m, és la primera etapa d'una ascensió a la Pica d'Estats, que va des de l'aparcament de l'Artigue fins al Refugi del Pinet. El camí comença amb una pujada gradual però constant.\n\nLa secció inicial serpenteja per un bosc preciós, caracteritzat per llums i ombres i pedres i troncs coberts de molsa. A mesura que avança la ruta, surt del bosc, obrint-se a vistes de muntanya abans d'arribar a l'Étang Sourd i finalment al Refugi del Pinet. Aquesta etapa és de dificultat moderada a causa de l'ascens sostingut.",
+      "es": "Esta ruta lineal de 5,3 km, con un importante desnivel de 1080 m, es la primera etapa de un ascenso a la Pica d'Estats, que va desde el aparcamiento de l'Artigue hasta el Refugio de Pinet. El camino comienza con una subida gradual pero constante.\n\nLa sección inicial serpentea por un hermoso bosque, caracterizado por luces y sombras y piedras y troncos cubiertos de musgo. A medida que avanza la ruta, sale del bosque, abriéndose a vistas de montaña antes de llegar al Étang Sourd y finalmente al Refugio de Pinet. Esta etapa es de dificultad moderada debido al ascenso sostenido."
+    }
   },
   {
     "source": "wikiloc",
@@ -47055,7 +47070,12 @@ export const trails: MountainRoute[] = [
         "lng": 1.396701,
         "ele": 2240
       }
-    ]
+    ],
+    "description": {
+      "en": "This 9.6 km loop, with 1004m of elevation gain, is a challenging second stage from Refuge du Pinet, designed for a multi-day ascent of the Pica d'Estats massif. The route is well-marked with cairns and GRT signs, generally following a clear path.\n\nIt traverses Estany de Montcalm, Coll de la Cometa, and Coll de Riufred before ascending to Pic de Montcalm (3077m), Cap de la Coma de Riufred (3041m), Pica d'Estats (3141m), and Pic de Verdaguer (3129m). The trail includes a couple of short scrambles but no major technical difficulties, making it suitable for hikers with experience in high-mountain terrain.",
+      "ca": "Aquesta ruta circular de 9,6 km, amb 1004 m de desnivell positiu, és una desafiadora segona etapa des del Refugi del Pinet, dissenyada per a una ascensió de diversos dies al massís de la Pica d'Estats. La ruta està ben senyalitzada amb fites i marques de GRT, seguint generalment un camí clar.\n\nTravessa l'Estany de Montcalm, el Coll de la Cometa i el Coll de Riufred abans d'ascendir al Pic de Montcalm (3077m), el Cap de la Coma de Riufred (3041m), la Pica d'Estats (3141m) i el Pic de Verdaguer (3129m). El camí inclou un parell de petites grimpades però sense grans dificultats tècniques, sent apta per a excursionistes amb experiència en terreny d'alta muntanya.",
+      "es": "Esta ruta circular de 9,6 km, con 1004 m de desnivel positivo, es una desafiante segunda etapa desde el Refugio de Pinet, diseñada para una ascensión de varios días al macizo de la Pica d'Estats. La ruta está bien señalizada con hitos y marcas del GRT, siguiendo generalmente un sendero claro.\n\nAtraviesa el Estany de Montcalm, el Coll de la Cometa y el Coll de Riufred antes de ascender al Pic de Montcalm (3077m), el Cap de la Coma de Riufred (3041m), la Pica d'Estats (3141m) y el Pic de Verdaguer (3129m). El sendero incluye un par de pequeñas trepadas pero sin grandes dificultades técnicas, siendo apta para excursionistas con experiencia en terreno de alta montaña."
+    }
   },
   {
     "source": "wikiloc",
@@ -64632,6 +64652,11 @@ export const trails: MountainRoute[] = [
         "lng": 1.42485,
         "ele": 1196.5
       }
-    ]
+    ],
+    "description": {
+      "en": "This demanding 19.5 km loop, with 2068m of elevation gain, combines three stages into a single challenging route to the Pica d'Estats massif, starting and ending at the Artigue parking area. The trail is very well-marked throughout.\n\nIt ascends to Pic de Montcalm (3077m), Cap de la Coma de Riufred (3041m), Pica d'Estats (3141m), and Pic de Verdaguer (3129m). While physically very strenuous, the route presents no major technical difficulties, making it suitable for experienced hikers seeking a big day out in the high mountains.",
+      "ca": "Aquesta exigent ruta circular de 19,5 km, amb 2068 m de desnivell positiu, combina tres etapes en una sola ruta desafiadora al massís de la Pica d'Estats, amb inici i final a l'aparcament de l'Artigue. El camí està molt ben senyalitzat en tot el seu recorregut.\n\nAscendeix al Pic de Montcalm (3077m), el Cap de la Coma de Riufred (3041m), la Pica d'Estats (3141m) i el Pic de Verdaguer (3129m). Tot i ser físicament molt exigent, la ruta no presenta grans dificultats tècniques, sent apta per a excursionistes experimentats que busquen una gran jornada a l'alta muntanya.",
+      "es": "Esta exigente ruta circular de 19,5 km, con 2068 m de desnivel positivo, combina tres etapas en una sola ruta desafiante al macizo de la Pica d'Estats, con inicio y final en la zona de aparcamiento de l'Artigue. El sendero está muy bien señalizado en todo su recorrido.\n\nAsciende al Pic de Montcalm (3077m), el Cap de la Coma de Riufred (3041m), la Pica d'Estats (3141m) y el Pic de Verdaguer (3129m). Aunque físicamente muy extenuante, la ruta no presenta grandes dificultades técnicas, siendo apta para excursionistas experimentados que buscan una gran jornada en la alta montaña."
+    }
   }
 ];

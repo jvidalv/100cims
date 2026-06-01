@@ -13,10 +13,8 @@ import { useTopMountainComments } from "@/domains/mountain-comments/mountain-com
  * — only one bar is ever mounted at a time, so the "no nested native tabs"
  * limitation doesn't apply.
  *
- * The folder also contains `edit.tsx` and `comment.tsx` (singular). Those are
- * intentionally NOT declared as triggers — they remain navigable routes but
- * don't get a visible tab button, matching the existing design where they're
- * sub-screens reached from inside View/Comments.
+ * `edit.tsx` lives one level up at `mountain/[slug]/edit.tsx` and is reached
+ * from the Details tab; it's not part of this NativeTabs.
  */
 export default function MountainSlugLayout() {
   const intl = useIntl();

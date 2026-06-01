@@ -506,6 +506,27 @@ const ALTOS_MADRILENOS_SLUGS = new Set<string>([
   "cerro-del-ecce-homo",
 ]);
 
+// Mirrors 0061_add-ehun-mendiak-challenge.sql — 100 Basque-Navarrese peaks.
+const EHUN_MENDIAK_SLUGS = new Set<string>([
+  "adarra", "adi", "aketegi", "alkaxuri", "alkurruntz", "anboto", "andarto",
+  "arangoiti", "aratz", "arbarain", "arradoi", "arthanolatze", "artzamendi",
+  "atxabal", "bachicabo", "baigura-areta", "baigura-lapurdi", "baio",
+  "balerdi", "behorlegituturru", "beriain", "berrendi", "bianditz", "carrias",
+  "dulantz", "erenozar", "eretza", "erga", "erlo", "ermua", "erroilbide",
+  "errozate", "eskutxi", "etxauriko-haitzak", "etxekortea", "fraile",
+  "ganekogorta", "gorbeia", "hauza", "hernio", "higa", "hiru-erregeen-mahaia",
+  "illon", "intxorta", "iparla", "ireber", "irimo", "irulegi", "iturrigorri",
+  "izarbe", "jaizkibel", "jata", "joar", "jorrios", "kanpanzar", "kapildui",
+  "kolitza", "lapoblacion", "larhun", "larrogain", "larrunarri", "legate",
+  "lekanda", "lokiz", "mendaur", "mondarrain", "montejurra", "pena-del-moro",
+  "mugarra", "murugil", "ogono", "oiz", "okabe", "orhi", "oriol",
+  "ortzantzurieta", "oteros", "palomares", "penablanca", "penalta",
+  "perriain", "puttarri", "repico", "saioa", "san-pedro", "serantes", "soila",
+  "sollazbizkargana", "sollube", "tolono", "txamantxoia", "txarlazo",
+  "udalatx", "untzillatx", "urepel", "urko", "urkulu", "urtemondo", "uzturre",
+  "zalama",
+]);
+
 /**
  * Filter mountains belonging to a known challenge. 100 Cims is matched via
  * the canonical FEEC URL pattern; the smaller challenges keep an explicit
@@ -518,16 +539,11 @@ export const loadMountainsForChallenge = (
 ): SeedMountain[] => {
   if (challengeSlug === "100-cims") {
     const all = loadAllMountainsWithUrls();
+    // Structural drop of `url` so future SeedMountain fields propagate
+    // automatically — an explicit field list silently omits new keys.
     return all
       .filter((m) => m.url?.includes("feec.cat/activitats/100-cims/cim/"))
-      .map(({ slug, name, location, height, latitude, longitude }) => ({
-        slug,
-        name,
-        location,
-        height,
-        latitude,
-        longitude,
-      }));
+      .map(({ url: _url, ...rest }) => rest);
   }
   const slugSet = (
     {
@@ -543,6 +559,7 @@ export const loadMountainsForChallenge = (
       "repte-del-girones": REPTE_DEL_GIRONES_SLUGS,
       "top-spain": TOP_SPAIN_SLUGS,
       "altos-madrilenos": ALTOS_MADRILENOS_SLUGS,
+      "ehun-mendiak": EHUN_MENDIAK_SLUGS,
     } as Record<string, Set<string>>
   )[challengeSlug];
   if (!slugSet) {

@@ -10,6 +10,7 @@ import type { LucideIcon } from "lucide-react-native";
 export type ActionRowIntent =
   | "primary"
   | "muted"
+  | "foreground"
   | "blue"
   | "emerald"
   | "danger"
@@ -30,6 +31,14 @@ const INTENT_STYLES: Record<
   muted: {
     bg: "bg-gray-200 dark:bg-gray-700",
     text: "text-muted-foreground",
+  },
+  // Same chip background as `muted` but the label keeps the page's default
+  // foreground colour. Useful when the row is information-bearing rather
+  // than secondary (e.g. social-network links where the brand sits in the
+  // icon and the label should read as primary copy).
+  foreground: {
+    bg: "bg-gray-200 dark:bg-gray-700",
+    text: "text-foreground",
   },
   blue: {
     bg: "bg-blue-100 dark:bg-blue-900",

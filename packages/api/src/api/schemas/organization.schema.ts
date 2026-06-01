@@ -26,6 +26,10 @@ export const OrganizationDetailSchema = t.Object({
   whatsappUrl: t.Nullable(t.String()),
   youtubeUrl: t.Nullable(t.String()),
   stravaUrl: t.Nullable(t.String()),
+  // Showcase gallery (0–10 CDN URLs). Renders as a wrapping carousel of
+  // square thumbs at the bottom of /organization/[id] on mobile, with a
+  // tap-to-lightbox interaction.
+  photoUrls: t.Array(t.String()),
   createdAt: t.Date(),
   members: t.Array(OrganizationMemberSchema),
 });

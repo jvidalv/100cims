@@ -21,7 +21,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MAX_IMAGE_KB } from "@/api/lib/images";
-import { fileToBase64 } from "@/app/admin/_lib/file-to-base64";
+import { MAX_ORGANIZATION_PHOTOS } from "@/api/lib/organization-images";
+import {
+  ImageTooBigError,
+  encodeImageForUpload,
+} from "@/app/admin/_lib/encode-image";
+import { ImageUploader } from "@/app/admin/_lib/image-uploader";
 import { SearchPicker } from "@/app/admin/_lib/search-picker";
 import { useUserSearch } from "@/app/admin/_lib/use-user-search";
 import {
@@ -73,21 +78,27 @@ export default function AdminOrganizationDetailPage({
 
   const [form, setForm] = useState<Form>(emptyForm);
   const [initial, setInitial] = useState<Form>(emptyForm);
+  // Showcase gallery is tracked separately so the existing string-keyed
+  // dirty check on `form` keeps working — comparing string[] with `!==`
+  // would always be dirty after a re-render.
+  const [photoUrls, setPhotoUrls] = useState<string[]>([]);
+  const [initialPhotoUrls, setInitialPhotoUrls] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
 
   const onPickImage = async (file: File | null) => {
     if (!file) return;
     setUploading(true);
     try {
-      const base64 = await fileToBase64(file);
-      // base64 byte count = ceil(len * 3 / 4); good enough as a client-side
-      // guard. Server re-validates with isBase64SizeValid().
-      const sizeKB = Math.ceil((base64.length * 3) / 4 / 1024);
-      if (sizeKB > MAX_IMAGE_KB) {
-        toast.error(`Image too large (${sizeKB} KB · max ${MAX_IMAGE_KB} KB)`);
-        return;
-      }
+      const base64 = await encodeImageForUpload(file);
       setForm((f) => ({ ...f, imageUrl: base64 }));
+    } catch (e) {
+      if (e instanceof ImageTooBigError) {
+        toast.error(e.message);
+      } else {
+        toast.error(
+          e instanceof Error ? e.message : "Could not read that image",
+        );
+      }
     } finally {
       setUploading(false);
     }
@@ -108,11 +119,15 @@ export default function AdminOrganizationDetailPage({
     };
     setForm(next);
     setInitial(next);
+    const nextPhotos = detail.data.photoUrls;
+    setPhotoUrls(nextPhotos);
+    setInitialPhotoUrls(nextPhotos);
   }, [detail.data, update.isPending]);
 
-  const dirty = (Object.keys(form) as (keyof Form)[]).some(
-    (k) => form[k] !== initial[k],
-  );
+  const dirty =
+    (Object.keys(form) as (keyof Form)[]).some((k) => form[k] !== initial[k]) ||
+    photoUrls.length !== initialPhotoUrls.length ||
+    photoUrls.some((u, i) => u !== initialPhotoUrls[i]);
 
   const onSave = () => {
     const body: AdminOrganizationUpdateBody = {};
@@ -133,6 +148,12 @@ export default function AdminOrganizationDetailPage({
       body.youtubeUrl = form.youtubeUrl || null;
     if (form.stravaUrl !== initial.stravaUrl)
       body.stravaUrl = form.stravaUrl || null;
+    if (
+      photoUrls.length !== initialPhotoUrls.length ||
+      photoUrls.some((u, i) => u !== initialPhotoUrls[i])
+    ) {
+      body.photoUrls = photoUrls;
+    }
 
     update.mutate(body, {
       onSuccess: () => toast.success("Saved"),
@@ -345,7 +366,7 @@ export default function AdminOrganizationDetailPage({
                 {uploading ? "Reading…" : "Click to add an image"}
               </span>
               <span className="text-xs text-muted-foreground">
-                JPG, PNG or WebP · max {MAX_IMAGE_KB} KB
+                JPG, PNG or WebP · auto-resized · max {MAX_IMAGE_KB} KB
               </span>
               <input
                 type="file"
@@ -362,6 +383,15 @@ export default function AdminOrganizationDetailPage({
           )}
         </div>
 
+        <ImageUploader
+          label="Showcase photos"
+          imageUrls={photoUrls}
+          onChange={setPhotoUrls}
+          uploading={uploading}
+          setUploading={setUploading}
+          maxImages={MAX_ORGANIZATION_PHOTOS}
+        />
+
         <div className="flex items-center gap-3">
           <Button
             disabled={!dirty || update.isPending || uploading}
@@ -373,7 +403,10 @@ export default function AdminOrganizationDetailPage({
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setForm(initial)}
+              onClick={() => {
+                setForm(initial);
+                setPhotoUrls(initialPhotoUrls);
+              }}
               disabled={update.isPending}
             >
               Reset

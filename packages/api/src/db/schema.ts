@@ -84,6 +84,10 @@ export const userTable = pgTable("user", {
   locale: text(),
   town: text(),
   phoneNumber: text(),
+  shippingStreet: text(),
+  shippingCity: text(),
+  shippingPostalCode: text(),
+  shippingCountry: text(),
   visibleOnHiscores: boolean().notNull().default(false),
   visibleOnPeopleSearch: boolean().notNull().default(true),
   admin: boolean().notNull().default(false),
@@ -857,6 +861,13 @@ export const organizationTable = pgTable("organization", {
   whatsappUrl: text(),
   youtubeUrl: text(),
   stravaUrl: text(),
+  // Showcase gallery (1–10 photos). Distinct from `imageUrl` (the header/logo).
+  // Admin-only upload via /admin/organizations/[id]; rendered as a wrapping
+  // carousel at the bottom of /organization/[id] on mobile.
+  photoUrls: text()
+    .array()
+    .notNull()
+    .default(sql`ARRAY[]::text[]`),
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp().notNull().defaultNow(),
 });

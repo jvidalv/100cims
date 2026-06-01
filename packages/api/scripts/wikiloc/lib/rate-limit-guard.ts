@@ -1,8 +1,9 @@
 /**
  * Tracks recent Wikiloc errors across the batch and, if 403s start clustering,
- * sleeps the run for ~15 minutes before allowing the next mountain to start.
- * Designed so a transient 403 burst (Wikiloc's WAF cooling us off) doesn't
- * waste hours of overnight time — we wait it out and resume.
+ * sleeps the run for COOLDOWN_MS (currently ~5 minutes) before allowing the
+ * next mountain to start. Designed so a transient 403 burst (Wikiloc's WAF
+ * cooling us off) doesn't waste hours of overnight time — we wait it out and
+ * resume.
  */
 
 const RECENT_WINDOW_MS = 5 * 60_000; // 5 minutes

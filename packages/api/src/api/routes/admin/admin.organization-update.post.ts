@@ -6,6 +6,7 @@ import { organizationTable } from "@/db/schema";
 import {
   OrganizationImageError,
   resolveOrganizationImageUrl,
+  resolveOrganizationPhotoUrls,
 } from "@/api/lib/organization-images";
 import { AdminOrganizationUpdateBodySchema } from "@/api/schemas/admin-organization.schema";
 import {
@@ -57,6 +58,28 @@ export const adminOrganizationUpdatePostRoute = new Elysia().post(
       }
     }
 
+    // photoUrls resolution: `undefined` leaves the column alone, anything
+    // else (including `[]`) replaces the full gallery. Each element is
+    // either an existing http(s) URL (kept as-is — admin can reorder
+    // without re-upload) or a base64 payload uploaded to S3.
+    let photoUrls: string[] | undefined;
+    if (body.photoUrls === undefined) {
+      photoUrls = undefined;
+    } else {
+      try {
+        photoUrls = await resolveOrganizationPhotoUrls(
+          body.photoUrls,
+          params.id,
+        );
+      } catch (e) {
+        if (e instanceof OrganizationImageError) {
+          set.status = e.status;
+          return { error: e.message };
+        }
+        throw e;
+      }
+    }
+
     const [row] = await db
       .update(organizationTable)
       .set({
@@ -65,7 +88,8 @@ export const adminOrganizationUpdatePostRoute = new Elysia().post(
         // alphabetised these keys would silently re-introduce un-normalized
         // empty / whitespace strings into the DB. Every column listed below
         // must stay after `...body`: description, websiteUrl, imageUrl,
-        // instagramUrl, tiktokUrl, whatsappUrl, youtubeUrl, stravaUrl.
+        // instagramUrl, tiktokUrl, whatsappUrl, youtubeUrl, stravaUrl,
+        // photoUrls.
         ...body,
         description,
         websiteUrl,
@@ -75,6 +99,7 @@ export const adminOrganizationUpdatePostRoute = new Elysia().post(
         whatsappUrl,
         youtubeUrl,
         stravaUrl,
+        photoUrls,
         updatedAt: new Date(),
       })
       .where(eq(organizationTable.id, params.id))

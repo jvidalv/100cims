@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import { MERCH_SIZES } from "@/api/lib/merch-sizes";
-import { fileToBase64 } from "@/app/admin/_lib/file-to-base64";
+import { ImageUploader } from "@/app/admin/_lib/image-uploader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -246,6 +246,7 @@ export function MerchForm({
         onChange={(next) => setForm((f) => ({ ...f, imageUrls: next }))}
         uploading={uploading}
         setUploading={setUploading}
+        maxImages={MAX_IMAGES}
       />
 
       <div className="space-y-2">
@@ -321,6 +322,7 @@ export function MerchForm({
               }
               uploading={uploading}
               setUploading={setUploading}
+              maxImages={MAX_IMAGES}
             />
           </div>
         ))}
@@ -423,112 +425,6 @@ function LocaleField({
           </div>
         ))}
       </div>
-    </div>
-  );
-}
-
-function ImageUploader({
-  label,
-  imageUrls,
-  onChange,
-  uploading,
-  setUploading,
-}: {
-  label: string;
-  imageUrls: string[];
-  onChange: (next: string[]) => void;
-  uploading: boolean;
-  setUploading: (v: boolean) => void;
-}) {
-  const removeImage = (idx: number) =>
-    onChange(imageUrls.filter((_, i) => i !== idx));
-
-  const onPickFiles = async (files: FileList | null) => {
-    if (!files || files.length === 0) return;
-    const remaining = MAX_IMAGES - imageUrls.length;
-    const picked = Array.from(files).slice(0, remaining);
-    setUploading(true);
-    try {
-      const next = await Promise.all(picked.map(fileToBase64));
-      onChange([...imageUrls, ...next]);
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const isImageFull = imageUrls.length >= MAX_IMAGES;
-
-  return (
-    <div className="space-y-2">
-      <Label>
-        {label} ({imageUrls.length}/{MAX_IMAGES})
-      </Label>
-      {imageUrls.length > 0 && (
-        <ul className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {imageUrls.map((src, i) => {
-            const isHttp = src.startsWith("http");
-            return (
-              <li
-                key={`${i}-${src.slice(0, 16)}`}
-                className="relative rounded border bg-muted/40 overflow-hidden"
-              >
-                <img
-                  src={isHttp ? src : `data:image/jpeg;base64,${src}`}
-                  alt=""
-                  className="aspect-square w-full object-cover"
-                />
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="destructive"
-                  className="absolute top-1 right-1 h-7 px-2"
-                  onClick={() => removeImage(i)}
-                >
-                  ×
-                </Button>
-                {!isHttp && (
-                  <span className="absolute bottom-1 left-1 text-[10px] bg-amber-200 text-amber-900 rounded px-1">
-                    pending upload
-                  </span>
-                )}
-              </li>
-            );
-          })}
-        </ul>
-      )}
-      {!isImageFull && (
-        <label
-          className={`flex flex-col items-center justify-center gap-1 border-2 border-dashed border-input rounded px-4 py-6 text-sm transition-colors ${
-            uploading
-              ? "opacity-50 cursor-not-allowed"
-              : "cursor-pointer hover:border-primary hover:bg-muted/40"
-          }`}
-        >
-          <span className="text-2xl leading-none">＋</span>
-          <span className="font-medium">
-            {uploading ? "Uploading…" : "Click to add images"}
-          </span>
-          <span className="text-xs text-muted-foreground">
-            JPG, PNG or WebP · up to {MAX_IMAGES - imageUrls.length} more
-          </span>
-          <input
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            multiple
-            disabled={uploading}
-            onChange={(e) => {
-              void onPickFiles(e.target.files);
-              e.target.value = "";
-            }}
-            className="sr-only"
-          />
-        </label>
-      )}
-      {isImageFull && (
-        <p className="text-xs text-muted-foreground">
-          Max {MAX_IMAGES} images. Remove one to add more.
-        </p>
-      )}
     </div>
   );
 }

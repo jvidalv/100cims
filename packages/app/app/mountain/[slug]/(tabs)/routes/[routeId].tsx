@@ -69,9 +69,15 @@ import type { LucideIcon as LucideIconType } from "lucide-react-native";
 export default function RouteDetailScreen() {
   const intl = useIntl();
   const router = useRouter();
+  // NativeTabs eager-mounts sibling screens, so useGlobalSearchParams can
+  // return undefined params even when the URL is fully formed; the public
+  // hook signature lies and types them as `string`. Narrow to optional and
+  // pass undefined through — both downstream hooks already short-circuit
+  // when their key is undefined (`useMountainOne` via `enabled: Boolean(mountainSlug)`,
+  // `useRouteById` via explicit `undefined` arg).
   const { slug, routeId } = useGlobalSearchParams<{
-    slug: string;
-    routeId: string;
+    slug?: string;
+    routeId?: string;
   }>();
   // Routes data is gated to authenticated users (the underlying endpoint
   // lives under /api/protected/routes). Skip the fetch when signed out so
@@ -79,7 +85,7 @@ export default function RouteDetailScreen() {
   const { isAuthenticated } = useAuth();
   // Header anchors on the parent mountain, not the route — matches the
   // routes-tab list screen and gives back-navigation visual continuity.
-  const { data: mountain } = useMountainOne({ mountainSlug: slug });
+  const { data: mountain } = useMountainOne({ mountainSlug: slug ?? "" });
   const { data: route, isLoading } = useRouteById(
     isAuthenticated ? routeId : undefined,
   );
@@ -110,7 +116,10 @@ export default function RouteDetailScreen() {
   if (!route) {
     return (
       <ThemedView className="flex-1">
-        <BlurredScreenHeader>{mountain?.name ?? ""}</BlurredScreenHeader>
+        <BlurredScreenHeader>
+          {mountain?.name ??
+            intl.formatMessage({ defaultMessage: "Route" })}
+        </BlurredScreenHeader>
         {isLoading ? (
           <RouteDetailSkeleton headerHeight={headerHeight} />
         ) : (
@@ -320,7 +329,7 @@ export default function RouteDetailScreen() {
 
   return (
     <ThemedView className="flex-1">
-      <BlurredScreenHeader>{mountain?.name ?? ""}</BlurredScreenHeader>
+      <BlurredScreenHeader>{mountain?.name ?? title}</BlurredScreenHeader>
       <ScrollView
         contentContainerStyle={{
           paddingTop: headerHeight,

@@ -1,7 +1,7 @@
 import { format } from "date-fns/format";
 import { isSameDay } from "date-fns/isSameDay";
 import * as Clipboard from "expo-clipboard";
-import { Link, useGlobalSearchParams } from "expo-router";
+import { Link, useGlobalSearchParams, useIsFocused } from "expo-router";
 import { CircleHelp, Send } from "lucide-react-native";
 import { useColorScheme } from "nativewind";
 import { useEffect, useRef, useState, useMemo } from "react";
@@ -66,6 +66,11 @@ export default function PlanChatPage() {
   const isDark = colorScheme === "dark";
   const { bottom: bottomInset } = useSafeAreaInsets();
   const blurredHeaderHeight = useBlurredScreenHeaderHeight();
+  // NativeTabs eager-mounts every plan tab, so this chat component runs
+  // even when the user is on Details/Complete/Modify. Gate the
+  // mount/unmount `readChat` calls on focus so we don't POST
+  // `/plans/chat/read` when the user isn't actually looking at chat.
+  const isFocused = useIsFocused();
 
   const intl = useIntl();
   const inputRef = useRef<TextInput>(null);
@@ -103,13 +108,13 @@ export default function PlanChatPage() {
   );
 
   useEffect(() => {
-    if (!id) return;
+    if (!id || !isFocused) return;
     readChat(id);
 
     return () => {
       readChat(id);
     };
-  }, [id, readChat]);
+  }, [id, isFocused, readChat]);
 
   const handleSend = async () => {
     if (!message.trim() || !id) return;

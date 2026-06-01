@@ -22,7 +22,7 @@ export const CRON_REGISTRY: CronEntry[] = [
     name: "complete-stale-plans",
     pattern: "0 50 1 * * *",
     description:
-      "Mark open plans whose start date was 2+ days ago as 'completed'. Runs nightly at 01:50.",
+      "Mark open plans whose start date was 1+ days ago as 'completed'. Runs nightly at 01:50.",
     fn: completeStalePlans,
   },
   {

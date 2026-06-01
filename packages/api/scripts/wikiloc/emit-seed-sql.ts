@@ -227,14 +227,28 @@ const collectAlreadySeededExternalIds = (): Set<string> => {
 const padIdx = (n: number): string => String(n).padStart(4, "0");
 
 // Find the highest seed_routes_part_* part number already in the journal
-// so the new files continue the numbering from there.
+// so the new files continue the numbering from there. Anchored to end-of-tag
+// so a tag containing the prefix twice (or a hand-edited tag with arbitrary
+// suffixes) can't trip the parse.
+const SEED_TAG_PART_REGEX = new RegExp(`${SEED_TAG_PREFIX}(\\d+)$`);
 const highestExistingPartNumber = (journal: Journal): number => {
   let max = 0;
   for (const e of journal.entries) {
-    if (!e.tag.includes(SEED_TAG_PREFIX)) continue;
-    const partStr = e.tag.split(SEED_TAG_PREFIX)[1];
-    const partNum = parseInt(partStr, 10);
+    const match = SEED_TAG_PART_REGEX.exec(e.tag);
+    if (!match) continue;
+    const partNum = parseInt(match[1], 10);
     if (!Number.isNaN(partNum) && partNum > max) max = partNum;
+  }
+  return max;
+};
+
+// Highest idx already in the journal — used as the floor for new entries so
+// the numbering doesn't collide if the array ever has gaps (e.g. a manually
+// deleted entry). entries.length would silently overwrite an existing idx.
+const highestExistingIdx = (journal: Journal): number => {
+  let max = -1;
+  for (const e of journal.entries) {
+    if (e.idx > max) max = e.idx;
   }
   return max;
 };
@@ -266,7 +280,7 @@ const main = (): void => {
 
   const journalRaw = readFileSync(JOURNAL_PATH, "utf8");
   const journal = JSON.parse(journalRaw) as Journal;
-  const baseIdx = journal.entries.length;
+  const baseIdx = highestExistingIdx(journal) + 1;
   const basePartNumber = highestExistingPartNumber(journal);
   const now = Date.now();
 
