@@ -834,6 +834,13 @@
       "when": 1780309912371,
       "tag": "0118_add-shipping-address",
       "breakpoints": true
+    },
+    {
+      "idx": 119,
+      "version": "7",
+      "when": 1780312645208,
+      "tag": "0119_add-shop-request-payment-image",
+      "breakpoints": true
     }
   ]
 }

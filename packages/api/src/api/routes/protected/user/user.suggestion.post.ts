@@ -12,7 +12,7 @@ import {
   MERCH_MESSAGE_PREFIX,
 } from "@/api/lib/shop-request";
 import { getUserFromRequest } from "@/api/routes/@shared/auth";
-import { SimpleSuccessResponse } from "@/api/schemas/common.schema";
+import { SuccessResponse } from "@/api/schemas/common.schema";
 
 export const userSuggestionPostRoute = new Elysia().post(
   "/suggestion",
@@ -34,13 +34,17 @@ export const userSuggestionPostRoute = new Elysia().post(
     // Shipped mobile clients route cart submits through this endpoint with a
     // `[MERCH ORDER]` prefix. Mirror those into the dedicated shop_request
     // table so the admin UI has a source of truth, without shipping a new app.
+    // The new Bizum payment flow needs the request's id surfaced back to the
+    // client so the user can attach a payment screenshot afterward.
+    let shopRequestId: string | null = null;
     if (body.suggestion.startsWith(MERCH_MESSAGE_PREFIX)) {
       try {
-        await createShopRequest({
+        const inserted = await createShopRequest({
           userId: user.id,
           userEmail: user.email,
           message: body.suggestion,
         });
+        shopRequestId = inserted.id;
       } catch (err) {
         console.warn("[suggestion] shop-request mirror failed", err);
       }
@@ -48,12 +52,15 @@ export const userSuggestionPostRoute = new Elysia().post(
 
     return {
       success: true,
+      message: { shopRequestId },
     };
   },
   {
     body: t.Object({
       suggestion: t.String(),
     }),
-    response: SimpleSuccessResponse,
+    response: SuccessResponse(
+      t.Object({ shopRequestId: t.Nullable(t.String()) }),
+    ),
   },
 );

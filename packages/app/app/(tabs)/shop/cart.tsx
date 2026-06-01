@@ -1,10 +1,16 @@
+import * as Clipboard from "expo-clipboard";
 import { Redirect, useFocusEffect, useRouter } from "expo-router";
 import {
   BadgeCheck,
+  Camera,
+  Copy,
+  HelpCircle,
   Minus,
   Plus,
   Send,
   ShoppingBag,
+  SkipForward,
+  Smartphone,
   Sparkles,
   Store,
 } from "lucide-react-native";
@@ -22,6 +28,7 @@ import {
   ActivityIndicator,
   Button,
   LucideIcon,
+  ThemedKeyboardAvoidingView,
   ThemedText,
   ThemedTextInput,
 } from "@/components/ui/atoms";
@@ -42,16 +49,32 @@ import {
 import { useCouponLookup } from "@/domains/merch/coupon.api";
 import { useMerch } from "@/domains/merch/merch.api";
 import {
+  useShopConfig,
+  useUploadShopRequestPaymentMutation,
+} from "@/domains/merch/shop-request.api";
+import {
   useSubmitSuggestionMutation,
   useUnlockableUnlock,
   useUpdateUserMeMutation,
   useUserMe,
 } from "@/domains/user/user.api";
 import { formatCountryLabel } from "@/lib/countries";
+import { IMAGE_TO_BIG } from "@/lib/error-codes";
+import { pickAndOptimizeImage } from "@/lib/images";
 import { getLocale } from "@/lib/locale";
+import { logError } from "@/lib/log-error";
 
 const APPLE_RELAY_DOMAIN = "@privaterelay.appleid.com";
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// Format a 9-digit Spanish phone as "605 62 87 41" for display. The
+// raw digits come from `/api/protected/shop/config` so we can change
+// the Bizum number without shipping a new app.
+const formatPhoneDisplay = (raw: string): string => {
+  const digits = raw.replace(/\D/g, "");
+  if (digits.length !== 9) return raw;
+  return `${digits.slice(0, 3)} ${digits.slice(3, 5)} ${digits.slice(5, 7)} ${digits.slice(7, 9)}`;
+};
 
 const isAppleRelayEmail = (email: string | null | undefined) =>
   !!email && email.toLowerCase().endsWith(APPLE_RELAY_DOMAIN);
@@ -62,13 +85,33 @@ export default function ShopCartScreen() {
   const { isAuthenticated } = useAuth();
   const { data: merch } = useMerch();
   const { data: me } = useUserMe();
-  const { mutateAsync: submitSuggestion, isPending } =
-    useSubmitSuggestionMutation();
+  const submitMutation = useSubmitSuggestionMutation();
+  const { mutateAsync: submitSuggestion, isPending } = submitMutation;
   const { mutate: unlock } = useUnlockableUnlock();
   const { mutateAsync: updateUserMe } = useUpdateUserMeMutation();
+  const { mutateAsync: uploadPayment, isPending: isUploadingPayment } =
+    useUploadShopRequestPaymentMutation();
+  // Bizum phone is server-owned so we can update it without a new app
+  // release. Falls back to a placeholder while the config request is
+  // in-flight; the payment step doesn't render until the order POST
+  // resolves, by which point this query has typically warmed up.
+  const { data: shopConfig } = useShopConfig();
+  const bizumPhone = shopConfig?.bizumPhone ?? "";
   const [cart, setCart] = useState<CartItem[]>([]);
   const [contactEmailOverride, setContactEmailOverride] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
+  // Snapshot of the order amount captured at submit time. The cart
+  // empties as part of a successful submit (clearCart → lines = [] →
+  // finalTotal = 0), so reading `finalTotal` live on the payment step
+  // would show "0€". We freeze it here right before the cart wipes.
+  const [paidAmount, setPaidAmount] = useState(0);
+  // The Bizum payment step is gated on the shop_request id returned by
+  // the latest order POST — we read it straight off the mutation's
+  // `data` so we don't shadow react-query's state. `isSubmitted` flips
+  // after the user finishes (or skips) the payment step, ending the
+  // checkout flow.
+  const paymentShopRequestId =
+    submitMutation.data?.message?.shopRequestId ?? null;
   // Coupon is a single freeform input that rides along in the order
   // message — no "apply" button or applied-state UI. Admin reads the
   // code from the plain string just like the address lines.
@@ -248,13 +291,20 @@ export default function ShopCartScreen() {
       shippingBlock +
       `\nItems:\n${itemLines}`;
 
+    // Freeze the order amount BEFORE awaiting the submit. React-Query
+    // writes `mutation.data` synchronously inside the await's resolution,
+    // which can trigger the first render of the Bizum step before any
+    // post-await setState lands. Snapshot here so the first render
+    // already has the correct amount instead of the initial `0`.
+    setPaidAmount(finalTotal);
+
     try {
       // Send the order first — that's the user's actual goal. Persist
       // the address/phone afterward as a non-blocking save so a transient
       // PATCH /me failure doesn't bury the successful order behind a
       // generic error. Old API versions ignore unknown body keys; new
       // ones store them.
-      await submitSuggestion({ suggestion: message });
+      const submitResult = await submitSuggestion({ suggestion: message });
       void updateUserMe({
         shippingStreet: shippingStreet.trim(),
         shippingCity: shippingCity.trim(),
@@ -268,7 +318,14 @@ export default function ShopCartScreen() {
       await clearCart();
       setCart([]);
       setCouponCode("");
-      setIsSubmitted(true);
+      // If the server returned a shop_request id, the mutation result
+      // already carries it — `paymentShopRequestId` reads it on the next
+      // render and we drop into the Bizum payment step. Otherwise fall
+      // back to the legacy success screen — this keeps older API
+      // responses and non-merch suggestions intact.
+      if (!submitResult.message?.shopRequestId) {
+        setIsSubmitted(true);
+      }
     } catch {
       Alert.alert(
         intl.formatMessage({ defaultMessage: "Something went wrong" }),
@@ -276,13 +333,154 @@ export default function ShopCartScreen() {
     }
   };
 
+  // Bizum-step actions —
+  // - `onUploadScreenshot` picks a photo, optimizes it, and POSTs the
+  //   base64 to the protected payment-upload route. Server bumps the
+  //   request status to `contacted` and admin sees the screenshot.
+  // - `onSkipPayment` and `onHelpPayment` both close the payment step:
+  //   skip flips into the success screen; help pushes the buyer onto
+  //   the /shop/help screen so they can write to us.
+  const onUploadScreenshot = async () => {
+    if (!paymentShopRequestId) return;
+    try {
+      const result = await pickAndOptimizeImage();
+      if (!result?.optimized.base64) return;
+      try {
+        await uploadPayment({
+          shopRequestId: paymentShopRequestId,
+          image: result.optimized.base64,
+        });
+        setIsSubmitted(true);
+      } catch (error) {
+        // apiClient throws the parsed `{ error: "image-to-big" }` body
+        // straight through (see `ErrorFieldResponse`), so we read the
+        // `.error` field — not `.message`. Same shape used by other
+        // image-upload callers in the app (e.g. plans create).
+        if (
+          typeof error === "object" &&
+          error !== null &&
+          "error" in error &&
+          error.error === IMAGE_TO_BIG
+        ) {
+          Alert.alert(intl.formatMessage({ defaultMessage: "Image too big." }));
+          return;
+        }
+        throw error;
+      }
+    } catch (error) {
+      logError(error, "shop/cart/bizum-upload");
+      Alert.alert(intl.formatMessage({ defaultMessage: "Error, try again." }));
+    }
+  };
+
+  // The cart-list branch is the only one that needs the pinned Total
+  // footer. We render the footer OUTSIDE the KAV so the keyboard covers
+  // it normally — inside the KAV it slides up with the keyboard and
+  // overlaps the focused input.
+  const showCartList =
+    !paymentShopRequestId &&
+    !isSubmitted &&
+    !(!merch && cart.length > 0) &&
+    lines.length > 0;
+
   return (
     <View className="flex-1 bg-background">
-      <ScreenHeader>
-        <FormattedMessage defaultMessage="Your cart" />
-      </ScreenHeader>
+      <ThemedKeyboardAvoidingView>
+        <ScreenHeader>
+          <FormattedMessage defaultMessage="Your cart" />
+        </ScreenHeader>
 
-      {isSubmitted ? (
+      {paymentShopRequestId && !isSubmitted ? (
+        <ScrollView
+          className="flex-1"
+          contentContainerClassName="px-6 pb-24 pt-4 gap-5"
+          showsVerticalScrollIndicator={false}
+        >
+          <View className="gap-2">
+            <ThemedText className="text-2xl font-bold">
+              <FormattedMessage
+                defaultMessage="Pay {amount}€ via Bizum"
+                values={{ amount: paidAmount }}
+              />
+            </ThemedText>
+            <ThemedText className="text-sm text-muted-foreground">
+              <FormattedMessage defaultMessage="Send the amount to this Bizum number, then upload your confirmation screenshot." />
+            </ThemedText>
+          </View>
+
+          <TouchableOpacity
+            onPress={async () => {
+              if (!bizumPhone) return;
+              await Clipboard.setStringAsync(bizumPhone);
+              Alert.alert(
+                intl.formatMessage({
+                  defaultMessage: "Bizum number copied",
+                }),
+              );
+            }}
+            activeOpacity={0.85}
+            disabled={!bizumPhone}
+            className="items-center gap-3 rounded border-2 border-blue-500/40 bg-blue-500/10 px-6 py-8"
+          >
+            <View className="size-16 items-center justify-center rounded-full bg-blue-500/20">
+              <LucideIcon icon={Smartphone} size={32} color="#3b82f6" />
+            </View>
+            <ThemedText className="text-xs uppercase tracking-wide text-muted-foreground">
+              <FormattedMessage defaultMessage="Bizum number" />
+            </ThemedText>
+            <View className="flex-row items-center gap-2">
+              <LucideIcon icon={Copy} size={20} color="#3b82f6" />
+              <ThemedText className="text-3xl font-bold text-blue-500">
+                {bizumPhone ? formatPhoneDisplay(bizumPhone) : "…"}
+              </ThemedText>
+            </View>
+            <View className="mt-4 w-full items-center gap-1 border-t border-blue-500/30 pt-4">
+              <ThemedText className="text-xs uppercase tracking-wide text-muted-foreground">
+                <FormattedMessage defaultMessage="Amount to send" />
+              </ThemedText>
+              <ThemedText className="text-2xl font-bold text-emerald-500">
+                {paidAmount}€
+              </ThemedText>
+              <ThemedText className="text-center text-xs text-muted-foreground">
+                <FormattedMessage defaultMessage="Open your bank app and send this amount." />
+              </ThemedText>
+            </View>
+          </TouchableOpacity>
+
+          <View className="gap-2">
+            <ActionRow
+              icon={Camera}
+              intent="primary"
+              size="lg"
+              onPress={onUploadScreenshot}
+              disabled={isUploadingPayment}
+            >
+              {isUploadingPayment ? (
+                <FormattedMessage defaultMessage="Uploading…" />
+              ) : (
+                <FormattedMessage defaultMessage="Upload screenshot" />
+              )}
+            </ActionRow>
+
+            <ActionRow
+              icon={HelpCircle}
+              size="lg"
+              onPress={() => router.push("/shop/help")}
+            >
+              <FormattedMessage defaultMessage="I don't know how to do this" />
+            </ActionRow>
+
+            <ActionRow
+              icon={SkipForward}
+              intent="muted"
+              size="lg"
+              onPress={() => setIsSubmitted(true)}
+            >
+              <FormattedMessage defaultMessage="Skip for now" />
+            </ActionRow>
+          </View>
+        </ScrollView>
+      ) : isSubmitted ? (
         <View className="flex-1 items-center justify-center gap-6 px-8">
           <Animated.View
             entering={ZoomIn.springify().damping(12)}
@@ -467,37 +665,51 @@ export default function ShopCartScreen() {
                 textContentType="streetAddressLine1"
                 maxLength={200}
               />
-              <ThemedTextInput
-                label={intl.formatMessage({ defaultMessage: "City" })}
-                value={shippingCity}
-                onChangeText={setShippingCity}
-                autoComplete="postal-address-locality"
-                textContentType="addressCity"
-                maxLength={120}
-              />
-              <ThemedTextInput
-                label={intl.formatMessage({ defaultMessage: "Postal code" })}
-                value={shippingPostalCode}
-                onChangeText={setShippingPostalCode}
-                autoComplete="postal-code"
-                textContentType="postalCode"
-                keyboardType="number-pad"
-                maxLength={20}
-              />
-              <CountryPicker
-                label={intl.formatMessage({ defaultMessage: "Country" })}
-                value={shippingCountry}
-                onChange={setShippingCountry}
-              />
-              <ThemedTextInput
-                label={intl.formatMessage({ defaultMessage: "Phone" })}
-                value={phoneNumber}
-                onChangeText={setPhoneNumber}
-                autoComplete="tel"
-                textContentType="telephoneNumber"
-                keyboardType="phone-pad"
-                maxLength={40}
-              />
+              <View className="flex-row gap-3.5">
+                <View className="flex-1">
+                  <ThemedTextInput
+                    label={intl.formatMessage({ defaultMessage: "City" })}
+                    value={shippingCity}
+                    onChangeText={setShippingCity}
+                    autoComplete="postal-address-locality"
+                    textContentType="addressCity"
+                    maxLength={120}
+                  />
+                </View>
+                <View className="flex-1">
+                  <ThemedTextInput
+                    label={intl.formatMessage({
+                      defaultMessage: "Postal code",
+                    })}
+                    value={shippingPostalCode}
+                    onChangeText={setShippingPostalCode}
+                    autoComplete="postal-code"
+                    textContentType="postalCode"
+                    keyboardType="number-pad"
+                    maxLength={20}
+                  />
+                </View>
+              </View>
+              <View className="flex-row gap-3.5">
+                <View className="flex-1">
+                  <CountryPicker
+                    label={intl.formatMessage({ defaultMessage: "Country" })}
+                    value={shippingCountry}
+                    onChange={setShippingCountry}
+                  />
+                </View>
+                <View className="flex-1">
+                  <ThemedTextInput
+                    label={intl.formatMessage({ defaultMessage: "Phone" })}
+                    value={phoneNumber}
+                    onChangeText={setPhoneNumber}
+                    autoComplete="tel"
+                    textContentType="telephoneNumber"
+                    keyboardType="phone-pad"
+                    maxLength={40}
+                  />
+                </View>
+              </View>
               <ThemedTextInput
                 label={intl.formatMessage({
                   defaultMessage: "Coupon code (optional)",
@@ -632,25 +844,30 @@ export default function ShopCartScreen() {
               </View>
             </TouchableOpacity>
           </ScrollView>
-
-          <View className="absolute bottom-0 left-0 right-0 border-t border-border bg-background px-6 pb-10 pt-4">
-            <View className="flex-row items-baseline justify-between">
-              <ThemedText className="text-lg font-semibold">
-                <FormattedMessage defaultMessage="Total" />
-              </ThemedText>
-              <View className="flex-row items-baseline gap-2">
-                {appliedCoupon && (
-                  <ThemedText className="text-base text-muted-foreground line-through">
-                    {total}€
-                  </ThemedText>
-                )}
-                <ThemedText className="text-2xl font-bold">
-                  {finalTotal}€
+        </>
+      )}
+      </ThemedKeyboardAvoidingView>
+      {showCartList && (
+        <View
+          pointerEvents="box-none"
+          className="absolute bottom-0 left-0 right-0 border-t border-border bg-background px-6 pb-10 pt-4"
+        >
+          <View className="flex-row items-baseline justify-between">
+            <ThemedText className="text-lg font-semibold">
+              <FormattedMessage defaultMessage="Total" />
+            </ThemedText>
+            <View className="flex-row items-baseline gap-2">
+              {appliedCoupon && (
+                <ThemedText className="text-base text-muted-foreground line-through">
+                  {total}€
                 </ThemedText>
-              </View>
+              )}
+              <ThemedText className="text-2xl font-bold">
+                {finalTotal}€
+              </ThemedText>
             </View>
           </View>
-        </>
+        </View>
       )}
     </View>
   );

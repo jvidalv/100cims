@@ -491,6 +491,7 @@ export const AdminShopRequestEntrySchema = t.Object({
   message: t.String(),
   status: ShopRequestStatusSchema,
   comments: t.Nullable(t.String()),
+  paymentImageUrl: t.Nullable(t.String()),
   createdAt: t.Date(),
   updatedAt: t.Date(),
 });

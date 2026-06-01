@@ -688,6 +688,7 @@ export const shopRequestTable = pgTable(
     message: text().notNull(),
     status: text().notNull().default("requested").$type<ShopRequestStatus>(),
     comments: text(),
+    paymentImageUrl: text(),
     createdAt: timestamp().notNull().defaultNow(),
     updatedAt: timestamp().notNull().defaultNow(),
   },
