@@ -66,15 +66,11 @@ android/
 
 *.psd
 
-# Wikiloc scraper — local-only artifacts. The .ts files under
-# packages/api/scripts/wikiloc/output/ are intentionally kept under version
-# control (they're the trail catalogue the seed SQL is generated from), but
-# everything else under that folder is derived/transient state that should
-# never reach git.
-packages/api/scripts/wikiloc/output/_summits.json
-packages/api/scripts/wikiloc/output/_chain.log
-packages/api/scripts/wikiloc/output/_backfill.log
-packages/api/scripts/wikiloc/output/_failures.json
+# Wikiloc scraper — every artifact in `output/` is regenerable from a
+# fresh scrape, and the canonical data ships as seed SQL chunks under
+# src/db/drizzle/. Keeping these in git would just inflate the repo and
+# tempt a future maintainer to edit them by hand.
+packages/api/scripts/wikiloc/output/
 
 # Agent-tooling state (per-cwd; harmless duplicates show up when Claude is
 # launched from a subpackage). The repo only intentionally commits files

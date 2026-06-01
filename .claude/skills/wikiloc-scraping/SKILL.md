@@ -95,19 +95,20 @@ hand.
 
 | File | Source of truth? | In git? |
 | ---- | ---------------- | ------- |
-| `output/<slug>.ts` | Yes initially | Only if it has trails not yet in any seed SQL |
 | `seed_routes_part_NNNN.sql` | **Yes — canonical** | Yes |
-| `output/_summits.json` | No — derived from .ts files | No (gitignored) |
-| `output/_chain.log`, `_failures.json`, `_backfill.log` | No — local-run state | No (gitignored) |
+| `output/` (entire folder) | No — regenerable from a scrape | No (gitignored) |
 
-After a successful pipeline run we delete `output/*.ts` files whose every
-trail externalId is in some seed_routes_part_*.sql — the SQL has the same
-data and ships in the migration. Partial files (gemini-rejected trails
-mixed with kept ones) stay so a future re-emit could in principle pick up
-the rejected ones if we ever change the rejection policy.
+Once a scrape finishes and the emitter has written its seed SQL chunks,
+the `output/` folder serves no further purpose: the canonical trail data
+lives in the migrations, and a re-scrape can rebuild the folder in full.
+The whole directory is gitignored — never commit anything inside it.
 
-Concretely: of 859 .ts files after the ehun-mendiak run, 747 were fully
-covered → deleted; 112 had at least one trail not in any seed SQL → kept.
+Trails that gemini's validation pass rejected don't reach `_summits.json`
+and therefore don't reach the seed SQL either; keeping their `<slug>.ts`
+files around doesn't preserve any salvageable signal, since a re-scrape
+would re-run the same validation prompts. If we ever want to recover
+rejected trails, the source of truth is Wikiloc itself — re-scrape with
+`--force` and a relaxed validation prompt.
 
 ## Performance tuning (per `scrape.ts` + `scrape-mountain.ts` + `rate-limit-guard.ts`)
 
