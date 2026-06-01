@@ -38,6 +38,10 @@ type Form = {
   username: string;
   town: string;
   phoneNumber: string;
+  shippingStreet: string;
+  shippingCity: string;
+  shippingPostalCode: string;
+  shippingCountry: string;
   country: string;
   locale: string;
   visibleOnHiscores: boolean;
@@ -52,6 +56,10 @@ const emptyForm: Form = {
   username: "",
   town: "",
   phoneNumber: "",
+  shippingStreet: "",
+  shippingCity: "",
+  shippingPostalCode: "",
+  shippingCountry: "",
   country: "",
   locale: "",
   visibleOnHiscores: false,
@@ -101,6 +109,10 @@ export default function AdminUserDetailPage({
       username: detail.data.username ?? "",
       town: detail.data.town ?? "",
       phoneNumber: detail.data.phoneNumber ?? "",
+      shippingStreet: detail.data.shippingStreet ?? "",
+      shippingCity: detail.data.shippingCity ?? "",
+      shippingPostalCode: detail.data.shippingPostalCode ?? "",
+      shippingCountry: detail.data.shippingCountry ?? "",
       country: detail.data.country ?? "",
       locale: detail.data.locale ?? "",
       visibleOnHiscores: detail.data.visibleOnHiscores,
@@ -134,6 +146,14 @@ export default function AdminUserDetailPage({
     if (form.town !== initial.town) body.town = form.town || null;
     if (form.phoneNumber !== initial.phoneNumber)
       body.phoneNumber = form.phoneNumber.trim() || null;
+    if (form.shippingStreet !== initial.shippingStreet)
+      body.shippingStreet = form.shippingStreet.trim() || null;
+    if (form.shippingCity !== initial.shippingCity)
+      body.shippingCity = form.shippingCity.trim() || null;
+    if (form.shippingPostalCode !== initial.shippingPostalCode)
+      body.shippingPostalCode = form.shippingPostalCode.trim() || null;
+    if (form.shippingCountry !== initial.shippingCountry)
+      body.shippingCountry = form.shippingCountry.trim() || null;
     if (form.country !== initial.country) body.country = form.country || null;
     if (form.locale !== initial.locale) body.locale = form.locale || null;
     if (form.visibleOnHiscores !== initial.visibleOnHiscores)
@@ -228,6 +248,26 @@ export default function AdminUserDetailPage({
             label="Phone number (private)"
             value={form.phoneNumber}
             onChange={(v) => setForm((p) => ({ ...p, phoneNumber: v }))}
+          />
+          <FieldText
+            label="Shipping street"
+            value={form.shippingStreet}
+            onChange={(v) => setForm((p) => ({ ...p, shippingStreet: v }))}
+          />
+          <FieldText
+            label="Shipping city"
+            value={form.shippingCity}
+            onChange={(v) => setForm((p) => ({ ...p, shippingCity: v }))}
+          />
+          <FieldText
+            label="Shipping postal code"
+            value={form.shippingPostalCode}
+            onChange={(v) => setForm((p) => ({ ...p, shippingPostalCode: v }))}
+          />
+          <FieldText
+            label="Shipping country"
+            value={form.shippingCountry}
+            onChange={(v) => setForm((p) => ({ ...p, shippingCountry: v }))}
           />
           <FieldText
             label="Country (ISO code)"

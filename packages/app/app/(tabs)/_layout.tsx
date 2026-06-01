@@ -3,6 +3,9 @@ import { useIntl } from "react-intl";
 
 import { useAuth } from "@/components/providers/auth-provider";
 import { Colors } from "@/constants/colors";
+import { useCartCount } from "@/domains/merch/cart";
+import { useMerch } from "@/domains/merch/merch.api";
+import { useUnseenNewCount } from "@/domains/merch/seen";
 import { useNewPlansCount } from "@/domains/plan/plan.api";
 
 export default function TabsLayout() {
@@ -13,6 +16,22 @@ export default function TabsLayout() {
   const { isAuthenticated } = useAuth();
   const { data: newPlansData } = useNewPlansCount();
   const newPlansCount = isAuthenticated ? (newPlansData?.count ?? 0) : 0;
+  // Cart lives in AsyncStorage, so the count is auth-independent — an
+  // unauthenticated user with stored items still sees the badge and gets
+  // funneled through /join when they tap into /shop/cart.
+  const cartCount = useCartCount();
+  // "New" indicator on the shop tab when there's at least one unseen product
+  // created in the last 7 days. Cart count takes precedence — NativeTabs
+  // exposes a single badge slot per trigger, and cart is the more actionable
+  // signal. `useMerch()` is shared cache; this is not an extra fetch.
+  const { data: merch } = useMerch();
+  const unseenNewCount = useUnseenNewCount(merch);
+  const shopBadge =
+    cartCount > 0
+      ? String(cartCount)
+      : unseenNewCount > 0
+        ? intl.formatMessage({ defaultMessage: "New" })
+        : null;
   return (
     // `disableTransparentOnScrollEdge` keeps the bar's blurred material when
     // the user scrolls to the very bottom of a list. Without it, iOS 18 and
@@ -72,6 +91,9 @@ export default function TabsLayout() {
         <NativeTabs.Trigger.Label>
           {intl.formatMessage({ defaultMessage: "Shop" })}
         </NativeTabs.Trigger.Label>
+        {shopBadge && (
+          <NativeTabs.Trigger.Badge>{shopBadge}</NativeTabs.Trigger.Badge>
+        )}
       </NativeTabs.Trigger>
     </NativeTabs>
   );

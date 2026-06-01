@@ -3,10 +3,10 @@ import { and, eq, lt } from "drizzle-orm";
 import { db } from "@/db";
 import { planTable } from "@/db/schema";
 
-const TWO_DAYS_MS = 2 * 24 * 60 * 60 * 1000;
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
 export async function completeStalePlans(): Promise<void> {
-  const cutoff = new Date(Date.now() - TWO_DAYS_MS).toISOString();
+  const cutoff = new Date(Date.now() - ONE_DAY_MS).toISOString();
 
   const updated = await db
     .update(planTable)

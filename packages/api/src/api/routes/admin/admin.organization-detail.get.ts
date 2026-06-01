@@ -32,6 +32,7 @@ export const adminOrganizationDetailGetRoute = new Elysia().get(
           whatsappUrl: organizationTable.whatsappUrl,
           youtubeUrl: organizationTable.youtubeUrl,
           stravaUrl: organizationTable.stravaUrl,
+          photoUrls: organizationTable.photoUrls,
           createdAt: organizationTable.createdAt,
           updatedAt: organizationTable.updatedAt,
         })

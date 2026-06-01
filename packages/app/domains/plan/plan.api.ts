@@ -30,6 +30,10 @@ export const usePlans = (
     creatorId?: string;
     userId?: string;
     sort?: "upcoming";
+    /** Server-side drop plans whose `startDate` is in the past (and any
+     *  plan with a null startDate). Off by default so /user/plans and
+     *  other historical surfaces keep showing completed/canceled rows. */
+    futureOnly?: boolean;
   },
   { enabled }: { enabled?: boolean } = {},
 ) => {
@@ -53,7 +57,10 @@ export const usePlans = (
  * limit only shows once). Separate from `usePlans` so the existing list
  * surfaces (/plans, mountain detail) keep their stable sort.
  */
-export const useFeaturedPlans = (params?: { limit?: number }) =>
+export const useFeaturedPlans = (params?: {
+  limit?: number;
+  futureOnly?: boolean;
+}) =>
   useQuery({
     queryKey: planKeys.featured(params),
     queryFn: async () => {
@@ -72,6 +79,7 @@ export const usePlansInfinite = (params?: {
   userId?: string;
   sort?: "upcoming";
   challengeId?: string;
+  futureOnly?: boolean;
 }) => {
   return useInfiniteQuery({
     queryKey: planKeys.listInfinite(params),

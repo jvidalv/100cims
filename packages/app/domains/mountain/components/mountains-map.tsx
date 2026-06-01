@@ -81,15 +81,45 @@ const TAP_PULSE_END_RADIUS = 22;
 const COLOR_USER_DOT = "#007AFF";
 const COLOR_USER_HALO = "rgba(0, 122, 255, 0.2)";
 
-// Fallback frame on cold start when neither mountains nor user-location are
-// available yet. Centred on Catalonia.
-const FALLBACK_CENTER: [number, number] = [1.8, 41.8];
-const FALLBACK_ZOOM = 7;
-
 // Half-edge in degrees that we expand zero-area bboxes by so a single-mountain
 // filter doesn't collapse the camera to an undefined zoom. ~5km on either side
 // at our latitudes — enough that Mapbox picks a reasonable zoom for one peak.
 const SINGLE_POINT_PADDING = 0.05;
+
+// Fallback camera frame when the mountain set is empty (e.g. a user with
+// no active challenge, or a challenge that hasn't had mountains assigned
+// yet). Centred on Catalonia at a wide regional zoom so the user sees
+// something recognisable instead of Mapbox's default world view (Persian
+// Gulf-ish), then can pan to wherever they want.
+const FALLBACK_CENTER: [number, number] = [1.8, 41.8];
+const FALLBACK_ZOOM = 7;
+
+// NE/SW corners of the bbox enclosing a mountain set, with zero-axis
+// collapses padded so Mapbox always has a non-degenerate box to work with.
+// Returns null for empty input — callers handle the no-mountains case
+// separately (initial mount is gated upstream; filter narrowing keeps the
+// previous camera position when the new set is empty).
+const computeBounds = (
+  mountains: Pick<Mountain, "latitude" | "longitude">[],
+): { ne: [number, number]; sw: [number, number] } | null => {
+  if (mountains.length === 0) return null;
+  const lats = mountains.map((m) => parseFloat(m.latitude));
+  const lngs = mountains.map((m) => parseFloat(m.longitude));
+  const minLat = Math.min(...lats);
+  const maxLat = Math.max(...lats);
+  const minLng = Math.min(...lngs);
+  const maxLng = Math.max(...lngs);
+  return {
+    ne: [
+      maxLng + (maxLng - minLng < 1e-6 ? SINGLE_POINT_PADDING : 0),
+      maxLat + (maxLat - minLat < 1e-6 ? SINGLE_POINT_PADDING : 0),
+    ],
+    sw: [
+      minLng - (maxLng - minLng < 1e-6 ? SINGLE_POINT_PADDING : 0),
+      minLat - (maxLat - minLat < 1e-6 ? SINGLE_POINT_PADDING : 0),
+    ],
+  };
+};
 
 // On-marker label settings — kept here so the magic numbers are in one place.
 // `LABEL_MIN_ZOOM` is the zoom at which the per-marker name/height tag becomes
@@ -99,7 +129,7 @@ const LABEL_NAME_MAX = 18;
 // above cluster-dissolve (zoom 9) so labels only show once the user is
 // close enough that the names won't overlap into a dense wall of text on
 // the satellite basemap.
-const LABEL_MIN_ZOOM = 12;
+const LABEL_MIN_ZOOM = 11;
 // Per-theme label colors. Dark slate on the light Standard basemap and
 // near-white on the dark-v11 basemap — picking one color for both turns
 // invisible on the opposite scheme.
@@ -166,6 +196,15 @@ export function MountainsMap({
   const { colorScheme } = useColorScheme();
   const cameraRef = useRef<CameraRef>(null);
   const shapeSourceRef = useRef<ShapeSourceRef>(null);
+  // Initial camera bounds, computed once at first render from the
+  // `mountains` prop. The parent gates mounting on data being available
+  // (skeleton until then), so we always have a populated array here and
+  // can hand the bbox straight to `<Camera defaultSettings>`. Mapbox reads
+  // that during native init, so the map opens directly on the challenge
+  // region — no pan-from-default-world animation. Subsequent filter
+  // narrowings go through the imperative useEffect below.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const initialBounds = useMemo(() => computeBounds(mountains), []);
   const setPreview = useCallback(
     (preview: MountainPreview | null) => {
       onPreviewChange?.(preview);
@@ -314,67 +353,23 @@ export function MountainsMap({
     [mountains],
   );
 
-  // Imperative camera control. Re-fits on every `mountainsKey` change so
-  // narrowing the filter (search query, Essentials toggle, altitude band)
-  // re-frames the camera on the new set. The original implementation fitted
-  // only ONCE because re-fitting on every mountainsKey change yanked the
-  // camera mid-pan; in practice mountainsKey doesn't change while the user
-  // is panning (it changes when filter chips or the search input do), so
-  // the trade-off favours re-fitting. The hide-the-map (display:none)
-  // toggle in the parent doesn't change `mountainsKey`, so the effect
-  // doesn't fire while the map is hidden.
+  // Imperative re-fit on filter changes (search, Essentials toggle, altitude
+  // band, etc.). Initial mount is handled by `<Camera defaultSettings>`, so
+  // this is only ever a "narrow to the new subset" animation. Skips on
+  // first run because defaultSettings already set the same bounds.
+  const firstRunRef = useRef(true);
   useEffect(() => {
+    if (firstRunRef.current) {
+      firstRunRef.current = false;
+      return;
+    }
     const camera = cameraRef.current;
     if (!camera) return;
-
-    if (mountains.length === 0) {
-      const fallback: [number, number] = userLocation
-        ? [userLocation.coords.longitude, userLocation.coords.latitude]
-        : FALLBACK_CENTER;
-      camera.setCamera({
-        centerCoordinate: fallback,
-        zoomLevel: userLocation ? 9 : FALLBACK_ZOOM,
-        animationDuration: 0,
-      });
-      return;
-    }
-
-    const lats = mountains.map((m) => parseFloat(m.latitude));
-    const lngs = mountains.map((m) => parseFloat(m.longitude));
-    const minLat = Math.min(...lats);
-    const maxLat = Math.max(...lats);
-    const minLng = Math.min(...lngs);
-    const maxLng = Math.max(...lngs);
-
-    // Single-mountain (or all-same-location) collapse — fitBounds on a
-    // zero-area bbox is platform-dependent. Centre on the point at a
-    // sensible zoom instead.
-    if (maxLat - minLat < 1e-6 && maxLng - minLng < 1e-6) {
-      camera.setCamera({
-        centerCoordinate: [
-          (minLng + maxLng) / 2,
-          (minLat + maxLat) / 2,
-        ],
-        zoomLevel: 11,
-        animationDuration: 500,
-      });
-      return;
-    }
-
-    // Pad zero-axis collapses (e.g. all mountains on the same latitude) so
-    // fitBounds still has a bbox to work with.
-    const nePadded: [number, number] = [
-      maxLng + (maxLng - minLng < 1e-6 ? SINGLE_POINT_PADDING : 0),
-      maxLat + (maxLat - minLat < 1e-6 ? SINGLE_POINT_PADDING : 0),
-    ];
-    const swPadded: [number, number] = [
-      minLng - (maxLng - minLng < 1e-6 ? SINGLE_POINT_PADDING : 0),
-      minLat - (maxLat - minLat < 1e-6 ? SINGLE_POINT_PADDING : 0),
-    ];
-
-    camera.fitBounds(nePadded, swPadded, [80, 40, 80, 40], 500);
-    // mountains/userLocation reference changes are captured by mountainsKey;
-    // depending on the array directly would re-fit on every render.
+    const bounds = computeBounds(mountains);
+    if (!bounds) return;
+    camera.fitBounds(bounds.ne, bounds.sw, [80, 40, 80, 40], 500);
+    // mountains reference changes are captured by mountainsKey; depending
+    // on the array directly would re-fit on every render.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mountainsKey]);
 
@@ -504,7 +499,33 @@ export function MountainsMap({
         // needs to happen at a higher level (UIWindow tint).
         tintColor="#737373"
       >
-        <Camera ref={cameraRef} animationMode="easeTo" />
+        <Camera
+          ref={cameraRef}
+          animationMode="easeTo"
+          // `defaultSettings` is read once during native init — defines the
+          // camera state at mount. With the parent gating the mount on
+          // mountains being loaded, this lands directly on the challenge
+          // bbox at first paint (no pan-from-default-world animation).
+          // Empty-mountains case falls back to a regional centre so the user
+          // doesn't see Mapbox's default world view.
+          defaultSettings={
+            initialBounds
+              ? {
+                  bounds: {
+                    ne: initialBounds.ne,
+                    sw: initialBounds.sw,
+                    paddingTop: 80,
+                    paddingRight: 40,
+                    paddingBottom: 80,
+                    paddingLeft: 40,
+                  },
+                }
+              : {
+                  centerCoordinate: FALLBACK_CENTER,
+                  zoomLevel: FALLBACK_ZOOM,
+                }
+          }
+        />
         {/* Register the three mountain glyph PNGs once so the SymbolLayer
             below can reference them by name. RN picks the right @1x/@2x/@3x
             asset automatically based on device pixel density. */}

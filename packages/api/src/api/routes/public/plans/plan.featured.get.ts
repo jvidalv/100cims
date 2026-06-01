@@ -16,6 +16,7 @@ import {
   getOptionalUserId,
 } from "@/api/routes/@shared/optional-auth";
 import { planVisibilitySql } from "@/api/routes/@shared/plan-access";
+import { planFutureOnlySql } from "@/api/routes/@shared/plan-future-only";
 import {
   assemblePlanOrganization,
   planOrganizationSelection,
@@ -76,6 +77,7 @@ export const planFeaturedGetRoute = new Elysia().use(JWT()).get(
         and(
           eq(planTable.featured, true),
           eq(planTable.status, "open"),
+          planFutureOnlySql(query?.futureOnly),
           planVisibilitySql(viewerId),
         ),
       )
@@ -201,6 +203,7 @@ export const planFeaturedGetRoute = new Elysia().use(JWT()).get(
     query: t.Optional(
       t.Object({
         limit: t.Optional(t.Number()),
+        futureOnly: t.Optional(t.Boolean()),
       }),
     ),
     response: SuccessResponse(PlansArraySchema),

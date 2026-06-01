@@ -31,6 +31,10 @@ export const MeSchema = t.Intersect([
   UserSchema,
   t.Object({
     phoneNumber: t.Nullable(t.String()),
+    shippingStreet: t.Nullable(t.String()),
+    shippingCity: t.Nullable(t.String()),
+    shippingPostalCode: t.Nullable(t.String()),
+    shippingCountry: t.Nullable(t.String()),
   }),
 ]);
 

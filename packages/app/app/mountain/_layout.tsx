@@ -1,5 +1,5 @@
 import { Stack } from "expo-router";
-import { Platform, useColorScheme } from "react-native";
+import { Platform } from "react-native";
 
 /**
  * Parent Stack for the /mountain subtree.
@@ -23,11 +23,6 @@ import { Platform, useColorScheme } from "react-native";
  * the Stack screen declarations match the leaves, not `[slug]` itself.
  */
 export default function MountainLayout() {
-  // Same theme-aware default the root Stack uses — keeps push transitions
-  // between mountains (and into edit) from flashing iOS's white
-  // `systemBackground` for the frame before React paints `ThemedView`.
-  const colorScheme = useColorScheme() === "dark" ? "dark" : "light";
-  const screenBackground = colorScheme === "dark" ? "#000000" : "#ffffff";
   return (
     <Stack
       screenOptions={{
@@ -40,7 +35,6 @@ export default function MountainLayout() {
         // Android sidesteps the snapshot path. See app/_layout.tsx for
         // the same workaround at the root level.
         freezeOnBlur: Platform.OS === "android" ? false : undefined,
-        contentStyle: { backgroundColor: screenBackground },
       }}
     >
       <Stack.Screen name="[slug]/(tabs)" />

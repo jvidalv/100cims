@@ -120,9 +120,16 @@ const PlansSection = () => {
     limit: 3,
     status: "open",
     sort: "upcoming",
+    // Home is a "what's next" surface — past plans don't belong here.
+    // The server-side filter keeps plans with `startDate >= today`
+    // (today's plan is "still upcoming") and drops earlier dates plus
+    // any plan without a startDate. `/user/plans` and other surfaces
+    // continue to see all rows.
+    futureOnly: true,
   });
   const { data: featured, isPending: isPendingFeatured } = useFeaturedPlans({
     limit: 3,
+    futureOnly: true,
   });
 
   // Featured plans render above the upcoming window. A featured plan

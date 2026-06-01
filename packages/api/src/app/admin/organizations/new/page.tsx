@@ -5,8 +5,13 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { MAX_ORGANIZATION_PHOTOS } from "@/api/lib/organization-images";
+import {
+  ImageTooBigError,
+  encodeImageForUpload,
+} from "@/app/admin/_lib/encode-image";
+import { ImageUploader } from "@/app/admin/_lib/image-uploader";
 import { MAX_IMAGE_KB } from "@/api/lib/images";
-import { fileToBase64 } from "@/app/admin/_lib/file-to-base64";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,21 +33,24 @@ export default function AdminOrganizationNewPage() {
   // uploads to S3), or an http(s) URL (already-CDN-hosted image kept
   // as-is). Mirrors the plan create/edit pattern.
   const [imageValue, setImageValue] = useState<string | null>(null);
+  // Showcase gallery (1–10). Mixed list of CDN URLs (kept as-is on submit)
+  // and base64 payloads (uploaded by the API). Empty by default.
+  const [photoUrls, setPhotoUrls] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
 
   const onPickImage = async (file: File | null) => {
     if (!file) return;
     setUploading(true);
     try {
-      const base64 = await fileToBase64(file);
-      // base64-encoded byte count = ceil(len * 3 / 4); good enough for the
-      // client-side guard. Server re-validates with isBase64SizeValid().
-      const sizeKB = Math.ceil((base64.length * 3) / 4 / 1024);
-      if (sizeKB > MAX_IMAGE_KB) {
-        toast.error(`Image too large (${sizeKB} KB · max ${MAX_IMAGE_KB} KB)`);
-        return;
+      setImageValue(await encodeImageForUpload(file));
+    } catch (e) {
+      if (e instanceof ImageTooBigError) {
+        toast.error(e.message);
+      } else {
+        toast.error(
+          e instanceof Error ? e.message : "Could not read that image",
+        );
       }
-      setImageValue(base64);
     } finally {
       setUploading(false);
     }
@@ -60,6 +68,7 @@ export default function AdminOrganizationNewPage() {
         whatsappUrl: whatsappUrl.trim() || undefined,
         youtubeUrl: youtubeUrl.trim() || undefined,
         stravaUrl: stravaUrl.trim() || undefined,
+        photoUrls: photoUrls.length > 0 ? photoUrls : undefined,
       },
       {
         onSuccess: ({ id }) => {
@@ -188,7 +197,7 @@ export default function AdminOrganizationNewPage() {
                 {uploading ? "Reading…" : "Click to add an image"}
               </span>
               <span className="text-xs text-muted-foreground">
-                JPG, PNG or WebP · max {MAX_IMAGE_KB} KB
+                JPG, PNG or WebP · auto-resized · max {MAX_IMAGE_KB} KB
               </span>
               <input
                 type="file"
@@ -204,6 +213,15 @@ export default function AdminOrganizationNewPage() {
             </label>
           )}
         </div>
+
+        <ImageUploader
+          label="Showcase photos"
+          imageUrls={photoUrls}
+          onChange={setPhotoUrls}
+          uploading={uploading}
+          setUploading={setUploading}
+          maxImages={MAX_ORGANIZATION_PHOTOS}
+        />
 
         <div className="flex items-center gap-3">
           <Button

@@ -16,16 +16,23 @@ import { twMerge } from "tailwind-merge";
 import { useAuth } from "@/components/providers/auth-provider";
 import {
   LucideIcon,
+  NewBadge,
   SearchInput,
   Skeleton,
   ThemedText,
   ThemedView,
 } from "@/components/ui/atoms";
 import { Image } from "@/components/ui/atoms/image";
-import { ProductPrice } from "@/components/ui/molecules";
+import { CartHeaderButton, ProductPrice } from "@/components/ui/molecules";
 import { Colors } from "@/constants/colors";
 import { useMerch } from "@/domains/merch/merch.api";
+import { useIsProductNew } from "@/domains/merch/seen";
 import { cleanText } from "@/lib";
+
+import type { paths } from "@/types/api";
+
+type MerchEntry =
+  paths["/api/public/merch/"]["get"]["responses"][200]["content"]["application/json"]["message"][number];
 
 const COLOR_HEX: Record<string, string> = {
   black: "#000000",
@@ -133,9 +140,12 @@ export default function ShopScreen() {
         {/* Matches the CalendarMonth header style — `text-4xl font-bold` —
             so top-level tab screens share a consistent header treatment.
             See `components/calendar/calendar-month.tsx:59`. */}
-        <ThemedText className="text-4xl font-bold">
-          <FormattedMessage defaultMessage="Shop" />
-        </ThemedText>
+        <View className="flex-row items-center justify-between">
+          <ThemedText className="text-4xl font-bold">
+            <FormattedMessage defaultMessage="Shop" />
+          </ThemedText>
+          <CartHeaderButton />
+        </View>
         <SearchInput onChangeText={setSearchInput} />
         {/* flex-wrap guards narrow phones in Spanish/Catalan, where three
             pills + gaps exceed the available width and would otherwise
@@ -253,12 +263,7 @@ export default function ShopScreen() {
                     </View>
                   )}
                   <View className="gap-1">
-                    <ThemedText
-                      className="text-base font-semibold"
-                      numberOfLines={1}
-                    >
-                      {product.name}
-                    </ThemedText>
+                    <ProductNameRow product={product} />
                     {product.variants.length > 1 && (
                       <View className="mt-0.5 flex-row gap-1.5">
                         {product.variants.map((v) => (
@@ -286,5 +291,23 @@ export default function ShopScreen() {
         </View>
       </ScrollView>
     </ThemedView>
+  );
+}
+
+// Per-product wrapper so `useIsProductNew` (which subscribes to the seen
+// store) runs in a stable component per slug rather than inside the
+// `.map()` body of ShopScreen. The hook must not be called in a loop.
+function ProductNameRow({ product }: { product: MerchEntry }) {
+  const isNew = useIsProductNew(product.slug, product.createdAt);
+  return (
+    <View className="flex-row items-center gap-1.5">
+      <ThemedText
+        className="shrink text-base font-semibold"
+        numberOfLines={1}
+      >
+        {product.name}
+      </ThemedText>
+      {isNew && <NewBadge />}
+    </View>
   );
 }

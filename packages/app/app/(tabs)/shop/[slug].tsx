@@ -7,10 +7,11 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { twMerge } from "tailwind-merge";
 
 import { useAuth } from "@/components/providers/auth-provider";
-import { LucideIcon, Skeleton, ThemedText } from "@/components/ui/atoms";
+import { LucideIcon, NewBadge, Skeleton, ThemedText } from "@/components/ui/atoms";
 import { Image } from "@/components/ui/atoms/image";
 import {
   ActionRow,
+  CartHeaderButton,
   ImagePreviewModal,
   ProductPrice,
   ScreenHeader,
@@ -18,6 +19,7 @@ import {
 } from "@/components/ui/molecules";
 import { addToCart, type CartSize } from "@/domains/merch/cart";
 import { useMerch } from "@/domains/merch/merch.api";
+import { markSeen, useIsProductNew } from "@/domains/merch/seen";
 import { useUserMe } from "@/domains/user/user.api";
 import { reportCartAddToDiscord } from "@/lib/report-cart-add";
 
@@ -55,6 +57,19 @@ export default function ShopProductScreen() {
     }
   }, [firstVariantColor, selectedColor]);
 
+  // Mark this product as seen the moment the detail page mounts for it.
+  // Clears the "New" indicator on the listing card and (when no other
+  // unseen new products remain) on the Shop bottom tab. Depend on the
+  // URL `slug` (not `product?.slug`) so the mark fires even on a cold
+  // start where `useMerch()` hasn't resolved yet. Gate on auth so an
+  // unauthenticated deep-link doesn't silently mark the product seen
+  // before bouncing the user through /join.
+  useEffect(() => {
+    if (isAuthenticated && slug) void markSeen(slug);
+  }, [isAuthenticated, slug]);
+
+  const isNew = useIsProductNew(slug, product?.createdAt);
+
   if (!isAuthenticated) {
     return <Redirect href="/join" />;
   }
@@ -63,7 +78,7 @@ export default function ShopProductScreen() {
     if (isPending) {
       return (
         <View className="flex-1 bg-background">
-          <ScreenHeader />
+          <ScreenHeader rightElement={<CartHeaderButton />} />
           <ScrollView
             className="flex-1"
             contentContainerClassName="pb-10"
@@ -111,7 +126,7 @@ export default function ShopProductScreen() {
     }
     return (
       <View className="flex-1 bg-background">
-        <ScreenHeader>
+        <ScreenHeader rightElement={<CartHeaderButton />}>
           <FormattedMessage defaultMessage="Product" />
         </ScreenHeader>
         <View className="flex-1 items-center justify-center">
@@ -177,13 +192,14 @@ export default function ShopProductScreen() {
 
   return (
     <View className="flex-1 bg-background">
-      <ScreenHeader>{product.name}</ScreenHeader>
+      <ScreenHeader rightElement={<CartHeaderButton />}>
+        {product.name}
+      </ScreenHeader>
       <ScrollView
         className="flex-1"
         // `useSafeAreaInsets().bottom` already includes the NativeTabs tab
         // bar height on iOS children of this tab subtree (see app SKILL.md),
-        // so we only add a small visual buffer on top — no manual tab-bar
-        // constant needed here, unlike the root-level FloatingCartButton.
+        // so we only add a small visual buffer here.
         contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
         showsVerticalScrollIndicator={false}
       >
@@ -236,9 +252,12 @@ export default function ShopProductScreen() {
         )}
 
         <View className="gap-4 px-6 pt-4">
-          <ThemedText className="text-3xl font-bold">
-            {product.name}
-          </ThemedText>
+          <View className="flex-row items-center gap-2">
+            <ThemedText className="shrink text-3xl font-bold">
+              {product.name}
+            </ThemedText>
+            {isNew && <NewBadge />}
+          </View>
 
           {product.description && (
             <ThemedText className="text-base text-muted-foreground">

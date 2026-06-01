@@ -1396,6 +1396,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/protected/shop/coupon-lookup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiProtectedShopCoupon-lookup"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/protected/admin/summits/{id}": {
         parameters: {
             query?: never;
@@ -4119,6 +4135,7 @@ export interface operations {
                 userId?: string;
                 sort?: string;
                 challengeId?: string;
+                futureOnly?: boolean;
             };
             header?: never;
             path?: never;
@@ -4280,6 +4297,7 @@ export interface operations {
                 userId?: string;
                 sort?: "upcoming";
                 challengeId?: string;
+                futureOnly?: boolean;
             };
             header?: never;
             path?: never;
@@ -4560,6 +4578,7 @@ export interface operations {
         parameters: {
             query?: {
                 limit?: number;
+                futureOnly?: boolean;
             };
             header?: never;
             path?: never;
@@ -4985,6 +5004,7 @@ export interface operations {
                             whatsappUrl: (string | null) | null;
                             youtubeUrl: (string | null) | null;
                             stravaUrl: (string | null) | null;
+                            photoUrls: string[];
                             createdAt: Record<string, never> | string | number;
                             members: {
                                 id: string;
@@ -5007,6 +5027,7 @@ export interface operations {
                             whatsappUrl: (string | null) | null;
                             youtubeUrl: (string | null) | null;
                             stravaUrl: (string | null) | null;
+                            photoUrls: string[];
                             createdAt: Record<string, never> | string | number;
                             members: {
                                 id: string;
@@ -5029,6 +5050,7 @@ export interface operations {
                             whatsappUrl: (string | null) | null;
                             youtubeUrl: (string | null) | null;
                             stravaUrl: (string | null) | null;
+                            photoUrls: string[];
                             createdAt: Record<string, never> | string | number;
                             members: {
                                 id: string;
@@ -5285,6 +5307,10 @@ export interface operations {
                             createdAt: Record<string, never> | string | number;
                         } & {
                             phoneNumber: (string | null) | null;
+                            shippingStreet: (string | null) | null;
+                            shippingCity: (string | null) | null;
+                            shippingPostalCode: (string | null) | null;
+                            shippingCountry: (string | null) | null;
                         };
                     };
                     "multipart/form-data": {
@@ -5306,6 +5332,10 @@ export interface operations {
                             createdAt: Record<string, never> | string | number;
                         } & {
                             phoneNumber: (string | null) | null;
+                            shippingStreet: (string | null) | null;
+                            shippingCity: (string | null) | null;
+                            shippingPostalCode: (string | null) | null;
+                            shippingCountry: (string | null) | null;
                         };
                     };
                     "text/plain": {
@@ -5327,6 +5357,10 @@ export interface operations {
                             createdAt: Record<string, never> | string | number;
                         } & {
                             phoneNumber: (string | null) | null;
+                            shippingStreet: (string | null) | null;
+                            shippingCity: (string | null) | null;
+                            shippingPostalCode: (string | null) | null;
+                            shippingCountry: (string | null) | null;
                         };
                     };
                 };
@@ -5349,6 +5383,10 @@ export interface operations {
                     imageUrl?: string;
                     town?: string;
                     phoneNumber?: string;
+                    shippingStreet?: string;
+                    shippingCity?: string;
+                    shippingPostalCode?: string;
+                    shippingCountry?: string;
                     visibleOnHiscores?: boolean;
                     visibleOnPeopleSearch?: boolean;
                     activeChallengeId?: string;
@@ -5361,6 +5399,10 @@ export interface operations {
                     imageUrl?: string;
                     town?: string;
                     phoneNumber?: string;
+                    shippingStreet?: string;
+                    shippingCity?: string;
+                    shippingPostalCode?: string;
+                    shippingCountry?: string;
                     visibleOnHiscores?: boolean;
                     visibleOnPeopleSearch?: boolean;
                     activeChallengeId?: string;
@@ -5373,6 +5415,10 @@ export interface operations {
                     imageUrl?: string;
                     town?: string;
                     phoneNumber?: string;
+                    shippingStreet?: string;
+                    shippingCity?: string;
+                    shippingPostalCode?: string;
+                    shippingCountry?: string;
                     visibleOnHiscores?: boolean;
                     visibleOnPeopleSearch?: boolean;
                     activeChallengeId?: string;
@@ -8347,7 +8393,7 @@ export interface operations {
             query?: {
                 mountainSlug?: string;
                 q?: string;
-                trailType?: string;
+                trailType?: "loop" | "out-and-back" | "one-way";
                 minDistance?: number;
                 maxDistance?: number;
                 multiPeak?: boolean;
@@ -8371,8 +8417,7 @@ export interface operations {
                             items: {
                                 id: string;
                                 externalId: string;
-                                /** @constant */
-                                source: "wikiloc";
+                                source: ("wikiloc" | null) | null;
                                 url: string;
                                 title: {
                                     en: string;
@@ -8436,8 +8481,7 @@ export interface operations {
                             items: {
                                 id: string;
                                 externalId: string;
-                                /** @constant */
-                                source: "wikiloc";
+                                source: ("wikiloc" | null) | null;
                                 url: string;
                                 title: {
                                     en: string;
@@ -8501,8 +8545,7 @@ export interface operations {
                             items: {
                                 id: string;
                                 externalId: string;
-                                /** @constant */
-                                source: "wikiloc";
+                                source: ("wikiloc" | null) | null;
                                 url: string;
                                 title: {
                                     en: string;
@@ -8585,8 +8628,7 @@ export interface operations {
                         message: {
                             id: string;
                             externalId: string;
-                            /** @constant */
-                            source: "wikiloc";
+                            source: ("wikiloc" | null) | null;
                             url: string;
                             title: {
                                 en: string;
@@ -8642,8 +8684,7 @@ export interface operations {
                         message: {
                             id: string;
                             externalId: string;
-                            /** @constant */
-                            source: "wikiloc";
+                            source: ("wikiloc" | null) | null;
                             url: string;
                             title: {
                                 en: string;
@@ -8699,8 +8740,7 @@ export interface operations {
                         message: {
                             id: string;
                             externalId: string;
-                            /** @constant */
-                            source: "wikiloc";
+                            source: ("wikiloc" | null) | null;
                             url: string;
                             title: {
                                 en: string;
@@ -9839,6 +9879,65 @@ export interface operations {
             };
         };
     };
+    "getApiProtectedShopCoupon-lookup": {
+        parameters: {
+            query: {
+                code: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            /** @constant */
+                            valid: false;
+                        } | {
+                            /** @constant */
+                            valid: true;
+                            code: string;
+                            discountType: "percentage" | "fixed";
+                            discountValue: string | number;
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            /** @constant */
+                            valid: false;
+                        } | {
+                            /** @constant */
+                            valid: true;
+                            code: string;
+                            discountType: "percentage" | "fixed";
+                            discountValue: string | number;
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            /** @constant */
+                            valid: false;
+                        } | {
+                            /** @constant */
+                            valid: true;
+                            code: string;
+                            discountType: "percentage" | "fixed";
+                            discountValue: string | number;
+                        };
+                    };
+                };
+            };
+        };
+    };
     deleteApiProtectedAdminSummitsById: {
         parameters: {
             query?: never;
@@ -10116,6 +10215,10 @@ export interface operations {
                             createdAt: Record<string, never> | string | number;
                         } & {
                             phoneNumber: (string | null) | null;
+                            shippingStreet: (string | null) | null;
+                            shippingCity: (string | null) | null;
+                            shippingPostalCode: (string | null) | null;
+                            shippingCountry: (string | null) | null;
                         };
                     };
                     "multipart/form-data": {
@@ -10137,6 +10240,10 @@ export interface operations {
                             createdAt: Record<string, never> | string | number;
                         } & {
                             phoneNumber: (string | null) | null;
+                            shippingStreet: (string | null) | null;
+                            shippingCity: (string | null) | null;
+                            shippingPostalCode: (string | null) | null;
+                            shippingCountry: (string | null) | null;
                         };
                     };
                     "text/plain": {
@@ -10158,6 +10265,10 @@ export interface operations {
                             createdAt: Record<string, never> | string | number;
                         } & {
                             phoneNumber: (string | null) | null;
+                            shippingStreet: (string | null) | null;
+                            shippingCity: (string | null) | null;
+                            shippingPostalCode: (string | null) | null;
+                            shippingCountry: (string | null) | null;
                         };
                     };
                 };
@@ -10313,6 +10424,10 @@ export interface operations {
                             imageUrl: (string | null) | null;
                             town: (string | null) | null;
                             phoneNumber: (string | null) | null;
+                            shippingStreet: (string | null) | null;
+                            shippingCity: (string | null) | null;
+                            shippingPostalCode: (string | null) | null;
+                            shippingCountry: (string | null) | null;
                             country: (string | null) | null;
                             platform: (string | null) | null;
                             appVersion: (string | null) | null;
@@ -10342,6 +10457,10 @@ export interface operations {
                             imageUrl: (string | null) | null;
                             town: (string | null) | null;
                             phoneNumber: (string | null) | null;
+                            shippingStreet: (string | null) | null;
+                            shippingCity: (string | null) | null;
+                            shippingPostalCode: (string | null) | null;
+                            shippingCountry: (string | null) | null;
                             country: (string | null) | null;
                             platform: (string | null) | null;
                             appVersion: (string | null) | null;
@@ -10371,6 +10490,10 @@ export interface operations {
                             imageUrl: (string | null) | null;
                             town: (string | null) | null;
                             phoneNumber: (string | null) | null;
+                            shippingStreet: (string | null) | null;
+                            shippingCity: (string | null) | null;
+                            shippingPostalCode: (string | null) | null;
+                            shippingCountry: (string | null) | null;
                             country: (string | null) | null;
                             platform: (string | null) | null;
                             appVersion: (string | null) | null;
@@ -10426,6 +10549,10 @@ export interface operations {
                     username?: string;
                     town?: (string | null) | null;
                     phoneNumber?: (string | null) | null;
+                    shippingStreet?: (string | null) | null;
+                    shippingCity?: (string | null) | null;
+                    shippingPostalCode?: (string | null) | null;
+                    shippingCountry?: (string | null) | null;
                     country?: (string | null) | null;
                     locale?: (string | null) | null;
                     visibleOnHiscores?: boolean;
@@ -10440,6 +10567,10 @@ export interface operations {
                     username?: string;
                     town?: (string | null) | null;
                     phoneNumber?: (string | null) | null;
+                    shippingStreet?: (string | null) | null;
+                    shippingCity?: (string | null) | null;
+                    shippingPostalCode?: (string | null) | null;
+                    shippingCountry?: (string | null) | null;
                     country?: (string | null) | null;
                     locale?: (string | null) | null;
                     visibleOnHiscores?: boolean;
@@ -10454,6 +10585,10 @@ export interface operations {
                     username?: string;
                     town?: (string | null) | null;
                     phoneNumber?: (string | null) | null;
+                    shippingStreet?: (string | null) | null;
+                    shippingCity?: (string | null) | null;
+                    shippingPostalCode?: (string | null) | null;
+                    shippingCountry?: (string | null) | null;
                     country?: (string | null) | null;
                     locale?: (string | null) | null;
                     visibleOnHiscores?: boolean;
@@ -12642,8 +12777,7 @@ export interface operations {
                             items: {
                                 id: string;
                                 externalId: string;
-                                /** @constant */
-                                source: "wikiloc";
+                                source: ("wikiloc" | null) | null;
                                 url: string;
                                 title: {
                                     en: string;
@@ -12707,8 +12841,7 @@ export interface operations {
                             items: {
                                 id: string;
                                 externalId: string;
-                                /** @constant */
-                                source: "wikiloc";
+                                source: ("wikiloc" | null) | null;
                                 url: string;
                                 title: {
                                     en: string;
@@ -12772,8 +12905,7 @@ export interface operations {
                             items: {
                                 id: string;
                                 externalId: string;
-                                /** @constant */
-                                source: "wikiloc";
+                                source: ("wikiloc" | null) | null;
                                 url: string;
                                 title: {
                                     en: string;
@@ -12856,8 +12988,7 @@ export interface operations {
                         message: {
                             id: string;
                             externalId: string;
-                            /** @constant */
-                            source: "wikiloc";
+                            source: ("wikiloc" | null) | null;
                             url: string;
                             title: {
                                 en: string;
@@ -12913,8 +13044,7 @@ export interface operations {
                         message: {
                             id: string;
                             externalId: string;
-                            /** @constant */
-                            source: "wikiloc";
+                            source: ("wikiloc" | null) | null;
                             url: string;
                             title: {
                                 en: string;
@@ -12970,8 +13100,7 @@ export interface operations {
                         message: {
                             id: string;
                             externalId: string;
-                            /** @constant */
-                            source: "wikiloc";
+                            source: ("wikiloc" | null) | null;
                             url: string;
                             title: {
                                 en: string;
@@ -14400,6 +14529,7 @@ export interface operations {
                     whatsappUrl?: string;
                     youtubeUrl?: string;
                     stravaUrl?: string;
+                    photoUrls?: string[];
                 };
                 "multipart/form-data": {
                     name: string;
@@ -14411,6 +14541,7 @@ export interface operations {
                     whatsappUrl?: string;
                     youtubeUrl?: string;
                     stravaUrl?: string;
+                    photoUrls?: string[];
                 };
                 "text/plain": {
                     name: string;
@@ -14422,6 +14553,7 @@ export interface operations {
                     whatsappUrl?: string;
                     youtubeUrl?: string;
                     stravaUrl?: string;
+                    photoUrls?: string[];
                 };
             };
         };
@@ -14514,6 +14646,7 @@ export interface operations {
                             whatsappUrl: (string | null) | null;
                             youtubeUrl: (string | null) | null;
                             stravaUrl: (string | null) | null;
+                            photoUrls: string[];
                             createdAt: Record<string, never> | string | number;
                             updatedAt: Record<string, never> | string | number;
                             members: {
@@ -14538,6 +14671,7 @@ export interface operations {
                             whatsappUrl: (string | null) | null;
                             youtubeUrl: (string | null) | null;
                             stravaUrl: (string | null) | null;
+                            photoUrls: string[];
                             createdAt: Record<string, never> | string | number;
                             updatedAt: Record<string, never> | string | number;
                             members: {
@@ -14562,6 +14696,7 @@ export interface operations {
                             whatsappUrl: (string | null) | null;
                             youtubeUrl: (string | null) | null;
                             stravaUrl: (string | null) | null;
+                            photoUrls: string[];
                             createdAt: Record<string, never> | string | number;
                             updatedAt: Record<string, never> | string | number;
                             members: {
@@ -14614,6 +14749,7 @@ export interface operations {
                     whatsappUrl?: (string | null) | null;
                     youtubeUrl?: (string | null) | null;
                     stravaUrl?: (string | null) | null;
+                    photoUrls?: string[];
                 };
                 "multipart/form-data": {
                     name?: string;
@@ -14625,6 +14761,7 @@ export interface operations {
                     whatsappUrl?: (string | null) | null;
                     youtubeUrl?: (string | null) | null;
                     stravaUrl?: (string | null) | null;
+                    photoUrls?: string[];
                 };
                 "text/plain": {
                     name?: string;
@@ -14636,6 +14773,7 @@ export interface operations {
                     whatsappUrl?: (string | null) | null;
                     youtubeUrl?: (string | null) | null;
                     stravaUrl?: (string | null) | null;
+                    photoUrls?: string[];
                 };
             };
         };

@@ -1,8 +1,8 @@
 import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 
-import { queryClient } from "@/components/providers/query-client-provider";
 import { useAuth } from "@/components/providers/auth-provider";
+import { queryClient } from "@/components/providers/query-client-provider";
 import apiClient from "@/lib/api-client";
 import { userKeys, challengeKeys, mountainKeys } from "@/lib/query-keys";
 
@@ -370,7 +370,15 @@ export const useUpdateUserMeMutation = () => {
       if (variables.activeChallengeId) {
         void queryClient.invalidateQueries({ queryKey: challengeKeys.active() });
         void queryClient.invalidateQueries({ queryKey: userKeys.summits() });
-        void queryClient.invalidateQueries({ queryKey: mountainKeys.all });
+        // `removeQueries` (not invalidate) so the cache is wiped, not just
+        // marked stale. The /mountains screen remounts on activeChallengeId
+        // change; if we only invalidated, the previous observer's refetch
+        // would land BEFORE the remount, the new mount would inherit the
+        // already-fresh entry, and `mountains` (and `mountainsKey`) would
+        // never change → the camera-fit effect wouldn't re-fire → the map
+        // would stay parked on the previous challenge's region (or worse,
+        // never get a fit at all and show Mapbox's default world view).
+        queryClient.removeQueries({ queryKey: mountainKeys.all });
       }
     },
   });

@@ -208,22 +208,24 @@ export default function MountainRoutesScreen() {
           paddingBottom: 96,
         }}
         ListEmptyComponent={
-          <View className="items-center px-6 py-16">
-            <ThemedText className="text-center text-base font-medium text-muted-foreground">
-              {routesLoading ? (
+          // While loading we still want to say so. For "no routes for this
+          // mountain at all" we render nothing — the Wikiloc footer below
+          // becomes the action surface. The "no matches" copy only fires
+          // when the user has actually narrowed the visible set with a
+          // search/loop/multi-peak filter.
+          routesLoading ? (
+            <View className="items-center px-6 py-16">
+              <ThemedText className="text-center text-base font-medium text-muted-foreground">
                 <FormattedMessage defaultMessage="Loading…" />
-              ) : routes.length === 0 ? (
-                <FormattedMessage defaultMessage="No routes yet" />
-              ) : (
-                <FormattedMessage defaultMessage="No routes match your filters" />
-              )}
-            </ThemedText>
-            {!routesLoading && routes.length === 0 ? (
-              <ThemedText className="mt-1 text-center text-sm text-muted-foreground">
-                <FormattedMessage defaultMessage="We're rolling out scraped Wikiloc routes mountain by mountain. This one isn't covered yet." />
               </ThemedText>
-            ) : null}
-          </View>
+            </View>
+          ) : routes.length > 0 ? (
+            <View className="items-center px-6 py-16">
+              <ThemedText className="text-center text-base font-medium text-muted-foreground">
+                <FormattedMessage defaultMessage="No routes match your filters" />
+              </ThemedText>
+            </View>
+          ) : null
         }
         renderItem={({ item }) => (
           <RouteListItem

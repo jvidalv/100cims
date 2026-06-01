@@ -65,3 +65,19 @@ ios/
 android/
 
 *.psd
+
+# Wikiloc scraper — local-only artifacts. The .ts files under
+# packages/api/scripts/wikiloc/output/ are intentionally kept under version
+# control (they're the trail catalogue the seed SQL is generated from), but
+# everything else under that folder is derived/transient state that should
+# never reach git.
+packages/api/scripts/wikiloc/output/_summits.json
+packages/api/scripts/wikiloc/output/_chain.log
+packages/api/scripts/wikiloc/output/_backfill.log
+packages/api/scripts/wikiloc/output/_failures.json
+
+# Agent-tooling state (per-cwd; harmless duplicates show up when Claude is
+# launched from a subpackage). The repo only intentionally commits files
+# under .claude/skills/ at the monorepo root.
+**/.claude/scheduled_tasks.lock
+**/.claude/settings.local.json

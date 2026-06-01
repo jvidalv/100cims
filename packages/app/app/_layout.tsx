@@ -4,7 +4,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, PropsWithChildren, useState, useMemo } from "react";
 import { IntlProvider } from "react-intl";
-import { Platform, View, useColorScheme } from "react-native";
+import { Platform, View } from "react-native";
 import {
   initialWindowMetrics,
   SafeAreaProvider,
@@ -14,7 +14,6 @@ import { QueryClientProvider } from "@/components/providers";
 import { AuthProvider, useAuth } from "@/components/providers/auth-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { ThemedLogo } from "@/components/ui/atoms";
-import { FloatingCartButton } from "@/components/ui/molecules";
 import { useMountains } from "@/domains/mountain/mountain.api";
 import { usePlanChatUnread } from "@/domains/plan/plan-chat.api";
 import { usePlans } from "@/domains/plan/plan.api";
@@ -66,13 +65,6 @@ function Content() {
   });
   usePushTokenRegistration();
 
-  // Match the background-color tokens declared in ThemeProvider so the
-  // RNScreen host view paints the theme background BEFORE React's first
-  // paint commits — without this, every push transition shows a brief
-  // white flash from iOS's `systemBackground` default during the slide-in.
-  const colorScheme = useColorScheme() === "dark" ? "dark" : "light";
-  const screenBackground = colorScheme === "dark" ? "#000000" : "#ffffff";
-
   const isDataReady = !isPendingMountains && !isPendingHomepageSummits;
 
   useEffect(() => {
@@ -97,10 +89,6 @@ function Content() {
         screenOptions={{
           headerShown: false,
           freezeOnBlur: Platform.OS === "android" ? false : undefined,
-          // Pin the per-screen host-view background to the theme so the
-          // slide-in transition doesn't briefly show iOS's white system
-          // background while the screen's React tree mounts.
-          contentStyle: { backgroundColor: screenBackground },
         }}
       >
         <Stack.Screen name="(tabs)" />
@@ -129,7 +117,6 @@ function Content() {
           options={{ presentation: isIpadOS ? "fullScreenModal" : "modal" }}
         />
       </Stack>
-      <FloatingCartButton />
     </>
   );
 }

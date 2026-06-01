@@ -6,6 +6,7 @@ import { organizationTable } from "@/db/schema";
 import {
   OrganizationImageError,
   resolveOrganizationImageUrl,
+  resolveOrganizationPhotoUrls,
 } from "@/api/lib/organization-images";
 import { AdminOrganizationCreateBodySchema } from "@/api/schemas/admin-organization.schema";
 import {
@@ -28,9 +29,14 @@ export const adminOrganizationCreatePostRoute = new Elysia().post(
     const organizationId = uuidv7();
 
     let imageUrl: string | null;
+    let photoUrls: string[];
     try {
       imageUrl = await resolveOrganizationImageUrl(
         body.imageUrl,
+        organizationId,
+      );
+      photoUrls = await resolveOrganizationPhotoUrls(
+        body.photoUrls ?? [],
         organizationId,
       );
     } catch (e) {
@@ -52,6 +58,7 @@ export const adminOrganizationCreatePostRoute = new Elysia().post(
       whatsappUrl: normalizeOptional(body.whatsappUrl),
       youtubeUrl: normalizeOptional(body.youtubeUrl),
       stravaUrl: normalizeOptional(body.stravaUrl),
+      photoUrls,
     });
 
     return { success: true, message: { id: organizationId } };
