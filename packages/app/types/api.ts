@@ -1412,6 +1412,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/protected/shop/shop-requests/{id}/payment": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["postApiProtectedShopShop-requestsByIdPayment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/protected/shop/config": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiProtectedShopConfig"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/protected/admin/summits/{id}": {
         parameters: {
             query?: never;
@@ -6423,12 +6455,21 @@ export interface operations {
                 content: {
                     "application/json": {
                         success: boolean;
+                        message: {
+                            shopRequestId: (string | null) | null;
+                        };
                     };
                     "multipart/form-data": {
                         success: boolean;
+                        message: {
+                            shopRequestId: (string | null) | null;
+                        };
                     };
                     "text/plain": {
                         success: boolean;
+                        message: {
+                            shopRequestId: (string | null) | null;
+                        };
                     };
                 };
             };
@@ -9932,6 +9973,131 @@ export interface operations {
                             code: string;
                             discountType: "percentage" | "fixed";
                             discountValue: string | number;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "postApiProtectedShopShop-requestsByIdPayment": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    image: string;
+                };
+                "multipart/form-data": {
+                    image: string;
+                };
+                "text/plain": {
+                    image: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                    };
+                    "text/plain": {
+                        success: boolean;
+                    };
+                };
+            };
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+        };
+    };
+    getApiProtectedShopConfig: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            bizumPhone: string;
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            bizumPhone: string;
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            bizumPhone: string;
                         };
                     };
                 };
@@ -16184,6 +16350,7 @@ export interface operations {
                                 message: string;
                                 status: "requested" | "contacted" | "done" | "cancelled";
                                 comments: (string | null) | null;
+                                paymentImageUrl: (string | null) | null;
                                 createdAt: Record<string, never> | string | number;
                                 updatedAt: Record<string, never> | string | number;
                             }[];
@@ -16199,6 +16366,7 @@ export interface operations {
                                 message: string;
                                 status: "requested" | "contacted" | "done" | "cancelled";
                                 comments: (string | null) | null;
+                                paymentImageUrl: (string | null) | null;
                                 createdAt: Record<string, never> | string | number;
                                 updatedAt: Record<string, never> | string | number;
                             }[];
@@ -16214,6 +16382,7 @@ export interface operations {
                                 message: string;
                                 status: "requested" | "contacted" | "done" | "cancelled";
                                 comments: (string | null) | null;
+                                paymentImageUrl: (string | null) | null;
                                 createdAt: Record<string, never> | string | number;
                                 updatedAt: Record<string, never> | string | number;
                             }[];
@@ -16248,6 +16417,7 @@ export interface operations {
                             message: string;
                             status: "requested" | "contacted" | "done" | "cancelled";
                             comments: (string | null) | null;
+                            paymentImageUrl: (string | null) | null;
                             createdAt: Record<string, never> | string | number;
                             updatedAt: Record<string, never> | string | number;
                         } & {
@@ -16268,6 +16438,7 @@ export interface operations {
                             message: string;
                             status: "requested" | "contacted" | "done" | "cancelled";
                             comments: (string | null) | null;
+                            paymentImageUrl: (string | null) | null;
                             createdAt: Record<string, never> | string | number;
                             updatedAt: Record<string, never> | string | number;
                         } & {
@@ -16288,6 +16459,7 @@ export interface operations {
                             message: string;
                             status: "requested" | "contacted" | "done" | "cancelled";
                             comments: (string | null) | null;
+                            paymentImageUrl: (string | null) | null;
                             createdAt: Record<string, never> | string | number;
                             updatedAt: Record<string, never> | string | number;
                         } & {

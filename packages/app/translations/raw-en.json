@@ -137,6 +137,9 @@
   "2E0xhC": {
     "defaultMessage": "Share Cims with a friend."
   },
+  "2HxZwB": {
+    "defaultMessage": "I don't know how to do this"
+  },
   "2YBqTq": {
     "defaultMessage": "Mountains"
   },
@@ -187,6 +190,9 @@
   },
   "3wJHrF": {
     "defaultMessage": "Join plan"
+  },
+  "3xN/Yn": {
+    "defaultMessage": "Uploading…"
   },
   "4+p0E9": {
     "defaultMessage": "Do you know?"
@@ -293,6 +299,9 @@
   "82UPI7": {
     "defaultMessage": "Bike"
   },
+  "89WWaR": {
+    "defaultMessage": "Go to cart"
+  },
   "89eDMC": {
     "defaultMessage": "Picat"
   },
@@ -334,6 +343,9 @@
   },
   "9Voj7P": {
     "defaultMessage": "Lock map"
+  },
+  "9WRlF4": {
+    "defaultMessage": "Send"
   },
   "9XiW3x": {
     "defaultMessage": "Loop"
@@ -632,6 +644,9 @@
   "IUPPsb": {
     "defaultMessage": "My challenges ({count}/{max})"
   },
+  "IWU2ya": {
+    "defaultMessage": "Pay {amount}€ via Bizum"
+  },
   "IXIWgD": {
     "defaultMessage": "How to rate"
   },
@@ -655,6 +670,9 @@
   },
   "J9wo18": {
     "defaultMessage": "more mountains"
+  },
+  "JLWim+": {
+    "defaultMessage": "Open your bank app and send this amount."
   },
   "JLegne": {
     "defaultMessage": "Forcat"
@@ -688,6 +706,9 @@
   },
   "KTlYr+": {
     "defaultMessage": "Deleting your account is permanent. All your summits and plans will be lost."
+  },
+  "L4s3LM": {
+    "defaultMessage": "Thanks, we'll be in touch."
   },
   "LGas/S": {
     "defaultMessage": "Search country"
@@ -809,6 +830,9 @@
   "PFtMy9": {
     "defaultMessage": "Canceled"
   },
+  "PPDYv4": {
+    "defaultMessage": "Bizum number copied"
+  },
   "Pe0ogR": {
     "defaultMessage": "Theme"
   },
@@ -901,6 +925,9 @@
   },
   "T4VxQN": {
     "defaultMessage": "Loading…"
+  },
+  "T7Ry38": {
+    "defaultMessage": "Message"
   },
   "T8aJHS": {
     "defaultMessage": "Pick a cover photo"
@@ -1001,6 +1028,12 @@
   "WXGcL+": {
     "defaultMessage": "Create challenge"
   },
+  "WYzHAI": {
+    "defaultMessage": "Skip for now"
+  },
+  "WtM7Ok": {
+    "defaultMessage": "Upload screenshot"
+  },
   "Ww0lYU": {
     "defaultMessage": "Unsafe"
   },
@@ -1060,6 +1093,9 @@
   },
   "ZQv4i6": {
     "defaultMessage": "Based on {count} from summiters, this mountain is rated {label} for dogs."
+  },
+  "ZS59xf": {
+    "defaultMessage": "Amount to send"
   },
   "ZYxiR7": {
     "defaultMessage": "Remove from your people?"
@@ -1247,6 +1283,9 @@
   "fddi7D": {
     "defaultMessage": "Circular"
   },
+  "ff2VGL": {
+    "defaultMessage": "Sending…"
+  },
   "fnihsY": {
     "defaultMessage": "Leave"
   },
@@ -1307,6 +1346,9 @@
   "jPUO6p": {
     "defaultMessage": "Price ↓"
   },
+  "jS/rrZ": {
+    "defaultMessage": "Tell us what's stuck — Bizum problems, payment failed, anything else. We'll get back to you within a day."
+  },
   "jdJhOL": {
     "defaultMessage": "Phone number"
   },
@@ -1333,6 +1375,9 @@
   },
   "koCg5W": {
     "defaultMessage": "Highest point reached on the route — usually the summit or a high pass."
+  },
+  "krty63": {
+    "defaultMessage": "Need help?"
   },
   "kyYf9Q": {
     "defaultMessage": "{points} pts"
@@ -1430,6 +1475,9 @@
   "pONqz8": {
     "defaultMessage": "First name"
   },
+  "pe6oHl": {
+    "defaultMessage": "Send the amount to this Bizum number, then upload your confirmation screenshot."
+  },
   "pkmThu": {
     "defaultMessage": "The trail starts and ends at the same point. You return on a different path."
   },
@@ -1441,6 +1489,9 @@
   },
   "qCcwo3": {
     "defaultMessage": "Links"
+  },
+  "qPecch": {
+    "defaultMessage": "Bizum number"
   },
   "qR1oV/": {
     "defaultMessage": "Add mountain"

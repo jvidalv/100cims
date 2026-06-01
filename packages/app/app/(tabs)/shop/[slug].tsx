@@ -1,5 +1,5 @@
 import { Redirect, useLocalSearchParams, useRouter } from "expo-router";
-import { ShoppingBag } from "lucide-react-native";
+import { ShoppingBag, ShoppingCart } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Alert, Pressable, ScrollView, TouchableOpacity, View } from "react-native";
@@ -11,7 +11,6 @@ import { LucideIcon, NewBadge, Skeleton, ThemedText } from "@/components/ui/atom
 import { Image } from "@/components/ui/atoms/image";
 import {
   ActionRow,
-  CartHeaderButton,
   ImagePreviewModal,
   ProductPrice,
   ScreenHeader,
@@ -78,7 +77,7 @@ export default function ShopProductScreen() {
     if (isPending) {
       return (
         <View className="flex-1 bg-background">
-          <ScreenHeader rightElement={<CartHeaderButton />} />
+          <ScreenHeader />
           <ScrollView
             className="flex-1"
             contentContainerClassName="pb-10"
@@ -126,7 +125,7 @@ export default function ShopProductScreen() {
     }
     return (
       <View className="flex-1 bg-background">
-        <ScreenHeader rightElement={<CartHeaderButton />}>
+        <ScreenHeader>
           <FormattedMessage defaultMessage="Product" />
         </ScreenHeader>
         <View className="flex-1 items-center justify-center">
@@ -192,9 +191,7 @@ export default function ShopProductScreen() {
 
   return (
     <View className="flex-1 bg-background">
-      <ScreenHeader rightElement={<CartHeaderButton />}>
-        {product.name}
-      </ScreenHeader>
+      <ScreenHeader>{product.name}</ScreenHeader>
       <ScrollView
         className="flex-1"
         // `useSafeAreaInsets().bottom` already includes the NativeTabs tab
@@ -385,14 +382,23 @@ export default function ShopProductScreen() {
             />
           </View>
 
-          <ActionRow
-            icon={ShoppingBag}
-            intent="emerald"
-            size="lg"
-            onPress={onAddToCart}
-          >
-            <FormattedMessage defaultMessage="Add to cart" />
-          </ActionRow>
+          <View className="gap-1">
+            <ActionRow
+              icon={ShoppingBag}
+              intent="emerald"
+              size="lg"
+              onPress={onAddToCart}
+            >
+              <FormattedMessage defaultMessage="Add to cart" />
+            </ActionRow>
+            <ActionRow
+              icon={ShoppingCart}
+              size="lg"
+              onPress={() => router.push("/shop/cart")}
+            >
+              <FormattedMessage defaultMessage="Go to cart" />
+            </ActionRow>
+          </View>
         </View>
       </ScrollView>
 
