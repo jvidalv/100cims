@@ -638,6 +638,9 @@
   "ID8Us+": {
     "defaultMessage": "How points work"
   },
+  "IMgaIg": {
+    "defaultMessage": "Add {amount}€ more to get free shipping."
+  },
   "INbfet": {
     "defaultMessage": "Hold to interact with map"
   },
@@ -709,6 +712,9 @@
   },
   "L4s3LM": {
     "defaultMessage": "Thanks, we'll be in touch."
+  },
+  "L8seEc": {
+    "defaultMessage": "Subtotal"
   },
   "LGas/S": {
     "defaultMessage": "Search country"
@@ -832,6 +838,9 @@
   },
   "PPDYv4": {
     "defaultMessage": "Bizum number copied"
+  },
+  "PRlD0A": {
+    "defaultMessage": "Shipping"
   },
   "Pe0ogR": {
     "defaultMessage": "Theme"
@@ -1469,6 +1478,9 @@
   "oZg4DR": {
     "defaultMessage": "Shortest"
   },
+  "ophUeg": {
+    "defaultMessage": "Free shipping unlocked."
+  },
   "p/Xd3M": {
     "defaultMessage": "Share with a friend"
   },
@@ -1564,6 +1576,9 @@
   },
   "tOdNiY": {
     "defaultMessage": "Dark"
+  },
+  "tf1lIh": {
+    "defaultMessage": "Free"
   },
   "tmsPkP": {
     "defaultMessage": "Saved for later"
