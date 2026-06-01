@@ -98,8 +98,8 @@ export const updateKeys = {
 // Calendar keys
 export const calendarKeys = {
   all: ["calendar"] as const,
-  events: (from: string, to: string) =>
-    ["calendar", "events", from, to] as const,
+  events: (from: string, to: string, isAuthenticated: boolean) =>
+    ["calendar", "events", from, to, isAuthenticated] as const,
 };
 
 // Organization keys

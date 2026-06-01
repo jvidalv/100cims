@@ -50,7 +50,7 @@ const STYLE_DARK = "mapbox://styles/mapbox/satellite-streets-v12";
 
 const COLOR_SUMMITED = "#10b981";
 const COLOR_ESSENTIAL = Colors.light.primary;
-const COLOR_DEFAULT = "#6b7280";
+const COLOR_DEFAULT = "#ffffff";
 const COLOR_CLUSTER = "#000000";
 
 const SOURCE_ID = "mountains";
@@ -689,6 +689,11 @@ export function MountainsMap({
               textSize: 11,
               textColor:
                 colorScheme === "dark" ? COLOR_LABEL_DARK : COLOR_LABEL_LIGHT,
+              // 2px black halo so the label stays readable against bright
+              // satellite terrain (snow, rock, lit slopes) where the
+              // foreground text would otherwise blend in.
+              textHaloColor: "#000000",
+              textHaloWidth: 2,
               // Semibold reads better at small sizes against varied terrain.
               // Mapbox Standard ships this in its glyph atlas; fall back to
               // Arial Unicode for any glyph the primary font lacks.

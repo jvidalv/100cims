@@ -23,11 +23,12 @@ import { SuccessResponse } from "@/api/schemas/common.schema";
  * Per-mountain row shape. Mirrors `CalendarPlanEventSchema` so the mobile
  * `PlanItemListCompact` molecule consumes it as-is, but widens `date` to
  * nullable — plans here may not have a start date set, whereas the calendar
- * endpoint guarantees one via its date-range filter. `isCreator` is dropped
- * because no current consumer reads it.
+ * endpoint guarantees one via its date-range filter. `isCreator` and
+ * `isJoined` are dropped because no current consumer reads them (this
+ * endpoint runs unauthenticated; viewer identity isn't known).
  */
 const PlanByMountainEventSchema = t.Composite([
-  t.Omit(CalendarPlanEventSchema, ["date", "isCreator"]),
+  t.Omit(CalendarPlanEventSchema, ["date", "isCreator", "isJoined"]),
   t.Object({
     date: t.Nullable(
       t.String({ description: "YYYY-MM-DD plan start date, or null" }),

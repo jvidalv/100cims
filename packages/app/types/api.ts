@@ -388,6 +388,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/public/plans/calendar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getApiPublicPlansCalendar"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/public/plans/featured": {
         parameters: {
             query?: never;
@@ -4606,6 +4622,146 @@ export interface operations {
             };
         };
     };
+    getApiPublicPlansCalendar: {
+        parameters: {
+            query: {
+                /** @description YYYY-MM-DD inclusive */
+                from: string;
+                /** @description YYYY-MM-DD inclusive */
+                to: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        message: {
+                            events: ({
+                                /** @constant */
+                                type: "summit";
+                                /** @description YYYY-MM-DD in the user's local timezone */
+                                date: string;
+                                id: string;
+                                mountainName: string;
+                                mountainSlug: string;
+                                mountainHeight: string;
+                                mountainImageUrl: (string | null) | null;
+                            } | {
+                                /** @constant */
+                                type: "plan";
+                                /** @description YYYY-MM-DD plan start date */
+                                date: string;
+                                id: string;
+                                title: string;
+                                status: "open" | "completed" | "canceled";
+                                planType: (("hike" | "trail" | "bike") | null) | null;
+                                isPrivate: boolean;
+                                isCreator: boolean;
+                                isJoined: boolean;
+                                featured: boolean;
+                                imageUrl: (string | null) | null;
+                                mountains: {
+                                    imageUrl: (string | null) | null;
+                                }[];
+                                users: {
+                                    id: string;
+                                    firstName: (string | null) | null;
+                                    lastName: (string | null) | null;
+                                    imageUrl: (string | null) | null;
+                                }[];
+                            })[];
+                        };
+                    };
+                    "multipart/form-data": {
+                        success: boolean;
+                        message: {
+                            events: ({
+                                /** @constant */
+                                type: "summit";
+                                /** @description YYYY-MM-DD in the user's local timezone */
+                                date: string;
+                                id: string;
+                                mountainName: string;
+                                mountainSlug: string;
+                                mountainHeight: string;
+                                mountainImageUrl: (string | null) | null;
+                            } | {
+                                /** @constant */
+                                type: "plan";
+                                /** @description YYYY-MM-DD plan start date */
+                                date: string;
+                                id: string;
+                                title: string;
+                                status: "open" | "completed" | "canceled";
+                                planType: (("hike" | "trail" | "bike") | null) | null;
+                                isPrivate: boolean;
+                                isCreator: boolean;
+                                isJoined: boolean;
+                                featured: boolean;
+                                imageUrl: (string | null) | null;
+                                mountains: {
+                                    imageUrl: (string | null) | null;
+                                }[];
+                                users: {
+                                    id: string;
+                                    firstName: (string | null) | null;
+                                    lastName: (string | null) | null;
+                                    imageUrl: (string | null) | null;
+                                }[];
+                            })[];
+                        };
+                    };
+                    "text/plain": {
+                        success: boolean;
+                        message: {
+                            events: ({
+                                /** @constant */
+                                type: "summit";
+                                /** @description YYYY-MM-DD in the user's local timezone */
+                                date: string;
+                                id: string;
+                                mountainName: string;
+                                mountainSlug: string;
+                                mountainHeight: string;
+                                mountainImageUrl: (string | null) | null;
+                            } | {
+                                /** @constant */
+                                type: "plan";
+                                /** @description YYYY-MM-DD plan start date */
+                                date: string;
+                                id: string;
+                                title: string;
+                                status: "open" | "completed" | "canceled";
+                                planType: (("hike" | "trail" | "bike") | null) | null;
+                                isPrivate: boolean;
+                                isCreator: boolean;
+                                isJoined: boolean;
+                                featured: boolean;
+                                imageUrl: (string | null) | null;
+                                mountains: {
+                                    imageUrl: (string | null) | null;
+                                }[];
+                                users: {
+                                    id: string;
+                                    firstName: (string | null) | null;
+                                    lastName: (string | null) | null;
+                                    imageUrl: (string | null) | null;
+                                }[];
+                            })[];
+                        };
+                    };
+                };
+            };
+        };
+    };
     getApiPublicPlansFeatured: {
         parameters: {
             query?: {
@@ -6239,6 +6395,7 @@ export interface operations {
                                 planType: (("hike" | "trail" | "bike") | null) | null;
                                 isPrivate: boolean;
                                 isCreator: boolean;
+                                isJoined: boolean;
                                 featured: boolean;
                                 imageUrl: (string | null) | null;
                                 mountains: {
@@ -6277,6 +6434,7 @@ export interface operations {
                                 planType: (("hike" | "trail" | "bike") | null) | null;
                                 isPrivate: boolean;
                                 isCreator: boolean;
+                                isJoined: boolean;
                                 featured: boolean;
                                 imageUrl: (string | null) | null;
                                 mountains: {
@@ -6315,6 +6473,7 @@ export interface operations {
                                 planType: (("hike" | "trail" | "bike") | null) | null;
                                 isPrivate: boolean;
                                 isCreator: boolean;
+                                isJoined: boolean;
                                 featured: boolean;
                                 imageUrl: (string | null) | null;
                                 mountains: {
@@ -10035,6 +10194,22 @@ export interface operations {
                 };
             };
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string | boolean;
+                    };
+                    "multipart/form-data": {
+                        error: string | boolean;
+                    };
+                    "text/plain": {
+                        error: string | boolean;
+                    };
+                };
+            };
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
