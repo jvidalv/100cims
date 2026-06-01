@@ -76,6 +76,19 @@ export const adminUsersGetRoute = new Elysia().get(
           return [desc(totalSummitsSql), desc(userTable.createdAt)];
         case "summits_asc":
           return [asc(totalSummitsSql), desc(userTable.createdAt)];
+        case "lastSeenAt_desc":
+          // NULLS LAST so accounts that never opened the app since the
+          // column was added don't pollute the top of the recently-active
+          // list. createdAt as a tiebreaker keeps the order stable.
+          return [
+            sql`${userTable.lastSeenAt} DESC NULLS LAST`,
+            desc(userTable.createdAt),
+          ];
+        case "lastSeenAt_asc":
+          return [
+            sql`${userTable.lastSeenAt} ASC NULLS LAST`,
+            desc(userTable.createdAt),
+          ];
         default:
           return [desc(userTable.createdAt)];
       }
@@ -102,6 +115,7 @@ export const adminUsersGetRoute = new Elysia().get(
             hasPushToken: sql<boolean>`${userTable.expoPushToken} IS NOT NULL`,
             totalSummits: totalSummitsSql,
             lastSummitAt: lastSummitAtSql,
+            lastSeenAt: userTable.lastSeenAt,
           })
           .from(userTable)
           .leftJoin(

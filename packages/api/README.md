@@ -38,8 +38,8 @@ Elysia is a fast, type-safe TypeScript API framework with excellent OpenAPI supp
 
 ### Prerequisites
 
-- Node.js >= 18.0.0
-- PostgreSQL database
+- Node.js >= 24.0.0 (pinned in root `package.json` engines)
+- PostgreSQL database (`yarn api db` starts a dockerized one locally)
 - AWS S3 bucket (for images)
 - Google Cloud service account (for Sheets logging)
 
@@ -92,13 +92,28 @@ The database includes these main tables:
 
 ### Running Migrations
 
-```bash
-# From monorepo root
-yarn api drizzle-kit push
+**Never run `drizzle-kit push`.** It bypasses the versioned migration files and
+later breaks `db:migrate` on every deploy until someone manually patches the
+`drizzle.__drizzle_migrations` table. Always use the generate + migrate flow:
 
-# Or from this directory
-yarn drizzle-kit push
+```bash
+# 1. Edit src/db/schema.ts
+# 2. Generate a versioned migration file
+yarn api db:generate --name <slug>
+
+# 3. Apply (ask the user first — see root AGENTS.md guardrails)
+yarn api db:migrate
 ```
+
+For pure data migrations with no schema diff, use
+`yarn api db:generate --custom --name <slug>` to get an empty file pre-registered
+in the journal. Hand-written SQL inside custom migrations **must use snake_case
+identifiers** (real column names like `image_url`, not the TS field `imageUrl`)
+— see [`.claude/skills/api/SKILL.md`](../../.claude/skills/api/SKILL.md) for the
+full rule.
+
+Production migrations apply automatically on Railway deploy (the `build` script
+runs `next build && yarn db:migrate`).
 
 ### Database Init Script
 
@@ -106,27 +121,18 @@ An initial data script is available at `src/db/init-script.sql` for populating m
 
 ## 📡 API Structure
 
-The API is organized into **public** and **protected** routes:
+Routes live under `src/api/routes/` in three top-level buckets:
 
-### Public Routes (`src/api/routes/public/`)
+- **`public/`** — no auth required (open reads, waitlist join).
+- **`protected/`** — JWT bearer auth (mobile app's authenticated calls). Admin-only
+  mobile actions sit at `protected/admin/*` and additionally check `user.admin`.
+- **`admin/`** — NextAuth session cookie (web backoffice only — not callable from
+  the mobile app).
 
-No authentication required:
-- `GET /api/mountains` - List all mountains
-- `GET /api/user/:id` - Get user profile
-- `GET /api/challenge` - List challenges
-- `GET /api/hiscores` - Get leaderboard
-- `POST /api/join` - Join waitlist (logs to Google Sheets)
-
-### Protected Routes (`src/api/routes/protected/`)
-
-Require JWT authentication (`Authorization: Bearer <token>`):
-- `POST /api/summit` - Log a summit
-- `GET /api/summit` - Get user's summits
-- `POST /api/plan` - Create a hiking plan
-- `POST /api/plan/:id/chat` - Send chat message
-- `POST /api/mountain/:id/image` - Upload summit photo
-- `POST /api/user/avatar` - Upload avatar
-- `POST /api/donor` - Record donation
+Each folder follows **one file = one endpoint** with an `index.ts` composer per
+folder. The full set of routes is browsable interactively at
+[`/api/swagger`](http://localhost:3000/api/swagger) in dev; that's the source of
+truth (don't maintain a hand-written list here that drifts).
 
 ### Authentication Flow
 

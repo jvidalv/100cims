@@ -1,6 +1,9 @@
 export const PUSH_TYPE = {
   PLAN_JOIN: "plan-join",
+  PLAN_JOIN_OTHER: "plan-join-other",
   PLAN_LEAVE: "plan-leave",
+  PLAN_DELETED: "plan-deleted",
+  FRIEND_PLAN_CREATED: "friend-plan-created",
   PLAN_CHAT: "plan-chat",
   PLAN_REMINDER: "plan-reminder",
   PLAN_SAVED_MOUNTAIN: "plan-saved-mountain",

@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect, useState } from "react";
 
 import type { paths } from "@/types/api";
 
@@ -41,12 +42,14 @@ const sanitize = (raw: unknown): CartItem[] => {
   const out: CartItem[] = [];
   for (const item of raw) {
     if (!item || typeof item !== "object") continue;
-    const obj = item as Record<string, unknown>;
-    if (typeof obj.slug !== "string") continue;
-    const qty = typeof obj.qty === "number" && obj.qty > 0 ? obj.qty : 1;
-    const size = isCartSize(obj.size) ? obj.size : undefined;
-    const color = typeof obj.color === "string" ? obj.color : undefined;
-    out.push({ slug: obj.slug, qty, size, color });
+    if (!("slug" in item) || typeof item.slug !== "string") continue;
+    const qtyRaw = "qty" in item ? item.qty : undefined;
+    const qty = typeof qtyRaw === "number" && qtyRaw > 0 ? qtyRaw : 1;
+    const sizeRaw = "size" in item ? item.size : undefined;
+    const size = isCartSize(sizeRaw) ? sizeRaw : undefined;
+    const colorRaw = "color" in item ? item.color : undefined;
+    const color = typeof colorRaw === "string" ? colorRaw : undefined;
+    out.push({ slug: item.slug, qty, size, color });
   }
   return out;
 };
@@ -102,4 +105,30 @@ export const updateQty = async (
       : items.map((i) => (sameLine(i, line) ? { ...i, qty } : i));
   await saveCart(next);
   return next;
+};
+
+// Sum of line quantities — drives the bottom-tab badge and the shop header
+// cart icon. We sum `qty` (not `items.length`) so adding 3 of the same size
+// shows "3", which matches what the user sees when they open the cart.
+export const useCartCount = (): number => {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    const toCount = (items: CartItem[]) =>
+      items.reduce((sum, i) => sum + i.qty, 0);
+    // Subscribe first so any `saveCart` that fires while `loadCart`'s
+    // AsyncStorage read is in-flight wins, and `seenUpdate` ignores the
+    // stale-snapshot resolution that would otherwise stomp it. Without
+    // this guard, a write between mount and load-resolution silently
+    // reverts the badge to the pre-write count.
+    let seenUpdate = false;
+    const unsubscribe = subscribeCart((items) => {
+      seenUpdate = true;
+      setCount(toCount(items));
+    });
+    void loadCart().then((items) => {
+      if (!seenUpdate) setCount(toCount(items));
+    });
+    return unsubscribe;
+  }, []);
+  return count;
 };

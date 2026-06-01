@@ -5,6 +5,7 @@ import { getToken } from "next-auth/jwt";
 import { db } from "@/db";
 import { userTable } from "@/db/schema";
 import { setAdminContext } from "@/api/routes/admin/admin-context";
+import { adminActiveUsersGetRoute } from "@/api/routes/admin/admin.active-users.get";
 import { adminCampaignStatsGetRoute } from "@/api/routes/admin/admin.campaign-stats.get";
 import { adminCampaignTriggerPostRoute } from "@/api/routes/admin/admin.campaign-trigger.post";
 import { adminChallengeDeleteDeleteRoute } from "@/api/routes/admin/admin.challenge-delete.delete";
@@ -12,6 +13,8 @@ import { adminChallengeDetailGetRoute } from "@/api/routes/admin/admin.challenge
 import { adminChallengeMountainsGetRoute } from "@/api/routes/admin/admin.challenge-mountains.get";
 import { adminChallengeUpdatePostRoute } from "@/api/routes/admin/admin.challenge-update.post";
 import { adminChallengesGetRoute } from "@/api/routes/admin/admin.challenges.get";
+import { adminRouteDetailGetRoute } from "@/api/routes/admin/admin.route-detail.get";
+import { adminRouteListGetRoute } from "@/api/routes/admin/admin.route-list.get";
 import { adminCouponCreatePostRoute } from "@/api/routes/admin/admin.coupon-create.post";
 import { adminCouponDeleteDeleteRoute } from "@/api/routes/admin/admin.coupon-delete.delete";
 import { adminCouponDetailGetRoute } from "@/api/routes/admin/admin.coupon-detail.get";
@@ -33,8 +36,10 @@ import { adminMerchGetRoute } from "@/api/routes/admin/admin.merch.get";
 import { adminMountainChallengesGetRoute } from "@/api/routes/admin/admin.mountain-challenges.get";
 import { adminMountainCommentCreatePostRoute } from "@/api/routes/admin/admin.mountain-comment-create.post";
 import { adminMountainCommentDeleteDeleteRoute } from "@/api/routes/admin/admin.mountain-comment-delete.delete";
+import { adminMountainCommentDetailGetRoute } from "@/api/routes/admin/admin.mountain-comment-detail.get";
 import { adminMountainCommentUpdatePostRoute } from "@/api/routes/admin/admin.mountain-comment-update.post";
 import { adminMountainCommentUpvotePostRoute } from "@/api/routes/admin/admin.mountain-comment-upvote.post";
+import { adminMountainCommentsListGetRoute } from "@/api/routes/admin/admin.mountain-comments-list.get";
 import { adminMountainCommentsGetRoute } from "@/api/routes/admin/admin.mountain-comments.get";
 import { adminMountainDeleteDeleteRoute } from "@/api/routes/admin/admin.mountain-delete.delete";
 import { adminMountainDetailGetRoute } from "@/api/routes/admin/admin.mountain-detail.get";
@@ -42,10 +47,19 @@ import { adminMountainRatingDeleteDeleteRoute } from "@/api/routes/admin/admin.m
 import { adminMountainRatingsGetRoute } from "@/api/routes/admin/admin.mountain-ratings.get";
 import { adminMountainUpdatePostRoute } from "@/api/routes/admin/admin.mountain-update.post";
 import { adminMountainsGetRoute } from "@/api/routes/admin/admin.mountains.get";
+import { adminOrganizationCreatePostRoute } from "@/api/routes/admin/admin.organization-create.post";
+import { adminOrganizationDeleteDeleteRoute } from "@/api/routes/admin/admin.organization-delete.delete";
+import { adminOrganizationDetailGetRoute } from "@/api/routes/admin/admin.organization-detail.get";
+import { adminOrganizationMemberAddPostRoute } from "@/api/routes/admin/admin.organization-member-add.post";
+import { adminOrganizationMemberRemoveDeleteRoute } from "@/api/routes/admin/admin.organization-member-remove.delete";
+import { adminOrganizationUpdatePostRoute } from "@/api/routes/admin/admin.organization-update.post";
+import { adminOrganizationsGetRoute } from "@/api/routes/admin/admin.organizations.get";
 import { adminPlanCreatePostRoute } from "@/api/routes/admin/admin.plan-create.post";
 import { adminPlanDeleteDeleteRoute } from "@/api/routes/admin/admin.plan-delete.delete";
 import { adminPlanDetailGetRoute } from "@/api/routes/admin/admin.plan-detail.get";
+import { adminPlanMemberLogGetRoute } from "@/api/routes/admin/admin.plan-member-log.get";
 import { adminPlanMemberRemoveDeleteRoute } from "@/api/routes/admin/admin.plan-member-remove.delete";
+import { adminPlanMemberRolePatchRoute } from "@/api/routes/admin/admin.plan-member-role.patch";
 import { adminPlanMountainAddPostRoute } from "@/api/routes/admin/admin.plan-mountain-add.post";
 import { adminPlanMountainRemoveDeleteRoute } from "@/api/routes/admin/admin.plan-mountain-remove.delete";
 import { adminPlanUpdatePostRoute } from "@/api/routes/admin/admin.plan-update.post";
@@ -109,6 +123,8 @@ export const adminRoutes = new Elysia({ prefix: "/admin" })
   .use(adminMountainRatingsGetRoute)
   .use(adminMountainRatingDeleteDeleteRoute)
   .use(adminMountainCommentsGetRoute)
+  .use(adminMountainCommentsListGetRoute)
+  .use(adminMountainCommentDetailGetRoute)
   .use(adminMountainCommentCreatePostRoute)
   .use(adminMountainCommentUpdatePostRoute)
   .use(adminMountainCommentUpvotePostRoute)
@@ -118,6 +134,8 @@ export const adminRoutes = new Elysia({ prefix: "/admin" })
   .use(adminChallengeUpdatePostRoute)
   .use(adminChallengeDeleteDeleteRoute)
   .use(adminChallengeMountainsGetRoute)
+  .use(adminRouteListGetRoute)
+  .use(adminRouteDetailGetRoute)
   .use(adminSummitsGetRoute)
   .use(adminSummitDetailGetRoute)
   .use(adminSummitUpdatePostRoute)
@@ -127,9 +145,18 @@ export const adminRoutes = new Elysia({ prefix: "/admin" })
   .use(adminPlanCreatePostRoute)
   .use(adminPlanUpdatePostRoute)
   .use(adminPlanDeleteDeleteRoute)
+  .use(adminPlanMemberLogGetRoute)
   .use(adminPlanMemberRemoveDeleteRoute)
+  .use(adminPlanMemberRolePatchRoute)
   .use(adminPlanMountainAddPostRoute)
   .use(adminPlanMountainRemoveDeleteRoute)
+  .use(adminOrganizationsGetRoute)
+  .use(adminOrganizationDetailGetRoute)
+  .use(adminOrganizationCreatePostRoute)
+  .use(adminOrganizationUpdatePostRoute)
+  .use(adminOrganizationDeleteDeleteRoute)
+  .use(adminOrganizationMemberAddPostRoute)
+  .use(adminOrganizationMemberRemoveDeleteRoute)
   .use(adminMerchGetRoute)
   .use(adminMerchDetailGetRoute)
   .use(adminMerchCreatePostRoute)
@@ -145,6 +172,7 @@ export const adminRoutes = new Elysia({ prefix: "/admin" })
   .use(adminShopRequestDetailGetRoute)
   .use(adminShopRequestUpdatePostRoute)
   .use(adminStatsTimeseriesGetRoute)
+  .use(adminActiveUsersGetRoute)
   .use(adminCronsGetRoute)
   .use(adminCronsTriggerPostRoute)
   .use(adminEmailTestPostRoute)

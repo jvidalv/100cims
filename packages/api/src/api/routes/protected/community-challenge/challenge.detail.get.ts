@@ -72,20 +72,37 @@ export const challengeDetailGetRoute = new Elysia().get(
     // First row has challenge data
     const challenge = results[0];
 
-    // Collect mountains from all rows (filter out nulls from LEFT JOIN)
-    const mountains = results
-      .filter((r) => r.mountainId !== null)
-      .map((r) => ({
-        id: r.mountainId!,
-        name: r.mountainName!,
-        slug: r.mountainSlug!,
-        location: r.mountainLocation!,
-        height: r.mountainHeight!,
-        latitude: r.mountainLatitude!,
-        longitude: r.mountainLongitude!,
-        imageUrl: r.mountainImageUrl,
-        essential: r.mountainEssential!,
-      }));
+    // Collect mountains from all rows (filter out nulls from LEFT JOIN).
+    // Every mountain column is nullable in TS due to the left join; the
+    // `mountainId` check narrows the row but TS doesn't propagate that, so
+    // build the result inside a flatMap that short-circuits when missing.
+    const mountains = results.flatMap((r) => {
+      if (
+        r.mountainId === null ||
+        r.mountainName === null ||
+        r.mountainSlug === null ||
+        r.mountainLocation === null ||
+        r.mountainHeight === null ||
+        r.mountainLatitude === null ||
+        r.mountainLongitude === null ||
+        r.mountainEssential === null
+      ) {
+        return [];
+      }
+      return [
+        {
+          id: r.mountainId,
+          name: r.mountainName,
+          slug: r.mountainSlug,
+          location: r.mountainLocation,
+          height: r.mountainHeight,
+          latitude: r.mountainLatitude,
+          longitude: r.mountainLongitude,
+          imageUrl: r.mountainImageUrl,
+          essential: r.mountainEssential,
+        },
+      ];
+    });
 
     return {
       success: true,

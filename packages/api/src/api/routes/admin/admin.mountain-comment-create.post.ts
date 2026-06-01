@@ -63,6 +63,11 @@ export const adminMountainCommentCreatePostRoute = new Elysia().post(
       .from(userTable)
       .where(eq(userTable.id, viewerId));
 
+    if (!user) {
+      set.status = 404;
+      return { error: "Viewer user not found" };
+    }
+
     const [summit] = await db
       .select({ id: summitTable.id })
       .from(summitTable)
@@ -85,7 +90,7 @@ export const adminMountainCommentCreatePostRoute = new Elysia().post(
         viewerHasUpvoted: false,
         createdAt: inserted.createdAt,
         updatedAt: inserted.updatedAt,
-        user: { ...user!, hasSummitedThisMountain: !!summit },
+        user: { ...user, hasSummitedThisMountain: !!summit },
       },
     };
   },

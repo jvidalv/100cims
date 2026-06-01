@@ -10,6 +10,10 @@ import {
   type CommentRowData,
 } from "@/components/ui/molecules/comment-row";
 import {
+  ImagePreviewModal,
+  useImagePreview,
+} from "@/components/ui/molecules/image-preview-modal";
+import {
   useDeleteMountainComment,
   useUpvoteMountainComment,
 } from "@/domains/mountain-comments/mountain-comments.api";
@@ -50,6 +54,9 @@ export function MountainCommentsSection({
   const { data: me } = useUserMe();
   const upvote = useUpvoteMountainComment(mountainId);
   const remove = useDeleteMountainComment(mountainId);
+  const { previewImage, isPreviewOpen, openPreview, closePreview } =
+    useImagePreview();
+  const onImagePress = (uri: string) => openPreview({ uri });
 
   const topLevel = searchMode
     ? items
@@ -74,7 +81,7 @@ export function MountainCommentsSection({
       return;
     }
     router.push({
-      pathname: "/mountain/[slug]/comment",
+      pathname: "/mountain/[slug]/comments/new",
       params: { slug: mountainSlug, ...params },
     });
   };
@@ -97,6 +104,7 @@ export function MountainCommentsSection({
     );
 
   return (
+    <>
     <View className="gap-4">
       {!hideTitle && (
         <ThemedText className="text-2xl font-semibold">
@@ -176,6 +184,7 @@ export function MountainCommentsSection({
                 onEdit={() => goToComposer({ editCommentId: c.id })}
                 onDelete={() => confirmDelete(c.id)}
                 onOpenThread={onOpenThread}
+                onImagePress={onImagePress}
               />
               {!searchMode &&
                 (repliesByParent.get(c.id) ?? []).length > 0 && (
@@ -197,6 +206,7 @@ export function MountainCommentsSection({
                           goToComposer({ editCommentId: reply.id })
                         }
                         onDelete={() => confirmDelete(reply.id)}
+                        onImagePress={onImagePress}
                       />
                     ))}
                   </View>
@@ -222,5 +232,11 @@ export function MountainCommentsSection({
         </ActionRow>
       )}
     </View>
+    <ImagePreviewModal
+      visible={isPreviewOpen}
+      imageSource={previewImage}
+      onClose={closePreview}
+    />
+    </>
   );
 }

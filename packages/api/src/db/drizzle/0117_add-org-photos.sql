@@ -1,0 +1,1 @@
+ALTER TABLE "organization" ADD COLUMN "photo_urls" text[] DEFAULT ARRAY[]::text[] NOT NULL;

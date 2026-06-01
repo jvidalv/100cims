@@ -1,0 +1,1 @@
+ALTER TABLE "shop_request" ADD COLUMN "payment_image_url" text;

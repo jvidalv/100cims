@@ -1,0 +1,1 @@
+ALTER TABLE "mountain_comment" ADD COLUMN "images" jsonb DEFAULT '[]'::jsonb NOT NULL;

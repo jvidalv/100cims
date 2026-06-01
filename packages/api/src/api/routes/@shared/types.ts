@@ -6,6 +6,10 @@ export type User = {
   imageUrl: string | null;
   town: string | null;
   phoneNumber: string | null;
+  shippingStreet: string | null;
+  shippingCity: string | null;
+  shippingPostalCode: string | null;
+  shippingCountry: string | null;
   visibleOnHiscores: boolean;
   visibleOnPeopleSearch: boolean;
   admin: boolean;

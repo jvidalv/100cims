@@ -2,11 +2,13 @@ import { format } from "date-fns";
 import { LinearGradient } from "expo-linear-gradient";
 import { forwardRef, ReactNode } from "react";
 import { FormattedMessage } from "react-intl";
-import { Image, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 import { Avatar, ThemedText } from "@/components/ui/atoms";
+import { Image } from "@/components/ui/atoms/image";
 import { Colors } from "@/constants/colors";
 import { formatUsersLine, getFullName } from "@/domains/user/user.utils";
+import { parseLocalDateString } from "@/lib/dates";
 import { getInitials } from "@/lib/strings";
 
 const CARD_W = 360;
@@ -193,7 +195,7 @@ export const PlanShareCard = forwardRef<View, Props>(
           <MetaRow
             items={[
               totalHeight > 0 ? `${totalHeight}m` : null,
-              format(new Date(date), "dd MMM yyyy"),
+              format(parseLocalDateString(date), "dd MMM yyyy"),
               summitCount > 0 ? (
                 summitCount === 1 ? (
                   <FormattedMessage

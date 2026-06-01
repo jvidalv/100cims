@@ -118,3 +118,19 @@ export const SummitWithUsersSchema = t.Object({
  * Schema for array of summits with users
  */
 export const SummitsArraySchema = t.Array(SummitWithUsersSchema);
+
+/**
+ * Schema for paginated mountain summits. Used by
+ * `/api/public/mountains/summits/all` — the legacy `/summits` stays in
+ * place so old mobile clients keep working with their flat-array contract.
+ */
+export const MountainSummitsAllResponseSchema = t.Object({
+  items: t.Array(SummitWithUsersSchema),
+  pagination: t.Object({
+    page: t.Number(),
+    pageSize: t.Number(),
+    totalItems: t.Number(),
+    totalPages: t.Number(),
+    hasMore: t.Boolean(),
+  }),
+});

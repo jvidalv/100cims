@@ -11,12 +11,15 @@ export const userKeys = {
   summitsAll: (query: string, sort: "recent" | "height") =>
     ["user", "summits", "all", query, sort] as const,
   summitsById: (userId: string) => ["user", "summits", userId] as const,
+  summitsByIdAll: (userId: string) =>
+    ["user", "summits", userId, "all"] as const,
   one: (userId: string) => ["user", "one", userId] as const,
   profile: (userId: string) => ["user", "profile", userId] as const,
   challenges: (userId: string) => ["user", "challenges", userId] as const,
   search: (query: string) => ["user", "search", query] as const,
   people: () => ["user", "people"] as const,
   saved: () => ["user", "saved"] as const,
+  savedRoutes: () => ["user", "saved-routes"] as const,
 };
 
 // Challenge keys
@@ -25,6 +28,7 @@ export const challengeKeys = {
   active: () => ["challenge", "active"] as const,
   list: () => ["challenge", "list"] as const,
   detail: (id: string) => ["challenge", "detail", id] as const,
+  myProgress: (id: string) => ["challenge", "my-progress", id] as const,
 };
 
 // Community challenge keys
@@ -55,6 +59,8 @@ export const summitKeys = {
   list: () => ["summit", "list"] as const,
   one: (id: string) => ["summit", id] as const,
   reactions: (summitId: string) => ["summit", "reactions", summitId] as const,
+  byMountainAll: (mountainId: string) =>
+    ["summit", "by-mountain", mountainId, "all"] as const,
 };
 
 // Plan keys
@@ -64,6 +70,9 @@ export const planKeys = {
   listInfinite: (params?: object) => ["plan", "list-infinite", params] as const,
   one: (id: string) => ["plan", id] as const,
   countNew: (userId?: string) => ["plan", "count-new", userId] as const,
+  byMountain: (mountainSlug: string) =>
+    ["plan", "by-mountain", mountainSlug] as const,
+  featured: (params?: object) => ["plan", "featured", params] as const,
 };
 
 // Hiscores keys
@@ -84,4 +93,25 @@ export const updateKeys = {
   all: ["updates"] as const,
   unseen: (updateIds: string[]) =>
     ["updates", "unseen", updateIds.join(",")] as const,
+};
+
+// Calendar keys
+export const calendarKeys = {
+  all: ["calendar"] as const,
+  events: (from: string, to: string, isAuthenticated: boolean) =>
+    ["calendar", "events", from, to, isAuthenticated] as const,
+};
+
+// Organization keys
+export const organizationKeys = {
+  all: ["organization"] as const,
+  one: (id: string) => ["organization", id] as const,
+};
+
+// Route keys
+export const routeKeys = {
+  all: ["route"] as const,
+  list: (params?: object) => ["route", "list", params] as const,
+  one: (id: string) => ["route", "one", id] as const,
+  byMountain: (slug: string) => ["route", "by-mountain", slug] as const,
 };

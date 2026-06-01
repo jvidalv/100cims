@@ -6,6 +6,7 @@ import { userTable } from "@/db/schema";
 import { JWT } from "@/api/routes/@shared/jwt";
 import { setRequestContext } from "@/api/routes/@shared/request-context";
 import { protectedAdminRoutes } from "@/api/routes/protected/admin";
+import { challengeRoutes } from "@/api/routes/protected/challenge";
 import { communityChallengeRoute } from "@/api/routes/protected/community-challenge";
 import { donorsRoute } from "@/api/routes/protected/donors";
 import { mountainLegacyPostRoute } from "@/api/routes/protected/mountain-legacy.post";
@@ -13,6 +14,7 @@ import { mountainCommentsRoute } from "@/api/routes/protected/mountain-comments"
 import { mountainsRoute } from "@/api/routes/protected/mountains";
 import { planChatRoute } from "@/api/routes/protected/plan-chat";
 import { plansRoute } from "@/api/routes/protected/plans";
+import { protectedRoutesRoute } from "@/api/routes/protected/routes";
 import { shopRoutes } from "@/api/routes/protected/shop";
 import { summitRoute } from "@/api/routes/protected/summit";
 import { userRoute } from "@/api/routes/protected/user";
@@ -50,6 +52,10 @@ export const protectedRoutes = new Elysia({ prefix: "/protected" })
         imageUrl: userTable.imageUrl,
         town: userTable.town,
         phoneNumber: userTable.phoneNumber,
+        shippingStreet: userTable.shippingStreet,
+        shippingCity: userTable.shippingCity,
+        shippingPostalCode: userTable.shippingPostalCode,
+        shippingCountry: userTable.shippingCountry,
         visibleOnHiscores: userTable.visibleOnHiscores,
         visibleOnPeopleSearch: userTable.visibleOnPeopleSearch,
         admin: userTable.admin,
@@ -82,7 +88,9 @@ export const protectedRoutes = new Elysia({ prefix: "/protected" })
   .use(summitRoute)
   .use(donorsRoute)
   .use(plansRoute)
+  .use(protectedRoutesRoute)
   .use(planChatRoute)
+  .use(challengeRoutes)
   .use(communityChallengeRoute)
   .use(shopRoutes)
   .use(protectedAdminRoutes);

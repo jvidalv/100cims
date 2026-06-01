@@ -4,7 +4,10 @@ import {
   AlignLeft,
   BadgeCheck,
   CircleCheck,
+  CircleDot,
+  Globe,
   Mountain,
+  PieChart,
   Share as ShareIcon,
   Target,
   Trash2,
@@ -13,7 +16,8 @@ import {
 import { useColorScheme } from "nativewind";
 import { useEffect } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { Alert, TouchableOpacity, Image, View } from "react-native";
+import { Alert, TouchableOpacity, View } from "react-native";
+
 
 
 import { useAuth } from "@/components/providers/auth-provider";
@@ -25,14 +29,19 @@ import {
   Skeleton,
   ThemedView,
 } from "@/components/ui/atoms";
+import { Image } from "@/components/ui/atoms/image";
 import { ActionRow, MountainItemList } from "@/components/ui/molecules";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
 import {
   useActiveChallenge,
   useAdminDeleteChallengeMutation,
   useChallengeDetail,
+  useChallengeMyProgress,
 } from "@/domains/challenge/challenge.api";
-import { countryToEmoji } from "@/domains/challenge/challenge.model";
+import {
+  challengeCompletionPercent,
+  countryToEmoji,
+} from "@/domains/challenge/challenge.model";
 import { useIsAdmin, useUpdateUserMeMutation } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
 import { isIOS } from "@/lib/device";
@@ -46,6 +55,10 @@ export default function ChallengeDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { isAuthenticated } = useAuth();
   const { data: challenge, isPending } = useChallengeDetail({ id });
+  const { data: myProgress } = useChallengeMyProgress({
+    id,
+    enabled: isAuthenticated,
+  });
   const { data: activeChallenge } = useActiveChallenge();
   const { mutateAsync: updateUser, isPending: isUpdating } =
     useUpdateUserMeMutation();
@@ -126,6 +139,7 @@ export default function ChallengeDetailScreen() {
     (challenge?.totalMountains || 0) > 3
       ? (challenge?.totalMountains || 0) - 3
       : 0;
+  const essentialCount = challenge?.totalEssentialMountains ?? 0;
 
   if (isPending) {
     return (
@@ -196,28 +210,40 @@ export default function ChallengeDetailScreen() {
     >
       {/* Details Section */}
       <View className="gap-3">
-        <View className="flex-row items-center gap-2">
-          <ThemedText className="text-2xl">{displayEmoji}</ThemedText>
-          <ThemedText className="text-xl font-medium">
-            {challenge.country}
-          </ThemedText>
+        <View className="flex-row items-center gap-4">
+          <View className="flex-row items-center gap-2">
+            <LucideIcon icon={Globe} muted size={20} />
+            <ThemedText className="text-xl font-medium">
+              {challenge.country}
+            </ThemedText>
+          </View>
           {challenge.isOfficial && (
-            <View className="flex-row items-center gap-1.5 rounded-full bg-primary/20 px-3 py-1.5">
-              <LucideIcon icon={BadgeCheck} primary size={18} />
-              <ThemedText className="text-base font-semibold text-primary">
+            <View className="flex-row items-center gap-2">
+              <LucideIcon icon={BadgeCheck} primary size={20} />
+              <ThemedText className="text-xl font-medium text-primary">
                 <FormattedMessage defaultMessage="Official" />
               </ThemedText>
             </View>
           )}
         </View>
-        <View className="flex-row items-center gap-2">
-          <LucideIcon icon={Mountain} muted size={20} />
-          <ThemedText className="text-xl font-medium">
-            {challenge.totalMountains}{" "}
-            <ThemedText className="text-muted-foreground">
-              <FormattedMessage defaultMessage="Mountains" />
+        <View className="flex-row items-center gap-4">
+          <View className="flex-row items-center gap-2">
+            <LucideIcon icon={Mountain} muted size={20} />
+            <ThemedText className="text-xl font-medium">
+              {challenge.totalMountains}
             </ThemedText>
-          </ThemedText>
+          </View>
+          {essentialCount > 0 && (
+            <View className="flex-row items-center gap-2">
+              <LucideIcon icon={CircleDot} primary size={20} />
+              <ThemedText className="text-xl font-medium">
+                {essentialCount}{" "}
+                <ThemedText className="text-xl font-medium text-muted-foreground">
+                  <FormattedMessage defaultMessage="essential" />
+                </ThemedText>
+              </ThemedText>
+            </View>
+          )}
         </View>
         {challenge.description && (
           <View className="flex-row gap-2">
@@ -280,6 +306,48 @@ export default function ChallengeDetailScreen() {
           </ActionRow>
         )}
       </View>
+
+      {/* Your stats Section — only when authenticated and the per-challenge
+          progress query has resolved. */}
+      {myProgress && (
+        <View className="gap-2">
+          <ThemedText className="text-2xl font-semibold">
+            <FormattedMessage defaultMessage="Your stats" />
+          </ThemedText>
+          <ActionRow icon={Mountain} intent="muted">
+            <FormattedMessage
+              defaultMessage="{summited} of {total} mountains"
+              values={{
+                summited: myProgress.summitedCount,
+                total: myProgress.totalMountains,
+              }}
+            />
+          </ActionRow>
+          {myProgress.totalEssentialMountains > 0 && (
+            <ActionRow icon={CircleDot} intent="primary">
+              <FormattedMessage
+                defaultMessage="{summited} of {total} essentials"
+                values={{
+                  summited: myProgress.summitedEssentialCount,
+                  total: myProgress.totalEssentialMountains,
+                }}
+              />
+            </ActionRow>
+          )}
+          <ActionRow icon={PieChart} intent="emerald">
+            <FormattedMessage
+              defaultMessage="{percent}% completed"
+              values={{
+                percent:
+                  challengeCompletionPercent(
+                    myProgress.summitedCount,
+                    myProgress.totalMountains,
+                  ) ?? 0,
+              }}
+            />
+          </ActionRow>
+        </View>
+      )}
 
       {/* Users Section */}
       {usersToShow.length > 0 && (

@@ -33,8 +33,9 @@ type Props = {
   difficulty: number | null;
   onDifficultyChange: (v: number | null) => void;
   // Tailwind classes for the two section titles (Difficulty / Recommend).
-  // Defaults to "text-lg font-bold" for the standalone summit forms; pass a
-  // smaller variant from screens where the section is nested inside a list.
+  // Defaults to "text-lg font-semibold" for the standalone summit forms;
+  // pass a smaller variant from screens where the section is nested inside
+  // a list.
   titleClassName?: string;
   // Controls icon bubble + pill sizing. "md" is the single-summit default.
   size?: Size;
@@ -52,7 +53,7 @@ export const SummitRatingFields = ({
   onDogFriendlyChange,
   difficulty,
   onDifficultyChange,
-  titleClassName = "text-lg font-bold",
+  titleClassName = "text-lg font-semibold",
   size = "md",
 }: Props) => {
   const intl = useIntl();
@@ -152,8 +153,8 @@ const RatingRow = ({
       : null;
   const bubbleClass =
     size === "sm"
-      ? "size-10 items-center justify-center rounded-full border-2 border-muted-foreground/50"
-      : "size-12 items-center justify-center rounded-full border-2 border-muted-foreground/50";
+      ? "size-10 items-center justify-center rounded-full border-2 border-border"
+      : "size-12 items-center justify-center rounded-full border-2 border-border";
   const iconSize = size === "sm" ? 20 : 24;
 
   return (
@@ -192,7 +193,7 @@ function FadeIcon({
   return (
     <View>
       <Animated.View style={mutedStyle}>
-        <LucideIcon icon={icon} size={size} />
+        <LucideIcon icon={icon} size={size} muted />
       </Animated.View>
       <Animated.View style={[coloredStyle, { position: "absolute" }]}>
         <LucideIcon icon={icon} size={size} color={color ?? undefined} />

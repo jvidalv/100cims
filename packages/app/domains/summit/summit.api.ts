@@ -1,9 +1,11 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 
 import { useAuth } from "@/components/providers/auth-provider";
 import { queryClient } from "@/components/providers/query-client-provider";
 import apiClient from "@/lib/api-client";
-import { summitKeys, userKeys } from "@/lib/query-keys";
+import { calendarKeys, summitKeys, userKeys } from "@/lib/query-keys";
+
+import type { paths } from "@/types/api";
 
 export const SUMMITS_KEY = ({
   mountainId,
@@ -50,14 +52,45 @@ export const useSummitsGet = (
   });
 };
 
-export const useSummitGet = ({ summitId }: { summitId: string }) => {
+/**
+ * Paginated infinite-query variant of `useSummitsGet` for a single mountain.
+ * 24 per page, ordered newest first. Used by the mountain detail "All
+ * summits" screen — the non-paginated `useSummitsGet` stays in place for
+ * the detail page's "Last N" preview.
+ */
+export const useMountainSummitsAll = ({
+  mountainId,
+}: {
+  mountainId: string;
+}) =>
+  useInfiniteQuery({
+    queryKey: summitKeys.byMountainAll(mountainId),
+    enabled: !!mountainId,
+    initialPageParam: 1,
+    queryFn: async ({ pageParam }) => {
+      const { data, error } = await apiClient.GET(
+        "/api/public/mountains/summits/all",
+        { params: { query: { mountainId, page: pageParam } } },
+      );
+      if (error) throw error;
+      return data.message;
+    },
+    getNextPageParam: (last) =>
+      last.pagination.hasMore ? last.pagination.page + 1 : undefined,
+  });
+
+export const useSummitGet = ({
+  summitId,
+}: {
+  summitId: string | undefined;
+}) => {
   const { isAuthenticated } = useAuth();
 
   const args = useQuery({
-    queryKey: summitKeys.one(summitId),
-    enabled: () => isAuthenticated,
+    queryKey: summitKeys.one(summitId ?? ""),
+    enabled: () => isAuthenticated && !!summitId,
     queryFn: async () => {
-      if (!isAuthenticated) return null;
+      if (!isAuthenticated || !summitId) return null;
       const { data, error } = await apiClient.GET("/api/protected/summit/one", {
         params: { query: { summitId } },
       });
@@ -92,6 +125,7 @@ export const useDeleteSummitMutation = () => {
       void queryClient.invalidateQueries({
         queryKey: userKeys.summits(),
       });
+      void queryClient.invalidateQueries({ queryKey: calendarKeys.all });
     },
   });
 };
@@ -144,6 +178,7 @@ export const useUpdateSummitMutation = () => {
         queryKey: summitKeys.one(variables.summitId),
       });
       void queryClient.invalidateQueries({ queryKey: userKeys.summits() });
+      void queryClient.invalidateQueries({ queryKey: calendarKeys.all });
     },
   });
 };
@@ -164,6 +199,7 @@ export const useAdminDeleteSummitMutation = () => {
         queryKey: SUMMITS_KEY({ mountainId: undefined, limit: undefined }),
       });
       void queryClient.invalidateQueries({ queryKey: userKeys.summits() });
+      void queryClient.invalidateQueries({ queryKey: calendarKeys.all });
     },
   });
 };
@@ -221,10 +257,10 @@ export const useSummitReactions = ({ summitId }: { summitId: string }) => {
   });
 };
 
-type ReactionsData = {
-  reactions: { emoji: string; count: number }[];
-  userReactions: string[];
-};
+// Derived from the API's OpenAPI schema so the optimistic-update cache
+// shape stays in lockstep with the backend response.
+type ReactionsData =
+  paths["/api/protected/summit/reactions"]["get"]["responses"][200]["content"]["application/json"]["message"];
 
 export const useSummitReactionMutation = () => {
   return useMutation({

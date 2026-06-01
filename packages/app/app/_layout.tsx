@@ -2,20 +2,18 @@ import { setDefaultOptions } from "date-fns/setDefaultOptions";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import React, {
-  useEffect,
-  PropsWithChildren,
-  useState,
-  useMemo,
-} from "react";
+import { useEffect, PropsWithChildren, useState, useMemo } from "react";
 import { IntlProvider } from "react-intl";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
+import {
+  initialWindowMetrics,
+  SafeAreaProvider,
+} from "react-native-safe-area-context";
 
 import { QueryClientProvider } from "@/components/providers";
-import { AuthProvider } from "@/components/providers/auth-provider";
+import { AuthProvider, useAuth } from "@/components/providers/auth-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { ThemedLogo } from "@/components/ui/atoms";
-import { FloatingCartButton } from "@/components/ui/molecules";
 import { useMountains } from "@/domains/mountain/mountain.api";
 import { usePlanChatUnread } from "@/domains/plan/plan-chat.api";
 import { usePlans } from "@/domains/plan/plan.api";
@@ -27,6 +25,7 @@ import { setApiLocation, setAuthToken } from "@/lib/api-client";
 import { getJwt } from "@/lib/auth";
 import { isIpadOS } from "@/lib/device";
 import { getDateFnsLocale, getLocale, initLocale } from "@/lib/locale";
+import { silenceMapboxNoise } from "@/lib/silence-mapbox-noise";
 import ca from "@/translations/ca.json";
 import en from "@/translations/en.json";
 import es from "@/translations/es.json";
@@ -35,6 +34,10 @@ import "../global.css";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 void SplashScreen.preventAutoHideAsync();
+
+// Drop @rnmapbox/maps' known native-lifecycle red-boxes in dev. Tightly
+// scoped — never swallows our own errors. See lib/silence-mapbox-noise.ts.
+silenceMapboxNoise();
 
 const LoadingSkeleton = () => {
   return (
@@ -75,20 +78,56 @@ function Content() {
   return (
     <>
       {!isDataReady && <LoadingSkeleton />}
-      <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="+not-found" />
-      <Stack.Screen
-        name="join"
-        options={{ presentation: isIpadOS ? "fullScreenModal" : "modal" }}
-      />
-    </Stack>
-      <FloatingCartButton />
+      {/* `freezeOnBlur: false` on Android only — react-native-screens'
+          default freeze-blurred-screen optimization snapshots the outgoing
+          screen as a Bitmap for the slide transition, and on Android that
+          bitmap gets `.recycle()`'d before the pop animation finishes,
+          crashing with `Canvas: trying to use a recycled bitmap`. Disabling
+          freeze on Android sidesteps the snapshot path. iOS uses a
+          different transition mechanism and is unaffected. */}
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          freezeOnBlur: Platform.OS === "android" ? false : undefined,
+        }}
+      >
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="challenges" />
+        {/* `mountain` owns its own Stack (mountain/_layout.tsx). Declaring it
+            here pins the root Stack mount point so every push of
+            /mountain/[slug] resolves to the parent Stack — which keeps
+            sibling slugs as separate frames with their own NativeTabs
+            instances instead of double-mounting on top of each other. */}
+        <Stack.Screen name="mountain" />
+        {/* No <Stack.Screen name="plans" />: plans/ contains only the (tabs)/
+            group, so Expo Router flattens the route to "plans/(tabs)" and a
+            "plans" declaration would not match any child — see the [Layout
+            children] warning. Routing still works through inference. */}
+        <Stack.Screen name="+not-found" />
+        {/* /join lives at the root (not under a tab subtree) and presents
+            as a modal. We tried nesting it under (tabs)/(home)/ to keep
+            the bottom tab bar visible, but cross-tab `<Redirect href="/join" />`
+            from gated routes (shop, mountains, plans/create, …) then has
+            to cross NativeTabs subtree boundaries, which races
+            react-native-screens' snapshot logic and crashes Android with
+            `Canvas: trying to use a recycled bitmap`. Modal at the root
+            is the boring-and-correct shape. */}
+        <Stack.Screen
+          name="join"
+          options={{ presentation: isIpadOS ? "fullScreenModal" : "modal" }}
+        />
+      </Stack>
     </>
   );
 }
 
+// Single source of truth for the foreground-location permission prompt:
+// fire it once per session for authenticated users. Screen-level callers
+// (`useLocation()` without `prompt`) then just read the resolved location
+// without ever triggering the OS dialog themselves.
 function LocationSync() {
-  const { location } = useLocation();
+  const { isAuthenticated } = useAuth();
+  const { location } = useLocation({ prompt: isAuthenticated });
   useEffect(() => {
     if (location?.coords) {
       setApiLocation({
@@ -169,8 +208,14 @@ export default function Root() {
   if (!localeReady) return null;
 
   return (
-    <ThemeProvider>
-      <RootProviders />
-    </ThemeProvider>
+    // initialMetrics seeds useSafeAreaInsets() with the real top/bottom values
+    // from the native side at JS startup, so screens that read insets on first
+    // render (e.g. /calendar's paddingTop) don't flash content under the
+    // status bar / dynamic island before the provider re-measures.
+    <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+      <ThemeProvider>
+        <RootProviders />
+      </ThemeProvider>
+    </SafeAreaProvider>
   );
 }

@@ -101,7 +101,9 @@ export const challengeSearchMountainsGetRoute = new Elysia().get(
       totalItems = countResult[0]?.count ?? 0;
       mountains = mountainsResult;
     } else {
-      // Challenge filter mode
+      // Challenge filter mode — we reached this branch via the earlier
+      // `else if (challengeId)` guard, so `challengeId` is defined here.
+      if (!challengeId) throw new Error("unreachable: challengeId required");
       const [countResult, mountainsResult] = await Promise.all([
         db
           .select({ count: count() })
@@ -110,7 +112,7 @@ export const challengeSearchMountainsGetRoute = new Elysia().get(
             challengeHasMountainTable,
             eq(challengeHasMountainTable.mountainId, mountainTable.id),
           )
-          .where(eq(challengeHasMountainTable.challengeId, challengeId!)),
+          .where(eq(challengeHasMountainTable.challengeId, challengeId)),
         db
           .select({
             id: mountainTable.id,
@@ -128,7 +130,7 @@ export const challengeSearchMountainsGetRoute = new Elysia().get(
             challengeHasMountainTable,
             eq(challengeHasMountainTable.mountainId, mountainTable.id),
           )
-          .where(eq(challengeHasMountainTable.challengeId, challengeId!))
+          .where(eq(challengeHasMountainTable.challengeId, challengeId))
           .orderBy(mountainTable.name)
           .limit(pageSize)
           .offset(offset),

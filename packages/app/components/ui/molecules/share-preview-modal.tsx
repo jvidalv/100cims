@@ -2,7 +2,7 @@ import * as Sharing from "expo-sharing";
 import { Share2, X } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { Image, Modal, TouchableOpacity, View } from "react-native";
+import { Modal, TouchableOpacity, View } from "react-native";
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -16,6 +16,7 @@ import {
   LucideIcon,
   ThemedText,
 } from "@/components/ui/atoms";
+import { Image } from "@/components/ui/atoms/image";
 import { logError } from "@/lib/log-error";
 
 interface Props {

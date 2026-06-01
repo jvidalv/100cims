@@ -1,14 +1,7 @@
 import { X } from "lucide-react-native";
 import { type ReactNode, useEffect, useState } from "react";
 import { useIntl } from "react-intl";
-import {
-  Modal,
-  Pressable,
-  View,
-  Image,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
+import { Modal, Pressable, View, TouchableOpacity, ScrollView } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -17,6 +10,7 @@ import Animated, {
 
 
 import { LucideIcon, ThemedText, ThemedView } from "@/components/ui/atoms";
+import { Image } from "@/components/ui/atoms/image";
 
 export interface Update {
   id: string;

@@ -1,24 +1,27 @@
 import { format } from "date-fns/format";
 import { Link, Redirect } from "expo-router";
+import { Download } from "lucide-react-native";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import {
-  ActivityIndicator,
-  FlatList,
-  Image,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, Alert, FlatList, TouchableOpacity, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
 import {
+  LucideIcon,
   ThemedText,
   ThemedView,
   SearchInput,
   Skeleton,
 } from "@/components/ui/atoms";
-import { ScreenHeader } from "@/components/ui/molecules";
+import { Image } from "@/components/ui/atoms/image";
+import {
+  useBlurredScreenHeaderHeight,
+  BlurredScreenHeader,
+} from "@/components/ui/molecules";
+import { exportUserSummitsCsv } from "@/domains/summit/summit-export";
 import { useUserMe, useUserAllSummits } from "@/domains/user/user.api";
+import { parseLocalDateString } from "@/lib/dates";
+import { logError } from "@/lib/log-error";
 
 type SortOption = "recent" | "height";
 
@@ -67,7 +70,8 @@ const SummitRow = memo(function SummitRow({
             {mountainName}
           </ThemedText>
           <ThemedText className="text-sm text-muted-foreground">
-            {format(summitedAt, "dd MMM yyyy")} • {mountainHeight}m
+            {format(parseLocalDateString(summitedAt), "dd MMM yyyy")} •{" "}
+            {mountainHeight}m
           </ThemedText>
         </View>
         <ThemedText
@@ -87,6 +91,7 @@ const SummitRow = memo(function SummitRow({
 
 export default function UserSummitsScreen() {
   const intl = useIntl();
+  const blurredHeaderHeight = useBlurredScreenHeaderHeight();
   const { data: me } = useUserMe();
 
   const [searchInput, setSearchInput] = useState("");
@@ -118,6 +123,43 @@ export default function UserSummitsScreen() {
     [],
   );
 
+  const [isExporting, setIsExporting] = useState(false);
+  const runExport = useCallback(async () => {
+    setIsExporting(true);
+    try {
+      await exportUserSummitsCsv();
+    } catch (error) {
+      logError(error, "summits/export");
+      Alert.alert(
+        intl.formatMessage({ defaultMessage: "Couldn't export your summits" }),
+      );
+    } finally {
+      setIsExporting(false);
+    }
+  }, [intl]);
+  const handleExport = useCallback(() => {
+    if (isExporting) return;
+    Alert.alert(
+      intl.formatMessage({ defaultMessage: "Export your summits?" }),
+      intl.formatMessage({
+        defaultMessage:
+          "You'll get a CSV file — a spreadsheet you can open in Excel, Numbers or Google Sheets.",
+      }),
+      [
+        {
+          text: intl.formatMessage({ defaultMessage: "Cancel" }),
+          style: "cancel",
+        },
+        {
+          text: intl.formatMessage({ defaultMessage: "Export" }),
+          onPress: () => {
+            void runExport();
+          },
+        },
+      ],
+    );
+  }, [isExporting, intl, runExport]);
+
   const sortOptions = useMemo<{ value: SortOption; label: string }[]>(
     () => [
       {
@@ -138,7 +180,31 @@ export default function UserSummitsScreen() {
 
   return (
     <ThemedView className="flex-1">
-      <ScreenHeader />
+      <BlurredScreenHeader
+        rightElement={
+          <TouchableOpacity
+            accessibilityLabel={intl.formatMessage({
+              defaultMessage: "Export to CSV",
+            })}
+            disabled={isExporting}
+            hitSlop={16}
+            onPress={handleExport}
+          >
+            {isExporting ? (
+              <ActivityIndicator />
+            ) : (
+              <LucideIcon icon={Download} size={22} />
+            )}
+          </TouchableOpacity>
+        }
+      >
+        <ThemedText numberOfLines={1} className="text-lg font-medium">
+          <FormattedMessage
+            defaultMessage="My summits ({count})"
+            values={{ count: totalSummits ?? 0 }}
+          />
+        </ThemedText>
+      </BlurredScreenHeader>
       <FlatList
         data={items}
         initialNumToRender={25}
@@ -147,12 +213,6 @@ export default function UserSummitsScreen() {
         onEndReachedThreshold={0.5}
         ListHeaderComponent={
           <View className="px-6 pb-4">
-            <ThemedText className="mb-4 text-4xl font-bold">
-              <FormattedMessage defaultMessage="My summits" />{" "}
-              <ThemedText className="text-lg font-semibold text-muted-foreground">
-                {totalSummits}
-              </ThemedText>
-            </ThemedText>
             <SearchInput onChangeText={setSearchInput} />
             <View className="mt-3 flex-row gap-2">
               {sortOptions.map((option) => {
@@ -221,7 +281,10 @@ export default function UserSummitsScreen() {
           )
         }
         keyExtractor={keyExtractor}
-        contentContainerClassName="gap-4 pt-2"
+        contentContainerStyle={{
+          paddingTop: blurredHeaderHeight,
+          gap: 16,
+        }}
         renderItem={renderItem}
       />
     </ThemedView>

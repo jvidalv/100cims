@@ -33,10 +33,12 @@ export const usePushTokenMutation = () =>
 
 const isPlanPushType = (value: unknown) =>
   value === "plan-join" ||
+  value === "plan-join-other" ||
   value === "plan-leave" ||
   value === "plan-chat" ||
   value === "plan-reminder" ||
-  value === "plan-saved-mountain";
+  value === "plan-saved-mountain" ||
+  value === "friend-plan-created";
 
 const isCommentPushType = (value: unknown) =>
   value === "comment-reply" ||
@@ -67,6 +69,11 @@ const routeFromNotificationData = (data: unknown) => {
   if (isCommentPushType(type)) {
     const slug = getStringField(data, "mountainSlug");
     if (slug) router.push(`/mountain/${slug}/comments`);
+    return;
+  }
+
+  if (type === "plan-deleted") {
+    router.push("/plans");
     return;
   }
 

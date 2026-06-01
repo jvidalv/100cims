@@ -9,18 +9,23 @@ import { planHasUsersTable, planTable } from "@/db/schema";
  * public). Pass as an argument to `.where(...)` alongside other filters.
  */
 export const planVisibilitySql = (viewerId: string | undefined): SQL => {
-  if (!viewerId) {
-    return eq(planTable.isPrivate, false);
-  }
-  return or(
-    eq(planTable.isPrivate, false),
-    eq(planTable.creatorId, viewerId),
-    sql`EXISTS (
-      SELECT 1 FROM ${planHasUsersTable}
-      WHERE ${planHasUsersTable.planId} = ${planTable.id}
-        AND ${planHasUsersTable.userId} = ${viewerId}
-    )`,
-  ) as SQL;
+  const publicPredicate = eq(planTable.isPrivate, false);
+  if (!viewerId) return publicPredicate;
+  // `or(...)` is typed `SQL | undefined` to allow variadic undefined inputs;
+  // every input here is concrete, so it never returns undefined — fall back
+  // on the public predicate to satisfy TS without a runtime branch that
+  // can't fire.
+  return (
+    or(
+      publicPredicate,
+      eq(planTable.creatorId, viewerId),
+      sql`EXISTS (
+        SELECT 1 FROM ${planHasUsersTable}
+        WHERE ${planHasUsersTable.planId} = ${planTable.id}
+          AND ${planHasUsersTable.userId} = ${viewerId}
+      )`,
+    ) ?? publicPredicate
+  );
 };
 
 /**

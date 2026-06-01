@@ -21,9 +21,9 @@ You are working on the **100cims mobile app** (`packages/app`), an Expo React Na
 
 ## Stack
 
-- **Expo SDK 55** with React Native 0.81 (new architecture enabled)
-- **expo-router 6** for file-based navigation
-- **NativeWind 4** for styling (Tailwind CSS)
+- **Expo SDK 56** with React Native 0.85 (new architecture enabled)
+- **expo-router 56** for file-based navigation
+- **NativeWind 5 (preview)** for styling (Tailwind CSS)
 - **React Query 5** for server state
 - **React Intl** for i18n (en, ca, es)
 - **expo-notifications** for push (sends to Expo push service; see Push Notifications section)
@@ -222,6 +222,23 @@ router.push('/user/123');
 router.push({ pathname: '/mountain/[id]', params: { id: '456' } });
 ```
 
+### NativeTabs (expo-router/unstable-native-tabs) — gotchas
+
+The app uses `NativeTabs` (sibling subtrees: `app/(tabs)`, `app/challenges/(tabs)`, `app/plans/(tabs)`, `app/plan/[id]/(tabs)`, `app/mountain/[slug]/(tabs)`). The OS forbids nesting two NativeTabs in the same render tree, so each section's tab bar is a *sibling subtree* under the root Stack — only one bar is mounted at a time.
+
+- **Dynamic params: use `useGlobalSearchParams`, not `useLocalSearchParams`.** Inside a NativeTabs eagerly-mounted child of a `[slug]`/`[id]` folder, `useLocalSearchParams` returns `undefined` for the parent dynamic until the tab is focused. `useGlobalSearchParams` reads the URL directly and works for both tab-bar taps and `Link` nav. The symptom is white-screen-on-tab-tap-only (Links work fine). Every plan/mountain detail tab screen does this.
+- **`useSafeAreaInsets().bottom` ALREADY includes the tab bar height.** iOS bumps the safe-area inset for any child of a `UITabBarController`. Don't add the tab-bar height on top — that double-counts and leaves a gap between your content and the bar. Use `useSafeAreaInsets().bottom` alone (or the `useNativeTabBarInset()` helper, which also handles Android's flipped behavior), plus an optional small visual buffer.
+- **Single-child route groups collapse.** A folder like `app/plans/` containing only `(tabs)/` flattens to the route name `plans/(tabs)`. A `<Stack.Screen name="plans" />` declaration on the root Stack won't match and you'll see `[Layout children]: No route named "plans" exists` warnings. Either drop the declaration (Expo Router infers) or add a sibling file to keep the wrapper registered separately.
+- **Trigger `hidden` causes a one-time remount on first transition.** Use sparingly. For ownership-gated tabs (e.g. `hidden={!isCreator}`), gate on the *full* set of conditions the old in-content row had (status, dates, etc.) — moving navigation to a tab without copying the gates is a regression.
+- **Hardcoded Tailwind heights don't survive NativeWind's static extraction when referenced from module-level string constants** (e.g. `const H = "h-32"; ... className={twMerge("h-24", H)}`). For dynamic sizing of header bars, use numeric `style={{ height: N }}` instead. See `BLURRED_SCREEN_HEADER_HEIGHT` in `components/ui/molecules/blurred-screen-header.tsx`.
+- **Child screens inside a tab need an explicit `Stack` `_layout.tsx`.** Putting `summits.tsx` (or any pushable child) next to the tab's `index.tsx` and trying to `<Link href="/summits">` to it from the tab will silently no-op under NativeTabs — taps fire, nothing happens, no warning. The fix: declare the tab as a **route group** folder (e.g. `(tabs)/(home)/index.tsx` + `(tabs)/(home)/summits.tsx`) AND add `(tabs)/(home)/_layout.tsx` returning `<Stack screenOptions={{ headerShown: false }} />`. The trigger then names the group: `<NativeTabs.Trigger name="(home)">`. Group folders are invisible in URLs so `/` and `/summits` stay the same. The shop folder gets away without its own `_layout` because its tab is already a named folder (`shop/`), not a group — expo-router auto-stacks inside it; groups need the layout file to be pushable. Symptom: tapping a link to the child does nothing, no console error.
+
+### BlurredScreenHeader
+
+Translucent absolute-positioned top bar used by Summit, Comments, Plan detail tabs, Plans list, Challenges layout, and the comment composer. API mirrors `ScreenHeader` (children = title, optional `rightElement`). It also accepts a plain string child and auto-wraps it in the standard `<ThemedText className="max-w-56 text-lg font-medium">` — so `<BlurredScreenHeader>{title}</BlurredScreenHeader>` works without manual wrapping.
+
+Because the header is `position: absolute`, consumers must pad the first content element below it. Use the exported `BLURRED_SCREEN_HEADER_HEIGHT` numeric constant as `paddingTop` via the `style` prop (NOT a className), and pair it with `contentContainerStyle` on scrollers — not `contentContainerClassName` — to avoid the NativeWind/className/style merge conflict that drops the padding. Example: `<ScrollView contentContainerStyle={{ paddingTop: BLURRED_SCREEN_HEADER_HEIGHT, paddingHorizontal: 24, gap: 16 }}>`.
+
 ### Icons
 
 All icons use **lucide-react-native**. Import the component by name, pass it to `<LucideIcon icon={Mountain} />` — the wrapper handles theme-aware color (`useColorScheme`) and the `muted` gray treatment. There is no `<Icon name="...">` string-based component any more; don't recreate one. Plumbing components (`Button`, `ActionRow`, `SettingsOption.icon`, `Filter.icon`) take `icon: LucideIcon` (the component by reference) — never a name string. See `packages/app/components/ui/atoms/lucide-icon.tsx` and `app/index.tsx` for the canonical call shape. Don't use `@expo/vector-icons` or `expo-symbols` — both are removed from the app bundle.
@@ -279,6 +296,7 @@ import { FormattedMessage } from 'react-intl';
 3. Run compilation: `yarn translations:generate`
 4. English (`translations/en.json`) is auto-generated
 5. **Manually copy new keys** to `translations/ca.json` (Catalan) and `translations/es.json` (Spanish)
+   - **Sort order is strict ASCII** (uppercase `A-Z` before lowercase `a-z`, symbols `+ /` before digits). Don't use `sort -f` / case-insensitive `localeCompare` — that reorders the existing file and produces a huge spurious diff. The safe approach is to insert each new hash at its strict-ASCII alphabetical position (or, when bulk-inserting, run `JSON.stringify(Object.fromEntries(Object.entries(obj).sort()))` — default JS `sort()` is codepoint-ascending, which matches the file's existing order).
 6. Translate the values in ca.json and es.json
 
 **Translation Files:**
@@ -288,27 +306,6 @@ import { FormattedMessage } from 'react-intl';
 - `translations/es.json` - Spanish translations (manual)
 
 ## Common Tasks
-
-### Add New Screen
-
-1. Create file in `/app/` (e.g., `/app/settings.tsx`)
-2. Export default React component
-3. File name becomes route path
-
-### Add API Integration
-
-1. Ensure backend types are current: `yarn generate-api-types`
-2. Create domain API file or add to existing
-3. Use React Query for data fetching
-4. Handle loading/error states
-
-### Add/Update Translations
-
-1. Use `intl.formatMessage({ defaultMessage: "English text" })` in code
-2. Run `yarn translations:extract` to extract all messages
-3. Run `yarn translations:generate` to compile English
-4. Copy new keys from `en.json` to `ca.json` and `es.json`
-5. Translate the values in ca.json and es.json
 
 ### Add Native Module
 
@@ -345,23 +342,6 @@ If you add a new screen that needs location, default to `prompt: false` + gracef
 Must prefix with `EXPO_PUBLIC_` to access in app:
 - `EXPO_PUBLIC_API_URL`: Backend URL
 - OAuth client IDs for Google/Apple
-
-## Debugging
-
-### Common Issues
-
-- **Type errors**: Regenerate API types with `yarn generate-api-types`
-- **Navigation issues**: Check expo-router file structure
-- **Styling not applying**: Verify NativeWind babel config, global.css import
-- **OAuth not working**: Check google-services.json, Apple config in app.config.ts
-
-### Helpful Commands
-
-```bash
-npx expo start --clear          # Clear cache
-npx expo-doctor                 # Diagnose issues
-npx uri-scheme list             # Check deep linking
-```
 
 ## Removing Dependencies
 

@@ -8,11 +8,30 @@ import type {
   AdminMerchCreateBodySchema,
   AdminMerchUpdateBodySchema,
   AdminPlanCreateBodySchema,
+  AdminPlanUpdateBodySchema,
   AdminShopRequestUpdateBodySchema,
 } from "@/api/schemas/admin.schema";
-import type { PlanSpeed, PlanStatus } from "@/db/enums";
+import type { PlanMemberRole } from "@/db/enums";
 import { api } from "@/lib/api";
 import { adminKeys } from "@/lib/query-keys";
+
+/**
+ * Eden Treaty surfaces errors as `{ status, value }` with `value` being the
+ * server's JSON body — typically `{ error: "..." }` for our admin routes. A
+ * bare `throw error` then makes react-query stringify the non-Error to
+ * `[object Object]` when it bubbles up to `toast.error(e.message)`. Build an
+ * Error with the real server message instead.
+ */
+const apiErrorFromEden = (error: unknown): Error => {
+  if (error && typeof error === "object") {
+    const value = (error as { value?: unknown }).value;
+    if (value && typeof value === "object" && "error" in value) {
+      return new Error(String((value as { error: unknown }).error));
+    }
+    if (typeof value === "string") return new Error(value);
+  }
+  return new Error("Request failed");
+};
 
 export const useCrons = () =>
   useQuery({
@@ -24,21 +43,24 @@ export const useCrons = () =>
     },
   });
 
-export const useAdminUsers = ({
-  page,
-  q,
-  country,
-  platform,
-  version,
-  sort,
-}: {
-  page: number;
-  q: string;
-  country: string;
-  platform: string;
-  version: string;
-  sort: string;
-}) =>
+export const useAdminUsers = (
+  {
+    page,
+    q,
+    country,
+    platform,
+    version,
+    sort,
+  }: {
+    page: number;
+    q: string;
+    country: string;
+    platform: string;
+    version: string;
+    sort: string;
+  },
+  options?: { enabled?: boolean },
+) =>
   useQuery({
     queryKey: adminKeys.users({ page, q, country, platform, version, sort }),
     queryFn: async () => {
@@ -57,6 +79,7 @@ export const useAdminUsers = ({
       return data.message;
     },
     placeholderData: (prev) => prev,
+    enabled: options?.enabled ?? true,
   });
 
 export const useAdminUserDetail = (id: string) =>
@@ -75,6 +98,10 @@ export type AdminUserUpdateBody = {
   username?: string;
   town?: string | null;
   phoneNumber?: string | null;
+  shippingStreet?: string | null;
+  shippingCity?: string | null;
+  shippingPostalCode?: string | null;
+  shippingCountry?: string | null;
   country?: string | null;
   locale?: string | null;
   visibleOnHiscores?: boolean;
@@ -204,6 +231,32 @@ export const useAdminMountainDetail = (id: string) =>
     },
   });
 
+export const useAdminCommentsList = ({
+  page,
+  q,
+  sort,
+}: {
+  page: number;
+  q: string;
+  sort: string;
+}) =>
+  useQuery({
+    queryKey: adminKeys.comments({ page, q, sort }),
+    queryFn: async () => {
+      const { data, error } = await api.api.admin["mountain-comments"].get({
+        query: {
+          page,
+          pageSize: 25,
+          q: q || undefined,
+          sort: sort || undefined,
+        },
+      });
+      if (error) throw error;
+      return data.message;
+    },
+    placeholderData: (prev) => prev,
+  });
+
 export const useAdminMountainChallenges = (id: string) =>
   useQuery({
     queryKey: adminKeys.mountainChallenges(id),
@@ -293,9 +346,13 @@ export const useUpdateAdminMountainComment = (mountainId: string) => {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       void qc.invalidateQueries({
         queryKey: adminKeys.mountainComments(mountainId),
+      });
+      void qc.invalidateQueries({ queryKey: adminKeys.commentsList() });
+      void qc.invalidateQueries({
+        queryKey: adminKeys.commentDetail(variables.id),
       });
     },
   });
@@ -329,10 +386,66 @@ export const useDeleteAdminMountainComment = (mountainId: string) => {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (_data, commentId) => {
       void qc.invalidateQueries({
         queryKey: adminKeys.mountainComments(mountainId),
       });
+      void qc.invalidateQueries({ queryKey: adminKeys.commentsList() });
+      void qc.invalidateQueries({
+        queryKey: adminKeys.commentDetail(commentId),
+      });
+    },
+  });
+};
+
+/**
+ * Hooks for the cross-mountain admin Comments page. Same wire endpoints as
+ * `useUpdate/DeleteAdminMountainComment`, but routed for callers that don't
+ * have the mountain id in scope (the /admin/comments[/id] pages); invalidate
+ * the cross-mountain list + detail keys rather than a specific mountain.
+ */
+export const useAdminCommentDetail = (id: string) =>
+  useQuery({
+    queryKey: adminKeys.commentDetail(id),
+    queryFn: async () => {
+      const { data, error } = await api.api.admin["mountain-comments"]({
+        id,
+      }).get();
+      if (error) throw error;
+      return data.message;
+    },
+  });
+
+export const useUpdateAdminComment = (id: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: { body: string }) => {
+      const { data, error } = await api.api.admin[
+        "mountain-comments"
+      ].update.post({ id, body: input.body });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: adminKeys.commentDetail(id) });
+      void qc.invalidateQueries({ queryKey: adminKeys.commentsList() });
+    },
+  });
+};
+
+export const useDeleteAdminComment = (id: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      const { data, error } = await api.api.admin["mountain-comments"]({
+        id,
+      }).delete();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: adminKeys.commentsList() });
+      void qc.removeQueries({ queryKey: adminKeys.commentDetail(id) });
     },
   });
 };
@@ -477,15 +590,19 @@ export const useAdminPlanDetail = (id: string) =>
     },
   });
 
-export type AdminPlanUpdateBody = {
-  title?: string;
-  description?: string | null;
-  status?: PlanStatus;
-  speed?: PlanSpeed;
-  startDate?: string | null;
-  imageUrl?: string | null;
-  routeUrl?: string | null;
-};
+export const useAdminPlanMemberLog = (id: string) =>
+  useQuery({
+    queryKey: adminKeys.planMemberLog(id),
+    queryFn: async () => {
+      const { data, error } = await api.api.admin
+        .plans({ id })
+        ["member-log"].get();
+      if (error) throw error;
+      return data.message.items;
+    },
+  });
+
+export type AdminPlanUpdateBody = Static<typeof AdminPlanUpdateBodySchema>;
 
 export type AdminPlanCreateBody = Static<typeof AdminPlanCreateBodySchema>;
 
@@ -546,6 +663,7 @@ export const useRemoveAdminPlanMember = (planId: string) => {
     },
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: adminKeys.planDetail(planId) });
+      void qc.invalidateQueries({ queryKey: adminKeys.planMemberLog(planId) });
     },
   });
 };
@@ -617,6 +735,23 @@ export const useAdminStatsTimeseries = (
       if (error) throw error;
       return data.message;
     },
+  });
+
+// Single-shot DAU/MAU snapshot for the overview header. The endpoint
+// computes both counts from `user.last_seen_at` (rolling 24h / 30d),
+// not tied to any range picker.
+export const useAdminActiveUsers = () =>
+  useQuery({
+    queryKey: adminKeys.activeUsers(),
+    queryFn: async () => {
+      const { data, error } = await api.api.admin["active-users"].get();
+      if (error) throw error;
+      return data.message;
+    },
+    // Bumped every 5 minutes per user on the API side; refresh the
+    // admin numbers at the same cadence so admin doesn't see stale
+    // values when they linger on the page.
+    refetchInterval: 5 * 60_000,
   });
 
 export const useAdminChallenges = (
@@ -967,6 +1102,212 @@ export const useTriggerCron = () => {
     },
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: adminKeys.crons() });
+    },
+  });
+};
+
+// ---------------------------------------------------------------------------
+// Organizations
+// ---------------------------------------------------------------------------
+
+export const useAdminOrganizations = (
+  { page, q }: { page: number; q: string },
+  options?: { enabled?: boolean },
+) =>
+  useQuery({
+    queryKey: adminKeys.organizations({ page, q }),
+    queryFn: async () => {
+      const { data, error } = await api.api.admin.organizations.get({
+        query: {
+          page,
+          pageSize: 15,
+          q: q || undefined,
+        },
+      });
+      if (error) throw error;
+      return data.message;
+    },
+    placeholderData: (prev) => prev,
+    enabled: options?.enabled ?? true,
+  });
+
+export const useAdminOrganizationDetail = (id: string) =>
+  useQuery({
+    queryKey: adminKeys.organizationDetail(id),
+    queryFn: async () => {
+      const { data, error } = await api.api.admin.organizations({ id }).get();
+      if (error) throw error;
+      return data.message;
+    },
+  });
+
+export type AdminOrganizationCreateBody = {
+  name: string;
+  description?: string;
+  websiteUrl?: string;
+  imageUrl?: string;
+  instagramUrl?: string;
+  tiktokUrl?: string;
+  whatsappUrl?: string;
+  youtubeUrl?: string;
+  stravaUrl?: string;
+  photoUrls?: string[];
+};
+
+export const useCreateAdminOrganization = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (body: AdminOrganizationCreateBody) => {
+      const { data, error } = await api.api.admin.organizations.post(body);
+      if (error) throw apiErrorFromEden(error);
+      return data.message;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: adminKeys.organizationsList() });
+    },
+  });
+};
+
+export type AdminOrganizationUpdateBody = {
+  name?: string;
+  description?: string | null;
+  websiteUrl?: string | null;
+  imageUrl?: string | null;
+  instagramUrl?: string | null;
+  tiktokUrl?: string | null;
+  whatsappUrl?: string | null;
+  youtubeUrl?: string | null;
+  stravaUrl?: string | null;
+  photoUrls?: string[];
+};
+
+export const useUpdateAdminOrganization = (id: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (body: AdminOrganizationUpdateBody) => {
+      const { data, error } = await api.api.admin
+        .organizations({ id })
+        .post(body);
+      if (error) throw apiErrorFromEden(error);
+      return data;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: adminKeys.organizationDetail(id) });
+      void qc.invalidateQueries({ queryKey: adminKeys.organizationsList() });
+    },
+  });
+};
+
+export const useDeleteAdminOrganization = (id: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      const { data, error } = await api.api.admin
+        .organizations({ id })
+        .delete();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      qc.removeQueries({ queryKey: adminKeys.organizationDetail(id) });
+      void qc.invalidateQueries({ queryKey: adminKeys.organizationsList() });
+    },
+  });
+};
+
+export const useAddAdminOrganizationMember = (orgId: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (body: { userId: string }) => {
+      const { data, error } = await api.api.admin
+        .organizations({ id: orgId })
+        .members.post(body);
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({
+        queryKey: adminKeys.organizationDetail(orgId),
+      });
+      void qc.invalidateQueries({ queryKey: adminKeys.organizationsList() });
+    },
+  });
+};
+
+export const useRemoveAdminOrganizationMember = (orgId: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (userId: string) => {
+      const { data, error } = await api.api.admin
+        .organizations({ id: orgId })
+        .members({ userId })
+        .delete();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({
+        queryKey: adminKeys.organizationDetail(orgId),
+      });
+      void qc.invalidateQueries({ queryKey: adminKeys.organizationsList() });
+    },
+  });
+};
+
+export const useAdminRoutes = ({
+  page,
+  q,
+  mountainSlug,
+  multiPeak,
+}: {
+  page: number;
+  q: string;
+  mountainSlug: string;
+  multiPeak: boolean;
+}) =>
+  useQuery({
+    queryKey: adminKeys.routes({ page, q, mountainSlug, multiPeak }),
+    queryFn: async () => {
+      const { data, error } = await api.api.admin.routes.get({
+        query: {
+          page,
+          pageSize: 25,
+          q: q || undefined,
+          mountainSlug: mountainSlug || undefined,
+          multiPeak: multiPeak || undefined,
+        },
+      });
+      if (error) throw error;
+      return data.message;
+    },
+    placeholderData: (prev) => prev,
+  });
+
+export const useAdminRouteDetail = (id: string) =>
+  useQuery({
+    queryKey: adminKeys.routeDetail(id),
+    queryFn: async () => {
+      const { data, error } = await api.api.admin.routes({ id }).get();
+      if (error) throw error;
+      return data.message;
+    },
+  });
+
+// Promote/demote a participant inside a plan. Mirrors the (now-deleted)
+// org-side role hook but targets plan_has_users.role instead.
+export const useUpdateAdminPlanMemberRole = (planId: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (args: { userId: string; role: PlanMemberRole }) => {
+      const { data, error } = await api.api.admin
+        .plans({ id: planId })
+        .members({ userId: args.userId })
+        .role.patch({ role: args.role });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: adminKeys.planDetail(planId) });
     },
   });
 };

@@ -2,11 +2,13 @@ import { format } from "date-fns";
 import { LinearGradient } from "expo-linear-gradient";
 import { forwardRef } from "react";
 import { FormattedMessage } from "react-intl";
-import { Image, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 import { Avatar, ThemedText } from "@/components/ui/atoms";
+import { Image } from "@/components/ui/atoms/image";
 import { Colors } from "@/constants/colors";
 import { formatUsersLine, getFullName } from "@/domains/user/user.utils";
+import { parseLocalDateString } from "@/lib/dates";
 import { getInitials } from "@/lib/strings";
 
 const CARD_W = 360;
@@ -139,7 +141,7 @@ export const SummitShareCard = forwardRef<View, Props>(
                 fontWeight: "600",
               }}
             >
-              {format(new Date(summitedAt), "dd MMM yyyy")}
+              {format(parseLocalDateString(summitedAt), "dd MMM yyyy")}
             </ThemedText>
             {mountainEssential && (
               <>

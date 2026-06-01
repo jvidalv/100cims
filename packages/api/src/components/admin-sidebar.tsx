@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Building2,
   Camera,
   Clock,
   Compass,
@@ -8,7 +9,9 @@ import {
   Inbox,
   LogOut,
   Mail,
+  MessageSquare,
   Mountain,
+  Route as RouteIcon,
   ShoppingBag,
   Ticket,
   Trophy,
@@ -43,9 +46,12 @@ const NAV_ITEMS = [
   { href: "/admin", label: "Overview", icon: Home },
   { href: "/admin/users", label: "Users", icon: Users },
   { href: "/admin/mountains", label: "Mountains", icon: Mountain },
+  { href: "/admin/routes", label: "Routes", icon: RouteIcon },
   { href: "/admin/challenges", label: "Challenges", icon: Trophy },
   { href: "/admin/summits", label: "Summits", icon: Camera },
+  { href: "/admin/comments", label: "Comments", icon: MessageSquare },
   { href: "/admin/plans", label: "Plans", icon: Compass },
+  { href: "/admin/organizations", label: "Organizations", icon: Building2 },
   { href: "/admin/merch", label: "Merch", icon: ShoppingBag },
   { href: "/admin/shop-requests", label: "Shop requests", icon: Inbox },
   { href: "/admin/coupons", label: "Coupons", icon: Ticket },

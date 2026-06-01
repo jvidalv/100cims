@@ -1,22 +1,32 @@
 import { Link } from "expo-router";
 import { FormattedMessage } from "react-intl";
-import { Image, ScrollView, View } from "react-native";
+import { ScrollView, View } from "react-native";
 
 import { SocialIcons, ThemedText, ThemedView } from "@/components/ui/atoms";
-import { ScreenHeader } from "@/components/ui/molecules";
+import { Image } from "@/components/ui/atoms/image";
+import {
+  useBlurredScreenHeaderHeight,
+  BlurredScreenHeader,
+} from "@/components/ui/molecules";
 
 export default function AboutTheAppScreen() {
+  const blurredHeaderHeight = useBlurredScreenHeaderHeight();
   return (
     <ThemedView className="flex-1">
-      <ScreenHeader />
-      <ScrollView
-        className="flex-1"
-        contentContainerClassName="px-6 pb-12"
-        showsVerticalScrollIndicator={false}
-      >
-        <ThemedText className="mb-3 text-4xl font-bold">
+      <BlurredScreenHeader>
+        <ThemedText numberOfLines={1} className="text-lg font-medium">
           <FormattedMessage defaultMessage="About" />
         </ThemedText>
+      </BlurredScreenHeader>
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={{
+          paddingTop: blurredHeaderHeight,
+          paddingHorizontal: 24,
+          paddingBottom: 48,
+        }}
+        showsVerticalScrollIndicator={false}
+      >
         <ThemedText className="mb-6 text-muted-foreground">
           <FormattedMessage defaultMessage="A non-profit app to help hikers discover the territory while enjoying the mountains. Made with care, shared for free." />
         </ThemedText>

@@ -2,8 +2,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { Camera, Check, X } from "lucide-react-native";
 import { useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { Alert, Image, ScrollView, TouchableOpacity, View } from "react-native";
-
+import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
 
 import {
   ActivityIndicator,
@@ -12,6 +11,7 @@ import {
   ThemedText,
   ThemedView,
 } from "@/components/ui/atoms";
+import { Image } from "@/components/ui/atoms/image";
 import { ThemedDateInput } from "@/components/ui/atoms/themed-date-input";
 import {
   ActionRow,
@@ -27,6 +27,7 @@ import { type PeoplePickerUser } from "@/domains/user/people-picker-session";
 import { useUserMe } from "@/domains/user/user.api";
 import { getFullName } from "@/domains/user/user.utils";
 import { useImagePicker } from "@/hooks/use-image-picker";
+import { parseLocalDateString, toLocalDateString } from "@/lib/dates";
 import { logError } from "@/lib/log-error";
 
 export default function EditSummitScreen() {
@@ -72,7 +73,7 @@ export default function EditSummitScreen() {
     );
   }
 
-  const initialDate = new Date(data.summitedAt);
+  const initialDate = parseLocalDateString(data.summitedAt);
   const initialUsers: PeoplePickerUser[] = data.users.map((u) => ({
     id: u.userId,
     fullName: getFullName(u) || "?",
@@ -98,8 +99,8 @@ export default function EditSummitScreen() {
       difficulty?: number | null;
     } = { summitId: summit };
 
-    if (date && date.toISOString() !== initialDate.toISOString()) {
-      payload.summitedAt = date.toISOString();
+    if (date && toLocalDateString(date) !== toLocalDateString(initialDate)) {
+      payload.summitedAt = toLocalDateString(date);
     }
     if (imageBase64) {
       payload.image = imageBase64;

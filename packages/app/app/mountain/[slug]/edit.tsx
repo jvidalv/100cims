@@ -2,16 +2,7 @@ import { Redirect, useLocalSearchParams, useRouter } from "expo-router";
 import { Camera, Check, Trash2, X } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import {
-  Alert,
-  Image,
-  Keyboard,
-  ScrollView,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
-} from "react-native";
-
+import { Alert, Keyboard, ScrollView, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 
 import {
   ActivityIndicator,
@@ -19,6 +10,7 @@ import {
   ThemedText,
   ThemedTextInput,
 } from "@/components/ui/atoms";
+import { Image } from "@/components/ui/atoms/image";
 import { ThemedToggleInput } from "@/components/ui/atoms/themed-toggle-input";
 import { ActionRow, ScreenHeader } from "@/components/ui/molecules";
 import {
@@ -153,7 +145,8 @@ export default function MountainEditScreen() {
       <View className="flex-1 bg-background">
         <ScreenHeader />
         <ScrollView
-          className="flex-1 px-6"
+          className="flex-1"
+          contentContainerClassName="px-6"
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >

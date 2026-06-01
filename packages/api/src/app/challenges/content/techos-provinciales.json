@@ -1,0 +1,40 @@
+{
+  "locale": "es",
+  "title": "Techos Provinciales · El pico más alto de cada provincia de España | Cims, sempre amunt",
+  "shortName": "Techos Provinciales",
+  "description": "Sigue tu progreso ascendiendo el techo de cada provincia de España: 47 cumbres, desde el Teide hasta los discretos altos de la meseta. App gratuita para iOS y Android.",
+  "heroTagline": "El pico más alto de cada provincia de España, en tu móvil.",
+  "heroImageUrl": "https://dg49c3nlr5rbl.cloudfront.net/100cims/mountain/profile/teide.jpg?date=1761896472107",
+  "whatIsTitle": "¿Qué son los Techos Provinciales?",
+  "whatIsParagraphs": [
+    "Los techos provinciales son el punto más alto de cada una de las 50 provincias de España, más las ciudades autónomas de Ceuta y Melilla. En cinco casos dos provincias comparten cima — Gorbea (Álava y Bizkaia), Torre Cerredo (Asturias y León), Peñalara (Madrid y Segovia), Moncayo (Soria y Zaragoza) y Peña Trevinca (Ourense y Zamora) — así que el reto reúne 47 cumbres distintas.",
+    "Es un recorrido por toda la geografía peninsular e insular: tresmiles como el Teide (3.718 m, techo de España), el Mulhacén (3.479 m), el Aneto (3.404 m) y la Pica d'Estats (3.143 m); cimas históricas del Pirineo y la Cordillera Cantábrica; volcanes y picos béticos del sur; y discretos altos de la meseta y Sierra Morena como la Bañuela o el Cerro Cuchillejo, de poco más de 900 metros.",
+    "Con Cims, sempre amunt llevas la lista al móvil, marcas cada ascenso con foto y fecha, y ves cómo avanzas provincia a provincia sin papeles ni fichas."
+  ],
+  "faqs": [
+    {
+      "q": "¿Cuántas cumbres tiene el reto?",
+      "a": "47 cumbres distintas. España tiene 50 provincias más Ceuta y Melilla (52 territorios), pero cinco pares de provincias comparten cima — Gorbea, Torre Cerredo, Peñalara, Moncayo y Peña Trevinca — así que la lista queda en 47."
+    },
+    {
+      "q": "¿Cuál es la cumbre más alta y la más baja?",
+      "a": "La más alta es el Teide (3.718 m), techo de Santa Cruz de Tenerife y de toda España. La más baja es el Fuerte de Rostrogordo (135 m), el punto más alto de Melilla — más un punto geográfico que un pico real, pero forma parte de la lista por completitud."
+    },
+    {
+      "q": "¿Hay que estar federado o tener licencia?",
+      "a": "No. Es un reto personal: la app te sirve para llevar la cuenta tanto si estás federado como si no."
+    },
+    {
+      "q": "¿Valen ascensiones anteriores a instalar la app?",
+      "a": "Sí. Puedes registrar cualquier ascensión, sea de la fecha que sea — solo tienes que añadir la cumbre con la fecha correspondiente."
+    },
+    {
+      "q": "¿Cuál es la mejor época para hacerlo?",
+      "a": "Depende del techo: los tresmiles del Pirineo y Sierra Nevada se hacen mejor en verano y primer otoño; los de la cornisa cantábrica y meseta norte aguantan buena ventana de primavera a otoño; los del sur y mediterráneo son ideales de otoño a primavera."
+    },
+    {
+      "q": "¿Por qué incluís Ceuta y Melilla si apenas tienen montaña?",
+      "a": "Porque el reto busca completitud territorial: las dos ciudades autónomas son parte de España y tienen su propio punto más alto. El Monte Anyera (349 m) en Ceuta y el Fuerte de Rostrogordo (135 m) en Melilla cierran simbólicamente la lista."
+    }
+  ]
+}

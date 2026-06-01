@@ -11,9 +11,10 @@ import {
   UserPlus,
   type LucideIcon as LucideIconType,
 } from "lucide-react-native";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { Alert, Image, View } from "react-native";
+import { Alert, View } from "react-native";
+
 
 import { useAuth } from "@/components/providers/auth-provider";
 import { SummitCard } from "@/components/summit";
@@ -23,17 +24,23 @@ import {
   Skeleton,
   ThemedText,
 } from "@/components/ui/atoms";
+import { Image } from "@/components/ui/atoms/image";
 import {
   ActionRow,
+  ChallengeRowMinimal,
   PersonRow,
   SharePreviewModal,
 } from "@/components/ui/molecules";
 import ParallaxScrollView from "@/components/ui/organisms/parallax-scroll-view";
 import { UserShareCard } from "@/components/user";
+import { useChallengeDetail } from "@/domains/challenge/challenge.api";
+import { countryToEmoji } from "@/domains/challenge/challenge.model";
 import {
   useAddUserPerson,
+  useAnyUserAllSummits,
   useAnyUserSummits,
   useRemoveUserPerson,
+  useUserChallenges,
   useUserMe,
   useUserOneGet,
   useUserPeople,
@@ -52,24 +59,65 @@ export default function UserScreen() {
   const { user: userId } = useLocalSearchParams<{ user: string }>();
   const { data: user } = useUserOneGet({ userId });
   const { data: userDetails } = useUserProfile({ userId });
-  const { data: summits, isPending: isPendingSummits } = useAnyUserSummits({
-    userId,
+  const activeChallengeId = user?.activeChallengeId ?? "";
+  const { data: activeChallenge } = useChallengeDetail({
+    id: activeChallengeId,
   });
+  // Per-challenge summit counts for the profile user — used to compute the
+  // completion % on the active-challenge row, matching /challenges.
+  const { data: userChallenges } = useUserChallenges({
+    userId,
+    enabled: !!activeChallengeId,
+  });
+  const activeChallengeSummitedCount =
+    userChallenges?.find((c) => c.id === activeChallengeId)?.summitCount ?? 0;
 
   const isMe = me?.id === userId;
+
+  // Paginated summits — 24 per page, infinite-scrolled into view as the
+  // user scrolls toward the bottom of the parallax scroll view.
+  const {
+    data: summitsPages,
+    isPending: isPendingSummits,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useAnyUserAllSummits({ userId });
+  const summits = useMemo(
+    () => summitsPages?.pages.flatMap((p) => p.items) ?? [],
+    [summitsPages],
+  );
+  const totalSummits = summitsPages?.pages[0]?.pagination.totalItems ?? 0;
+  const handleEndReached = () => {
+    if (hasNextPage && !isFetchingNextPage) fetchNextPage();
+  };
+
+  // Share-card needs the full summit list (sorted by height, top 10) for
+  // the "Share on social" composition. Only runs when the viewer is the
+  // profile owner — the share card is also only rendered in that case
+  // (see the `isMe && !!user` guard near the end). The legacy
+  // non-paginated endpoint stays around exactly for this.
+  const { data: allSummitsForShare, isPending: isPendingShareSummits } =
+    useAnyUserSummits({
+      userId,
+      enabled: isMe,
+    });
 
   const shareCardRef = useRef<View>(null);
   const [isSharing, setIsSharing] = useState(false);
   const [shareUri, setShareUri] = useState<string | null>(null);
 
   const sharedUsers = userDetails?.sharedUsers ?? [];
-  const topSummits = [...(summits ?? [])]
+  // Share card uses the full (legacy) list when we're the profile owner —
+  // we need every summit so the "top 10 by height" sort actually reflects
+  // every cim, not just the first page.
+  const topSummits = [...(allSummitsForShare ?? [])]
     .sort(
       (a, b) => (parseInt(b.mountainHeight) || 0) - (parseInt(a.mountainHeight) || 0),
     )
     .slice(0, 10)
     .map((s) => ({ imageUrl: s.summitedImageUrl }));
-  const remainingCount = Math.max(0, (summits?.length ?? 0) - 10);
+  const remainingCount = Math.max(0, (allSummitsForShare?.length ?? 0) - 10);
 
   const handleShareLink = async () => {
     await shareDeeplink({
@@ -167,6 +215,7 @@ export default function UserScreen() {
       title={user ? getFullName(user) : "..."}
       headerClassName="flex items-center justify-center bg-primary"
       contentClassName="py-6"
+      onEndReached={handleEndReached}
       headerImage={
         user?.imageUrl ? (
           <Image
@@ -218,7 +267,7 @@ export default function UserScreen() {
                 onPress={handleShareSocial}
                 icon={ImageIcon}
                 intent="blue"
-                disabled={isSharing || isPendingSummits}
+                disabled={isSharing || isPendingShareSummits}
                 iconOverride={
                   isSharing ? <ActivityIndicator size="sm" /> : undefined
                 }
@@ -313,12 +362,42 @@ export default function UserScreen() {
           ))}
         </View>
       )}
+      {activeChallenge && (
+        <View className="mb-6 gap-2 px-6">
+          <ThemedText className="text-2xl font-semibold">
+            <FormattedMessage defaultMessage="Current challenge" />
+          </ThemedText>
+          <ChallengeRowMinimal
+            name={activeChallenge.name}
+            emoji={
+              activeChallenge.emoji ?? countryToEmoji(activeChallenge.country)
+            }
+            peakImageUrl={
+              activeChallenge.mountains[0]?.imageUrl ??
+              activeChallenge.imageUrl ??
+              null
+            }
+            totalMountains={String(activeChallenge.totalMountains)}
+            totalUsers={String(activeChallenge.totalUsers)}
+            summitedCount={activeChallengeSummitedCount}
+            onPress={() =>
+              router.push({
+                pathname: "/challenge/[id]",
+                params: { id: activeChallenge.id },
+              })
+            }
+          />
+        </View>
+      )}
       <View className="relative flex-row items-center justify-between">
         <ThemedText className="mb-4 px-6 text-2xl font-semibold">
           <FormattedMessage defaultMessage="Summits" />
           <ThemedText className="font-medium text-muted-foreground">
             {"  "}
-            {summits?.length}
+            {/* Suppress the count until page 1 lands — otherwise we'd flash
+                "Summits 0" before the real total resolves, the skeleton
+                grid below is the real loading indicator. */}
+            {isPendingSummits ? "" : totalSummits}
           </ThemedText>
         </ThemedText>
       </View>
@@ -332,12 +411,12 @@ export default function UserScreen() {
               />
             </View>
           ))}
-        {!summits?.length && !isPendingSummits && (
+        {!summits.length && !isPendingSummits && (
           <ThemedText className="text-muted-foreground">
             <FormattedMessage defaultMessage="No summits yet." />
           </ThemedText>
         )}
-        {summits?.map((summit, index) => (
+        {summits.map((summit, index) => (
           <SummitCard
             key={summit.summitId}
             summit={summit}
@@ -352,6 +431,11 @@ export default function UserScreen() {
           />
         ))}
       </View>
+      {isFetchingNextPage && (
+        <View className="py-4">
+          <ActivityIndicator />
+        </View>
+      )}
       </ParallaxScrollView>
       {isMe && !!user && (
         <View

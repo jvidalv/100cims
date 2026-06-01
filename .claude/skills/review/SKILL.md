@@ -14,6 +14,7 @@ Review all files you changed in this session. Focus on patterns specific to this
 - `@ts-ignore` / `@ts-expect-error` without a `--` reason comment.
 - `console.log` left in committed code.
 - Hardcoded values that belong in a constant / env var.
+- **Re-exports of symbols the file doesn't define.** `export { X } from "./other"` and `export type { X } from "./other"` are both violations unless the file is explicitly a package's public-API barrel (e.g. `components/ui/atoms/index.ts`). Callsites import `X` from where `X` lives — re-exporting "alongside related hooks for convenience" still drifts, fragments ownership, and pads the bundle. The global rule lives in `~/.claude/CLAUDE.md` "Critical Rules"; this skill's job is to catch its violations.
 
 ### 2. Manually edited generated types
 
@@ -38,9 +39,9 @@ If `packages/app/types/api.ts` is in the diff, flag it. This file is regenerated
 - Missing `onError` logging hook coverage for new error paths.
 - New DB query patterns that would be slow without an index — flag for review.
 - S3 upload endpoints without image size / MIME validation.
-- Multiple Elysia endpoints bundled into one file (see `packages/api/CLAUDE.md` — **one file = one endpoint**).
+- Multiple Elysia endpoints bundled into one file — **one file = one endpoint** (see `AGENTS.md`).
 - Routes added but not mounted in the parent `index.ts` composer.
-- **Hand-authored migration files** under `packages/api/src/db/drizzle/` or **hand-edited `drizzle/meta/_journal.json`** — flag either. Migration files must be produced by drizzle-kit: `yarn api db:generate` for schema changes, `yarn api db:generate --custom --name <slug>` for pure data changes (backfills, renames, merges). Root `CLAUDE.md` has the full flow.
+- **Hand-authored migration files** under `packages/api/src/db/drizzle/` or **hand-edited `drizzle/meta/_journal.json`** — flag either. Migration files must be produced by drizzle-kit: `yarn api db:generate` for schema changes, `yarn api db:generate --custom --name <slug>` for pure data changes (backfills, renames, merges). See `AGENTS.md` for the full flow.
 - **CRITICAL — custom migration SQL must use snake_case column identifiers**, NOT camelCase. Drizzle's `text()`/`boolean()`/`uuid()` builders map TS field `imageUrl` to DB column `image_url`; quoting `"imageUrl"` in raw SQL references a column that doesn't exist. drizzle-kit swallows the PG error and just prints `exit code: 1`, which silently breaks every Railway build until the migration is fixed. For every new `*.sql` file under `packages/api/src/db/drizzle/`, scan each `INSERT (...)`, `UPDATE ... SET`, and `WHERE` clause and confirm every identifier matches a real column (cross-check against an existing migration like `0001_seed-data.sql` or against `information_schema.columns`).
 
 ### 5. API backwards compatibility (CRITICAL)

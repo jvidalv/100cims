@@ -1,10 +1,11 @@
 import { Camera } from "lucide-react-native";
 import { forwardRef, ReactNode } from "react";
 import { FormattedMessage } from "react-intl";
-import { Image, TouchableOpacity, TouchableOpacityProps, View } from "react-native";
+import { TouchableOpacity, TouchableOpacityProps, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
 import { LucideIcon, ThemedText } from "@/components/ui/atoms";
+import { Image } from "@/components/ui/atoms/image";
 
 type Props = {
   name: string;
