@@ -46,6 +46,7 @@ import {
   updateQty,
   type CartItem,
 } from "@/domains/merch/cart";
+import { computeCartTotals, round2 } from "@/domains/merch/cart-totals";
 import { useCouponLookup } from "@/domains/merch/coupon.api";
 import { useMerch } from "@/domains/merch/merch.api";
 import {
@@ -97,6 +98,15 @@ export default function ShopCartScreen() {
   // resolves, by which point this query has typically warmed up.
   const { data: shopConfig } = useShopConfig();
   const bizumPhone = shopConfig?.bizumPhone ?? "";
+  // Shipping is server-owned: `shippingFee` is the flat fee in euros,
+  // waived once the goods subtotal (pre-coupon) reaches
+  // `freeShippingThreshold`. Fallbacks: 0 / Infinity so an old API
+  // version (or in-flight config request) silently degrades to "no
+  // shipping fee" instead of guessing wrong values. Anchoring off the
+  // pre-coupon subtotal means a coupon can't push the buyer below the
+  // free-shipping bar.
+  const shippingFeeConfigured = shopConfig?.shippingFee ?? 0;
+  const freeShippingThreshold = shopConfig?.freeShippingThreshold ?? Infinity;
   const [cart, setCart] = useState<CartItem[]>([]);
   const [contactEmailOverride, setContactEmailOverride] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -201,16 +211,24 @@ export default function ShopCartScreen() {
     };
   })();
 
-  // Snap to 2 decimals so `25 * 0.85 = 21.25` doesn't render as
-  // `21.249999…`. Percentage discounts can produce fractional cents;
-  // fixed-€ discounts won't but the same formatter handles both.
-  const round2 = (n: number) => Math.round(n * 100) / 100;
-  const discountAmount = appliedCoupon
-    ? appliedCoupon.discountType === "percentage"
-      ? round2((total * appliedCoupon.discountValue) / 100)
-      : Math.min(total, appliedCoupon.discountValue)
-    : 0;
-  const finalTotal = Math.max(0, round2(total - discountAmount));
+  // Single shared formula — every surface (inline summary, floating
+  // footer, Discord message, Bizum step) reads from the same returned
+  // breakdown. Inline arithmetic on `total` / `appliedCoupon` /
+  // shipping is forbidden so we never get pieces that disagree.
+  const totals = computeCartTotals({
+    subtotal: total,
+    appliedCoupon,
+    shippingFee: shippingFeeConfigured,
+    freeShippingThreshold,
+  });
+  const {
+    subtotal,
+    discountAmount,
+    shippingCharge,
+    isFreeShipping,
+    finalTotal,
+    totalWithoutCoupon,
+  } = totals;
 
   if (!isAuthenticated) {
     return <Redirect href="/join" />;
@@ -279,15 +297,28 @@ export default function ShopCartScreen() {
       `  ${shippingStreet.trim()}\n` +
       `  ${shippingPostalCode.trim()} ${shippingCity.trim()}\n` +
       `  ${countryLine} (${shippingCountry})\n`;
+    // Build the receipt block: show the full Subtotal/Shipping/Total
+    // breakdown whenever a coupon OR shipping fee affects the result;
+    // collapse to a single Total: line for the simple case (no coupon
+    // AND server-disabled shipping). Free shipping prints the rule
+    // rationale so admin sees the threshold fired.
+    const showShippingLine = shippingFeeConfigured > 0;
+    const showBreakdown = !!appliedCoupon || showShippingLine;
+    const shippingLine = !showShippingLine
+      ? ""
+      : isFreeShipping
+        ? `Shipping: 0€ (free, subtotal ≥ ${freeShippingThreshold}€)\n`
+        : `Shipping: ${shippingCharge}€\n`;
+    const receiptBlock = showBreakdown
+      ? `Subtotal: ${subtotal}€\n${shippingLine}Total: ${finalTotal}€\n`
+      : `Total: ${subtotal}€\n`;
     const message =
       `[MERCH ORDER]\n` +
       `From: ${effectiveEmail}\n` +
       hiddenLine +
       phoneLine +
       couponLine +
-      (appliedCoupon
-        ? `Subtotal: ${total}€\nTotal: ${finalTotal}€\n`
-        : `Total: ${total}€\n`) +
+      receiptBlock +
       shippingBlock +
       `\nItems:\n${itemLines}`;
 
@@ -373,22 +404,11 @@ export default function ShopCartScreen() {
     }
   };
 
-  // The cart-list branch is the only one that needs the pinned Total
-  // footer. We render the footer OUTSIDE the KAV so the keyboard covers
-  // it normally — inside the KAV it slides up with the keyboard and
-  // overlaps the focused input.
-  const showCartList =
-    !paymentShopRequestId &&
-    !isSubmitted &&
-    !(!merch && cart.length > 0) &&
-    lines.length > 0;
-
   return (
-    <View className="flex-1 bg-background">
-      <ThemedKeyboardAvoidingView>
-        <ScreenHeader>
-          <FormattedMessage defaultMessage="Your cart" />
-        </ScreenHeader>
+    <ThemedKeyboardAvoidingView>
+      <ScreenHeader>
+        <FormattedMessage defaultMessage="Your cart" />
+      </ScreenHeader>
 
       {paymentShopRequestId && !isSubmitted ? (
         <ScrollView
@@ -743,14 +763,70 @@ export default function ShopCartScreen() {
             )}
 
             <View className="mt-4 gap-1">
-              <View className="flex-row items-baseline justify-between">
+              {shippingFeeConfigured > 0 && (
+                <View className="flex-row items-baseline justify-between">
+                  <ThemedText className="text-sm text-muted-foreground">
+                    <FormattedMessage defaultMessage="Subtotal" />
+                  </ThemedText>
+                  <ThemedText className="text-sm text-muted-foreground">
+                    {subtotal}€
+                  </ThemedText>
+                </View>
+              )}
+              {shippingFeeConfigured > 0 && (
+                <View className="flex-row items-baseline justify-between">
+                  <ThemedText className="text-sm text-muted-foreground">
+                    <FormattedMessage defaultMessage="Shipping" />
+                  </ThemedText>
+                  <ThemedText
+                    className={
+                      isFreeShipping
+                        ? "text-sm font-semibold text-emerald-600 dark:text-emerald-400"
+                        : "text-sm text-muted-foreground"
+                    }
+                  >
+                    {isFreeShipping ? (
+                      <FormattedMessage defaultMessage="Free" />
+                    ) : (
+                      `${shippingCharge}€`
+                    )}
+                  </ThemedText>
+                </View>
+              )}
+              {shippingFeeConfigured > 0 &&
+                subtotal < freeShippingThreshold && (
+                  <ThemedText className="text-right text-xs text-muted-foreground">
+                    <FormattedMessage
+                      defaultMessage="Add {amount}€ more to get free shipping."
+                      values={{
+                        amount: round2(freeShippingThreshold - subtotal),
+                      }}
+                    />
+                  </ThemedText>
+                )}
+              {isFreeShipping && (
+                <ThemedText className="text-right text-xs font-semibold text-emerald-700 dark:text-emerald-400">
+                  <FormattedMessage defaultMessage="Free shipping unlocked." />
+                </ThemedText>
+              )}
+              <View
+                className={
+                  shippingFeeConfigured > 0
+                    ? "mt-3 flex-row items-baseline justify-between"
+                    : "flex-row items-baseline justify-between"
+                }
+              >
                 <ThemedText className="text-base font-semibold">
                   <FormattedMessage defaultMessage="Total" />
                 </ThemedText>
                 <View className="flex-row items-baseline gap-2">
                   {appliedCoupon && (
+                    // The struck-out "before" must include shipping, otherwise
+                    // a coupon that exactly offsets shipping renders as
+                    // `25€ → 25€` and looks like a no-op. The honest
+                    // pre-coupon comparison is subtotal + shippingCharge.
                     <ThemedText className="text-base text-muted-foreground line-through">
-                      {total}€
+                      {totalWithoutCoupon}€
                     </ThemedText>
                   )}
                   <ThemedText className="text-2xl font-bold">
@@ -788,7 +864,7 @@ export default function ShopCartScreen() {
               onPress={onSubmit}
               disabled={isPending || !addressComplete}
               activeOpacity={0.85}
-              className="mt-2 flex-row items-center gap-3 py-2"
+              className="mt-2 flex-row items-center gap-3 py-1"
               style={{ opacity: !addressComplete || isPending ? 0.5 : 1 }}
             >
               <View className="size-12 items-center justify-center rounded-full bg-primary/15">
@@ -802,26 +878,9 @@ export default function ShopCartScreen() {
                   />
                 )}
               </View>
-              <View className="flex-1 gap-0.5">
+              <View className="flex-1">
                 <ThemedText className="text-base font-semibold text-primary">
                   <FormattedMessage defaultMessage="Send order" />
-                </ThemedText>
-                <ThemedText className="text-xs text-muted-foreground">
-                  {!addressComplete ? (
-                    <FormattedMessage defaultMessage="Fill in your address to send the order." />
-                  ) : (
-                    (() => {
-                      const trimmed = contactEmailOverride.trim();
-                      const valid =
-                        trimmed && EMAIL_RE.test(trimmed) ? trimmed : null;
-                      return (
-                        <FormattedMessage
-                          defaultMessage="We'll reach you at {email}."
-                          values={{ email: valid ?? me?.email ?? "—" }}
-                        />
-                      );
-                    })()
-                  )}
                 </ThemedText>
               </View>
             </TouchableOpacity>
@@ -829,46 +888,20 @@ export default function ShopCartScreen() {
             <TouchableOpacity
               onPress={() => router.push("/shop")}
               activeOpacity={0.85}
-              className="flex-row items-center gap-3 py-2"
+              className="flex-row items-center gap-3 py-1"
             >
               <View className="size-12 items-center justify-center rounded-full bg-border">
                 <LucideIcon icon={Store} size={20} muted />
               </View>
-              <View className="flex-1 gap-0.5">
+              <View className="flex-1">
                 <ThemedText className="text-base font-semibold">
                   <FormattedMessage defaultMessage="Keep shopping" />
-                </ThemedText>
-                <ThemedText className="text-xs text-muted-foreground">
-                  <FormattedMessage defaultMessage="Add more merch before sending." />
                 </ThemedText>
               </View>
             </TouchableOpacity>
           </ScrollView>
         </>
       )}
-      </ThemedKeyboardAvoidingView>
-      {showCartList && (
-        <View
-          pointerEvents="box-none"
-          className="absolute bottom-0 left-0 right-0 border-t border-border bg-background px-6 pb-10 pt-4"
-        >
-          <View className="flex-row items-baseline justify-between">
-            <ThemedText className="text-lg font-semibold">
-              <FormattedMessage defaultMessage="Total" />
-            </ThemedText>
-            <View className="flex-row items-baseline gap-2">
-              {appliedCoupon && (
-                <ThemedText className="text-base text-muted-foreground line-through">
-                  {total}€
-                </ThemedText>
-              )}
-              <ThemedText className="text-2xl font-bold">
-                {finalTotal}€
-              </ThemedText>
-            </View>
-          </View>
-        </View>
-      )}
-    </View>
+    </ThemedKeyboardAvoidingView>
   );
 }

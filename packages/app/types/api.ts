@@ -10261,18 +10261,24 @@ export interface operations {
                         success: boolean;
                         message: {
                             bizumPhone: string;
+                            shippingFee: number;
+                            freeShippingThreshold: number;
                         };
                     };
                     "multipart/form-data": {
                         success: boolean;
                         message: {
                             bizumPhone: string;
+                            shippingFee: number;
+                            freeShippingThreshold: number;
                         };
                     };
                     "text/plain": {
                         success: boolean;
                         message: {
                             bizumPhone: string;
+                            shippingFee: number;
+                            freeShippingThreshold: number;
                         };
                     };
                 };

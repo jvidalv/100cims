@@ -15,7 +15,7 @@ if (process.env.MAPBOX_DOWNLOADS_TOKEN && !process.env.RNMAPBOX_MAPS_DOWNLOAD_TO
 const config: ExpoConfig & { newArchEnabled?: boolean } = {
   name: "Cims",
   slug: "100cims",
-  version: "3.1.0",
+  version: "3.2.0",
   orientation: "portrait",
   icon: "./assets/images/icon.png",
   scheme: "centcims",
