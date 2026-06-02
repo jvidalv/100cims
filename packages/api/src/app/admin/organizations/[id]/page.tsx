@@ -492,15 +492,22 @@ export default function AdminOrganizationDetailPage({
               [u.firstName, u.lastName].filter(Boolean).join(" ") ||
               u.username ||
               u.email;
+            const initials = (u.firstName?.[0] ?? u.email[0]).toUpperCase();
             return (
-              <>
-                <span className="font-medium">{name}</span>
-                {u.email && (
-                  <span className="text-xs text-muted-foreground">
-                    {u.email}
-                  </span>
-                )}
-              </>
+              <div className="flex w-full items-center gap-3">
+                <Avatar className="size-8 shrink-0">
+                  {u.imageUrl && <AvatarImage src={u.imageUrl} alt={name} />}
+                  <AvatarFallback>{initials}</AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col items-start gap-0.5 min-w-0">
+                  <span className="font-medium truncate">{name}</span>
+                  {u.email && (
+                    <span className="text-xs text-muted-foreground truncate">
+                      {u.email}
+                    </span>
+                  )}
+                </div>
+              </div>
             );
           }}
         />
