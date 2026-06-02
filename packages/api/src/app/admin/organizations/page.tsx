@@ -58,7 +58,6 @@ export default function AdminOrganizationsPage() {
                 <tr className="border-b text-left">
                   <th className="py-2 pr-4 font-medium">Logo</th>
                   <th className="py-2 pr-4 font-medium">Name</th>
-                  <th className="py-2 pr-4 font-medium">Members</th>
                   <th className="py-2 pr-4 font-medium">Created</th>
                 </tr>
               </thead>
@@ -85,9 +84,6 @@ export default function AdminOrganizationsPage() {
                     <td className="py-2 pr-4">
                       <div className="font-medium">{o.name}</div>
                     </td>
-                    <td className="py-2 pr-4 text-muted-foreground font-mono">
-                      {o.memberCount}
-                    </td>
                     <td className="py-2 pr-4 text-muted-foreground">
                       {formatDate(o.createdAt)}
                     </td>
@@ -96,7 +92,7 @@ export default function AdminOrganizationsPage() {
                 {data.items.length === 0 && (
                   <tr>
                     <td
-                      colSpan={4}
+                      colSpan={3}
                       className="py-8 text-center text-muted-foreground"
                     >
                       No organizations yet.
