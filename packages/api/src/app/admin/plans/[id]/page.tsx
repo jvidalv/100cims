@@ -30,8 +30,10 @@ import {
 import { SearchPicker } from "@/app/admin/_lib/search-picker";
 import { useMountainSearch } from "@/app/admin/_lib/use-mountain-search";
 import { useOrganizationSearch } from "@/app/admin/_lib/use-organization-search";
+import { useUserSearch } from "@/app/admin/_lib/use-user-search";
 import {
   type AdminPlanUpdateBody,
+  useAddAdminPlanMember,
   useAddAdminPlanMountain,
   useAdminPlanDetail,
   useAdminPlanMemberLog,
@@ -121,6 +123,7 @@ export default function AdminPlanDetailPage({
   const updatePlanMemberRole = useUpdateAdminPlanMemberRole(id);
   const addMountain = useAddAdminPlanMountain(id);
   const removeMountain = useRemoveAdminPlanMountain(id);
+  const addMember = useAddAdminPlanMember(id);
 
   const [form, setForm] = useState<Form>(emptyForm);
   const [initial, setInitial] = useState<Form>(emptyForm);
@@ -741,6 +744,38 @@ export default function AdminPlanDetailPage({
             })}
           </ul>
         )}
+        <SearchPicker
+          placeholder="Add a member by name, username or email…"
+          emptyLabel="No users match."
+          useResults={useUserSearch}
+          excludeIds={new Set(p.participants.map((m) => m.userId))}
+          onPick={(u) =>
+            addMember.mutate(u.id, {
+              onSuccess: () => toast.success("Member added"),
+              onError: (e) =>
+                toast.error(e instanceof Error ? e.message : "Add failed"),
+            })
+          }
+          renderOption={(u) => {
+            const name =
+              [u.firstName, u.lastName].filter(Boolean).join(" ") || u.username;
+            const initials = name.slice(0, 2).toUpperCase();
+            return (
+              <div className="flex w-full items-center gap-3">
+                <Avatar className="size-8 shrink-0">
+                  {u.imageUrl && <AvatarImage src={u.imageUrl} alt={name} />}
+                  <AvatarFallback>{initials}</AvatarFallback>
+                </Avatar>
+                <div className="min-w-0">
+                  <div className="font-medium truncate">{name}</div>
+                  <div className="text-xs text-muted-foreground truncate">
+                    {u.email}
+                  </div>
+                </div>
+              </div>
+            );
+          }}
+        />
       </section>
 
       <section className="space-y-3">

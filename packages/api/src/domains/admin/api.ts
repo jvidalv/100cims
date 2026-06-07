@@ -651,6 +651,24 @@ export const useDeleteAdminPlan = (id: string) => {
   });
 };
 
+export const useAddAdminPlanMember = (planId: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (userId: string) => {
+      const { data, error } = await api.api.admin
+        .plans({ id: planId })
+        .members({ userId })
+        .post();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: adminKeys.planDetail(planId) });
+      void qc.invalidateQueries({ queryKey: adminKeys.planMemberLog(planId) });
+    },
+  });
+};
+
 export const useRemoveAdminPlanMember = (planId: string) => {
   const qc = useQueryClient();
   return useMutation({

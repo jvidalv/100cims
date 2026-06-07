@@ -57,6 +57,7 @@ import { adminOrganizationsGetRoute } from "@/api/routes/admin/admin.organizatio
 import { adminPlanCreatePostRoute } from "@/api/routes/admin/admin.plan-create.post";
 import { adminPlanDeleteDeleteRoute } from "@/api/routes/admin/admin.plan-delete.delete";
 import { adminPlanDetailGetRoute } from "@/api/routes/admin/admin.plan-detail.get";
+import { adminPlanMemberAddPostRoute } from "@/api/routes/admin/admin.plan-member-add.post";
 import { adminPlanMemberLogGetRoute } from "@/api/routes/admin/admin.plan-member-log.get";
 import { adminPlanMemberRemoveDeleteRoute } from "@/api/routes/admin/admin.plan-member-remove.delete";
 import { adminPlanMemberRolePatchRoute } from "@/api/routes/admin/admin.plan-member-role.patch";
@@ -146,6 +147,7 @@ export const adminRoutes = new Elysia({ prefix: "/admin" })
   .use(adminPlanUpdatePostRoute)
   .use(adminPlanDeleteDeleteRoute)
   .use(adminPlanMemberLogGetRoute)
+  .use(adminPlanMemberAddPostRoute)
   .use(adminPlanMemberRemoveDeleteRoute)
   .use(adminPlanMemberRolePatchRoute)
   .use(adminPlanMountainAddPostRoute)
