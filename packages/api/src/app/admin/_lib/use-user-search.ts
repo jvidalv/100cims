@@ -31,3 +31,9 @@ export const useUserSearch = (q: string) => {
     })) ?? [];
   return { items, isLoading };
 };
+
+// The per-item shape the picker renders. Derived here so consumers don't
+// hand-roll a mirror of the `items` map above.
+export type UserSearchResult = ReturnType<
+  typeof useUserSearch
+>["items"][number];
