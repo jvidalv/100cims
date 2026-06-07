@@ -30,13 +30,17 @@ import {
 import { SearchPicker } from "@/app/admin/_lib/search-picker";
 import { useMountainSearch } from "@/app/admin/_lib/use-mountain-search";
 import { useOrganizationSearch } from "@/app/admin/_lib/use-organization-search";
-import { useUserSearch } from "@/app/admin/_lib/use-user-search";
+import {
+  type UserSearchResult,
+  useUserSearch,
+} from "@/app/admin/_lib/use-user-search";
 import {
   type AdminPlanUpdateBody,
   useAddAdminPlanMember,
   useAddAdminPlanMountain,
   useAdminPlanDetail,
   useAdminPlanMemberLog,
+  useChangeAdminPlanCreator,
   useDeleteAdminPlan,
   useRemoveAdminPlanMember,
   useRemoveAdminPlanMountain,
@@ -108,6 +112,26 @@ const emptyForm: Form = {
   organizationName: "",
 };
 
+// Shared row renderer for the two user SearchPickers (change-creator +
+// add-member). Both feed off `useUserSearch`, so the option shape matches.
+const renderUserOption = (u: UserSearchResult) => {
+  const name =
+    [u.firstName, u.lastName].filter(Boolean).join(" ") || u.username;
+  const initials = name.slice(0, 2).toUpperCase();
+  return (
+    <div className="flex w-full items-center gap-3">
+      <Avatar className="size-8 shrink-0">
+        {u.imageUrl && <AvatarImage src={u.imageUrl} alt={name} />}
+        <AvatarFallback>{initials}</AvatarFallback>
+      </Avatar>
+      <div className="min-w-0">
+        <div className="font-medium truncate">{name}</div>
+        <div className="text-xs text-muted-foreground truncate">{u.email}</div>
+      </div>
+    </div>
+  );
+};
+
 export default function AdminPlanDetailPage({
   params,
 }: {
@@ -124,9 +148,11 @@ export default function AdminPlanDetailPage({
   const addMountain = useAddAdminPlanMountain(id);
   const removeMountain = useRemoveAdminPlanMountain(id);
   const addMember = useAddAdminPlanMember(id);
+  const changeCreator = useChangeAdminPlanCreator(id);
 
   const [form, setForm] = useState<Form>(emptyForm);
   const [initial, setInitial] = useState<Form>(emptyForm);
+  const [changingCreator, setChangingCreator] = useState(false);
 
   useEffect(() => {
     if (!detail.data || update.isPending) return;
@@ -275,18 +301,53 @@ export default function AdminPlanDetailPage({
             <h1 className="text-2xl font-bold leading-tight truncate">
               {p.title}
             </h1>
-            <Link
-              href={`/admin/users/${p.creatorId}`}
-              className="text-sm text-muted-foreground hover:underline inline-flex items-center gap-2 mt-1"
-            >
-              <Avatar className="size-5">
-                {p.creator.imageUrl && (
-                  <AvatarImage src={p.creator.imageUrl} alt={creatorName} />
-                )}
-                <AvatarFallback>{creatorInitials}</AvatarFallback>
-              </Avatar>
-              <span>{creatorName}</span>
-            </Link>
+            <div className="flex items-center gap-2 mt-1">
+              <Link
+                href={`/admin/users/${p.creatorId}`}
+                className="text-sm text-muted-foreground hover:underline inline-flex items-center gap-2"
+              >
+                <Avatar className="size-5">
+                  {p.creator.imageUrl && (
+                    <AvatarImage src={p.creator.imageUrl} alt={creatorName} />
+                  )}
+                  <AvatarFallback>{creatorInitials}</AvatarFallback>
+                </Avatar>
+                <span>{creatorName}</span>
+              </Link>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="h-6 px-2 text-xs"
+                disabled={changeCreator.isPending}
+                onClick={() => setChangingCreator((v) => !v)}
+              >
+                {changingCreator ? "Cancel" : "Change creator"}
+              </Button>
+            </div>
+            {changingCreator && (
+              <div className="mt-2 w-80 max-w-full">
+                <SearchPicker
+                  placeholder="Pick the new creator…"
+                  emptyLabel="No users match."
+                  useResults={useUserSearch}
+                  excludeIds={new Set([p.creatorId])}
+                  onPick={(u) =>
+                    changeCreator.mutate(u.id, {
+                      onSuccess: () => {
+                        toast.success("Creator changed");
+                        setChangingCreator(false);
+                      },
+                      onError: (e) =>
+                        toast.error(
+                          e instanceof Error ? e.message : "Change failed",
+                        ),
+                    })
+                  }
+                  renderOption={renderUserOption}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -756,25 +817,7 @@ export default function AdminPlanDetailPage({
                 toast.error(e instanceof Error ? e.message : "Add failed"),
             })
           }
-          renderOption={(u) => {
-            const name =
-              [u.firstName, u.lastName].filter(Boolean).join(" ") || u.username;
-            const initials = name.slice(0, 2).toUpperCase();
-            return (
-              <div className="flex w-full items-center gap-3">
-                <Avatar className="size-8 shrink-0">
-                  {u.imageUrl && <AvatarImage src={u.imageUrl} alt={name} />}
-                  <AvatarFallback>{initials}</AvatarFallback>
-                </Avatar>
-                <div className="min-w-0">
-                  <div className="font-medium truncate">{name}</div>
-                  <div className="text-xs text-muted-foreground truncate">
-                    {u.email}
-                  </div>
-                </div>
-              </div>
-            );
-          }}
+          renderOption={renderUserOption}
         />
       </section>
 
