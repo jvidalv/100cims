@@ -12,7 +12,12 @@ import {
 import { Elysia, t } from "elysia";
 
 import { db } from "@/db";
-import { mountainTable, summitTable, userTable } from "@/db/schema";
+import {
+  challengeHasMountainTable,
+  mountainTable,
+  summitTable,
+  userTable,
+} from "@/db/schema";
 import { creatorNameConcat } from "@/api/routes/@shared/sql-helpers";
 import { AdminMountainsResponseSchema } from "@/api/schemas/admin-mountain.schema";
 import { SuccessResponse } from "@/api/schemas/common.schema";
@@ -39,6 +44,15 @@ export const adminMountainsGetRoute = new Elysia().get(
         ilike(mountainTable.location, pattern),
       );
       if (cond) conditions.push(cond);
+    }
+
+    const challengeId = query.challengeId?.trim();
+    if (challengeId) {
+      conditions.push(sql`EXISTS (
+        SELECT 1 FROM ${challengeHasMountainTable}
+        WHERE ${challengeHasMountainTable.mountainId} = ${mountainTable.id}
+          AND ${challengeHasMountainTable.challengeId} = ${challengeId}
+      )`);
     }
 
     const where = conditions.length ? and(...conditions) : undefined;
@@ -113,6 +127,7 @@ export const adminMountainsGetRoute = new Elysia().get(
       pageSize: t.Optional(t.Number()),
       q: t.Optional(t.String()),
       sort: t.Optional(t.String()),
+      challengeId: t.Optional(t.String()),
     }),
     response: SuccessResponse(AdminMountainsResponseSchema),
   },

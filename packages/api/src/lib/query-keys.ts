@@ -20,8 +20,12 @@ export const adminKeys = {
   userPeople: (id: string) => ["admin", "users", id, "people"] as const,
   userSaved: (id: string) => ["admin", "users", id, "saved"] as const,
   mountainsList: () => ["admin", "mountains"] as const,
-  mountains: (params: { page: number; q: string; sort: string }) =>
-    ["admin", "mountains", params] as const,
+  mountains: (params: {
+    page: number;
+    q: string;
+    sort: string;
+    challengeId: string;
+  }) => ["admin", "mountains", params] as const,
   mountainDetail: (id: string) => ["admin", "mountains", id] as const,
   mountainChallenges: (id: string) =>
     ["admin", "mountains", id, "challenges"] as const,
@@ -46,6 +50,7 @@ export const adminKeys = {
     ["admin", "stats", "timeseries", metric, range] as const,
   activeUsers: () => ["admin", "active-users"] as const,
   challengesList: () => ["admin", "challenges"] as const,
+  challengeOptions: () => ["admin", "challenges", "options"] as const,
   challenges: (params: { page: number; q: string; kind: string }) =>
     ["admin", "challenges", params] as const,
   challengeDetail: (id: string) => ["admin", "challenges", id] as const,
