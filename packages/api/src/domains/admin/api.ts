@@ -196,15 +196,17 @@ export const useAdminMountains = (
     page,
     q,
     sort,
+    challengeId,
   }: {
     page: number;
     q: string;
     sort: string;
+    challengeId: string;
   },
   options?: { enabled?: boolean },
 ) =>
   useQuery({
-    queryKey: adminKeys.mountains({ page, q, sort }),
+    queryKey: adminKeys.mountains({ page, q, sort, challengeId }),
     queryFn: async () => {
       const { data, error } = await api.api.admin.mountains.get({
         query: {
@@ -212,6 +214,7 @@ export const useAdminMountains = (
           pageSize: 15,
           q: q || undefined,
           sort: sort || undefined,
+          challengeId: challengeId || undefined,
         },
       });
       if (error) throw error;
@@ -818,6 +821,24 @@ export const useAdminChallenges = (
     },
     placeholderData: (prev) => prev,
     enabled: options?.enabled ?? true,
+  });
+
+/**
+ * Lightweight list of every challenge (name + id) for filter dropdowns. Reuses
+ * the paginated list endpoint at its max page size — the challenge catalogue is
+ * well under 100 rows, so a single page covers it.
+ */
+export const useAdminChallengeOptions = () =>
+  useQuery({
+    queryKey: adminKeys.challengeOptions(),
+    queryFn: async () => {
+      const { data, error } = await api.api.admin.challenges.get({
+        query: { page: 1, pageSize: 100 },
+      });
+      if (error) throw error;
+      return data.message.items;
+    },
+    staleTime: 5 * 60 * 1000,
   });
 
 export const useAdminChallengeDetail = (id: string) =>

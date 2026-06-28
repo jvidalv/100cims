@@ -14,7 +14,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useAdminMountains } from "@/domains/admin/api";
+import {
+  useAdminChallengeOptions,
+  useAdminMountains,
+} from "@/domains/admin/api";
 import { formatDate } from "@/lib/format-date";
 import { formatRating } from "@/lib/format-rating";
 
@@ -23,7 +26,13 @@ export default function AdminMountainsPage() {
   const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1));
   const [q, setQ] = useQueryState("q", parseAsString.withDefault(""));
   const [sort, setSort] = useQueryState("sort", parseAsString.withDefault(""));
+  const [challengeId, setChallengeId] = useQueryState(
+    "challengeId",
+    parseAsString.withDefault(""),
+  );
   const [search, setSearch] = useState(q);
+
+  const { data: challenges } = useAdminChallengeOptions();
 
   useEffect(() => {
     const id = setTimeout(() => {
@@ -35,7 +44,12 @@ export default function AdminMountainsPage() {
     return () => clearTimeout(id);
   }, [search, q, setQ, setPage]);
 
-  const { data, error, isLoading } = useAdminMountains({ page, q, sort });
+  const { data, error, isLoading } = useAdminMountains({
+    page,
+    q,
+    sort,
+    challengeId,
+  });
 
   return (
     <div className="p-8">
@@ -65,6 +79,26 @@ export default function AdminMountainsPage() {
             <SelectItem value="createdAt_asc">Oldest first</SelectItem>
             <SelectItem value="summits_desc">Most summits</SelectItem>
             <SelectItem value="summits_asc">Fewest summits</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <Select
+          value={challengeId || "all"}
+          onValueChange={(value) => {
+            void setChallengeId(value === "all" ? null : value);
+            void setPage(1);
+          }}
+        >
+          <SelectTrigger className="w-[220px]">
+            <SelectValue placeholder="Challenge" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All challenges</SelectItem>
+            {challenges?.map((c) => (
+              <SelectItem key={c.id} value={c.id}>
+                {c.name}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
@@ -160,7 +194,7 @@ export default function AdminMountainsPage() {
                       colSpan={10}
                       className="py-8 text-center text-muted-foreground"
                     >
-                      No mountains match “{q}”.
+                      No mountains match the current filters.
                     </td>
                   </tr>
                 )}
