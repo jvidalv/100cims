@@ -12,7 +12,10 @@
  */
 
 const WHATSAPP_HOSTS = ["whatsapp.com", "wa.me"];
-const WIKILOC_HOSTS = ["wikiloc.com"];
+// `loc.wiki` is Wikiloc's own short-link domain — its share sheet emits
+// `https://loc.wiki/t/<id>?...` links, which is how trails are commonly
+// shared, so it must be accepted alongside the canonical `wikiloc.com`.
+const WIKILOC_HOSTS = ["wikiloc.com", "loc.wiki"];
 const STRAVA_HOSTS = ["strava.com", "strava.app.link"];
 
 const HTTP_PROTOCOLS = ["http:", "https:"] as const;
