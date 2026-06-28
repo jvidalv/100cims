@@ -5,6 +5,8 @@ import {
   desc,
   eq,
   ilike,
+  isNotNull,
+  isNull,
   or,
   sql,
   type SQL,
@@ -44,6 +46,12 @@ export const adminMountainsGetRoute = new Elysia().get(
         ilike(mountainTable.location, pattern),
       );
       if (cond) conditions.push(cond);
+    }
+
+    if (query.kind === "official") {
+      conditions.push(isNull(mountainTable.creatorId));
+    } else if (query.kind === "community") {
+      conditions.push(isNotNull(mountainTable.creatorId));
     }
 
     const challengeId = query.challengeId?.trim();
@@ -128,6 +136,7 @@ export const adminMountainsGetRoute = new Elysia().get(
       q: t.Optional(t.String()),
       sort: t.Optional(t.String()),
       challengeId: t.Optional(t.String()),
+      kind: t.Optional(t.String()),
     }),
     response: SuccessResponse(AdminMountainsResponseSchema),
   },

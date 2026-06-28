@@ -197,16 +197,18 @@ export const useAdminMountains = (
     q,
     sort,
     challengeId,
+    kind,
   }: {
     page: number;
     q: string;
     sort: string;
     challengeId: string;
+    kind: string;
   },
   options?: { enabled?: boolean },
 ) =>
   useQuery({
-    queryKey: adminKeys.mountains({ page, q, sort, challengeId }),
+    queryKey: adminKeys.mountains({ page, q, sort, challengeId, kind }),
     queryFn: async () => {
       const { data, error } = await api.api.admin.mountains.get({
         query: {
@@ -215,6 +217,7 @@ export const useAdminMountains = (
           q: q || undefined,
           sort: sort || undefined,
           challengeId: challengeId || undefined,
+          kind: kind || undefined,
         },
       });
       if (error) throw error;
@@ -824,16 +827,17 @@ export const useAdminChallenges = (
   });
 
 /**
- * Lightweight list of every challenge (name + id) for filter dropdowns. Reuses
- * the paginated list endpoint at its max page size — the challenge catalogue is
- * well under 100 rows, so a single page covers it.
+ * Lightweight list of official challenges (name + id) for filter dropdowns.
+ * Reuses the paginated list endpoint at its max page size — the official
+ * catalogue is well under 100 rows, so a single page covers it. Community
+ * (user-created) challenges are excluded via `kind: "official"`.
  */
 export const useAdminChallengeOptions = () =>
   useQuery({
     queryKey: adminKeys.challengeOptions(),
     queryFn: async () => {
       const { data, error } = await api.api.admin.challenges.get({
-        query: { page: 1, pageSize: 100 },
+        query: { page: 1, pageSize: 100, kind: "official" },
       });
       if (error) throw error;
       return data.message.items;

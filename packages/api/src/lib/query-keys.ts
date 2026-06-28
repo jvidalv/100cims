@@ -25,6 +25,7 @@ export const adminKeys = {
     q: string;
     sort: string;
     challengeId: string;
+    kind: string;
   }) => ["admin", "mountains", params] as const,
   mountainDetail: (id: string) => ["admin", "mountains", id] as const,
   mountainChallenges: (id: string) =>
