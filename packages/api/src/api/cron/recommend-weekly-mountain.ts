@@ -4,6 +4,7 @@ import { db } from "@/db";
 import {
   challengeHasMountainTable,
   mountainTable,
+  summitHasUsersTable,
   summitTable,
   userTable,
 } from "@/db/schema";
@@ -114,14 +115,26 @@ export async function recommendWeeklyMountain(): Promise<void> {
     mountainsByChallenge.set(r.challengeId, list);
   }
 
+  // A user's summits live on the `summit_has_users` join table, NOT on
+  // `summit.user_id` (that column is legacy/creator-only and is populated for
+  // just a fraction of rows). Counting via `summit.user_id` undercounts badly
+  // — it's what made the progress read "10 of 523" when the user had really
+  // summited ~30. Join through `summit_has_users` like hiscores does, and
+  // count only validated summits so `done` matches the leaderboard.
   const userIds = users.map((u) => u.id);
   const summits = await db
     .select({
-      userId: summitTable.userId,
+      userId: summitHasUsersTable.userId,
       mountainId: summitTable.mountainId,
     })
-    .from(summitTable)
-    .where(inArray(summitTable.userId, userIds));
+    .from(summitHasUsersTable)
+    .innerJoin(summitTable, eq(summitHasUsersTable.summitId, summitTable.id))
+    .where(
+      and(
+        inArray(summitHasUsersTable.userId, userIds),
+        eq(summitTable.validated, true),
+      ),
+    );
 
   const summitedByUser = new Map<string, Set<string>>();
   for (const s of summits) {

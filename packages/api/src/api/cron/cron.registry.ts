@@ -78,7 +78,7 @@ export const CRON_REGISTRY: CronEntry[] = [
     name: "recommend-weekly-mountain",
     pattern: "0 0 17 * * 2",
     description:
-      "Push the closest non-summited essential mountain to each opted-in user with recent location. Falls back to non-essential if all essentials are summited. Runs Tuesday at 17:00 UTC.",
+      "Push the closest non-summited mountain (essential or not) from the user's active challenge to each opted-in user with recent location, with their challenge progress. Runs Tuesday at 17:00 UTC.",
     fn: recommendWeeklyMountain,
   },
   {
