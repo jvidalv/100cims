@@ -30,6 +30,7 @@ export default function AdminMountainsPage() {
     "challengeId",
     parseAsString.withDefault(""),
   );
+  const [kind, setKind] = useQueryState("kind", parseAsString.withDefault(""));
   const [search, setSearch] = useState(q);
 
   const { data: challenges } = useAdminChallengeOptions();
@@ -49,6 +50,7 @@ export default function AdminMountainsPage() {
     q,
     sort,
     challengeId,
+    kind,
   });
 
   return (
@@ -99,6 +101,23 @@ export default function AdminMountainsPage() {
                 {c.name}
               </SelectItem>
             ))}
+          </SelectContent>
+        </Select>
+
+        <Select
+          value={kind || "all"}
+          onValueChange={(value) => {
+            void setKind(value === "all" ? null : value);
+            void setPage(1);
+          }}
+        >
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All types</SelectItem>
+            <SelectItem value="official">Official only</SelectItem>
+            <SelectItem value="community">Community only</SelectItem>
           </SelectContent>
         </Select>
       </div>
