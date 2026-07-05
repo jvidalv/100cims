@@ -24,6 +24,7 @@ import {
   type AdminSummitUpdateBody,
   useAdminSummitDetail,
   useDeleteAdminSummit,
+  useRemoveAdminSummitRelatedUser,
   useUpdateAdminSummit,
 } from "@/domains/admin/api";
 import { formatDate, formatDateTime } from "@/lib/format-date";
@@ -54,6 +55,14 @@ export default function AdminSummitDetailPage({
   const detail = useAdminSummitDetail(id);
   const update = useUpdateAdminSummit(id);
   const deleteSummit = useDeleteAdminSummit(id);
+  const removeRelatedUser = useRemoveAdminSummitRelatedUser(id);
+
+  const onRemoveRelatedUser = (userId: string, name: string) =>
+    removeRelatedUser.mutate(userId, {
+      onSuccess: () => toast.success(`Removed ${name} from this summit`),
+      onError: (e) =>
+        toast.error(e instanceof Error ? e.message : "Remove failed"),
+    });
 
   const onDelete = () =>
     deleteSummit.mutate(undefined, {
@@ -294,6 +303,40 @@ export default function AdminSummitDetailPage({
                       Main
                     </span>
                   )}
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="ml-auto text-destructive hover:text-destructive"
+                        disabled={removeRelatedUser.isPending}
+                      >
+                        Remove
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Remove {name} from this summit?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This removes {name}&apos;s record of this summit. The
+                          summit itself and other users&apos; records stay.
+                          {u.isMain &&
+                            " Since this is the summit's main user, another linked user is promoted to main (or the Main user field is cleared if none remain)."}
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          onClick={() => onRemoveRelatedUser(u.id, name)}
+                        >
+                          Remove
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </li>
               );
             })}
