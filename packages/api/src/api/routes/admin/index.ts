@@ -69,6 +69,7 @@ import { adminPlansGetRoute } from "@/api/routes/admin/admin.plans.get";
 import { adminStatsTimeseriesGetRoute } from "@/api/routes/admin/admin.stats-timeseries.get";
 import { adminSummitDeleteDeleteRoute } from "@/api/routes/admin/admin.summit-delete.delete";
 import { adminSummitDetailGetRoute } from "@/api/routes/admin/admin.summit-detail.get";
+import { adminSummitRelatedUserRemoveDeleteRoute } from "@/api/routes/admin/admin.summit-related-user-remove.delete";
 import { adminSummitUpdatePostRoute } from "@/api/routes/admin/admin.summit-update.post";
 import { adminSummitsGetRoute } from "@/api/routes/admin/admin.summits.get";
 import { adminUserDetailGetRoute } from "@/api/routes/admin/admin.user-detail.get";
@@ -142,6 +143,7 @@ export const adminRoutes = new Elysia({ prefix: "/admin" })
   .use(adminSummitDetailGetRoute)
   .use(adminSummitUpdatePostRoute)
   .use(adminSummitDeleteDeleteRoute)
+  .use(adminSummitRelatedUserRemoveDeleteRoute)
   .use(adminPlansGetRoute)
   .use(adminPlanDetailGetRoute)
   .use(adminPlanCreatePostRoute)

@@ -761,6 +761,24 @@ export const useDeleteAdminSummit = (id: string) => {
   });
 };
 
+export const useRemoveAdminSummitRelatedUser = (summitId: string) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (userId: string) => {
+      const { data, error } = await api.api.admin
+        .summits({ id: summitId })
+        ["related-users"]({ userId })
+        .delete();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: adminKeys.summitDetail(summitId) });
+      void qc.invalidateQueries({ queryKey: adminKeys.summitsList() });
+    },
+  });
+};
+
 export type StatsMetric = "new-users" | "summits" | "plans";
 export type StatsRange = "week" | "month" | "6months" | "year" | "all";
 
