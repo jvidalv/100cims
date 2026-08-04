@@ -18,6 +18,9 @@ export async function cancelAbandonedPlans(): Promise<void> {
         isNull(planTable.startDate),
         lt(planTable.createdAt, cutoff),
         eq(userTable.admin, false),
+        // Private plans are personal to-do lists rather than open
+        // invitations, so leaving one dateless isn't abandonment.
+        eq(planTable.isPrivate, false),
       ),
     );
 

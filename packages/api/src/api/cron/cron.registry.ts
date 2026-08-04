@@ -64,7 +64,7 @@ export const CRON_REGISTRY: CronEntry[] = [
     name: "cancel-abandoned-plans",
     pattern: "0 0 3 1 * *",
     description:
-      "Cancel open plans created by non-admin users that have no start date and have been open for more than a month. Runs the 1st of each month at 03:00.",
+      "Cancel open, non-private plans created by non-admin users that have no start date and have been open for more than a month. Runs the 1st of each month at 03:00.",
     fn: cancelAbandonedPlans,
   },
   {
