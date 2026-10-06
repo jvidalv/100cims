@@ -115,9 +115,18 @@ full rule.
 Production migrations apply automatically on Railway deploy (the `build` script
 runs `next build && yarn db:migrate`).
 
-### Database Init Script
+### Seed Data
 
-An initial data script is available at `src/db/init-script.sql` for populating mountains and challenges.
+The repository ships **no seed data**. `0001_initial-schema.sql` creates the
+schema only, so a fresh database starts empty — no mountains, challenges or
+products. Populate it through the admin backoffice or your own scripts.
+
+Note: the `unaccent` extension is **not** created by the migration, but user and
+mountain search call `unaccent()`. On a fresh database, enable it once:
+
+```sql
+CREATE EXTENSION IF NOT EXISTS unaccent WITH SCHEMA public;
+```
 
 ## 📡 API Structure
 
@@ -199,7 +208,7 @@ src/
 ├── db/
 │   ├── schema.ts         # Drizzle schema definitions
 │   ├── index.ts          # Database client
-│   └── init-script.sql   # Initial data script
+│   └── drizzle/          # Versioned migrations (0001 = schema only)
 └── middleware.ts         # Next.js i18n middleware
 ```
 

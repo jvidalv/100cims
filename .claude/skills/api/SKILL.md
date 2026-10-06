@@ -325,9 +325,8 @@ custom SQL — are in `AGENTS.md`. Operational details specific to this codebase
 - **Pure data migrations** (backfills, renames, deletes with no schema diff):
   `yarn api db:generate --custom --name <slug>` produces an empty file
   pre-registered in the journal.
-- **Cross-check custom SQL** against an existing migration (`0001_seed-data.sql`,
-  `0012_grant_josep_admin.sql`) or `information_schema.columns WHERE table_name
-  = '<table>'` before writing — drizzle-kit hides PG errors and exits with just
+- **Cross-check custom SQL** against `src/db/schema.ts` (the schema of record) or
+  `information_schema.columns WHERE table_name = '<table>'` before writing — drizzle-kit hides PG errors and exits with just
   `error Command failed with exit code 1.`, which silently breaks Railway
   builds until reverted.
 
