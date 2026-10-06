@@ -265,6 +265,24 @@ const main = (): void => {
   const newRoutes = routes.filter((r) => !alreadySeeded.has(r.externalId));
   console.log(`[seed-sql] ${newRoutes.length} new routes to emit`);
 
+  // The migrations were squashed to a schema-only 0001, so no
+  // seed_routes_part_*.sql files remain and `alreadySeeded` comes back empty.
+  // Without this guard the append-only dedupe silently degrades to "emit
+  // everything", re-committing the entire route dataset that the squash
+  // removed. Require an explicit opt-in to seed from scratch.
+  if (
+    alreadySeeded.size === 0 &&
+    process.env.SEED_ROUTES_FROM_SCRATCH !== "1"
+  ) {
+    throw new Error(
+      `Found no existing ${SEED_TAG_PREFIX}*.sql files in ${DRIZZLE_DIR}, so ` +
+        `every one of the ${newRoutes.length} scraped routes looks "new" and ` +
+        `would be written as fresh migrations. This repo intentionally ships ` +
+        `no seed data. Re-run with SEED_ROUTES_FROM_SCRATCH=1 only if you ` +
+        `really mean to commit the full route dataset.`,
+    );
+  }
+
   if (newRoutes.length === 0) {
     console.log("[seed-sql] nothing to do — exiting");
     return;

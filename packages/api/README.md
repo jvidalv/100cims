@@ -117,9 +117,9 @@ runs `next build && yarn db:migrate`).
 
 ### Seed Data
 
-The repository ships **no seed data**. `0001_initial-schema.sql` creates the
-schema only, so a fresh database starts empty — no mountains, challenges or
-products. Populate it through the admin backoffice or your own scripts.
+`0001_initial-schema.sql` creates the schema only — a fresh database starts
+empty (no mountains, challenges or products). Populate it through the admin
+backoffice or your own scripts.
 
 Note: the `unaccent` extension is **not** created by the migration, but user and
 mountain search call `unaccent()`. On a fresh database, enable it once:

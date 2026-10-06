@@ -4,11 +4,18 @@ import { resolve } from "path";
 import type { Target } from "./scrape-mountain";
 
 // We pull mountains straight from the seed SQL so the script needs zero
-// hardcoded targets. Re-parsing the seed each run is fine — it's a few KB and
-// reads in <10ms. Once 100cims has more mountains being added live this can
-// move to a DB query, but the seed is the canonical source for now.
+// hardcoded targets.
+//
+// NOTE: the repo no longer ships seed data — migrations were squashed to a
+// schema-only 0001, so there are no `INSERT INTO mountain` blocks on disk and
+// this parser finds nothing. The scraper therefore cannot run against a clean
+// checkout; point DRIZZLE_SEED_DIR at a directory of seed SQL (e.g. a dump
+// taken from prod) or port these loaders to query the database instead.
+// `loadAllMountains()` throws rather than returning [] so a scrape can't
+// silently succeed with zero targets.
 
-const DRIZZLE_DIR = resolve(__dirname, "../../../src/db/drizzle");
+const DRIZZLE_DIR =
+  process.env.DRIZZLE_SEED_DIR ?? resolve(__dirname, "../../../src/db/drizzle");
 
 // Wikiloc Catalonia spans ~3° lng × 2° lat; a 0.18° radius (~20km) is wide
 // enough to catch trails starting at a nearby village without inviting many
@@ -103,6 +110,14 @@ export const loadAllMountains = (): SeedMountain[] => {
         longitude: parseFloat(tuple[6]),
       });
     }
+  }
+  if (out.length === 0) {
+    throw new Error(
+      `No "INSERT INTO mountain" rows found in ${DRIZZLE_DIR}. The repo ships ` +
+        `no seed data since migrations were squashed to a schema-only 0001, so ` +
+        `there is nothing to scrape. Set DRIZZLE_SEED_DIR to a directory of ` +
+        `seed SQL, or port this loader to query the database.`,
+    );
   }
   return out;
 };

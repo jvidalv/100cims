@@ -5,6 +5,21 @@ description: Use when adding a new challenge's routes to the catalogue, or anyth
 
 # Wikiloc scraping playbook
 
+> **SUPERSEDED — this pipeline does not run on a clean checkout.**
+>
+> The migrations were squashed to a schema-only `0001_initial-schema.sql`, so the
+> repo ships **no seed data**: no `INSERT INTO mountain` rows for
+> `loadAllMountains()` to parse, and no `seed_routes_part_*.sql` files for
+> `emit-seed-sql.ts` to dedupe against. Both scripts now throw instead of
+> silently producing nothing (`DRIZZLE_SEED_DIR` / `SEED_ROUTES_FROM_SCRATCH=1`
+> override them).
+>
+> Everything below describes the pre-squash world and is kept for reference.
+> Treat the mountain catalogue in the database — not migration SQL — as the
+> source of truth, and port these loaders to a DB query before relying on them.
+> In particular, ignore the "append-only contract" and the source-of-truth table
+> below: the part files they govern no longer exist.
+
 The scraper turns Wikiloc trail pages into seed SQL that ships in a migration.
 The pipeline has three discrete scripts you run in order — skipping or
 reordering breaks things in subtle, silent ways that the schema validator
@@ -95,7 +110,7 @@ hand.
 
 | File | Source of truth? | In git? |
 | ---- | ---------------- | ------- |
-| `seed_routes_part_NNNN.sql` | **Yes — canonical** | Yes |
+| `seed_routes_part_NNNN.sql` | No longer exists — purged in the 0001 squash | No |
 | `output/` (entire folder) | No — regenerable from a scrape | No (gitignored) |
 
 Once a scrape finishes and the emitter has written its seed SQL chunks,

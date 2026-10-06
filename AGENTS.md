@@ -59,7 +59,7 @@ Catalan or Spanish.
 **Hand-written SQL must use snake_case column identifiers.** Drizzle maps TS
 `imageUrl` → DB `image_url`; quoting `"imageUrl"` in raw SQL references a
 column that doesn't exist and silently breaks every Railway build. Cross-check
-new SQL against `information_schema.columns` or an existing migration.
+new SQL against `information_schema.columns` or `src/db/schema.ts`.
 
 **Always ask the user before applying a migration.** Prepare the file, wait
 for approval, then run `yarn api db:migrate` locally. (Production migrations
