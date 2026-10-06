@@ -54,7 +54,11 @@ Catalan or Spanish.
 
 **Never hand-author files under `packages/api/src/db/drizzle/`.** Use
 `yarn api db:generate` (schema change) or `yarn api db:generate --custom --name
-<slug>` (pure data change) so the journal stays consistent.
+<slug>` (pure data change) so the journal stays consistent. (One-off exception,
+already applied: the chain was squashed to a single generated
+`0001_initial-schema`, and `_journal.json` was renumbered idx 0 → 1 to match.
+`idx` is not read when applying — drizzle matches on tag + hash — and
+`db:generate` continues correctly from idx 2.)
 
 **Hand-written SQL must use snake_case column identifiers.** Drizzle maps TS
 `imageUrl` → DB `image_url`; quoting `"imageUrl"` in raw SQL references a
